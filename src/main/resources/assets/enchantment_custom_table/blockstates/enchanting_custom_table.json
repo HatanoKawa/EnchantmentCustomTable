@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "enchantment_custom_table:block/enchanting_custom_table"
+    }
+  }
+}

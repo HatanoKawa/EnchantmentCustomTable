@@ -1,10 +1,10 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "enchantmentcustomtable:block/enchanting_custom_table_bottom",
-    "bottom": "enchantmentcustomtable:block/enchanting_custom_table_bottom",
-    "top": "enchantmentcustomtable:block/enchanting_custom_table_top",
-    "side": "enchantmentcustomtable:block/enchanting_custom_table_side"
+    "particle": "enchantment_custom_table:block/enchanting_custom_table_bottom",
+    "bottom": "enchantment_custom_table:block/enchanting_custom_table_bottom",
+    "top": "enchantment_custom_table:block/enchanting_custom_table_top",
+    "side": "enchantment_custom_table:block/enchanting_custom_table_side"
   },
   "elements": [
     {

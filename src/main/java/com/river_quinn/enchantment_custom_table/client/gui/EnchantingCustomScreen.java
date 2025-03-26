@@ -46,7 +46,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantmentC
         this.imageHeight = 166;
     }
 
-    private static final ResourceLocation texture = ResourceLocation.parse("enchantmentcustomtable:textures/screens/enchantment_custom.png");
+    private static final ResourceLocation texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchantment_custom.png");
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
@@ -128,7 +128,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantmentC
         // guistate.put("button:imagebutton_enchanting_custom_table_top", imagebutton_enchanting_custom_table_top);
         // this.addRenderableWidget(imagebutton_enchanting_custom_table_top);
          imagebutton_burn_progress = new ImageButton(this.leftPos + 16, this.topPos + 31, 16, 24,
-                 new WidgetSprites(ResourceLocation.parse("enchantmentcustomtable:textures/screens/burn_progress.png"), ResourceLocation.parse("enchantmentcustomtable:textures/screens/burn_progress.png")), e -> {
+                 new WidgetSprites(ResourceLocation.parse("enchantment_custom_table:textures/screens/burn_progress.png"), ResourceLocation.parse("enchantment_custom_table:textures/screens/burn_progress.png")), e -> {
          }) {
              @Override
              public void renderWidget(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
