@@ -268,7 +268,6 @@ public class EnchantmentCustomMenu extends AbstractContainerMenu {
 	@Override
 	public void removed(Player playerIn) {
 		super.removed(playerIn);
-		LOGGER.info("EnchantmentCustomMenu removed");
 		if (!bound && playerIn instanceof ServerPlayer) {
 //		if (!bound && playerIn instanceof ServerPlayer serverPlayer) {
 //			if (!serverPlayer.isAlive() || serverPlayer.hasDisconnected()) {

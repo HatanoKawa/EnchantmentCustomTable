@@ -11,6 +11,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.*;
@@ -220,6 +222,8 @@ public class EnchantingCustomTableBlockEntity extends BlockEntity implements Men
             player.getInventory().placeItemBackInInventory(enchantedBook);
 
             clearEnchantedBookStore();
+
+            level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }
 
@@ -369,6 +373,14 @@ public class EnchantingCustomTableBlockEntity extends BlockEntity implements Men
         if (enchantmentInstances.size() > 1 || forceRegenerateEnchantedBookStore || regenerateEnchantedBookStore) {
             genEnchantedBookStore();
         }
+
+        level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
+
+        if (enchantmentsOnTool.entrySet().isEmpty()) {
+            // 若待附魔工具中没有附魔，重新设置一个初始的页码
+            currentPage = 0;
+            totalPage = 1;
+        }
     }
 
     public void removeEnchantment(List<EnchantmentInstance> enchantmentInstances) {
@@ -381,13 +393,13 @@ public class EnchantingCustomTableBlockEntity extends BlockEntity implements Men
         for (EnchantmentInstance enchantmentInstance : enchantmentInstances) {
             var enchantmentReference = translateEnchantment(enchantmentInstance.enchantment.value());
             assert enchantmentReference != null;
-            mutable.set(enchantmentReference, 0);
             // set 方法在 level 小于等于 0 时会移除对应附魔
-            mutable.set(enchantmentReference, enchantmentInstance.level);
+            mutable.set(enchantmentReference, 0);
         }
         toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), mutable.toImmutable());
         // endregion
 
+        level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     public void clearEnchantedBookStore() {

@@ -44,7 +44,7 @@ public class EnchantingCustomTableBlock extends BaseEntityBlock {
         super(
                 BlockBehaviour.Properties.of()
                         .lightLevel(blockState -> 15)
-                        .destroyTime(10)
+                        .destroyTime(1)
                         .explosionResistance(3600)
         );
     }
@@ -118,7 +118,7 @@ public class EnchantingCustomTableBlock extends BaseEntityBlock {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof EnchantingCustomTableBlockEntity be) {
-                //Containers.dropContents(world, pos, be);
+                // Containers.dropContents(world, pos, be);
                 be.DropToolInFirstSlotOnRemove();
                 world.updateNeighbourForOutputSignal(pos, this);
             }
