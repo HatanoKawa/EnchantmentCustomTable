@@ -1,7 +1,6 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
 import com.mojang.logging.LogUtils;
-import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.HashMap;
@@ -18,8 +16,6 @@ import java.util.HashMap;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentCustomMenu;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.slf4j.Logger;
 
 public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantmentCustomMenu> {
