@@ -5,14 +5,8 @@ import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentCusto
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.*;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -23,7 +17,6 @@ import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -35,36 +28,23 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class EnchantingCustomTableBlockEntity extends BlockEntity implements MenuProvider {
-    private final int ENCHANTED_BOOK_SLOT_SIZE = 4 * 7;
+    public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
+    public static final int ENCHANTED_BOOK_SLOT_COLUMN_COUNT = 6;
+    public static final int ENCHANTED_BOOK_SLOT_SIZE = ENCHANTED_BOOK_SLOT_ROW_COUNT * ENCHANTED_BOOK_SLOT_COLUMN_COUNT;
+    public static final int ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE = ENCHANTED_BOOK_SLOT_SIZE + 2;
 //    private NonNullList<ItemStack> stacks = NonNullList.<ItemStack>withSize(ENCHANTED_BOOK_SLOT_SIZE + 2, ItemStack.EMPTY);
     /**
      * index 0: 待附魔工具槽
      * index 1: 附加槽，仅接受附魔，添加附魔书后将会立刻将附魔书的附魔添加到待附魔工具中并重新生成附魔书槽
      * index 2-22: 附魔书槽
      */
-    private final ItemStackHandler itemHandler = new ItemStackHandler(ENCHANTED_BOOK_SLOT_SIZE + 2);
-//    private final ItemStackHandler itemHandler = new ItemStackHandler(ENCHANTED_BOOK_SLOT_SIZE + 2) {
-//        @Override
-//        protected void onContentsChanged(int slotIndex) {
-//            super.onContentsChanged(slotIndex);
-//            System.out.println("onContentsChanged event triggered, slot index: " + slotIndex);
-//            if (slotIndex == 0) {
-//                generateEnchantmentStore();
-//            } else if (slotIndex == 1) {
-//                return;
-//            } else {
-//                // 附魔书槽变为空，处理逻辑通过 Menu 类的 onTake 和 setChanged 事件触发
-//                return;
-//            }
-//        }
-//    };
+    private final ItemStackHandler itemHandler = new ItemStackHandler(ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE);
+
+    public int currentPage = 0;
+    public int totalPage = 0;
 
     public int time;
     public float flip;
@@ -180,6 +160,11 @@ public class EnchantingCustomTableBlockEntity extends BlockEntity implements Men
         return itemHandler;
     }
 
+    public void resetPage() {
+        currentPage = 0;
+        totalPage = 0;
+    }
+
     public void DropToolInFirstSlotOnRemove() {
         ItemStack toolItemStack = this.itemHandler.getStackInSlot(0);
 //        ItemStack toolItemStack = this.getItem(0);
@@ -196,14 +181,96 @@ public class EnchantingCustomTableBlockEntity extends BlockEntity implements Men
         return new EnchantmentCustomMenu(i, inventory, new FriendlyByteBuf(Unpooled.buffer()).writeBlockPos(this.worldPosition));
     }
 
+    // 存储当前工具槽中的附魔，用于进行翻页操作
+    private final List<ItemStack> enchantmentsOnCurrentTool = new ArrayList<>();
+
+    private Holder.Reference<Enchantment> translateEnchantment(Enchantment enchantment) {
+        if (this.level == null)
+            return null;
+        Registry<Enchantment> fullEnchantmentRegistry = this.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        ResourceKey<Enchantment> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantment).get();
+        // 一些通过猜谜获得的逻辑，我不知道为什么要这么做，但是这么做能行
+        Optional<Holder.Reference<Enchantment>> optional = this.level
+                .registryAccess()
+                .registryOrThrow(Registries.ENCHANTMENT)
+                .getHolder(resourceKey);
+        return optional.get();
+    }
+
+    public void exportAllEnchantments(Player player) {
+        ItemStack toolItemStack = itemHandler.getStackInSlot(0);
+        ItemEnchantments itemEnchantments = toolItemStack.get(EnchantmentHelper.getComponentType(toolItemStack));
+        if (!toolItemStack.isEmpty() && itemEnchantments != null) {
+            ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(itemEnchantments);
+            ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
+
+            for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
+                Enchantment enchantment = entry.getKey().value();
+                int enchantmentLevel = entry.getIntValue();
+
+                var enchantmentReference = translateEnchantment(enchantment);
+
+                assert enchantmentReference != null;
+                // set 方法在 level 小于等于 0 时会移除对应附魔
+                mutable.set(enchantmentReference, 0);
+                enchantedBook.enchant(enchantmentReference, enchantmentLevel);
+            }
+
+            toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), mutable.toImmutable());
+            player.getInventory().placeItemBackInInventory(enchantedBook);
+
+            clearEnchantedBookStore();
+        }
+    }
+
+    public void nextPage() {
+        if (currentPage < (totalPage - 1)) {
+            turnPage(currentPage + 1);
+        }
+    }
+
+    public void previousPage() {
+        if (currentPage > 0) {
+            turnPage(currentPage - 1);
+        }
+    }
+
+    // 保存当前页的附魔，设置新页面并更新附魔书槽
+    public void turnPage(int targetPage) {
+        if (targetPage < 0 || targetPage >= totalPage) {
+            return;
+        }
+        int indexOffset = currentPage * ENCHANTED_BOOK_SLOT_SIZE;
+        for (int i = 0; i < ENCHANTED_BOOK_SLOT_SIZE; i++) {
+            int indexOfFullList = i + indexOffset;
+            int indexOfSlot = i + 2;
+            if (indexOfFullList < enchantmentsOnCurrentTool.size())
+                enchantmentsOnCurrentTool.set(indexOfFullList, itemHandler.getStackInSlot(indexOfSlot));
+        }
+        currentPage = targetPage;
+        updateEnchantedBookSlots();
+    }
+
+    public void updateEnchantedBookSlots() {
+        int indexOffset = currentPage * ENCHANTED_BOOK_SLOT_SIZE;
+        // 将附魔书添加到附魔书槽
+        for (int i = 0; i < ENCHANTED_BOOK_SLOT_SIZE; i++) {
+            int indexOfFullList = i + indexOffset;
+            int indexOfSlot = i + 2;
+            if (indexOfFullList < enchantmentsOnCurrentTool.size())
+                itemHandler.setStackInSlot(indexOfSlot, enchantmentsOnCurrentTool.get(indexOfFullList));
+            else
+                itemHandler.setStackInSlot(indexOfSlot, ItemStack.EMPTY);
+        }
+    }
+
     // 根据待附魔工具槽中的物品生成附魔书槽
     public void genEnchantedBookStore() {
         ItemStack toolItemStack = itemHandler.getStackInSlot(0);
 
-        List<ItemStack> enchantmentsList = new ArrayList<>();
+        enchantmentsOnCurrentTool.clear();
         if (!toolItemStack.isEmpty()) {
             ItemEnchantments enchantments = toolItemStack.get(EnchantmentHelper.getComponentType(toolItemStack));
-            Registry<Enchantment> fullEnchantmentList = this.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
 
             if (enchantments != null) {
                 // 根据待附魔工具槽中的附魔生成对应的附魔书，并添加到 fullEnchantmentList
@@ -211,24 +278,21 @@ public class EnchantingCustomTableBlockEntity extends BlockEntity implements Men
                     Enchantment enchantment = entry.getKey().value();
                     Integer enchantmentLevel = entry.getValue();
                     ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
-                    ResourceKey<Enchantment> resourceKey = fullEnchantmentList.getResourceKey(enchantment).get();
-                    Optional<Holder.Reference<Enchantment>> optional = this.level
-                            .registryAccess()
-                            .registryOrThrow(Registries.ENCHANTMENT)
-                            .getHolder(resourceKey);
-                    enchantedBook.enchant(optional.get(), enchantmentLevel);
-                    enchantmentsList.add(enchantedBook);
+
+                    var enchantmentReference = translateEnchantment(enchantment);
+                    assert enchantmentReference != null;
+                    enchantedBook.enchant(enchantmentReference, enchantmentLevel);
+
+                    enchantmentsOnCurrentTool.add(enchantedBook);
                 }
             }
         }
 
-        // 将附魔书添加到附魔书槽
-        for (int i = 0; i < ENCHANTED_BOOK_SLOT_SIZE; i++) {
-            if (i < enchantmentsList.size())
-                itemHandler.setStackInSlot(i + 2, enchantmentsList.get(i));
-            else
-                itemHandler.setStackInSlot(i + 2, ItemStack.EMPTY);
-        }
+        currentPage = 0;
+
+        totalPage = (int) Math.ceil((double) enchantmentsOnCurrentTool.size() / ENCHANTED_BOOK_SLOT_SIZE);
+
+        updateEnchantedBookSlots();
 
         // 清除附加槽中的附魔书
         itemHandler.setStackInSlot(1, ItemStack.EMPTY);
@@ -291,22 +355,18 @@ public class EnchantingCustomTableBlockEntity extends BlockEntity implements Men
         ItemEnchantments itemEnchantments = toolItemStack.get(EnchantmentHelper.getComponentType(toolItemStack));
         // 转换成可变形式
         ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(itemEnchantments);
-        Registry<Enchantment> fullEnchantmentRegistry = this.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
         for (EnchantmentInstance enchantmentInstance : resultEnchantmentMap.values().stream().toList()) {
-            ResourceKey<Enchantment> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantmentInstance.enchantment.value()).get();
-            // 一些通过猜谜获得的逻辑，我不知道为什么要这么做，但是这么做能行
-            Optional<Holder.Reference<Enchantment>> optional = this.level
-                    .registryAccess()
-                    .registryOrThrow(Registries.ENCHANTMENT)
-                    .getHolder(resourceKey);
+            var enchantmentReference = translateEnchantment(enchantmentInstance.enchantment.value());
+            assert enchantmentReference != null;
+            mutable.set(enchantmentReference, 0);
             // set 方法在 level 小于等于 0 时会移除对应附魔
-            mutable.set(optional.get(), enchantmentInstance.level);
+            mutable.set(enchantmentReference, enchantmentInstance.level);
         }
         toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), mutable.toImmutable());
         // endregion
 
-        // 如果放入了携带相同附魔的附魔书，那么需要重新生成附魔书槽
-        if (forceRegenerateEnchantedBookStore || regenerateEnchantedBookStore) {
+        // 如果放入了携带相同附魔的附魔书，或者携带多附魔词条的附魔书，那么需要重新生成附魔书槽
+        if (enchantmentInstances.size() > 1 || forceRegenerateEnchantedBookStore || regenerateEnchantedBookStore) {
             genEnchantedBookStore();
         }
     }
@@ -318,16 +378,12 @@ public class EnchantingCustomTableBlockEntity extends BlockEntity implements Men
         ItemEnchantments itemEnchantments = toolItemStack.get(EnchantmentHelper.getComponentType(toolItemStack));
         // 转换成可变形式
         ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(itemEnchantments);
-        Registry<Enchantment> fullEnchantmentRegistry = this.level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
         for (EnchantmentInstance enchantmentInstance : enchantmentInstances) {
-            ResourceKey<Enchantment> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantmentInstance.enchantment.value()).get();
-            // 一些通过猜谜获得的逻辑，我不知道为什么要这么做，但是这么做能行
-            Optional<Holder.Reference<Enchantment>> optional = this.level
-                    .registryAccess()
-                    .registryOrThrow(Registries.ENCHANTMENT)
-                    .getHolder(resourceKey);
+            var enchantmentReference = translateEnchantment(enchantmentInstance.enchantment.value());
+            assert enchantmentReference != null;
+            mutable.set(enchantmentReference, 0);
             // set 方法在 level 小于等于 0 时会移除对应附魔
-            mutable.set(optional.get(), 0);
+            mutable.set(enchantmentReference, enchantmentInstance.level);
         }
         toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), mutable.toImmutable());
         // endregion

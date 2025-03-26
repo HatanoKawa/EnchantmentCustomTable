@@ -36,6 +36,8 @@ import java.util.function.Supplier;
 import java.util.Map;
 import java.util.HashMap;
 
+import static com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity.*;
+
 public class EnchantmentCustomMenu extends AbstractContainerMenu {
 	private static final Logger LOGGER = LogUtils.getLogger();
 	public final static HashMap<String, Object> guistate = new HashMap<>();
@@ -44,14 +46,13 @@ public class EnchantmentCustomMenu extends AbstractContainerMenu {
 	public int x, y, z;
 	private ContainerLevelAccess access = ContainerLevelAccess.NULL;
 	private ItemStackHandler internal;
-//	private final Map<Integer, Slot> customSlots = new HashMap<>();
 	private Slot enchantableItemSlot;
 	private Slot enchantedBookToAppendSlot;
 	private final Map<Integer, Slot> enchantedBookSlots = new HashMap<>();
 	private boolean bound = false;
 	private Supplier<Boolean> boundItemMatcher = null;
 	private Entity boundEntity = null;
-	private EnchantingCustomTableBlockEntity boundBlockEntity = null;
+	public EnchantingCustomTableBlockEntity boundBlockEntity = null;
 	private ItemStackHandler boundInv = null;
 
 	public EnchantmentCustomMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
@@ -76,7 +77,7 @@ public class EnchantmentCustomMenu extends AbstractContainerMenu {
 			}
 		}
 
-		this.enchantableItemSlot = this.addSlot(new SlotItemHandler(internal, 0, 16, 8) {
+		this.enchantableItemSlot = this.addSlot(new SlotItemHandler(internal, 0, 8, 8) {
 			private final int slot = 0;
 			private int x = EnchantmentCustomMenu.this.x;
 			private int y = EnchantmentCustomMenu.this.y;
@@ -90,11 +91,12 @@ public class EnchantmentCustomMenu extends AbstractContainerMenu {
 				} else {
 					// 取出待附魔工具，清空附魔书槽
 					boundBlockEntity.clearEnchantedBookStore();
+					boundBlockEntity.resetPage();
 				}
 			}
 		});
 
-		this.enchantedBookToAppendSlot = this.addSlot(new SlotItemHandler(internal, 1, 16, 62) {
+		this.enchantedBookToAppendSlot = this.addSlot(new SlotItemHandler(internal, 1, 42, 8) {
 			private final int slot = 1;
 			private int x = EnchantmentCustomMenu.this.x;
 			private int y = EnchantmentCustomMenu.this.y;
@@ -118,10 +120,10 @@ public class EnchantmentCustomMenu extends AbstractContainerMenu {
 		});
 
 		int enchanted_book_index = 0;
-		for (int row = 0; row < 4; row++) {
+		for (int row = 0; row < ENCHANTED_BOOK_SLOT_ROW_COUNT; row++) {
 			int yPos = 8 + row * 18;
-			for (int col = 0; col < 7; col++) {
-				int xPos = 43 + col * 18;
+			for (int col = 0; col < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; col++) {
+				int xPos = 61 + col * 18;
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
 					new SlotItemHandler(internal, final_enchanted_book_index + 2, xPos, yPos) {
@@ -179,16 +181,16 @@ public class EnchantmentCustomMenu extends AbstractContainerMenu {
 		if (slot != null && slot.hasItem()) {
 			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
-			if (index < 23) {
-				if (!this.moveItemStackTo(itemstack1, 23, this.slots.size(), true))
+			if (index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE) {
+				if (!this.moveItemStackTo(itemstack1, ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE, this.slots.size(), true))
 					return ItemStack.EMPTY;
 				slot.onQuickCraft(itemstack1, itemstack);
-			} else if (!this.moveItemStackTo(itemstack1, 0, 23, false)) {
-				if (index < 23 + 27) {
-					if (!this.moveItemStackTo(itemstack1, 23 + 27, this.slots.size(), true))
+			} else if (!this.moveItemStackTo(itemstack1, 0, ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE, false)) {
+				if (index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE + 27) {
+					if (!this.moveItemStackTo(itemstack1, ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE + 27, this.slots.size(), true))
 						return ItemStack.EMPTY;
 				} else {
-					if (!this.moveItemStackTo(itemstack1, 23, 23 + 27, false))
+					if (!this.moveItemStackTo(itemstack1, ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE, ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE + 27, false))
 						return ItemStack.EMPTY;
 				}
 				return ItemStack.EMPTY;
@@ -300,17 +302,8 @@ public class EnchantmentCustomMenu extends AbstractContainerMenu {
 			Enchantment enchantment = entry.getKey().value();
 			int enchantmentLevel = entry.getIntValue();
 			enchantmentOfBook.add(new EnchantmentInstance(Holder.direct(enchantment), enchantmentLevel));
-			LOGGER.info("Enchantment: " + enchantment + "desc: " + enchantment.description() + " Level: " + enchantmentLevel);
 		}
 
 		return enchantmentOfBook;
-	}
-
-	public void turnNextPage() {
-		// todo
-	}
-
-	public void turnPreviousPage() {
-		// todo
 	}
 }

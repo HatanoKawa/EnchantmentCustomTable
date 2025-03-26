@@ -1,14 +1,14 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
 import com.mojang.logging.LogUtils;
+import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.HashMap;
@@ -16,6 +16,7 @@ import java.util.HashMap;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentCustomMenu;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.slf4j.Logger;
 
 public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantmentCustomMenu> {
@@ -32,7 +33,10 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantmentC
     // ImageButton imagebutton_enchanting_table_tab_unselected;
     // ImageButton imagebutton_enchanted_book;
     // ImageButton imagebutton_enchanting_custom_table_top;
-    ImageButton imagebutton_burn_progress;
+    Button button_left_arrow_button;
+    Button button_right_arrow_button;
+    Button export_button;
+//    ImageButton imagebutton_burn_progress;
 
     public EnchantingCustomScreen(EnchantmentCustomMenu container, Inventory inventory, Component text) {
         super(container, inventory, text);
@@ -61,6 +65,9 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantmentC
         RenderSystem.defaultBlendFunc();
         guiGraphics.blit(texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         RenderSystem.disableBlend();
+
+        guiGraphics.blit(ResourceLocation.parse("enchantment_custom_table:textures/screens/left_arrow.png"), this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+
     }
 
     @Override
@@ -72,13 +79,56 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantmentC
         return super.keyPressed(key, b, c);
     }
 
+    public String generatePageText() {
+        int currentPage = this.menuContainer.boundBlockEntity.currentPage;
+        int totalPage = this.menuContainer.boundBlockEntity.totalPage;
+        if (totalPage == 0)
+            return "-/-";
+        return (currentPage + 1) + "/" + totalPage;
+    }
+
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        guiGraphics.drawCenteredString(
+                this.font,
+                generatePageText(),
+                35,
+                33,
+                -1
+        );
+
     }
 
     @Override
     public void init() {
         super.init();
+        button_left_arrow_button = Button.builder(
+                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
+                e -> menuContainer.boundBlockEntity.previousPage()
+        ).bounds(this.leftPos + 7, this.topPos + 43, 26, 18).build();
+        guistate.put("button:button_left_arrow_button", button_left_arrow_button);
+        this.addRenderableWidget(button_left_arrow_button);
+
+        button_right_arrow_button = Button.builder(
+                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
+                e -> {
+                        menuContainer.boundBlockEntity.nextPage();
+                }
+        ).bounds(this.leftPos + 33, this.topPos + 43, 26, 18).build();
+        guistate.put("button:button_right_arrow_button", button_right_arrow_button);
+        this.addRenderableWidget(button_right_arrow_button);
+
+        export_button = Button.builder(
+                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_export"),
+                e -> PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
+                        x, y, z,
+                        EnchantingCustomTableNetData.OperateType.EXPORT_ALL_ENCHANTMENTS.toString()
+                ))
+        ).bounds(this.leftPos + 7, this.topPos + 61, 52, 18).build();
+        guistate.put("button:export_button", export_button);
+        this.addRenderableWidget(export_button);
+
+
 //        button_left_arrow = Button.builder(Component.translatable("gui.enchantmentcustomtable.enchantment_custom.button_left_arrow"), e -> {
 //        }).bounds(this.leftPos + 42, this.topPos + 61, 30, 20).build();
 //        guistate.put("button:button_left_arrow", button_left_arrow);
@@ -127,16 +177,16 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantmentC
         // };
         // guistate.put("button:imagebutton_enchanting_custom_table_top", imagebutton_enchanting_custom_table_top);
         // this.addRenderableWidget(imagebutton_enchanting_custom_table_top);
-         imagebutton_burn_progress = new ImageButton(this.leftPos + 16, this.topPos + 31, 16, 24,
-                 new WidgetSprites(ResourceLocation.parse("enchantment_custom_table:textures/screens/burn_progress.png"), ResourceLocation.parse("enchantment_custom_table:textures/screens/burn_progress.png")), e -> {
-         }) {
-             @Override
-             public void renderWidget(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
-                 guiGraphics.blit(sprites.get(isActive(), isHoveredOrFocused()), getX(), getY(), 0, 0, width, height, width, height);
-             }
-         };
-         guistate.put("button:imagebutton_burn_progress", imagebutton_burn_progress);
-         this.addRenderableWidget(imagebutton_burn_progress);
+//         imagebutton_burn_progress = new ImageButton(this.leftPos + 16, this.topPos + 31, 16, 24,
+//                 new WidgetSprites(ResourceLocation.parse("enchantment_custom_table:textures/screens/burn_progress.png"), ResourceLocation.parse("enchantment_custom_table:textures/screens/burn_progress.png")), e -> {
+//         }) {
+//             @Override
+//             public void renderWidget(GuiGraphics guiGraphics, int x, int y, float partialTicks) {
+//                 guiGraphics.blit(sprites.get(isActive(), isHoveredOrFocused()), getX(), getY(), 0, 0, width, height, width, height);
+//             }
+//         };
+//         guistate.put("button:imagebutton_burn_progress", imagebutton_burn_progress);
+//         this.addRenderableWidget(imagebutton_burn_progress);
     }
 
     public void ShowEnchantmentCustomPage() {

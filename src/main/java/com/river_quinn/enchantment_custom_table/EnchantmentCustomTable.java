@@ -3,6 +3,7 @@ package com.river_quinn.enchantment_custom_table;
 import com.river_quinn.enchantment_custom_table.init.*;
 import com.river_quinn.enchantment_custom_table.renderer.ModBlockEntityRenderers;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -114,10 +115,10 @@ public class EnchantmentCustomTable
             ModBlockEntityRenderers.register(event);
         }
 
-//        @SubscribeEvent
-//        public static void register(final RegisterPayloadHandlersEvent event) {
-//            ModPayloads.register(event);
-//        }
+        @SubscribeEvent
+        public static void register(final RegisterPayloadHandlersEvent event) {
+            ModPayloads.register(event);
+        }
 
     }
 }
