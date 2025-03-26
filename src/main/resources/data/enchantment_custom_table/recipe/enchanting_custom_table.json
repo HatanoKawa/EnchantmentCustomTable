@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "minecraft:obsidian"
+    },
+    "B": {
+      "item": "minecraft:book"
+    },
+    "D": {
+      "item": "minecraft:diamond_block"
+    }
+  },
+  "pattern": [
+    " B ",
+    "D#D",
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "enchantment_custom_table:enchanting_custom_table"
+  }
+}

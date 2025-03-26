@@ -32,7 +32,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class EnchantmentCustomTable
 {
     // Define mod id in a common place for everything to reference
-    public static final String MODID = "enchantmentcustomtable";
+    public static final String MODID = "enchantment_custom_table";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
