@@ -393,9 +393,8 @@ public class EnchantingCustomTableBlockEntity extends BlockEntity implements Men
         for (EnchantmentInstance enchantmentInstance : enchantmentInstances) {
             var enchantmentReference = translateEnchantment(enchantmentInstance.enchantment.value());
             assert enchantmentReference != null;
-            mutable.set(enchantmentReference, 0);
             // set 方法在 level 小于等于 0 时会移除对应附魔
-            mutable.set(enchantmentReference, enchantmentInstance.level);
+            mutable.set(enchantmentReference, 0);
         }
         toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), mutable.toImmutable());
         // endregion
