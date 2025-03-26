@@ -1,6 +1,6 @@
 package com.river_quinn.enchantment_custom_table.renderer;
 
-import com.river_quinn.enchantment_custom_table.entity.ModBlockEntities;
+import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 public class ModBlockEntityRenderers {

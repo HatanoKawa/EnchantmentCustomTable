@@ -1,6 +1,6 @@
-package com.river_quinn.enchantment_custom_table.entity;
+package com.river_quinn.enchantment_custom_table.init;
 
-import com.river_quinn.enchantment_custom_table.block.ModBlocks;
+import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;

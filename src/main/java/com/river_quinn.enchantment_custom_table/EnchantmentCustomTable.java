@@ -1,8 +1,6 @@
 package com.river_quinn.enchantment_custom_table;
 
-import com.river_quinn.enchantment_custom_table.block.ModBlocks;
-import com.river_quinn.enchantment_custom_table.entity.ModBlockEntities;
-import com.river_quinn.enchantment_custom_table.item.ModItems;
+import com.river_quinn.enchantment_custom_table.init.*;
 import com.river_quinn.enchantment_custom_table.renderer.ModBlockEntityRenderers;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import org.slf4j.Logger;
@@ -54,6 +52,8 @@ public class EnchantmentCustomTable
         ModItems.register(modEventBus);
 
         ModBlockEntities.register(modEventBus);
+
+        ModMenus.register(modEventBus);
 
         CREATIVE_MODE_TABS.register(modEventBus);
 
@@ -113,5 +113,11 @@ public class EnchantmentCustomTable
         public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
             ModBlockEntityRenderers.register(event);
         }
+
+//        @SubscribeEvent
+//        public static void register(final RegisterPayloadHandlersEvent event) {
+//            ModPayloads.register(event);
+//        }
+
     }
 }
