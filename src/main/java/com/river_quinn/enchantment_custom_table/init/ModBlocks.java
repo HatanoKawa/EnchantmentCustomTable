@@ -1,5 +1,6 @@
-package com.river_quinn.enchantment_custom_table.block;
+package com.river_quinn.enchantment_custom_table.init;
 
+import com.river_quinn.enchantment_custom_table.block.EnchantingCustomTableBlock;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;

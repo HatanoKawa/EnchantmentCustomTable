@@ -3,7 +3,7 @@ package com.river_quinn.enchantment_custom_table.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.river_quinn.enchantment_custom_table.entity.EnchantingCustomTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
