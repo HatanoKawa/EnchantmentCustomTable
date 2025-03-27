@@ -1,13 +1,15 @@
 
 package com.river_quinn.enchantment_custom_table.world.inventory;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
@@ -107,6 +109,14 @@ public class EnchantmentCustomMenu extends AbstractContainerMenu {
 			}
 
 			@Override
+			public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+				return Pair.of(
+						InventoryMenu.BLOCK_ATLAS,
+						ResourceLocation.tryParse("enchantment_custom_table:item/empty_book")
+				);
+			}
+
+			@Override
 			public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
 				super.setByPlayer(newStack, oldStack);
 				if (!newStack.isEmpty()) {
@@ -134,6 +144,14 @@ public class EnchantmentCustomMenu extends AbstractContainerMenu {
 						@Override
 						public boolean mayPlace(ItemStack stack) {
 							return Items.ENCHANTED_BOOK == stack.getItem() && !getItemHandler().getStackInSlot(0).isEmpty();
+						}
+
+						@Override
+						public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+							return Pair.of(
+									InventoryMenu.BLOCK_ATLAS,
+									ResourceLocation.tryParse("enchantment_custom_table:item/empty_book")
+							);
 						}
 
 						@Override
