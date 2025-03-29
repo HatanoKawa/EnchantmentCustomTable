@@ -409,4 +409,10 @@ public class EnchantingCustomTableBlockEntity extends BlockEntity implements Men
             }
         }
     }
+
+    public void initMenu() {
+        clearEnchantedBookStore();
+        enchantmentsOnCurrentTool.clear();
+        resetPage();
+    }
 }

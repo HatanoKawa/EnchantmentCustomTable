@@ -177,6 +177,8 @@ public class EnchantmentCustomMenu extends AbstractContainerMenu {
 				this.addSlot(new Slot(inv, sj + (si + 1) * 9, 0 + 8 + sj * 18, 0 + 84 + si * 18));
 		for (int si = 0; si < 9; ++si)
 			this.addSlot(new Slot(inv, si, 0 + 8 + si * 18, 0 + 142));
+
+		this.boundBlockEntity.initMenu();
 	}
 
 	@Override
