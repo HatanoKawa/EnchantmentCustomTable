@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "enchantment_custom_table:blocks/enchantment_conversion_table",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "enchantment_custom_table:enchantment_conversion_table"
+        }
+      ]
+    }
+  ]
+}

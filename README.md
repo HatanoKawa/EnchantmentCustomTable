@@ -10,6 +10,8 @@ Add a workstation that converts books into enchanted books. This workstation wil
 
 # Usage
 
+## Enchantment Custom Table
+
 ![enchantment custom table gui](./src/main/resources/doc/enchantment_custom_table_gui.jpg)
 
 Place a tool or an enchanted book containing multiple enchantments in the top-left slot. All enchantments on the item will be displayed as individual enchanted books in the 4×6 grid on the right.
@@ -20,15 +22,21 @@ Place a tool or an enchanted book containing multiple enchantments in the top-le
 
 - Enchantments of the same type will merge their levels. For example, if you place a Diamond Sword with Sharpness I and an enchanted book with Sharpness II, the result will be a Diamond Sword with Sharpness III.
 
-## Single Input Slot
+### Single Input Slot
 
 For the single book slot to the right of the tool slot, any enchanted books placed in this slot will be immediately consumed, and their enchantments will be applied to the tool. This allows players to quickly add multiple enchantments to their tool using Shift + Left Click.
 
-## Export Button
+### Export Button
 
 Clicking this button will remove all enchantments from the tool and combine them into a single enchanted book, which will be given to the player.
 
 **Note**: If the player's inventory is full, the combined enchanted book will be dropped in front of them.
+
+## Enchantment Conversion Table
+
+![enchantment conversion table gui](./src/main/resources/doc/enchantment_conversion_table_gui.jpg)
+
+Place a book and either emeralds or emerald blocks in the designated slots on the left. If the minimum cost is met (by default, 1 book + 36 emeralds or 4 emerald blocks), the 4×7 grid on the right will display all available enchantments at their maximum level. You can then exchange books and emeralds for the corresponding enchanted books.
 
 # Balance Considerations
 When creating this mod, I did not focus on balance. However, I understand that some players value gameplay challenges and balance.

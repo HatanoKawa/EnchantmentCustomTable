@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.block.entity.EnchantingTableLikeBlockEntity;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 
-public class EnchantingCustomTableRenderer implements BlockEntityRenderer<EnchantingCustomTableBlockEntity> {
+public class EnchantingCustomTableRenderer implements BlockEntityRenderer<EnchantingTableLikeBlockEntity> {
     public static final Material BOOK_LOCATION;
     private final BookModel bookModel;
 
@@ -25,7 +26,7 @@ public class EnchantingCustomTableRenderer implements BlockEntityRenderer<Enchan
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
     }
 
-    public void render(EnchantingCustomTableBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(EnchantingTableLikeBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.75F, 0.5F);
         float f = (float)blockEntity.time + partialTick;
