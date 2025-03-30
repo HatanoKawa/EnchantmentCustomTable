@@ -87,7 +87,7 @@ public class EnchantmentCustomTable
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS)
-            event.accept(ModBlocks.ENCHANTMENT_CUSTOM_TABLE_BLOCK);
+            event.accept(ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -96,6 +96,14 @@ public class EnchantmentCustomTable
     {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
+    }
+
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
+    public static class Networking {
+        @SubscribeEvent
+        public static void register(final RegisterPayloadHandlersEvent event) {
+            ModPayloads.register(event);
+        }
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
@@ -115,10 +123,11 @@ public class EnchantmentCustomTable
             ModBlockEntityRenderers.register(event);
         }
 
-        @SubscribeEvent
-        public static void register(final RegisterPayloadHandlersEvent event) {
-            ModPayloads.register(event);
-        }
+//        @SubscribeEvent
+//        public static void register(final RegisterPayloadHandlersEvent event) {
+//            ModPayloads.register(event);
+//        }
 
     }
+
 }

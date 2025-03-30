@@ -1,5 +1,8 @@
 package com.river_quinn.enchantment_custom_table.init;
 
+import com.river_quinn.enchantment_custom_table.network.enchanted_book_converting_table.EnchantmentConversionTableClientPayloadHandler;
+import com.river_quinn.enchantment_custom_table.network.enchanted_book_converting_table.EnchantmentConversionTableNetData;
+import com.river_quinn.enchantment_custom_table.network.enchanted_book_converting_table.EnchantmentConversionTableServerPayloadHandler;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableClientPayloadHandler;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableServerPayloadHandler;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
@@ -16,6 +19,15 @@ public class ModPayloads {
                 new DirectionalPayloadHandler<>(
                         EnchantingCustomTableClientPayloadHandler::handleDataOnMain,
                         EnchantingCustomTableServerPayloadHandler::handleDataOnMain
+                )
+        );
+
+        registrar.playBidirectional(
+                EnchantmentConversionTableNetData.TYPE,
+                EnchantmentConversionTableNetData.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        EnchantmentConversionTableClientPayloadHandler::handleDataOnMain,
+                        EnchantmentConversionTableServerPayloadHandler::handleDataOnMain
                 )
         );
     }

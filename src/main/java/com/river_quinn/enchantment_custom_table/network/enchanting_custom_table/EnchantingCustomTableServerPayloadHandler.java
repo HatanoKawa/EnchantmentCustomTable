@@ -8,12 +8,18 @@ public class EnchantingCustomTableServerPayloadHandler {
 
     public static void handleDataOnMain(final EnchantingCustomTableNetData data, final IPayloadContext context) {
         BlockPos blockPos = new BlockPos(data.blockPosX(), data.blockPosY(), data.blockPosZ());
-        System.out.println("server msg received: " + blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ());
+        EnchantingCustomTableBlockEntity blockEntity =
+                (EnchantingCustomTableBlockEntity)context.player().level().getBlockEntity(blockPos);
+
         switch (EnchantingCustomTableNetData.OperateType.valueOf(data.operateType())) {
             case EXPORT_ALL_ENCHANTMENTS -> {
-                EnchantingCustomTableBlockEntity blockEntity =
-                        (EnchantingCustomTableBlockEntity)context.player().level().getBlockEntity(blockPos);
                 blockEntity.exportAllEnchantments(context.player());
+            }
+            case NEXT_PAGE -> {
+                blockEntity.nextPage();
+            }
+            case PREVIOUS_PAGE -> {
+                blockEntity.previousPage();
             }
         }
     }

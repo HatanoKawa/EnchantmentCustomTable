@@ -12,7 +12,12 @@ public class ModItems {
 
     public static final DeferredItem<BlockItem> ENCHANTMENT_CUSTOM_TABLE_ITEM = ITEMS.registerSimpleBlockItem(
             "enchanting_custom_table",
-            ModBlocks.ENCHANTMENT_CUSTOM_TABLE_BLOCK
+            ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK
+    );
+
+    public static final DeferredItem<BlockItem> ENCHANTMENT_CONVERSION_TABLE_ITEM = ITEMS.registerSimpleBlockItem(
+            "enchantment_conversion_table",
+            ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK
     );
 
     public static void register(IEventBus eventBus){

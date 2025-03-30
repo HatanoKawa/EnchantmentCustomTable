@@ -8,8 +8,8 @@
     "B": {
       "item": "minecraft:book"
     },
-    "D": {
-      "item": "minecraft:diamond_block"
+    "E": {
+      "item": "minecraft:emerald_block"
     },
     "L": {
       "item": "minecraft:lapis_block"
@@ -17,11 +17,11 @@
   },
   "pattern": [
     "LBL",
-    "D#D",
+    "E#E",
     "###"
   ],
   "result": {
     "count": 1,
-    "id": "enchantment_custom_table:enchanting_custom_table"
+    "id": "enchantment_custom_table:enchantment_conversion_table"
   }
 }

@@ -11,10 +11,12 @@ import static com.river_quinn.enchantment_custom_table.EnchantmentCustomTable.MO
 public record EnchantingCustomTableNetData(int blockPosX, int blockPosY, int blockPosZ, String operateType) implements CustomPacketPayload {
     public enum OperateType {
         EXPORT_ALL_ENCHANTMENTS,
+        NEXT_PAGE,
+        PREVIOUS_PAGE
     }
 
     public static final CustomPacketPayload.Type<EnchantingCustomTableNetData> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "generate_enchantment_store"));
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "enchanting_custom"));
 
     public static final StreamCodec<ByteBuf, EnchantingCustomTableNetData> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,

@@ -1,33 +1,32 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.river_quinn.enchantment_custom_table.network.enchanted_book_converting_table.EnchantmentConversionTableNetData;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
-import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.neoforged.neoforge.network.PacketDistributor;
+public class EnchantmentConversionScreen extends AbstractContainerScreen<EnchantmentConversionMenu> {
 
-public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCustomMenu> {
-
-    private EnchantingCustomMenu menuContainer;
-    private final static HashMap<String, Object> guistate = EnchantingCustomMenu.guistate;
+    private EnchantmentConversionMenu menuContainer;
+    private final static HashMap<String, Object> guistate = EnchantmentConversionMenu.guistate;
     private final Level world;
     private final int x, y, z;
     private final Player entity;
     Button button_left_arrow_button;
     Button button_right_arrow_button;
-    Button export_button;
 
-    public EnchantingCustomScreen(EnchantingCustomMenu container, Inventory inventory, Component text) {
+    public EnchantmentConversionScreen(EnchantmentConversionMenu container, Inventory inventory, Component text) {
         super(container, inventory, text);
         this.menuContainer = container;
         this.world = container.world;
@@ -39,7 +38,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         this.imageHeight = 166;
     }
 
-    private static final ResourceLocation texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchanting_custom.png");
+    private static final ResourceLocation texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchantment_conversion.png");
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
@@ -54,9 +53,6 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         RenderSystem.defaultBlendFunc();
         guiGraphics.blit(texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         RenderSystem.disableBlend();
-
-        guiGraphics.blit(ResourceLocation.parse("enchantment_custom_table:textures/screens/left_arrow.png"), this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
-
     }
 
     @Override
@@ -81,8 +77,8 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         guiGraphics.drawCenteredString(
                 this.font,
                 generatePageText(),
-                35,
-                33,
+                24,
+                51,
                 -1
         );
 
@@ -95,37 +91,28 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> {
                     menuContainer.boundBlockEntity.previousPage();
-                    PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
+                    PacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
                             x, y, z,
-                            EnchantingCustomTableNetData.OperateType.PREVIOUS_PAGE.name()
+                            EnchantmentConversionTableNetData.OperateType.PREVIOUS_PAGE.name()
                     ));
                 }
-        ).bounds(this.leftPos + 7, this.topPos + 43, 26, 18).build();
+        ).bounds(this.leftPos + 7, this.topPos + 61, 17, 18).build();
         guistate.put("button:button_left_arrow_button", button_left_arrow_button);
         this.addRenderableWidget(button_left_arrow_button);
 
         button_right_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> {
-                        menuContainer.boundBlockEntity.nextPage();
-                    PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
+                    menuContainer.boundBlockEntity.nextPage();
+                    PacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
                             x, y, z,
-                            EnchantingCustomTableNetData.OperateType.NEXT_PAGE.name()
+                            EnchantmentConversionTableNetData.OperateType.NEXT_PAGE.name()
                     ));
                 }
-        ).bounds(this.leftPos + 33, this.topPos + 43, 26, 18).build();
+        ).bounds(this.leftPos + 24, this.topPos + 61, 17, 18).build();
         guistate.put("button:button_right_arrow_button", button_right_arrow_button);
         this.addRenderableWidget(button_right_arrow_button);
 
-        export_button = Button.builder(
-                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_export"),
-                e -> PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
-                        x, y, z,
-                        EnchantingCustomTableNetData.OperateType.EXPORT_ALL_ENCHANTMENTS.name()
-                ))
-        ).bounds(this.leftPos + 7, this.topPos + 61, 52, 18).build();
-        guistate.put("button:export_button", export_button);
-        this.addRenderableWidget(export_button);
     }
 
 }
