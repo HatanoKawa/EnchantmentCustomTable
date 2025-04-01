@@ -69,8 +69,8 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
     }
 
     public String generatePageText() {
-        int currentPage = this.menuContainer.boundBlockEntity.currentPage;
-        int totalPage = this.menuContainer.boundBlockEntity.totalPage;
+        int currentPage = this.menuContainer.currentPage;
+        int totalPage = this.menuContainer.totalPage;
         if (totalPage == 0)
             return "-/-";
         return (currentPage + 1) + "/" + totalPage;
@@ -94,9 +94,8 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         button_left_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> {
-                    menuContainer.boundBlockEntity.previousPage();
+                    menuContainer.previousPage();
                     PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
-                            x, y, z,
                             EnchantingCustomTableNetData.OperateType.PREVIOUS_PAGE.name()
                     ));
                 }
@@ -107,9 +106,8 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         button_right_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> {
-                        menuContainer.boundBlockEntity.nextPage();
+                    menuContainer.nextPage();
                     PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
-                            x, y, z,
                             EnchantingCustomTableNetData.OperateType.NEXT_PAGE.name()
                     ));
                 }
@@ -119,10 +117,12 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
 
         export_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_export"),
-                e -> PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
-                        x, y, z,
-                        EnchantingCustomTableNetData.OperateType.EXPORT_ALL_ENCHANTMENTS.name()
-                ))
+                e -> {
+                    menuContainer.exportAllEnchantments();
+                    PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
+                            EnchantingCustomTableNetData.OperateType.EXPORT_ALL_ENCHANTMENTS.name()
+                    ));
+                }
         ).bounds(this.leftPos + 7, this.topPos + 61, 52, 18).build();
         guistate.put("button:export_button", export_button);
         this.addRenderableWidget(export_button);

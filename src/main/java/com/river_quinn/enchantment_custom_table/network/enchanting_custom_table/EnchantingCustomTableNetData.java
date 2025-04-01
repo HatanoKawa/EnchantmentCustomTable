@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import static com.river_quinn.enchantment_custom_table.EnchantmentCustomTable.MODID;
 
-public record EnchantingCustomTableNetData(int blockPosX, int blockPosY, int blockPosZ, String operateType) implements CustomPacketPayload {
+public record EnchantingCustomTableNetData(String operateType) implements CustomPacketPayload {
     public enum OperateType {
         EXPORT_ALL_ENCHANTMENTS,
         NEXT_PAGE,
@@ -19,12 +19,6 @@ public record EnchantingCustomTableNetData(int blockPosX, int blockPosY, int blo
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "enchanting_custom"));
 
     public static final StreamCodec<ByteBuf, EnchantingCustomTableNetData> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT,
-            EnchantingCustomTableNetData::blockPosX,
-            ByteBufCodecs.INT,
-            EnchantingCustomTableNetData::blockPosY,
-            ByteBufCodecs.INT,
-            EnchantingCustomTableNetData::blockPosZ,
             ByteBufCodecs.STRING_UTF8,
             EnchantingCustomTableNetData::operateType,
             EnchantingCustomTableNetData::new
