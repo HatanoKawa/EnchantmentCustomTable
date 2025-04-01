@@ -1,6 +1,7 @@
 package com.river_quinn.enchantment_custom_table.world.inventory;
 
 import com.mojang.datafixers.util.Pair;
+import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
@@ -108,7 +109,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return Items.EMERALD == stack.getItem() || Items.EMERALD_BLOCK == stack.getItem();
+				return (Items.EMERALD == stack.getItem() && Config.minimumEmeraldCost > 0)
+						|| (Items.EMERALD_BLOCK == stack.getItem() && Config.minimumEmeraldBlockCost > 0);
 			}
 
 			@Override
@@ -353,10 +355,10 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		tryGetAllEnchantments();
 		boolean hasBook = itemHandler.getStackInSlot(0).is(Items.BOOK);
 		boolean hasEnoughEmerald = false;
-		if (itemHandler.getStackInSlot(1).is(Items.EMERALD)) {
-			hasEnoughEmerald = itemHandler.getStackInSlot(1).getCount() >= 36;
-		} else if (itemHandler.getStackInSlot(1).is(Items.EMERALD_BLOCK)) {
-			hasEnoughEmerald = itemHandler.getStackInSlot(1).getCount() >= 4;
+		if (itemHandler.getStackInSlot(1).is(Items.EMERALD) && Config.minimumEmeraldCost > 0) {
+			hasEnoughEmerald = itemHandler.getStackInSlot(1).getCount() >= Config.minimumEmeraldCost;
+		} else if (itemHandler.getStackInSlot(1).is(Items.EMERALD_BLOCK) && Config.minimumEmeraldBlockCost > 0) {
+			hasEnoughEmerald = itemHandler.getStackInSlot(1).getCount() >= Config.minimumEmeraldBlockCost;
 		}
 
 		if (!hasBook || !hasEnoughEmerald) {
@@ -389,9 +391,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public void pickEnchantedBook() {
 		itemHandler.getStackInSlot(0).shrink(1);
 		if (itemHandler.getStackInSlot(1).is(Items.EMERALD))
-			itemHandler.getStackInSlot(1).shrink(36);
+			itemHandler.getStackInSlot(1).shrink(Config.minimumEmeraldCost);
 		else if (itemHandler.getStackInSlot(1).is(Items.EMERALD_BLOCK))
-			itemHandler.getStackInSlot(1).shrink(4);
+			itemHandler.getStackInSlot(1).shrink(Config.minimumEmeraldBlockCost);
 		genEnchantedBookSlot();
 	}
 }

@@ -20,22 +20,22 @@ public class Config
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     private static final ModConfigSpec.IntValue MINIMUM_LAPIS_COST = BUILDER
-            .comment("Minimum lapis cost when using enchantment conversion table")
-            .defineInRange("minimumLapisCost", 36, 0, 64);
+            .comment("Minimum lapis cost when using enchantment conversion table, when set to 0, emerald will be banned on the table")
+            .defineInRange("minimumEmeraldCost", 36, 0, 64);
 
     private static final ModConfigSpec.IntValue MINIMUM_LAPIS_BLOCK_COST = BUILDER
-            .comment("Minimum lapis block cost when using enchantment conversion table")
-            .defineInRange("minimumLapisBlockCost", 4, 0, 64);
+            .comment("Minimum lapis block cost when using enchantment conversion table, when set to 0, emerald block will be banned on the table")
+            .defineInRange("minimumEmeraldBlockCost", 4, 0, 64);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
-    public static int minimumLapisCost;
-    public static int minimumLapisBlockCost;
+    public static int minimumEmeraldCost;
+    public static int minimumEmeraldBlockCost;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)
     {
-        minimumLapisCost = MINIMUM_LAPIS_COST.get();
-        minimumLapisBlockCost = MINIMUM_LAPIS_BLOCK_COST.get();
+        minimumEmeraldCost = MINIMUM_LAPIS_COST.get();
+        minimumEmeraldBlockCost = MINIMUM_LAPIS_BLOCK_COST.get();
     }
 }
