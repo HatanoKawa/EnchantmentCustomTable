@@ -4,10 +4,6 @@ I'm not particularly interested in rolling enchantments on items, and the mod I'
 
 If you're also not a fan of randomly rolling enchantments, you might want to give this workstation a try!
 
-# Planned Feature
-
-Add a workstation that converts books into enchanted books. This workstation will consume a book and some emerald to grant the player a specified enchanted book at its maximum level.
-
 # Usage
 
 ## Enchantment Custom Table

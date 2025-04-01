@@ -1,25 +1,22 @@
 package com.river_quinn.enchantment_custom_table.network.enchanting_custom_table;
 
-import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
-import net.minecraft.core.BlockPos;
+import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class EnchantingCustomTableServerPayloadHandler {
 
     public static void handleDataOnMain(final EnchantingCustomTableNetData data, final IPayloadContext context) {
-        BlockPos blockPos = new BlockPos(data.blockPosX(), data.blockPosY(), data.blockPosZ());
-        EnchantingCustomTableBlockEntity blockEntity =
-                (EnchantingCustomTableBlockEntity)context.player().level().getBlockEntity(blockPos);
+        EnchantingCustomMenu menu = (EnchantingCustomMenu)context.player().containerMenu;
 
         switch (EnchantingCustomTableNetData.OperateType.valueOf(data.operateType())) {
             case EXPORT_ALL_ENCHANTMENTS -> {
-                blockEntity.exportAllEnchantments(context.player());
+                menu.exportAllEnchantments();
             }
             case NEXT_PAGE -> {
-                blockEntity.nextPage();
+                menu.nextPage();
             }
             case PREVIOUS_PAGE -> {
-                blockEntity.previousPage();
+                menu.previousPage();
             }
         }
     }

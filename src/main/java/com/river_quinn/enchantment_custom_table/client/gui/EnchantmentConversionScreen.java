@@ -65,8 +65,8 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     }
 
     public String generatePageText() {
-        int currentPage = this.menuContainer.boundBlockEntity.currentPage;
-        int totalPage = this.menuContainer.boundBlockEntity.totalPage;
+        int currentPage = this.menuContainer.currentPage;
+        int totalPage = this.menuContainer.totalPage;
         if (totalPage == 0)
             return "-/-";
         return (currentPage + 1) + "/" + totalPage;
@@ -90,9 +90,8 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         button_left_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> {
-                    menuContainer.boundBlockEntity.previousPage();
+                    menuContainer.previousPage();
                     PacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
-                            x, y, z,
                             EnchantmentConversionTableNetData.OperateType.PREVIOUS_PAGE.name()
                     ));
                 }
@@ -103,9 +102,8 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         button_right_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> {
-                    menuContainer.boundBlockEntity.nextPage();
+                    menuContainer.nextPage();
                     PacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
-                            x, y, z,
                             EnchantmentConversionTableNetData.OperateType.NEXT_PAGE.name()
                     ));
                 }
