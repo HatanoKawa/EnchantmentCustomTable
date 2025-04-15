@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "enchantment_custom_table:item/enchantment_conversion_table"
+  }
+}
