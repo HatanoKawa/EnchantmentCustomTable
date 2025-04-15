@@ -27,15 +27,21 @@ public class Config
             .comment("Minimum lapis block cost when using enchantment conversion table, when set to 0, emerald block will be banned on the table")
             .defineInRange("minimumEmeraldBlockCost", 4, 0, 64);
 
+    private static final ModConfigSpec.BooleanValue IGNORE_ENCHANTMENT_LEVEL_LIMIT = BUILDER
+            .comment("Ignore enchantment level limit when using enchantment conversion table")
+            .define("ignoreEnchantmentLevelLimit", true);
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     public static int minimumEmeraldCost;
     public static int minimumEmeraldBlockCost;
+    public static boolean ignoreEnchantmentLevelLimit;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)
     {
         minimumEmeraldCost = MINIMUM_LAPIS_COST.get();
         minimumEmeraldBlockCost = MINIMUM_LAPIS_BLOCK_COST.get();
+        ignoreEnchantmentLevelLimit = IGNORE_ENCHANTMENT_LEVEL_LIMIT.get();
     }
 }
