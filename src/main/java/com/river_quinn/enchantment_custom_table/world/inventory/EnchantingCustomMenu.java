@@ -485,7 +485,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 
 	// 获取所有已注册的附魔
 	public IdMap<Holder<Enchantment>> getAllRegisteredEnchantments() {
-		Registry<Enchantment> fullEnchantmentList = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+		Registry<Enchantment> fullEnchantmentList = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
 		return fullEnchantmentList.asHolderIdMap();
 	}
 

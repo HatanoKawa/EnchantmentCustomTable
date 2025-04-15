@@ -3,6 +3,7 @@ package com.river_quinn.enchantment_custom_table.client.gui;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -39,7 +40,8 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         this.imageHeight = 166;
     }
 
-    private static final ResourceLocation texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchanting_custom.png");
+    private static final ResourceLocation gui_bg_texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchanting_custom.png");
+    private static final ResourceLocation arrow_texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/left_arrow.png");
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
@@ -52,10 +54,10 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        guiGraphics.blit(texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(RenderType::guiTextured, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         RenderSystem.disableBlend();
 
-        guiGraphics.blit(ResourceLocation.parse("enchantment_custom_table:textures/screens/left_arrow.png"), this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+        guiGraphics.blit(RenderType::guiTextured, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
 
     }
 

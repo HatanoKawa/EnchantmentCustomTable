@@ -300,7 +300,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 	public void tryGetAllEnchantments() {
 		if (allEnchantments.isEmpty()) {
-			Registry<Enchantment> fullEnchantmentList = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+			Registry<Enchantment> fullEnchantmentList = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
 			IdMap<Holder<Enchantment>> allRegisteredEnchantments = fullEnchantmentList.asHolderIdMap();
 			allRegisteredEnchantments.forEach(enchantment ->
 					allEnchantments.add(fullEnchantmentList.getId(enchantment.value())));
@@ -310,7 +310,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public ItemStack getEnchantedBook(int enchantmentId) {
 		ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
 
-		Enchantment enchantment = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT).byId(enchantmentId);
+		Enchantment enchantment = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).byId(enchantmentId);
 		int enchantmentLevel = enchantment.getMaxLevel();
 		var enchantmentReference = EnchantmentUtils.translateEnchantment(world, enchantment);
 		assert enchantmentReference != null;

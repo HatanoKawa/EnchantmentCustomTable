@@ -7,6 +7,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -35,8 +36,8 @@ public class EnchantmentConversionTableBlock extends EnchantingTableLikeBlock {
         super(properties);
     }
 
-    public EnchantmentConversionTableBlock() {
-        super();
+    public EnchantmentConversionTableBlock(ResourceLocation registryName) {
+        super(registryName);
     }
 
     @Override

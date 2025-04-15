@@ -17,14 +17,18 @@ public class ModBlockEntities {
 
     public static final Supplier<BlockEntityType<EnchantingCustomTableBlockEntity>> ENCHANTING_CUSTOM_TABLE = BLOCK_ENTITY_TYPES.register(
             "enchanting_custom_table",
-            () -> BlockEntityType.Builder.of(EnchantingCustomTableBlockEntity::new,
-                    ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get()).build(null)
+            () -> new BlockEntityType<>(
+                    EnchantingCustomTableBlockEntity::new,
+                    ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get()
+            )
     );
 
     public static final Supplier<BlockEntityType<EnchantmentConversionTableBlockEntity>> ENCHANTMENT_CONVERSION_TABLE = BLOCK_ENTITY_TYPES.register(
             "enchantment_conversion_table",
-            () -> BlockEntityType.Builder.of(EnchantmentConversionTableBlockEntity::new,
-                    ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get()).build(null)
+            () -> new BlockEntityType<>(
+                    EnchantmentConversionTableBlockEntity::new,
+                    ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get()
+            )
     );
 
     public static void register(IEventBus eventBus){

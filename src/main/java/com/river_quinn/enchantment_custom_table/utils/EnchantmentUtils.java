@@ -13,13 +13,13 @@ public class EnchantmentUtils {
     public static Holder.Reference<Enchantment> translateEnchantment(Level level, Enchantment enchantment) {
         if (level == null)
             return null;
-        Registry<Enchantment> fullEnchantmentRegistry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        Registry<Enchantment> fullEnchantmentRegistry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         ResourceKey<Enchantment> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantment).get();
         // 一些通过猜谜获得的逻辑，我不知道为什么要这么做，但是这么做能行
         Optional<Holder.Reference<Enchantment>> optional = level
                 .registryAccess()
-                .registryOrThrow(Registries.ENCHANTMENT)
-                .getHolder(resourceKey);
+                .lookupOrThrow(Registries.ENCHANTMENT)
+                .get(resourceKey);
         return optional.get();
     }
 }

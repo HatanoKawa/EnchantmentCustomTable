@@ -7,6 +7,7 @@ import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConve
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -38,7 +39,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         this.imageHeight = 166;
     }
 
-    private static final ResourceLocation texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchantment_conversion.png");
+    private static final ResourceLocation gui_bg_texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchantment_conversion.png");
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
@@ -51,7 +52,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        guiGraphics.blit(texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(RenderType::guiTextured, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         RenderSystem.disableBlend();
     }
 

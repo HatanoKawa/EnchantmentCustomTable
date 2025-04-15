@@ -15,12 +15,12 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> ENCHANTING_CUSTOM_TABLE_BLOCK = BLOCKS.register(
             "enchanting_custom_table",
-            registryName -> new EnchantingCustomTableBlock()
+            EnchantingCustomTableBlock::new
     );
     
     public static final DeferredBlock<Block> ENCHANTMENT_CONVERSION_TABLE_BLOCK = BLOCKS.register(
             "enchantment_conversion_table",
-            registryName -> new EnchantmentConversionTableBlock()
+            EnchantmentConversionTableBlock::new
     );
 
     public static void register(IEventBus eventBus){

@@ -3,6 +3,9 @@ package com.river_quinn.enchantment_custom_table.block;
 import com.mojang.serialization.MapCodec;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingTableLikeBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -12,6 +15,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -28,8 +32,9 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
                 .explosionResistance(3600));
     }
 
-    public EnchantingTableLikeBlock() {
-        super(Properties.of()
+    public EnchantingTableLikeBlock(ResourceLocation registryName) {
+        super(BlockBehaviour.Properties.of()
+                .setId(ResourceKey.create(Registries.BLOCK, registryName))
                 .lightLevel(blockState -> 15)
                 .destroyTime(1)
                 .explosionResistance(3600));
@@ -61,7 +66,7 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
         return level.isClientSide ? (lvl, pos, blockState, t) -> {
             if (t instanceof EnchantingTableLikeBlockEntity enchantingTable) {
                 EnchantingTableLikeBlockEntity.bookAnimationTick(lvl, pos, blockState, enchantingTable);
-        }
+            }
         } : null;
     }
 

@@ -3,7 +3,6 @@ package com.river_quinn.enchantment_custom_table.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingTableLikeBlockEntity;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -13,10 +12,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.AABB;
 
 public class EnchantingCustomTableRenderer implements BlockEntityRenderer<EnchantingTableLikeBlockEntity> {
     public static final Material BOOK_LOCATION;
@@ -49,13 +46,8 @@ public class EnchantingCustomTableRenderer implements BlockEntityRenderer<Enchan
         float f6 = Mth.lerp(partialTick, blockEntity.oOpen, blockEntity.open);
         this.bookModel.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
         VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
-        this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
+        this.bookModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay);
         poseStack.popPose();
-    }
-
-    public AABB getRenderBoundingBox(EnchantingCustomTableBlockEntity blockEntity) {
-        BlockPos pos = blockEntity.getBlockPos();
-        return new AABB((double)pos.getX(), (double)pos.getY(), (double)pos.getZ(), (double)pos.getX() + (double)1.0F, (double)pos.getY() + (double)1.5F, (double)pos.getZ() + (double)1.0F);
     }
 
     static {
