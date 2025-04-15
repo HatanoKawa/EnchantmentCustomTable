@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": {
-      "item": "minecraft:obsidian"
-    },
-    "B": {
-      "item": "minecraft:book"
-    },
-    "E": {
-      "item": "minecraft:emerald_block"
-    },
-    "L": {
-      "item": "minecraft:lapis_block"
-    }
+    "#": "minecraft:quartz_block",
+    "B": "minecraft:book",
+    "E": "minecraft:emerald_block",
+    "L": "minecraft:lapis_block"
   },
   "pattern": [
     "LBL",

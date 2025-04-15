@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": "minecraft:obsidian",
+    "#": "minecraft:quartz_block",
     "B": "minecraft:book",
     "D": "minecraft:diamond_block",
     "L": "minecraft:lapis_block"
