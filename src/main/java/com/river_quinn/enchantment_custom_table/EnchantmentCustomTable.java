@@ -1,7 +1,7 @@
 package com.river_quinn.enchantment_custom_table;
 
 import com.river_quinn.enchantment_custom_table.init.*;
-import com.river_quinn.enchantment_custom_table.renderer.ModBlockEntityRenderers;
+import com.river_quinn.enchantment_custom_table.init.ModBlockEntityRenderers;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.slf4j.Logger;
@@ -9,11 +9,9 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;

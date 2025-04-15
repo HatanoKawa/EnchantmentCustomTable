@@ -3,6 +3,7 @@ package com.river_quinn.enchantment_custom_table.world.inventory;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
+import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
@@ -96,7 +97,6 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				super.setByPlayer(newStack, oldStack);
 				if (!newStack.isEmpty()) {
 					// 放置待附魔工具，重新生成附魔书槽
-//					genEnchantedBookCache();
 					genEnchantedBookCache();
 					currentPage = 0;
 					updateEnchantedBookSlots();
@@ -116,7 +116,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return Items.ENCHANTED_BOOK == stack.getItem() && !getItemHandler().getStackInSlot(0).isEmpty();
+				return Items.ENCHANTED_BOOK == stack.getItem()
+						&& !getItemHandler().getStackInSlot(0).isEmpty()
+						&& (Config.ignoreEnchantmentLevelLimit || checkCanPlaceEnchantedBook(stack));
 			}
 
 			@Override
@@ -154,7 +156,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 
 						@Override
 						public boolean mayPlace(ItemStack stack) {
-							return Items.ENCHANTED_BOOK == stack.getItem() && !getItemHandler().getStackInSlot(0).isEmpty();
+							return Items.ENCHANTED_BOOK == stack.getItem()
+									&& !getItemHandler().getStackInSlot(0).isEmpty()
+									&& (Config.ignoreEnchantmentLevelLimit || checkCanPlaceEnchantedBook(stack));
 						}
 
 						@Override
@@ -326,6 +330,27 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		}
 
 		return enchantmentOfBook;
+	}
+
+	public boolean checkCanPlaceEnchantedBook(ItemStack stack) {
+		var itemEnchantments = stack.get(EnchantmentHelper.getComponentType(stack));
+		var itemToEnchant = itemHandler.getStackInSlot(0);
+		var itemEnchantmentsOnTool = itemToEnchant.get(EnchantmentHelper.getComponentType(itemToEnchant));
+		if (itemEnchantmentsOnTool == null) {
+			// 待附魔物品槽中没有附魔
+			return true;
+		}
+		for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
+			Enchantment enchantment = entry.getKey().value();
+			var enchantmentLevel = entry.getIntValue();
+			var enchantmentLevelOnTool = itemEnchantmentsOnTool.getLevel(entry.getKey());
+			var maxLevel = enchantment.getMaxLevel();
+			if (enchantmentLevelOnTool + enchantmentLevel > maxLevel) {
+				// 附魔等级超过最大等级
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public int currentPage = 0;
@@ -517,7 +542,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		for (EnchantmentInstance enchantmentInstance : resultEnchantmentMap.values().stream().toList()) {
 			var enchantmentReference = EnchantmentUtils.translateEnchantment(world, enchantmentInstance.enchantment.value());
 			assert enchantmentReference != null;
-			mutable.set(enchantmentReference, 0);
+//			mutable.set(enchantmentReference, 0);
 			// set 方法在 level 小于等于 0 时会移除对应附魔
 			mutable.set(enchantmentReference, enchantmentInstance.level);
 		}
