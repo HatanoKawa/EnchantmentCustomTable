@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 public class EnchantingCustomTableRenderer implements BlockEntityRenderer<EnchantingTableLikeBlockEntity> {
     public static final Material BOOK_LOCATION;
@@ -23,7 +24,7 @@ public class EnchantingCustomTableRenderer implements BlockEntityRenderer<Enchan
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
     }
 
-    public void render(EnchantingTableLikeBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(EnchantingTableLikeBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, Vec3 vec3) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.75F, 0.5F);
         float f = (float)blockEntity.time + partialTick;

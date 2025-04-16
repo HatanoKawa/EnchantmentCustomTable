@@ -50,10 +50,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
         guiGraphics.blit(RenderType::guiTextured, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
-        RenderSystem.disableBlend();
     }
 
     @Override

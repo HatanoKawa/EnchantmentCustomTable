@@ -512,17 +512,17 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		//region 遍历放入的附魔书的附魔
 
 		for (EnchantmentInstance enchantmentInstance : enchantmentInstances) {
-			int enchantmentId = allRegisteredEnchantments.getId(enchantmentInstance.enchantment);
+			int enchantmentId = allRegisteredEnchantments.getId(enchantmentInstance.enchantment());
 			if (resultEnchantmentMap.containsKey(enchantmentId)) {
 				regenerateEnchantedBookStore = true;
 				// 若附魔已经存在，直接相加两者的附魔等级
 				resultEnchantmentMap.put(enchantmentId, new EnchantmentInstance(
-						enchantmentInstance.enchantment,
-						resultEnchantmentMap.get(enchantmentId).level + enchantmentInstance.level
+						enchantmentInstance.enchantment(),
+						resultEnchantmentMap.get(enchantmentId).level() + enchantmentInstance.level()
 				));
 			} else {
 				// 若附魔不存在，直接生成同样附魔等级的附魔
-				resultEnchantmentMap.put(enchantmentId, new EnchantmentInstance(enchantmentInstance.enchantment, enchantmentInstance.level));
+				resultEnchantmentMap.put(enchantmentId, new EnchantmentInstance(enchantmentInstance.enchantment(), enchantmentInstance.level()));
 			}
 		}
 
@@ -534,11 +534,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		// 转换成可变形式
 		ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(itemEnchantments);
 		for (EnchantmentInstance enchantmentInstance : resultEnchantmentMap.values().stream().toList()) {
-			var enchantmentReference = EnchantmentUtils.translateEnchantment(world, enchantmentInstance.enchantment.value());
+			var enchantmentReference = EnchantmentUtils.translateEnchantment(world, enchantmentInstance.enchantment().value());
 			assert enchantmentReference != null;
 //			mutable.set(enchantmentReference, 0);
 			// set 方法在 level 小于等于 0 时会移除对应附魔
-			mutable.set(enchantmentReference, enchantmentInstance.level);
+			mutable.set(enchantmentReference, enchantmentInstance.level());
 		}
 		toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), mutable.toImmutable());
 		// endregion
@@ -576,7 +576,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		// 转换成可变形式
 		ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(itemEnchantments);
 		for (EnchantmentInstance enchantmentInstance : enchantmentInstances) {
-			var enchantmentReference = EnchantmentUtils.translateEnchantment(world, enchantmentInstance.enchantment.value());
+			var enchantmentReference = EnchantmentUtils.translateEnchantment(world, enchantmentInstance.enchantment().value());
 			assert enchantmentReference != null;
 			// set 方法在 level 小于等于 0 时会移除对应附魔
 			mutable.set(enchantmentReference, 0);

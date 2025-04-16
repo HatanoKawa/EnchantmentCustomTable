@@ -1,6 +1,5 @@
 package com.river_quinn.enchantment_custom_table.block;
 
-import com.mojang.serialization.MapCodec;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingTableLikeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -20,7 +19,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
