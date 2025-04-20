@@ -169,26 +169,30 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 							);
 						}
 
-//						@Override
-//						public void onQuickCraft(ItemStack newStack, ItemStack oldStack) {
-//							super.onQuickCraft(newStack, oldStack);
-//							if (!newStack.isEmpty() && oldStack.isEmpty()) {
-//								// 合法情况下不应该存在这种状况
-//								LOGGER.warn("stack 1, setByPlayer() called with newStack.isEmpty()");
-//							} else if (newStack.isEmpty() && !oldStack.isEmpty()) {
-//								// 移除附魔书，同步移除工具上的附魔
-//								removeEnchantment(getEnchantmentInstanceFromEnchantedBook(oldStack));
-//							}
-//						}
-
 						@Override
 						public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
+							if (!newStack.isEmpty() && !oldStack.isEmpty()) {
+								// 新的物品槽对应的附魔书可能同时有多种附魔
+								var enchantmentsOnNewStack = getEnchantmentInstanceFromEnchantedBook(newStack);
+								// 旧的物品槽对应的附魔书最多只有一种附魔
+								var enchantmentOnOldStack = getEnchantmentInstanceFromEnchantedBook(oldStack).get(0);
+								var hasDuplicateEnchantment = enchantmentsOnNewStack.stream().anyMatch(enchantment ->
+										enchantment.enchantment.equals(enchantmentOnOldStack.enchantment));
+								if (hasDuplicateEnchantment) {
+									// 如果新旧物品槽的对应的附魔书有重复的附魔，则直接添加到工具上，合并附魔并不返回旧的附魔书
+									addEnchantment(getEnchantmentInstanceFromEnchantedBook(newStack), slot, true);
+									oldStack.setCount(0);
+									return;
+								}
+							}
+							// 除此以外的情况将触发默认的 setByPlayer 方法，返回旧的附魔书
 							super.setByPlayer(newStack, oldStack);
-							if (!newStack.isEmpty() && oldStack.isEmpty()) {
-								// 放置附魔书，同步添加工具上的附魔
+							if (!newStack.isEmpty()) {
+								// 添加新的槽位对应附魔书的附魔
 								addEnchantment(getEnchantmentInstanceFromEnchantedBook(newStack), slot);
-							} else if (newStack.isEmpty() && !oldStack.isEmpty()) {
-								// 移除附魔书，同步移除工具上的附魔
+							}
+							if (!oldStack.isEmpty()) {
+								// 移除旧的槽位对应附魔书的附魔
 								removeEnchantment(getEnchantmentInstanceFromEnchantedBook(oldStack));
 							}
 						}
@@ -363,7 +367,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	public void exportAllEnchantments() {
         ItemStack toolItemStack = itemHandler.getStackInSlot(0);
 		ItemEnchantments itemEnchantments = toolItemStack.get(EnchantmentHelper.getComponentType(toolItemStack));
-		if (!toolItemStack.isEmpty() && itemEnchantments != null) {
+		if (!toolItemStack.isEmpty() && itemEnchantments != null && !itemEnchantments.isEmpty()) {
 			ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(itemEnchantments);
 			ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
 
@@ -435,10 +439,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	}
 
 	public void clearCache() {
-		enchantmentsOnCurrentTool.clear();
+//		enchantmentsOnCurrentTool.clear();
 		for (int i = 2; i < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE; i++) {
 			itemHandler.setStackInSlot(i, ItemStack.EMPTY);
 		}
+		genEnchantedBookCache();
 	}
 
 	public void clearPage() {
@@ -550,7 +555,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		// endregion
 
 		// 将新增的附魔书添加到缓存中
-		if (slotIndex >1) {
+		if (slotIndex > 1) {
 			int enchantmentIndex = (slotIndex - 2) + currentPage * ENCHANTED_BOOK_SLOT_SIZE;
 			enchantmentsOnCurrentTool.set(enchantmentIndex, itemHandler.getStackInSlot(slotIndex));
 		}
