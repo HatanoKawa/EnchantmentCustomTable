@@ -172,6 +172,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 						@Override
 						public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
 							if (!newStack.isEmpty() && !oldStack.isEmpty()) {
+								// 当尝试替换附魔书槽的附魔书时，存在以下两种情况：
+								// 1. 新旧附魔书没有重复的附魔，此时去除工具上的旧附魔，添加新的附魔，返回旧的附魔书
+								// 2. 新旧附魔书有重复的附魔，此时直接添加新的附魔书的附魔到工具上，不返回附魔书
+								// 此段逻辑用于处理第二种情况
+
 								// 新的物品槽对应的附魔书可能同时有多种附魔
 								var enchantmentsOnNewStack = getEnchantmentInstanceFromEnchantedBook(newStack);
 								// 旧的物品槽对应的附魔书最多只有一种附魔
@@ -181,11 +186,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 								if (hasDuplicateEnchantment) {
 									// 如果新旧物品槽的对应的附魔书有重复的附魔，则直接添加到工具上，合并附魔并不返回旧的附魔书
 									addEnchantment(getEnchantmentInstanceFromEnchantedBook(newStack), slot, true);
-									oldStack.setCount(0);
+									entity.containerMenu.getCarried().setCount(0);
 									return;
 								}
 							}
-							// 除此以外的情况将触发默认的 setByPlayer 方法，返回旧的附魔书
+							// 以下逻辑用于处理第一种情况
 							super.setByPlayer(newStack, oldStack);
 							if (!newStack.isEmpty()) {
 								// 添加新的槽位对应附魔书的附魔
