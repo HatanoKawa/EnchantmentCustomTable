@@ -77,7 +77,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				// 旧的物品槽对应的附魔书最多只有一种附魔
 				var enchantmentOnOldStack = getEnchantmentInstanceFromEnchantedBook(itemStackToReplace).get(0);
 				var hasDuplicateEnchantment = enchantmentsOnNewStack.stream().anyMatch(enchantment ->
-						enchantment.enchantment.equals(enchantmentOnOldStack.enchantment));
+						enchantment.enchantment().equals(enchantmentOnOldStack.enchantment()));
 				if (hasDuplicateEnchantment) {
 					// 如果新旧物品槽的对应的附魔书有重复的附魔，则直接添加到工具上，合并附魔并不返回旧的附魔书
 					addEnchantment(itemStackToPut, slotId, true);
