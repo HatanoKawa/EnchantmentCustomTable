@@ -628,7 +628,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 					.entrySet().stream()
 					.filter(entry -> enchantmentReference.getKey().registryKey() == entry.getKey().getKey().registryKey())
 					.findFirst().get().getIntValue();
-			var enchantmentLevelToMinus = enchantmentInstance.level;
+			var enchantmentLevelToMinus = enchantmentInstance.level();
 
 			System.out.println("enchantmentLevelSource = " + enchantmentLevelSource);
 			System.out.println("enchantmentLevelToMinus = " + enchantmentLevelToMinus);
