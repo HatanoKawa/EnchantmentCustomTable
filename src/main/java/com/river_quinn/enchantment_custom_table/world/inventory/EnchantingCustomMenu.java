@@ -630,9 +630,6 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 					.findFirst().get().getIntValue();
 			var enchantmentLevelToMinus = enchantmentInstance.level;
 
-			System.out.println("enchantmentLevelSource = " + enchantmentLevelSource);
-			System.out.println("enchantmentLevelToMinus = " + enchantmentLevelToMinus);
-
 			assert enchantmentReference != null;
 			// set 方法在 level 小于等于 0 时会移除对应附魔
 			mutable.set(enchantmentReference, enchantmentLevelSource - enchantmentLevelToMinus);
