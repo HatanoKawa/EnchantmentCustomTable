@@ -310,9 +310,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public ItemStack getEnchantedBook(int enchantmentId) {
 		ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
 
-		Enchantment enchantment = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).byId(enchantmentId);
-		int enchantmentLevel = enchantment.getMaxLevel();
-		var enchantmentReference = EnchantmentUtils.translateEnchantment(world, enchantment);
+        Enchantment enchantment = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).byId(enchantmentId);
+        int enchantmentLevel = Config.convertMaxLevelBook ? enchantment.getMaxLevel() : 1;		var enchantmentReference = EnchantmentUtils.translateEnchantment(world, enchantment);
 		assert enchantmentReference != null;
 		enchantedBook.enchant(enchantmentReference, enchantmentLevel);
 

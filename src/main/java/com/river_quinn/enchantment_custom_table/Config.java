@@ -31,11 +31,22 @@ public class Config
             .comment("Ignore enchantment level limit when using enchantment conversion table")
             .define("ignoreEnchantmentLevelLimit", true);
 
+//    private static final ModConfigSpec.BooleanValue ENABLE_XP_REQUIREMENT = BUILDER
+//            .comment("Enable XP requirement when using enchanting custom table")
+//            .define("enableXpRequirement", false);
+
+    private static final ModConfigSpec.BooleanValue CONVERT_MAX_LEVEL_BOOK = BUILDER
+            .comment("if set to true, enchantment conversion table will use emerald to exchange max level book")
+            .comment("if set to false, enchantment conversion table will use emerald to exchange 1-level book")
+            .define("convert_max_level_book", true);
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     public static int minimumEmeraldCost;
     public static int minimumEmeraldBlockCost;
     public static boolean ignoreEnchantmentLevelLimit;
+    public static boolean enableXpRequirement;
+    public static boolean convertMaxLevelBook;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)
@@ -43,5 +54,7 @@ public class Config
         minimumEmeraldCost = MINIMUM_LAPIS_COST.get();
         minimumEmeraldBlockCost = MINIMUM_LAPIS_BLOCK_COST.get();
         ignoreEnchantmentLevelLimit = IGNORE_ENCHANTMENT_LEVEL_LIMIT.get();
+//        enableXpRequirement = ENABLE_XP_REQUIREMENT.get();
+        convertMaxLevelBook = CONVERT_MAX_LEVEL_BOOK.get();
     }
 }
