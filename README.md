@@ -1,5 +1,12 @@
 # Enchantment Custom Table
 
+<a href="https://www.curseforge.com/minecraft/mc-mods/enchantment-custom-table"><img src="http://cf.way2muchnoise.eu/versions/1229709.svg" alt="CF"></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/enchantment-custom-table"><img src="http://cf.way2muchnoise.eu/1229709.svg" alt="CF"></a>
+<a href="https://modrinth.com/mod/enchantment-custom-table"><img src="https://img.shields.io/modrinth/dt/enchantment-custom-table?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth"></a>
+
+*For the Fabric version, please refer to this link: [Enchantment Custom Table For Fabric](https://github.com/HatanoKawa/EnchantmentCustomTable).
+If you encounter any issues with the Fabric version, please submit them there.*
+
 I'm not particularly interested in rolling enchantments on items, and the mod I've always used, "Disenchantment Edit Table," has been discontinued and is closed-source. So, I recreated it based on its logic to make a new mod compatible with Minecraft versions 1.21 and later. This mod allows players to freely customize the enchantments on their tools.
 
 If you're also not a fan of randomly rolling enchantments, you might want to give this workstation a try!
@@ -28,11 +35,19 @@ Clicking this button will remove all enchantments from the tool and combine them
 
 **Note**: If the player's inventory is full, the combined enchanted book will be dropped in front of them.
 
+### recipe
+
+![enchantment custom table recipe](./src/main/resources/doc/enchanting_custom_table_recipe.png)
+
 ## Enchantment Conversion Table
 
 ![enchantment conversion table gui](./src/main/resources/doc/enchantment_conversion_table_gui.jpg)
 
 Place a book and either emeralds or emerald blocks in the designated slots on the left. If the minimum cost is met (by default, 1 book + 36 emeralds or 4 emerald blocks), the 4×7 grid on the right will display all available enchantments at their maximum level. You can then exchange books and emeralds for the corresponding enchanted books.
+
+### recipe
+
+![enchantment conversion table recipe](./src/main/resources/doc/enchantment_conversion_table_recipe.png)
 
 # Balance Considerations
 When creating this mod, I did not focus on balance. However, I understand that some players value gameplay challenges and balance.
