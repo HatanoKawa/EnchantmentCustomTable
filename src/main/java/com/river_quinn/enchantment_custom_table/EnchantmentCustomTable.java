@@ -2,6 +2,7 @@ package com.river_quinn.enchantment_custom_table;
 
 import com.river_quinn.enchantment_custom_table.init.*;
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntityRenderers;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.slf4j.Logger;
@@ -43,6 +44,7 @@ public class EnchantmentCustomTable
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public EnchantmentCustomTable(IEventBus modEventBus, ModContainer modContainer)
     {
+        modEventBus.addListener(ModPayloads::register);
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
@@ -66,22 +68,17 @@ public class EnchantmentCustomTable
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+        if (FMLEnvironment.dist.isClient()) {
+            modEventBus.addListener(ModBlockEntityRenderers::register);
+            modEventBus.addListener(ModScreens::register);
+        }
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-//        // Some common setup code
-//        LOGGER.info("HELLO FROM COMMON SETUP");
-//
-//        if (Config.logDirtBlock)
-//            LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-//
-//        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-//
-//        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
 
-    // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
@@ -96,38 +93,6 @@ public class EnchantmentCustomTable
     {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
-    }
-
-    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
-    public static class Networking {
-        @SubscribeEvent
-        public static void register(final RegisterPayloadHandlersEvent event) {
-            ModPayloads.register(event);
-        }
-    }
-
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
-            // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-        }
-
-        @SubscribeEvent
-        public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            ModBlockEntityRenderers.register(event);
-        }
-
-//        @SubscribeEvent
-//        public static void register(final RegisterPayloadHandlersEvent event) {
-//            ModPayloads.register(event);
-//        }
-
     }
 
 }

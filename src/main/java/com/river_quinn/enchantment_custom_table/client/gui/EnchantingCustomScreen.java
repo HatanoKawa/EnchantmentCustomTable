@@ -3,7 +3,7 @@ package com.river_quinn.enchantment_custom_table.client.gui;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,7 +14,6 @@ import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.HashMap;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCustomMenu> {
@@ -51,9 +50,9 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        guiGraphics.blit(RenderType::guiTextured, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
-        guiGraphics.blit(RenderType::guiTextured, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+//        RenderSystem.setShaderColor(1, 1, 1, 1);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
 
     }
 
