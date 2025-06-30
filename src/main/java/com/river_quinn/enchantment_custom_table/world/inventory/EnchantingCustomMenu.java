@@ -68,13 +68,13 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		// 1. 点击的槽位的下标在 2-22 之间
 		// 2. 点击类型不是快速移动
 		// 3. 附魔书槽对应的物品可以放置在该槽位上（主要是待附魔物品槽不能为空）
+		var itemStackToPut = entity.containerMenu.getCarried();
 		if (
 				slotId >= 2 &&
 				slotId < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE &&
 				clickType != ClickType.QUICK_MOVE &&
-				getSlot(slotId).mayPlace(entity.containerMenu.getCarried())
+				(itemStackToPut.isEmpty() || getSlot(slotId).mayPlace(entity.containerMenu.getCarried()))
 		) {
-			var itemStackToPut = entity.containerMenu.getCarried();
 			var itemStackToReplace = itemHandler.getStackInSlot(slotId);
 			if (!itemStackToPut.isEmpty() && !itemStackToReplace.isEmpty()) {
 				// 当尝试替换附魔书槽的附魔书时，存在以下两种情况：
