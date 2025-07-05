@@ -1,12 +1,8 @@
 package com.river_quinn.enchantment_custom_table.init;
 
 import com.river_quinn.enchantment_custom_table.renderer.EnchantingCustomTableRenderer;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
-
-@OnlyIn(Dist.CLIENT)
 public class ModBlockEntityRenderers {
     public static void register(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(

@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.HashMap;
 
@@ -87,7 +87,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> {
                     menuContainer.previousPage();
-                    PacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
+                    ClientPacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
                             EnchantmentConversionTableNetData.OperateType.PREVIOUS_PAGE.name()
                     ));
                 }
@@ -99,7 +99,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> {
                     menuContainer.nextPage();
-                    PacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
+                    ClientPacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
                             EnchantmentConversionTableNetData.OperateType.NEXT_PAGE.name()
                     ));
                 }

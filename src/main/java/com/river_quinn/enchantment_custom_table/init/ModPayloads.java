@@ -7,7 +7,7 @@ import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableServerPayloadHandler;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
+import net.neoforged.neoforge.network.handling.MainThreadPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class ModPayloads {
@@ -16,17 +16,21 @@ public class ModPayloads {
         registrar.playBidirectional(
                 EnchantingCustomTableNetData.TYPE,
                 EnchantingCustomTableNetData.STREAM_CODEC,
-                new DirectionalPayloadHandler<>(
-                        EnchantingCustomTableClientPayloadHandler::handleDataOnMain,
+                new MainThreadPayloadHandler<>(
                         EnchantingCustomTableServerPayloadHandler::handleDataOnMain
+                ),
+                new MainThreadPayloadHandler<>(
+                        EnchantingCustomTableClientPayloadHandler::handleDataOnMain
                 )
         );
 
         registrar.playBidirectional(
                 EnchantmentConversionTableNetData.TYPE,
                 EnchantmentConversionTableNetData.STREAM_CODEC,
-                new DirectionalPayloadHandler<>(
-                        EnchantmentConversionTableClientPayloadHandler::handleDataOnMain,
+                new MainThreadPayloadHandler<>(
+                        EnchantmentConversionTableServerPayloadHandler::handleDataOnMain
+                ),
+                new MainThreadPayloadHandler<>(
                         EnchantmentConversionTableServerPayloadHandler::handleDataOnMain
                 )
         );
