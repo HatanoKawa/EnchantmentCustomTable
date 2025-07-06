@@ -4,6 +4,9 @@
 <a href="https://www.curseforge.com/minecraft/mc-mods/enchantment-custom-table"><img src="http://cf.way2muchnoise.eu/1229709.svg" alt="CF"></a>
 <a href="https://modrinth.com/mod/enchantment-custom-table"><img src="https://img.shields.io/modrinth/dt/enchantment-custom-table?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth"></a>
 
+*For the Fabric version, please refer to this link: [Enchantment Custom Table For Fabric](https://github.com/HatanoKawa/EnchantmentCustomTable).
+If you encounter any issues with the Fabric version, please submit them there.*
+
 I'm not particularly interested in rolling enchantments on items, and the mod I've always used, "Disenchantment Edit Table," has been discontinued and is closed-source. So, I recreated it based on its logic to make a new mod compatible with Minecraft versions 1.21 and later. This mod allows players to freely customize the enchantments on their tools.
 
 If you're also not a fan of randomly rolling enchantments, you might want to give this workstation a try!
