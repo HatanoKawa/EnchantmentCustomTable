@@ -3,11 +3,10 @@ package com.river_quinn.enchantment_custom_table.world.inventory;
 import com.mojang.datafixers.util.Pair;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
-import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.IdMap;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,6 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -50,6 +50,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public final Player entity;
 	public int x, y, z;
 	private ContainerLevelAccess access = ContainerLevelAccess.NULL;
+	private boolean hasValidPosition = false;
 	private final Map<Integer, Slot> enchantedBookSlots = new HashMap<>();
 	private boolean bound = false;
 	private Supplier<Boolean> boundItemMatcher = null;
@@ -68,10 +69,36 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			this.y = pos.getY();
 			this.z = pos.getZ();
 			access = ContainerLevelAccess.create(world, pos);
+			hasValidPosition = true;
 		}
 		if (pos != null) {
-			boundBlockEntity = (EnchantmentConversionTableBlockEntity) this.world.getBlockEntity(pos);
+			if (this.world.getBlockEntity(pos) instanceof EnchantmentConversionTableBlockEntity blockEntity) {
+				boundBlockEntity = blockEntity;
+			}
 		}
+
+		this.addDataSlot(new DataSlot() {
+			@Override
+			public int get() {
+				return currentPage;
+			}
+
+			@Override
+			public void set(int value) {
+				currentPage = value;
+			}
+		});
+		this.addDataSlot(new DataSlot() {
+			@Override
+			public int get() {
+				return totalPage;
+			}
+
+			@Override
+			public void set(int value) {
+				totalPage = value;
+			}
+		});
 
 		this.addSlot(new SlotItemHandler(itemHandler, 0, 16, 8) {
 			private final int slot = 0;
@@ -150,6 +177,11 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 						}
 
 						@Override
+						public boolean mayPickup(Player player) {
+							return canPickEnchantedBook();
+						}
+
+						@Override
 						public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 							return Pair.of(
 									InventoryMenu.BLOCK_ATLAS,
@@ -158,8 +190,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 						}
 
 						@Override
-						public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
-							super.setByPlayer(newStack, oldStack);
+						public void onTake(Player player, ItemStack stack) {
+							super.onTake(player, stack);
 							pickEnchantedBook();
 						}
 
@@ -178,15 +210,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 	@Override
 	public boolean stillValid(Player player) {
-//		if (this.bound) {
-//			if (this.boundItemMatcher != null)
-//				return this.boundItemMatcher.get();
-//			else if (this.boundBlockEntity != null)
-//				return AbstractContainerMenu.stillValid(this.access, player, this.boundBlockEntity.getBlockState().getBlock());
-//			else if (this.boundEntity != null)
-//				return this.boundEntity.isAlive();
-//		}
-		return true;
+		return hasValidPosition
+				&& AbstractContainerMenu.stillValid(access, player, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 	}
 
 	@Override
@@ -221,8 +246,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 		if (index < 2) {
 			genEnchantedBookSlot();
-		} else if (index < ENCHANTMENT_CONVERSION_SLOT_SIZE) {
-			pickEnchantedBook();
 		}
 
 		return itemstack;
@@ -239,7 +262,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			while (!p_38904_.isEmpty() && (p_38907_ ? i >= p_38905_ : i < p_38906_)) {
 				Slot slot = this.slots.get(i);
 				ItemStack itemstack = slot.getItem();
-				if (slot.mayPlace(itemstack) && !itemstack.isEmpty() && ItemStack.isSameItemSameComponents(p_38904_, itemstack)) {
+				if (slot.mayPlace(p_38904_) && !itemstack.isEmpty() && ItemStack.isSameItemSameComponents(p_38904_, itemstack)) {
 					int j = itemstack.getCount() + p_38904_.getCount();
 					int k = slot.getMaxStackSize(itemstack);
 					if (j <= k) {
@@ -296,25 +319,20 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		}
 	}
 
-	public static final List<Integer> allEnchantments = new ArrayList<>();
+	private final List<Holder<Enchantment>> allEnchantments = new ArrayList<>();
 
 	public void tryGetAllEnchantments() {
 		if (allEnchantments.isEmpty()) {
 			Registry<Enchantment> fullEnchantmentList = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-			IdMap<Holder<Enchantment>> allRegisteredEnchantments = fullEnchantmentList.asHolderIdMap();
-			allRegisteredEnchantments.forEach(enchantment ->
-					allEnchantments.add(fullEnchantmentList.getId(enchantment.value())));
+			fullEnchantmentList.asHolderIdMap().forEach(allEnchantments::add);
 		}
 	}
 
-	public ItemStack getEnchantedBook(int enchantmentId) {
+	public ItemStack getEnchantedBook(Holder<Enchantment> enchantment) {
 		ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
 
-		Enchantment enchantment = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT).byId(enchantmentId);
-		int enchantmentLevel = Config.convertMaxLevelBook ? enchantment.getMaxLevel() : 1;
-		var enchantmentReference = EnchantmentUtils.translateEnchantment(world, enchantment);
-		assert enchantmentReference != null;
-		enchantedBook.enchant(enchantmentReference, enchantmentLevel);
+		int enchantmentLevel = Config.convertMaxLevelBook ? enchantment.value().getMaxLevel() : 1;
+		enchantedBook.enchant(enchantment, enchantmentLevel);
 
 		return enchantedBook;
 	}
@@ -335,6 +353,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	public void turnPage(int page) {
+		if (page < 0 || page >= totalPage) {
+			return;
+		}
 		currentPage = page;
 		clearEnchantedBookSlot();
 		genEnchantedBookSlot();
@@ -354,12 +375,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public void genEnchantedBookSlot() {
 		tryGetAllEnchantments();
 		boolean hasBook = itemHandler.getStackInSlot(0).is(Items.BOOK);
-		boolean hasEnoughEmerald = false;
-		if (itemHandler.getStackInSlot(1).is(Items.EMERALD) && Config.minimumEmeraldCost > 0) {
-			hasEnoughEmerald = itemHandler.getStackInSlot(1).getCount() >= Config.minimumEmeraldCost;
-		} else if (itemHandler.getStackInSlot(1).is(Items.EMERALD_BLOCK) && Config.minimumEmeraldBlockCost > 0) {
-			hasEnoughEmerald = itemHandler.getStackInSlot(1).getCount() >= Config.minimumEmeraldBlockCost;
-		}
+		boolean hasEnoughEmerald = hasEnoughPayment();
 
 		if (!hasBook || !hasEnoughEmerald) {
 			resetPage();
@@ -373,8 +389,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 			if (enchantmentIndex < allEnchantments.size()) {
 				if (itemHandler.getStackInSlot(slotIndex).isEmpty()) {
-					int enchantmentId = allEnchantments.get(enchantmentIndex);
-					itemHandler.setStackInSlot(slotIndex, getEnchantedBook(enchantmentId));
+					Holder<Enchantment> enchantment = allEnchantments.get(enchantmentIndex);
+					itemHandler.setStackInSlot(slotIndex, getEnchantedBook(enchantment));
 				}
 			} else {
 				itemHandler.setStackInSlot(slotIndex, ItemStack.EMPTY);
@@ -383,17 +399,37 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	public void regenerateEnchantedBookSlot() {
+		tryGetAllEnchantments();
 		currentPage = 0;
 		totalPage = (int) Math.ceil(allEnchantments.size() / (double) ENCHANTED_BOOK_SLOT_SIZE);
 		genEnchantedBookSlot();
 	}
 
-	public void pickEnchantedBook() {
+	public boolean canPickEnchantedBook() {
+		return itemHandler.getStackInSlot(0).is(Items.BOOK) && hasEnoughPayment();
+	}
+
+	private boolean hasEnoughPayment() {
+		if (itemHandler.getStackInSlot(1).is(Items.EMERALD) && Config.minimumEmeraldCost > 0) {
+			return itemHandler.getStackInSlot(1).getCount() >= Config.minimumEmeraldCost;
+		} else if (itemHandler.getStackInSlot(1).is(Items.EMERALD_BLOCK) && Config.minimumEmeraldBlockCost > 0) {
+			return itemHandler.getStackInSlot(1).getCount() >= Config.minimumEmeraldBlockCost;
+		}
+		return false;
+	}
+
+	public boolean pickEnchantedBook() {
+		if (!canPickEnchantedBook()) {
+			clearEnchantedBookSlot();
+			return false;
+		}
+
 		itemHandler.getStackInSlot(0).shrink(1);
 		if (itemHandler.getStackInSlot(1).is(Items.EMERALD))
 			itemHandler.getStackInSlot(1).shrink(Config.minimumEmeraldCost);
 		else if (itemHandler.getStackInSlot(1).is(Items.EMERALD_BLOCK))
 			itemHandler.getStackInSlot(1).shrink(Config.minimumEmeraldBlockCost);
 		genEnchantedBookSlot();
+		return true;
 	}
 }

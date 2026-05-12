@@ -16,16 +16,40 @@ import java.util.Optional;
 
 public class EnchantmentUtils {
     public static Holder.Reference<Enchantment> translateEnchantment(Level level, Enchantment enchantment) {
-        if (level == null)
+        if (level == null || enchantment == null)
             return null;
         Registry<Enchantment> fullEnchantmentRegistry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-        ResourceKey<Enchantment> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantment).get();
-        // 一些通过猜谜获得的逻辑，我不知道为什么要这么做，但是这么做能行
-        Optional<Holder.Reference<Enchantment>> optional = level
-                .registryAccess()
-                .registryOrThrow(Registries.ENCHANTMENT)
-                .getHolder(resourceKey);
-        return optional.get();
+        Optional<ResourceKey<Enchantment>> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantment);
+        return resourceKey.flatMap(fullEnchantmentRegistry::getHolder).orElse(null);
+    }
+
+    public static Optional<ResourceKey<Enchantment>> getEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
+        if (level == null || enchantment == null) {
+            return Optional.empty();
+        }
+
+        Optional<ResourceKey<Enchantment>> holderKey = enchantment.unwrapKey();
+        if (holderKey.isPresent()) {
+            return holderKey;
+        }
+
+        Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        return registry.getResourceKey(enchantment.value());
+    }
+
+    public static Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, Holder<Enchantment> enchantment) {
+        if (level == null || enchantment == null) {
+            return Optional.empty();
+        }
+
+        Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        return getEnchantmentKey(level, enchantment)
+                .flatMap(registry::getHolder)
+                .map(holder -> holder);
+    }
+
+    public static ItemEnchantments getEnchantments(ItemStack itemStack) {
+        return itemStack.getOrDefault(EnchantmentHelper.getComponentType(itemStack), ItemEnchantments.EMPTY);
     }
 
     public static int getEnchantCost(ItemStack toolItemStack) {
@@ -33,7 +57,7 @@ public class EnchantmentUtils {
             return 0;
 
         var xpLevelToCost = 0;
-        var itemEnchantments = toolItemStack.get(EnchantmentHelper.getComponentType(toolItemStack));
+        var itemEnchantments = getEnchantments(toolItemStack);
         for (var entry : itemEnchantments.entrySet()) {
             var enchantment = entry.getKey();
             var level = entry.getValue();
