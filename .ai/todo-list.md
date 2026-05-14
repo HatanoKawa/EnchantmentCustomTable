@@ -12,13 +12,13 @@ This folder stores AI-produced maintenance notes for the project.
 - [x] P1: Fix enchantment removal matching so it removes the selected enchantment instead of the first enchantment in the registry.
 - [x] P2: Make conversion-table result pickup charge resources through the result slot take path.
 - [x] P2: Replace conversion-table global integer enchantment cache with per-menu registered holders.
-- [ ] P2: Add focused JVM tests or game tests for enchantment merge, split, export, and conversion-table payment paths.
+- [x] P2: Add focused JVM tests or game tests for enchantment merge, split, export, and conversion-table payment paths.
 - [ ] P3: Remove leftover template/debug code and unused GUI state maps once behavior is stable.
 
 ## Test system setup: 2026-05-14
 
-- [ ] Add JVM unit-test infrastructure and a first passing smoke test.
-- [ ] Add NeoForge GameTest infrastructure and a first discoverable passing GameTest.
+- [x] Add JVM unit-test infrastructure and a first passing smoke test.
+- [x] Add NeoForge GameTest infrastructure and a first discoverable passing GameTest.
 - [ ] Add release UI smoke-test checklist for manual / Computer Use assisted validation.
-- [ ] Backfill meaningful JVM tests for extracted pure logic.
-- [ ] Backfill meaningful GameTests for table block/menu behavior.
+- [x] Backfill meaningful JVM tests for extracted pure logic.
+- [x] Backfill meaningful GameTests for table block/menu behavior.

@@ -55,7 +55,7 @@ If the book has exactly one enchantment and its level is greater than 1:
 - The selection area should show generated books carrying the same enchantment at smaller levels.
 - The intended split strategy is binary-style splitting.
 - Example: an input book with Sharpness 8 should generate Sharpness 4, Sharpness 2, and Sharpness 1 books.
-- For odd levels, use the agreed rounding behavior and avoid duplicate generated results.
+- For odd levels, round down while splitting and avoid duplicate generated results.
 
 If the book has exactly one enchantment at level 1:
 
@@ -88,6 +88,4 @@ When a player takes an enchanted book from the selection area:
 
 ## Open Design Questions
 
-- For odd-level enchanted-book splitting, confirm the exact intended rounding rule. The current written goal says to round down for odd cases, while the Sharpness 8 example matches the existing binary-style split output of 4, 2, 1.
 - Define "obtainable enchantments" for the conversion table precisely: all registered enchantments, all non-curse enchantments, all trade/treasure discoverable enchantments, or another filtered set.
-

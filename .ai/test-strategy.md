@@ -8,6 +8,11 @@ Build a layered test system that improves stability without depending on a singl
 
 Purpose: cover deterministic logic without launching Minecraft.
 
+Current status:
+- Configured JUnit 5 through Gradle.
+- Added focused rule tests for pagination, generated-slot cache indexes, configured payment counts, and binary-style enchanted-book splitting.
+- Verified with `./gradlew test`.
+
 Planned scope:
 - Page-count and slot-index calculations.
 - Payment amount decisions for emerald / emerald block conversion.
@@ -20,6 +25,11 @@ Verification command:
 ## Layer 2: NeoForge GameTest
 
 Purpose: cover server-side in-game behavior inside Minecraft's test runner.
+
+Current status:
+- Added a minimal namespaced structure at `data/enchantment_custom_table/structure/gametest/empty.nbt`.
+- Added GameTests for functional block placement, BlockEntity creation, menu binding, `stillValid` behavior, conversion-table payment/result clearing, and custom-table split/merge/remove flows.
+- Verified with `./gradlew runGameTestServer`.
 
 Planned scope:
 - Blocks and block entities can be placed and loaded.
@@ -38,6 +48,10 @@ Notes:
 
 Purpose: manually or semi-automatically validate client GUI behavior before releases.
 
+Current status:
+- Paused by request. No direct UI automation is tracked as part of the current test implementation.
+- Previous availability check showed `runClient` can start the Minecraft window, but Computer Use could not attach to the LWJGL Java window in the current environment.
+
 Planned scope:
 - Launch `runClient`.
 - Open both custom tables.
@@ -46,6 +60,5 @@ Planned scope:
 - Confirm no client crash, no ghost item, and expected visual state.
 
 Verification approach:
-- Use a documented release checklist first.
-- Computer Use can assist by operating the local Minecraft client window, but this should be treated as a smoke-test helper rather than CI-grade automation.
-
+- Keep this as a manual release checklist area until a more reliable UI-driver option is chosen.
+- Treat Computer Use as an optional smoke-test helper rather than CI-grade automation.
