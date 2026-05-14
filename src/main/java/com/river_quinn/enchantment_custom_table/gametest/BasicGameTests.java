@@ -15,6 +15,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.level.GameType;
@@ -24,6 +25,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+import java.util.List;
 
 @GameTestHolder(EnchantmentCustomTable.MODID)
 @PrefixGameTestTemplate(false)
@@ -131,6 +134,51 @@ public class BasicGameTests {
     }
 
     @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void conversionTableSearchFiltersResultsByClientMatchedIds(GameTestHelper helper) {
+        helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
+
+        int originalEmeraldCost = Config.minimumEmeraldCost;
+        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
+        boolean originalConvertMaxLevelBook = Config.convertMaxLevelBook;
+        Config.minimumEmeraldCost = 1;
+        Config.minimumEmeraldBlockCost = 0;
+        Config.convertMaxLevelBook = true;
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantmentConversionMenu menu = conversionMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ResourceLocation sharpnessId = enchantmentId(helper, sharpness);
+
+            menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK, 2));
+            menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD, 2));
+
+            menu.setSearchQuery("localized-sharpness", "zh_cn", List.of(sharpnessId));
+
+            helper.assertTrue(menu.totalPage == 1, "Client matched ids should narrow the conversion list to one page");
+            assertEnchantmentIdLevel(
+                    helper,
+                    menu.getSlot(2).getItem(),
+                    sharpnessId,
+                    sharpness.value().getMaxLevel(),
+                    "Filtered conversion result should be the client-matched enchantment"
+            );
+            helper.assertTrue(menu.getSlot(3).getItem().isEmpty(), "Only the matched enchantment should be shown");
+
+            menu.setSearchQuery("definitely-missing-enchantment", "en_us", List.of());
+
+            helper.assertTrue(menu.totalPage == 0, "No-match search should clear conversion pages");
+            helper.assertTrue(menu.getSlot(2).getItem().isEmpty(), "No-match search should clear visible result slots");
+
+            helper.succeed();
+        } finally {
+            Config.minimumEmeraldCost = originalEmeraldCost;
+            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+            Config.convertMaxLevelBook = originalConvertMaxLevelBook;
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
     public static void customTableSplitsSingleHighLevelBookByDesign(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -215,6 +263,12 @@ public class BasicGameTests {
         return helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(key);
     }
 
+    private static ResourceLocation enchantmentId(GameTestHelper helper, Holder<Enchantment> enchantment) {
+        return EnchantmentUtils.getEnchantmentKey(helper.getLevel(), enchantment)
+                .orElseThrow()
+                .location();
+    }
+
     private static ItemStack enchantedBook(Holder<Enchantment> enchantment, int level) {
         ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
         book.enchant(enchantment, level);
@@ -229,6 +283,24 @@ public class BasicGameTests {
             String message
     ) {
         int actualLevel = EnchantmentUtils.getEnchantments(stack).getLevel(enchantment);
+        helper.assertTrue(actualLevel == expectedLevel, message + " (expected " + expectedLevel + ", got " + actualLevel + ")");
+    }
+
+    private static void assertEnchantmentIdLevel(
+            GameTestHelper helper,
+            ItemStack stack,
+            ResourceLocation enchantmentId,
+            int expectedLevel,
+            String message
+    ) {
+        int actualLevel = 0;
+        for (var entry : EnchantmentUtils.getEnchantments(stack).entrySet()) {
+            ResourceLocation entryId = enchantmentId(helper, entry.getKey());
+            if (enchantmentId.equals(entryId)) {
+                actualLevel = entry.getIntValue();
+                break;
+            }
+        }
         helper.assertTrue(actualLevel == expectedLevel, message + " (expected " + expectedLevel + ", got " + actualLevel + ")");
     }
 

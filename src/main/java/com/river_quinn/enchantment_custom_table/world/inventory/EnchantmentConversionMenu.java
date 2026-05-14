@@ -5,12 +5,15 @@ import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
+import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
+import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -29,9 +32,12 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class EnchantmentConversionMenu extends AbstractContainerMenu {
@@ -57,6 +63,10 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	private Supplier<Boolean> boundItemMatcher = null;
 	private Entity boundEntity = null;
 	public EnchantmentConversionTableBlockEntity boundBlockEntity = null;
+	private String searchQuery = "";
+	private String searchClientLanguage = "";
+	private boolean usingClientSearchMatches = false;
+	private Set<ResourceLocation> clientMatchedEnchantments = Set.of();
 
 	public EnchantmentConversionMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
 		super(ModMenus.ENCHANTMENT_CONVERSION.get(), id);
@@ -341,6 +351,30 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		return enchantedBook;
 	}
 
+	public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
+		searchQuery = EnchantmentSearchRules.sanitizeSearchQuery(query);
+		searchClientLanguage = EnchantmentSearchRules.sanitizeClientLanguage(clientLanguage);
+		usingClientSearchMatches = !EnchantmentSearchRules.isBlankSearch(searchQuery) && matchedEnchantments != null;
+
+		if (usingClientSearchMatches) {
+			clientMatchedEnchantments = matchedEnchantments.stream()
+					.limit(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS)
+					.collect(HashSet::new, Set::add, Set::addAll);
+		} else {
+			clientMatchedEnchantments = Set.of();
+		}
+
+		regenerateEnchantedBookSlot();
+	}
+
+	public String getSearchQuery() {
+		return searchQuery;
+	}
+
+	public String getSearchClientLanguage() {
+		return searchClientLanguage;
+	}
+
 	public int currentPage = 0;
 	public int totalPage = 0;
 
@@ -377,7 +411,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	public void genEnchantedBookSlot() {
-		tryGetAllEnchantments();
+		List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
 		boolean hasBook = itemHandler.getStackInSlot(0).is(Items.BOOK);
 		boolean hasEnoughEmerald = hasEnoughPayment();
 
@@ -391,9 +425,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			int slotIndex = i + 2;
 			int enchantmentIndex = i + currentPage * ENCHANTED_BOOK_SLOT_SIZE;
 
-			if (enchantmentIndex < allEnchantments.size()) {
+			if (enchantmentIndex < enchantments.size()) {
 				if (itemHandler.getStackInSlot(slotIndex).isEmpty()) {
-					Holder<Enchantment> enchantment = allEnchantments.get(enchantmentIndex);
+					Holder<Enchantment> enchantment = enchantments.get(enchantmentIndex);
 					itemHandler.setStackInSlot(slotIndex, getEnchantedBook(enchantment));
 				}
 			} else {
@@ -403,10 +437,40 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	public void regenerateEnchantedBookSlot() {
-		tryGetAllEnchantments();
+		List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
 		currentPage = 0;
-		totalPage = EnchantmentTableRules.calculatePageCount(allEnchantments.size(), ENCHANTED_BOOK_SLOT_SIZE, false);
+		totalPage = EnchantmentTableRules.calculatePageCount(enchantments.size(), ENCHANTED_BOOK_SLOT_SIZE, false);
+		clearEnchantedBookSlot();
 		genEnchantedBookSlot();
+	}
+
+	private List<Holder<Enchantment>> getFilteredEnchantments() {
+		tryGetAllEnchantments();
+		if (EnchantmentSearchRules.isBlankSearch(searchQuery)) {
+			return allEnchantments;
+		}
+
+		return allEnchantments.stream()
+				.filter(this::matchesSearch)
+				.toList();
+	}
+
+	private boolean matchesSearch(Holder<Enchantment> enchantment) {
+		Optional<ResourceLocation> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::location);
+		if (enchantmentId.isPresent() && usingClientSearchMatches && clientMatchedEnchantments.contains(enchantmentId.get())) {
+			return true;
+		}
+
+		List<String> serverCandidates = new ArrayList<>();
+		enchantmentId.ifPresent(id -> {
+			serverCandidates.add(id.toString());
+			serverCandidates.add(id.getNamespace());
+			serverCandidates.add(id.getPath());
+			serverCandidates.add(id.getPath().replace('_', ' '));
+			serverCandidates.add("enchantment." + id.getNamespace() + "." + id.getPath());
+		});
+		serverCandidates.add(enchantment.value().description().getString());
+		return EnchantmentSearchRules.matchesAnyCandidate(searchQuery, serverCandidates);
 	}
 
 	public boolean canPickEnchantedBook() {

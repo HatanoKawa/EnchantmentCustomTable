@@ -24,6 +24,9 @@ public class EnchantmentConversionTableServerPayloadHandler {
             case PREVIOUS_PAGE -> {
                 menu.previousPage();
             }
+            case SEARCH -> {
+                menu.setSearchQuery(data.searchQuery(), data.clientLanguage(), data.matchedEnchantments());
+            }
         }
         menu.broadcastChanges();
     }
