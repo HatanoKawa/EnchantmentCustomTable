@@ -91,7 +91,6 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         button_left_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> {
-                    menuContainer.previousPage();
                     PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
                             EnchantingCustomTableNetData.OperateType.PREVIOUS_PAGE.name()
                     ));
@@ -103,7 +102,6 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         button_right_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> {
-                    menuContainer.nextPage();
                     PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
                             EnchantingCustomTableNetData.OperateType.NEXT_PAGE.name()
                     ));
@@ -115,7 +113,6 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         export_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_export"),
                 e -> {
-                    menuContainer.exportAllEnchantments();
                     PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
                             EnchantingCustomTableNetData.OperateType.EXPORT_ALL_ENCHANTMENTS.name()
                     ));
