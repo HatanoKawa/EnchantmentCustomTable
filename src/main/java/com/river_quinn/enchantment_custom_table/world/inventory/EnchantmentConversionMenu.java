@@ -111,7 +111,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 		});
 
-		this.addSlot(new SlotItemHandler(itemHandler, 0, 16, 8) {
+		this.addSlot(new SlotItemHandler(itemHandler, 0, 16, 8 + 15) {
 			private final int slot = 0;
 			private int x = EnchantmentConversionMenu.this.x;
 			private int y = EnchantmentConversionMenu.this.y;
@@ -140,7 +140,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 		});
 
-		this.addSlot(new SlotItemHandler(itemHandler, 1, 16, 26) {
+		this.addSlot(new SlotItemHandler(itemHandler, 1, 16, 26 + 15) {
 			private final int slot = 1;
 			private int x = EnchantmentConversionMenu.this.x;
 			private int y = EnchantmentConversionMenu.this.y;
@@ -175,7 +175,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 		int enchanted_book_index = 0;
 		for (int row = 0; row < ENCHANTED_BOOK_SLOT_ROW_COUNT; row++) {
-			int yPos = 8 + row * 18;
+			int yPos = 8 + row * 18 + 15;
 			for (int col = 0; col < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; col++) {
 				int xPos = 43 + col * 18;
 				int final_enchanted_book_index = enchanted_book_index;
@@ -217,9 +217,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 		for (int si = 0; si < 3; ++si)
 			for (int sj = 0; sj < 9; ++sj)
-				this.addSlot(new Slot(inv, sj + (si + 1) * 9, 0 + 8 + sj * 18, 0 + 84 + si * 18));
+				this.addSlot(new Slot(inv, sj + (si + 1) * 9, 0 + 8 + sj * 18, 0 + 84 + si * 18 + 15));
 		for (int si = 0; si < 9; ++si)
-			this.addSlot(new Slot(inv, si, 0 + 8 + si * 18, 0 + 142));
+			this.addSlot(new Slot(inv, si, 0 + 8 + si * 18, 0 + 142 + 15));
 	}
 
 	@Override

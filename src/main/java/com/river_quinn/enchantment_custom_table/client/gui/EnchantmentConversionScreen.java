@@ -51,7 +51,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         this.z = container.z;
         this.entity = container.entity;
         this.imageWidth = 176;
-        this.imageHeight = 166;
+        this.imageHeight = 181;
     }
 
     private static final ResourceLocation texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchantment_conversion.png");
@@ -119,7 +119,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 this.font,
                 generatePageText(),
                 24,
-                51,
+                51 + 15,
                 -1
         );
 
@@ -131,7 +131,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         searchBox = new EditBox(
                 this.font,
                 this.leftPos + 43,
-                this.topPos - 15,
+                this.topPos + 4,
                 126,
                 14,
                 Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search")
@@ -150,7 +150,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                             EnchantmentConversionTableNetData.OperateType.PREVIOUS_PAGE.name()
                     ));
                 }
-        ).bounds(this.leftPos + 7, this.topPos + 61, 17, 18).build();
+        ).bounds(this.leftPos + 7, this.topPos + 61 + 15, 17, 18).build();
         guistate.put("button:button_left_arrow_button", button_left_arrow_button);
         this.addRenderableWidget(button_left_arrow_button);
 
@@ -161,7 +161,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                             EnchantmentConversionTableNetData.OperateType.NEXT_PAGE.name()
                     ));
                 }
-        ).bounds(this.leftPos + 24, this.topPos + 61, 17, 18).build();
+        ).bounds(this.leftPos + 24, this.topPos + 61 + 15, 17, 18).build();
         guistate.put("button:button_right_arrow_button", button_right_arrow_button);
         this.addRenderableWidget(button_right_arrow_button);
 
