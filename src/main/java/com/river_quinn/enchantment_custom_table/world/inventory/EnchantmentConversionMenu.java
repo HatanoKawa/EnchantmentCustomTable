@@ -5,6 +5,7 @@ import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
+import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -136,8 +137,11 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return (Items.EMERALD == stack.getItem() && Config.minimumEmeraldCost > 0)
-						|| (Items.EMERALD_BLOCK == stack.getItem() && Config.minimumEmeraldBlockCost > 0);
+				return EnchantmentTableRules.paymentCostFor(
+						stack.getItem(),
+						Config.minimumEmeraldCost,
+						Config.minimumEmeraldBlockCost
+				) > 0;
 			}
 
 			@Override
@@ -401,7 +405,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public void regenerateEnchantedBookSlot() {
 		tryGetAllEnchantments();
 		currentPage = 0;
-		totalPage = (int) Math.ceil(allEnchantments.size() / (double) ENCHANTED_BOOK_SLOT_SIZE);
+		totalPage = EnchantmentTableRules.calculatePageCount(allEnchantments.size(), ENCHANTED_BOOK_SLOT_SIZE, false);
 		genEnchantedBookSlot();
 	}
 
@@ -410,12 +414,11 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	private boolean hasEnoughPayment() {
-		if (itemHandler.getStackInSlot(1).is(Items.EMERALD) && Config.minimumEmeraldCost > 0) {
-			return itemHandler.getStackInSlot(1).getCount() >= Config.minimumEmeraldCost;
-		} else if (itemHandler.getStackInSlot(1).is(Items.EMERALD_BLOCK) && Config.minimumEmeraldBlockCost > 0) {
-			return itemHandler.getStackInSlot(1).getCount() >= Config.minimumEmeraldBlockCost;
-		}
-		return false;
+		return EnchantmentTableRules.hasEnoughPayment(
+				itemHandler.getStackInSlot(1),
+				Config.minimumEmeraldCost,
+				Config.minimumEmeraldBlockCost
+		);
 	}
 
 	public boolean pickEnchantedBook() {
@@ -425,10 +428,11 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		}
 
 		itemHandler.getStackInSlot(0).shrink(1);
-		if (itemHandler.getStackInSlot(1).is(Items.EMERALD))
-			itemHandler.getStackInSlot(1).shrink(Config.minimumEmeraldCost);
-		else if (itemHandler.getStackInSlot(1).is(Items.EMERALD_BLOCK))
-			itemHandler.getStackInSlot(1).shrink(Config.minimumEmeraldBlockCost);
+		EnchantmentTableRules.consumePayment(
+				itemHandler.getStackInSlot(1),
+				Config.minimumEmeraldCost,
+				Config.minimumEmeraldBlockCost
+		);
 		genEnchantedBookSlot();
 		return true;
 	}
