@@ -26,8 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,7 +47,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	 * index 1: 绿宝石槽
 	 * index 2-29: 附魔书槽
 	 */
-	private final ItemStackHandler itemHandler = new ItemStackHandler(ENCHANTMENT_CONVERSION_SLOT_SIZE);
+	private final MenuItemStackHandler itemHandler = new MenuItemStackHandler(ENCHANTMENT_CONVERSION_SLOT_SIZE);
 
 	public final static HashMap<String, Object> guistate = new HashMap<>();
 	public final Level world;
@@ -109,7 +108,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 		});
 
-		this.addSlot(new SlotItemHandler(itemHandler, 0, 16, 8 + 15) {
+		this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, 16, 8 + 15) {
 			private final int slot = 0;
 			private int x = EnchantmentConversionMenu.this.x;
 			private int y = EnchantmentConversionMenu.this.y;
@@ -135,7 +134,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 		});
 
-		this.addSlot(new SlotItemHandler(itemHandler, 1, 16, 26 + 15) {
+		this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, 16, 26 + 15) {
 			private final int slot = 1;
 			private int x = EnchantmentConversionMenu.this.x;
 			private int y = EnchantmentConversionMenu.this.y;
@@ -172,7 +171,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 				int xPos = 43 + col * 18;
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
-					new SlotItemHandler(itemHandler, final_enchanted_book_index + 2, xPos, yPos) {
+					new ResourceHandlerSlot(itemHandler, itemHandler::set, final_enchanted_book_index + 2, xPos, yPos) {
 						private final int slot = final_enchanted_book_index + 2;
 						private int x = EnchantmentConversionMenu.this.x;
 						private int y = EnchantmentConversionMenu.this.y;

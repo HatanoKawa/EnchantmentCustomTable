@@ -42,36 +42,76 @@ public class BasicGameTests {
     private static final BlockPos ENCHANTMENT_CONVERSION_TABLE_POS = new BlockPos(3, 1, 1);
     private static final Identifier EMPTY_TEMPLATE =
             Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "gametest/empty");
+    private static final List<TestRegistration> TESTS = List.of(
+            new TestRegistration("functional_blocks_create_their_block_entities", 20, BasicGameTests::functionalBlocksCreateTheirBlockEntities),
+            new TestRegistration("functional_menus_bind_to_placed_blocks", 40, BasicGameTests::functionalMenusBindToPlacedBlocks),
+            new TestRegistration("conversion_table_consumes_configured_payment_and_clears_results_when_exhausted", 40, BasicGameTests::conversionTableConsumesConfiguredPaymentAndClearsResultsWhenExhausted),
+            new TestRegistration("conversion_table_search_filters_results_by_client_matched_ids", 40, BasicGameTests::conversionTableSearchFiltersResultsByClientMatchedIds),
+            new TestRegistration("custom_table_splits_single_high_level_book_by_design", 40, BasicGameTests::customTableSplitsSingleHighLevelBookByDesign),
+            new TestRegistration("custom_table_merges_duplicate_book_levels_without_vanilla_cap", 40, BasicGameTests::customTableMergesDuplicateBookLevelsWithoutVanillaCap),
+            new TestRegistration("custom_table_removing_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableRemovingGeneratedBookSubtractsFromTool)
+    );
 
     @SubscribeEvent
     public static void registerTests(RegisterGameTestsEvent event) {
+        if (!isGameTestServerLaunch()) {
+            return;
+        }
+
         Holder<TestEnvironmentDefinition> environment = event.registerEnvironment(
                 Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "default")
         );
 
-        registerTest(event, environment, "functional_blocks_create_their_block_entities", 20, BasicGameTests::functionalBlocksCreateTheirBlockEntities);
-        registerTest(event, environment, "functional_menus_bind_to_placed_blocks", 40, BasicGameTests::functionalMenusBindToPlacedBlocks);
-        registerTest(event, environment, "conversion_table_consumes_configured_payment_and_clears_results_when_exhausted", 40, BasicGameTests::conversionTableConsumesConfiguredPaymentAndClearsResultsWhenExhausted);
-        registerTest(event, environment, "conversion_table_search_filters_results_by_client_matched_ids", 40, BasicGameTests::conversionTableSearchFiltersResultsByClientMatchedIds);
-        registerTest(event, environment, "custom_table_splits_single_high_level_book_by_design", 40, BasicGameTests::customTableSplitsSingleHighLevelBookByDesign);
-        registerTest(event, environment, "custom_table_merges_duplicate_book_levels_without_vanilla_cap", 40, BasicGameTests::customTableMergesDuplicateBookLevelsWithoutVanillaCap);
-        registerTest(event, environment, "custom_table_removing_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableRemovingGeneratedBookSubtractsFromTool);
+        for (TestRegistration test : TESTS) {
+            registerTest(event, environment, test);
+        }
     }
 
     private static void registerTest(
             RegisterGameTestsEvent event,
             Holder<TestEnvironmentDefinition> environment,
-            String name,
-            int timeoutTicks,
-            Consumer<GameTestHelper> function
+            TestRegistration test
     ) {
         event.registerTest(
-                Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, name),
+                testId(test.name()),
                 new DirectGameTestInstance(
-                        new TestData<>(environment, EMPTY_TEMPLATE, timeoutTicks, 0, true),
-                        function
+                        new TestData<>(environment, EMPTY_TEMPLATE, test.timeoutTicks(), 0, true),
+                        test.function()
                 )
         );
+    }
+
+    private static boolean isGameTestServerLaunch() {
+        Boolean serverModLoaderResult = invokeBoolean(
+                "net.neoforged.neoforge.server.loading.ServerModLoader",
+                "isGameTestServer"
+        );
+        if (serverModLoaderResult != null) {
+            return serverModLoaderResult;
+        }
+
+        return Boolean.TRUE.equals(invokeBoolean(
+                "net.neoforged.neoforge.gametest.GameTestHooks",
+                "isGametestServer"
+        ));
+    }
+
+    private static Boolean invokeBoolean(String className, String methodName) {
+        try {
+            Object result = Class.forName(className, false, BasicGameTests.class.getClassLoader())
+                    .getMethod(methodName)
+                    .invoke(null);
+            return result instanceof Boolean value ? value : null;
+        } catch (ReflectiveOperationException | LinkageError ignored) {
+            return null;
+        }
+    }
+
+    private static Identifier testId(String name) {
+        return Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, name);
+    }
+
+    private record TestRegistration(String name, int timeoutTicks, Consumer<GameTestHelper> function) {
     }
 
     private static final class DirectGameTestInstance extends GameTestInstance {
