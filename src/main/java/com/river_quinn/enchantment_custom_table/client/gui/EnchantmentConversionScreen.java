@@ -5,7 +5,7 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -45,29 +45,21 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     private int searchUpdateDelayTicks = -1;
 
     public EnchantmentConversionScreen(EnchantmentConversionMenu container, Inventory inventory, Component text) {
-        super(container, inventory, text);
+        super(container, inventory, text, 176, 181);
         this.menuContainer = container;
         this.world = container.world;
         this.x = container.x;
         this.y = container.y;
         this.z = container.z;
         this.entity = container.entity;
-        this.imageWidth = 176;
-        this.imageHeight = 181;
     }
 
     private static final Identifier gui_bg_texture = Identifier.parse("enchantment_custom_table:textures/screens/enchantment_conversion.png");
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
-    }
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
-//        RenderSystem.setShaderColor(1, 1, 1, 1);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+    protected void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
     }
 
     @Override
@@ -113,13 +105,14 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawCenteredString(
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        super.extractLabels(graphics, mouseX, mouseY);
+        graphics.centeredText(
                 this.font,
                 generatePageText(),
                 24,
                 51 + 15,
-                -1
+                0xFFFFFFFF
         );
 
     }
