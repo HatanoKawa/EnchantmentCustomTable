@@ -49,6 +49,8 @@ public class BasicGameTests {
             new TestRegistration("conversion_table_search_filters_results_by_client_matched_ids", 40, BasicGameTests::conversionTableSearchFiltersResultsByClientMatchedIds),
             new TestRegistration("custom_table_splits_single_high_level_book_by_design", 40, BasicGameTests::customTableSplitsSingleHighLevelBookByDesign),
             new TestRegistration("custom_table_merges_duplicate_book_levels_without_vanilla_cap", 40, BasicGameTests::customTableMergesDuplicateBookLevelsWithoutVanillaCap),
+            new TestRegistration("custom_table_quick_move_book_into_input_updates_tool", 40, BasicGameTests::customTableQuickMoveBookIntoInputUpdatesTool),
+            new TestRegistration("custom_table_drag_insert_book_into_generated_slot_updates_tool", 40, BasicGameTests::customTableDragInsertBookIntoGeneratedSlotUpdatesTool),
             new TestRegistration("custom_table_removing_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableRemovingGeneratedBookSubtractsFromTool)
     );
 
@@ -312,6 +314,63 @@ public class BasicGameTests {
         );
 
         helper.succeed();
+    }
+    public static void customTableQuickMoveBookIntoInputUpdatesTool(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        boolean originalIgnoreLevelLimit = Config.ignoreEnchantmentLevelLimit;
+        Config.ignoreEnchantmentLevelLimit = true;
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 4);
+
+            menu.getSlot(0).setByPlayer(sword);
+            player.getInventory().setItem(0, enchantedBook(sharpness, 1));
+
+            int firstHotbarSlot = EnchantingCustomMenu.ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE + 27;
+            ItemStack moved = menu.quickMoveStack(player, firstHotbarSlot);
+
+            assertTrue(helper, moved.is(Items.ENCHANTED_BOOK), "Quick-moving an enchanted book should move the book stack");
+            assertTrue(helper, player.getInventory().getItem(0).isEmpty(), "Quick-moving should consume the source inventory book");
+            assertTrue(helper, menu.getSlot(1).getItem().isEmpty(), "Quick-moving into the input book slot should leave that slot empty");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 5, "Quick-moving into the input book slot should merge into the tool");
+
+            helper.succeed();
+        } finally {
+            Config.ignoreEnchantmentLevelLimit = originalIgnoreLevelLimit;
+        }
+    }
+    public static void customTableDragInsertBookIntoGeneratedSlotUpdatesTool(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        boolean originalIgnoreLevelLimit = Config.ignoreEnchantmentLevelLimit;
+        Config.ignoreEnchantmentLevelLimit = true;
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 4);
+
+            menu.getSlot(0).setByPlayer(sword);
+
+            ItemStack carriedBook = enchantedBook(sharpness, 1);
+            ItemStack remaining = menu.getSlot(3).safeInsert(carriedBook);
+            menu.getSlot(3).setChanged();
+
+            assertTrue(helper, remaining.isEmpty(), "Drag-inserting an enchanted book should consume the carried book");
+            assertTrue(helper, menu.getSlot(3).getItem().isEmpty(), "Drag-inserting into a generated slot should leave that slot empty");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 5, "Drag-inserting into a generated slot should merge into the tool");
+
+            helper.succeed();
+        } finally {
+            Config.ignoreEnchantmentLevelLimit = originalIgnoreLevelLimit;
+        }
     }
     public static void customTableRemovingGeneratedBookSubtractsFromTool(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
