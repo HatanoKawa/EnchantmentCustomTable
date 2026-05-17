@@ -51,7 +51,8 @@ public class BasicGameTests {
             new TestRegistration("custom_table_merges_duplicate_book_levels_without_vanilla_cap", 40, BasicGameTests::customTableMergesDuplicateBookLevelsWithoutVanillaCap),
             new TestRegistration("custom_table_quick_move_book_into_input_updates_tool", 40, BasicGameTests::customTableQuickMoveBookIntoInputUpdatesTool),
             new TestRegistration("custom_table_drag_insert_book_into_generated_slot_updates_tool", 40, BasicGameTests::customTableDragInsertBookIntoGeneratedSlotUpdatesTool),
-            new TestRegistration("custom_table_removing_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableRemovingGeneratedBookSubtractsFromTool)
+            new TestRegistration("custom_table_removing_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableRemovingGeneratedBookSubtractsFromTool),
+            new TestRegistration("custom_table_quick_move_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableQuickMoveGeneratedBookSubtractsFromTool)
     );
 
     @SubscribeEvent
@@ -389,6 +390,27 @@ public class BasicGameTests {
         assertTrue(helper, player.containerMenu.getCarried().is(Items.ENCHANTED_BOOK), "Taking a generated book should put that book on the cursor");
         assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 0, "Removing a generated book should remove the matching tool enchantment");
         assertTrue(helper, menu.getSlot(2).getItem().isEmpty(), "Generated books should clear after the source enchantment is removed");
+
+        helper.succeed();
+    }
+
+    public static void customTableQuickMoveGeneratedBookSubtractsFromTool(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        EnchantingCustomMenu menu = enchantingMenu(helper, player);
+        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.enchant(sharpness, 5);
+
+        menu.getSlot(0).setByPlayer(sword);
+
+        ItemStack moved = menu.quickMoveStack(player, 2);
+
+        assertTrue(helper, moved.is(Items.ENCHANTED_BOOK), "Quick-moving a generated book should move that book stack");
+        assertTrue(helper, player.getInventory().contains(moved), "Quick-moving a generated book should place it in the player inventory");
+        assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 0, "Quick-moving a generated book should remove the matching tool enchantment");
+        assertTrue(helper, menu.getSlot(2).getItem().isEmpty(), "Generated books should clear after the source enchantment is quick-moved");
 
         helper.succeed();
     }
