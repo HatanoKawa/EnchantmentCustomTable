@@ -42,7 +42,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
     private static final Identifier arrow_texture = Identifier.parse("enchantment_custom_table:textures/screens/left_arrow.png");
 
     @Override
-    protected void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         graphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         graphics.blit(RenderPipelines.GUI_TEXTURED, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);

@@ -56,7 +56,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	public EnchantingCustomTableBlockEntity boundBlockEntity = null;
 
 	@Override
-	public void clicked(int slotId, int button, ClickType clickType, Player player) {
+	public void clicked(int slotId, int button, ContainerInput clickType, Player player) {
 		// 在 1.21.2 版本及以上时，在尝试堆叠 isSameItemSameComponents 判定为 true 的附魔书时不会触发 setByPlayer 方法，
 		// 因此将对于附魔书槽操作的逻辑迁移到更底层的 clicked 方法中
 
@@ -68,7 +68,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		if (
 				slotId >= 2 &&
 				slotId < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE &&
-				clickType != ClickType.QUICK_MOVE &&
+				clickType != ContainerInput.QUICK_MOVE &&
 				(itemStackToPut.isEmpty() || getSlot(slotId).mayPlace(entity.containerMenu.getCarried()))
 		) {
 			var itemStackToReplace = itemHandler.getStackInSlot(slotId);

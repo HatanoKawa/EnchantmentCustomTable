@@ -23,7 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -60,7 +60,7 @@ public class BasicGameTests {
             return;
         }
 
-        Holder<TestEnvironmentDefinition> environment = event.registerEnvironment(
+        Holder<TestEnvironmentDefinition<?>> environment = event.registerEnvironment(
                 Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "default")
         );
 
@@ -71,7 +71,7 @@ public class BasicGameTests {
 
     private static void registerTest(
             RegisterGameTestsEvent event,
-            Holder<TestEnvironmentDefinition> environment,
+            Holder<TestEnvironmentDefinition<?>> environment,
             TestRegistration test
     ) {
         event.registerTest(
@@ -119,7 +119,7 @@ public class BasicGameTests {
     private static final class DirectGameTestInstance extends GameTestInstance {
         private final Consumer<GameTestHelper> function;
 
-        private DirectGameTestInstance(TestData<Holder<TestEnvironmentDefinition>> testData, Consumer<GameTestHelper> function) {
+        private DirectGameTestInstance(TestData<Holder<TestEnvironmentDefinition<?>>> testData, Consumer<GameTestHelper> function) {
             super(testData);
             this.function = function;
         }
@@ -384,7 +384,7 @@ public class BasicGameTests {
         menu.getSlot(0).setByPlayer(sword);
         player.containerMenu = menu;
 
-        menu.clicked(2, 0, ClickType.PICKUP, player);
+        menu.clicked(2, 0, ContainerInput.PICKUP, player);
 
         assertTrue(helper, player.containerMenu.getCarried().is(Items.ENCHANTED_BOOK), "Taking a generated book should put that book on the cursor");
         assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 0, "Removing a generated book should remove the matching tool enchantment");
