@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,8 +40,8 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         this.imageHeight = 166;
     }
 
-    private static final ResourceLocation gui_bg_texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchanting_custom.png");
-    private static final ResourceLocation arrow_texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/left_arrow.png");
+    private static final Identifier gui_bg_texture = Identifier.parse("enchantment_custom_table:textures/screens/enchanting_custom.png");
+    private static final Identifier arrow_texture = Identifier.parse("enchantment_custom_table:textures/screens/left_arrow.png");
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {

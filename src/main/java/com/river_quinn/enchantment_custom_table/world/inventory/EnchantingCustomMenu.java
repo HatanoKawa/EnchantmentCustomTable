@@ -11,7 +11,7 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.*;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.*;
@@ -222,8 +222,8 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 			}
 
 			@Override
-			public ResourceLocation getNoItemIcon() {
-				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+			public Identifier getNoItemIcon() {
+				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
 
 			@Override
@@ -260,8 +260,8 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 						}
 
 						@Override
-						public ResourceLocation getNoItemIcon() {
-							return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+						public Identifier getNoItemIcon() {
+							return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 						}
 
 					}

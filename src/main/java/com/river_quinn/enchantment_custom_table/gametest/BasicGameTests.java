@@ -21,7 +21,7 @@ import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.level.GameType;
@@ -40,13 +40,13 @@ import java.util.function.Consumer;
 public class BasicGameTests {
     private static final BlockPos ENCHANTING_CUSTOM_TABLE_POS = new BlockPos(1, 1, 1);
     private static final BlockPos ENCHANTMENT_CONVERSION_TABLE_POS = new BlockPos(3, 1, 1);
-    private static final ResourceLocation EMPTY_TEMPLATE =
-            ResourceLocation.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "gametest/empty");
+    private static final Identifier EMPTY_TEMPLATE =
+            Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "gametest/empty");
 
     @SubscribeEvent
     public static void registerTests(RegisterGameTestsEvent event) {
         Holder<TestEnvironmentDefinition> environment = event.registerEnvironment(
-                ResourceLocation.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "default")
+                Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "default")
         );
 
         registerTest(event, environment, "functional_blocks_create_their_block_entities", 20, BasicGameTests::functionalBlocksCreateTheirBlockEntities);
@@ -66,7 +66,7 @@ public class BasicGameTests {
             Consumer<GameTestHelper> function
     ) {
         event.registerTest(
-                ResourceLocation.fromNamespaceAndPath(EnchantmentCustomTable.MODID, name),
+                Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, name),
                 new DirectGameTestInstance(
                         new TestData<>(environment, EMPTY_TEMPLATE, timeoutTicks, 0, true),
                         function
@@ -205,7 +205,7 @@ public class BasicGameTests {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
             EnchantmentConversionMenu menu = conversionMenu(helper, player);
             Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
-            ResourceLocation sharpnessId = enchantmentId(helper, sharpness);
+            Identifier sharpnessId = enchantmentId(helper, sharpness);
 
             menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK, 2));
             menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD, 2));
@@ -314,10 +314,10 @@ public class BasicGameTests {
         return helper.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(key).orElseThrow();
     }
 
-    private static ResourceLocation enchantmentId(GameTestHelper helper, Holder<Enchantment> enchantment) {
+    private static Identifier enchantmentId(GameTestHelper helper, Holder<Enchantment> enchantment) {
         return EnchantmentUtils.getEnchantmentKey(helper.getLevel(), enchantment)
                 .orElseThrow()
-                .location();
+                .identifier();
     }
 
     private static ItemStack enchantedBook(Holder<Enchantment> enchantment, int level) {
@@ -340,13 +340,13 @@ public class BasicGameTests {
     private static void assertEnchantmentIdLevel(
             GameTestHelper helper,
             ItemStack stack,
-            ResourceLocation enchantmentId,
+            Identifier enchantmentId,
             int expectedLevel,
             String message
     ) {
         int actualLevel = 0;
         for (var entry : EnchantmentUtils.getEnchantments(stack).entrySet()) {
-            ResourceLocation entryId = enchantmentId(helper, entry.getKey());
+            Identifier entryId = enchantmentId(helper, entry.getKey());
             if (enchantmentId.equals(entryId)) {
                 actualLevel = entry.getIntValue();
                 break;

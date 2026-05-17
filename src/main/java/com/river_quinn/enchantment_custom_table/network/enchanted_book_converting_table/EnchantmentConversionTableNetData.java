@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +16,7 @@ public record EnchantmentConversionTableNetData(
         String operateType,
         String searchQuery,
         String clientLanguage,
-        List<ResourceLocation> matchedEnchantments
+        List<Identifier> matchedEnchantments
 ) implements CustomPacketPayload {
     public enum OperateType {
         NEXT_PAGE,
@@ -41,10 +41,10 @@ public record EnchantmentConversionTableNetData(
     }
 
     public static final Type<EnchantmentConversionTableNetData> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "enchantment_conversion"));
+            new Type<>(Identifier.fromNamespaceAndPath(MODID, "enchantment_conversion"));
 
-    private static final StreamCodec<ByteBuf, List<ResourceLocation>> MATCHED_ENCHANTMENTS_CODEC =
-            ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));
+    private static final StreamCodec<ByteBuf, List<Identifier>> MATCHED_ENCHANTMENTS_CODEC =
+            Identifier.STREAM_CODEC.apply(ByteBufCodecs.list(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));
 
     public static final StreamCodec<ByteBuf, EnchantmentConversionTableNetData> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.stringUtf8(32),

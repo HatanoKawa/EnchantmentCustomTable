@@ -17,7 +17,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -56,7 +56,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         this.imageHeight = 181;
     }
 
-    private static final ResourceLocation gui_bg_texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchantment_conversion.png");
+    private static final Identifier gui_bg_texture = Identifier.parse("enchantment_custom_table:textures/screens/enchantment_conversion.png");
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
@@ -195,15 +195,15 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         return EnchantmentSearchRules.sanitizeClientLanguage(minecraft.getLanguageManager().getSelected());
     }
 
-    private List<ResourceLocation> findClientLocalizedMatches(String query) {
+    private List<Identifier> findClientLocalizedMatches(String query) {
         if (EnchantmentSearchRules.isBlankSearch(query)) {
             return List.of();
         }
 
         Registry<Enchantment> enchantmentRegistry = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-        List<ResourceLocation> matchedEnchantments = new ArrayList<>();
+        List<Identifier> matchedEnchantments = new ArrayList<>();
         enchantmentRegistry.asHolderIdMap().forEach(enchantment -> {
-            Optional<ResourceLocation> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::location);
+            Optional<Identifier> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::identifier);
             if (enchantmentId.isEmpty()) {
                 return;
             }
@@ -217,7 +217,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 : matchedEnchantments;
     }
 
-    private boolean matchesClientSearch(String query, Holder<Enchantment> enchantment, ResourceLocation enchantmentId) {
+    private boolean matchesClientSearch(String query, Holder<Enchantment> enchantment, Identifier enchantmentId) {
         return EnchantmentSearchRules.matchesAnyCandidate(query, List.of(
                 enchantmentId.toString(),
                 enchantmentId.getNamespace(),

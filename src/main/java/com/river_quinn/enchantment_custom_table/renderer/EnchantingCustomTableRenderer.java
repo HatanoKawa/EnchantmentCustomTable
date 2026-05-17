@@ -4,9 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingTableLikeBlockEntity;
 import javax.annotation.Nullable;
-import net.minecraft.client.model.BookModel;
+import net.minecraft.client.model.object.book.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -79,7 +79,7 @@ public class EnchantingCustomTableRenderer<T extends EnchantingTableLikeBlockEnt
                 this.bookModel,
                 bookState,
                 poseStack,
-                BOOK_LOCATION.renderType(RenderType::entitySolid),
+                BOOK_LOCATION.renderType(RenderTypes::entitySolid),
                 renderState.lightCoords,
                 OverlayTexture.NO_OVERLAY,
                 -1,

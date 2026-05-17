@@ -13,7 +13,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -64,7 +64,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	private String searchQuery = "";
 	private String searchClientLanguage = "";
 	private boolean usingClientSearchMatches = false;
-	private Set<ResourceLocation> clientMatchedEnchantments = Set.of();
+	private Set<Identifier> clientMatchedEnchantments = Set.of();
 
 	public EnchantmentConversionMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
 		super(ModMenus.ENCHANTMENT_CONVERSION.get(), id);
@@ -130,8 +130,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 
 			@Override
-			public ResourceLocation getNoItemIcon() {
-				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+			public Identifier getNoItemIcon() {
+				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
 		});
 
@@ -160,8 +160,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 
 			@Override
-			public ResourceLocation getNoItemIcon() {
-				return ResourceLocation.withDefaultNamespace("container/slot/emerald");
+			public Identifier getNoItemIcon() {
+				return Identifier.withDefaultNamespace("container/slot/emerald");
 			}
 		});
 
@@ -183,8 +183,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 						}
 
 						@Override
-						public ResourceLocation getNoItemIcon() {
-							return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+						public Identifier getNoItemIcon() {
+							return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 						}
 
 						@Override
@@ -340,7 +340,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		return enchantedBook;
 	}
 
-	public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
+	public void setSearchQuery(String query, String clientLanguage, List<Identifier> matchedEnchantments) {
 		searchQuery = EnchantmentSearchRules.sanitizeSearchQuery(query);
 		searchClientLanguage = EnchantmentSearchRules.sanitizeClientLanguage(clientLanguage);
 		usingClientSearchMatches = !EnchantmentSearchRules.isBlankSearch(searchQuery) && matchedEnchantments != null;
@@ -445,7 +445,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	private boolean matchesSearch(Holder<Enchantment> enchantment) {
-		Optional<ResourceLocation> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::location);
+		Optional<Identifier> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::identifier);
 		if (enchantmentId.isPresent() && usingClientSearchMatches && clientMatchedEnchantments.contains(enchantmentId.get())) {
 			return true;
 		}

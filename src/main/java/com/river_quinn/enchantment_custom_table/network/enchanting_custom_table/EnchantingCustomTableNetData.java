@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.river_quinn.enchantment_custom_table.EnchantmentCustomTable.MODID;
 
@@ -16,7 +16,7 @@ public record EnchantingCustomTableNetData(String operateType) implements Custom
     }
 
     public static final CustomPacketPayload.Type<EnchantingCustomTableNetData> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "enchanting_custom"));
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MODID, "enchanting_custom"));
 
     public static final StreamCodec<ByteBuf, EnchantingCustomTableNetData> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,

@@ -4,7 +4,7 @@ import com.river_quinn.enchantment_custom_table.block.entity.EnchantingTableLike
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -30,7 +30,7 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
                 .explosionResistance(3600));
     }
 
-    public EnchantingTableLikeBlock(ResourceLocation registryName) {
+    public EnchantingTableLikeBlock(Identifier registryName) {
         super(BlockBehaviour.Properties.of()
                 .setId(ResourceKey.create(Registries.BLOCK, registryName))
                 .lightLevel(blockState -> 15)
