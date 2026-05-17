@@ -68,7 +68,6 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        super.extractLabels(graphics, mouseX, mouseY);
         graphics.centeredText(
                 this.font,
                 generatePageText(),

@@ -317,7 +317,17 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		}
 
 		if (index > 1 && index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE) {
-			removeEnchantment(itemStackToOperate);
+			int enchantmentIndexInCache = EnchantmentTableRules.cacheIndexForGeneratedSlot(
+					index,
+					2,
+					currentPage,
+					ENCHANTED_BOOK_SLOT_SIZE
+			);
+			var hasRegenerated = removeEnchantment(itemStackToOperate);
+			if (!hasRegenerated && enchantmentIndexInCache < enchantmentsOnCurrentTool.size()) {
+				enchantmentsOnCurrentTool.set(enchantmentIndexInCache, ItemStack.EMPTY);
+				updateEnchantedBookSlots();
+			}
 		}
 		return itemstack;
 	}
