@@ -63,7 +63,7 @@ public class EnchantmentCustomTable
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
-        if (FMLEnvironment.dist.isClient()) {
+        if (FMLEnvironment.getDist().isClient()) {
             modEventBus.addListener(ModBlockEntityRenderers::register);
             modEventBus.addListener(ModScreens::register);
         }

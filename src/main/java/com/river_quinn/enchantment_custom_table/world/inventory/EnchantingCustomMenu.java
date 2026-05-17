@@ -440,7 +440,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	private final List<ItemStack> enchantmentsOnCurrentTool = new ArrayList<>();
 
 	public void exportAllEnchantments() {
-		if (world.isClientSide) {
+		if (world.isClientSide()) {
 			return;
 		}
 

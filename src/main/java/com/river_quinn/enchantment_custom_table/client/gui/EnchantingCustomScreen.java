@@ -2,6 +2,7 @@ package com.river_quinn.enchantment_custom_table.client.gui;
 
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.world.level.Level;
@@ -57,12 +58,12 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
     }
 
     @Override
-    public boolean keyPressed(int key, int b, int c) {
-        if (key == 256) {
+    public boolean keyPressed(KeyEvent event) {
+        if (event.key() == 256) {
             this.minecraft.player.closeContainer();
             return true;
         }
-        return super.keyPressed(key, b, c);
+        return super.keyPressed(event);
     }
 
     public String generatePageText() {
