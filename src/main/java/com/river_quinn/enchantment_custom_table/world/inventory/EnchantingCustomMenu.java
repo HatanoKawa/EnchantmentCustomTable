@@ -222,7 +222,6 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 
 			@Override
 			public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
-				super.setByPlayer(newStack, oldStack);
 				if (!newStack.isEmpty()) {
 					// 放置附魔书，同步添加工具上的附魔，并删除附加槽的附魔书，重新生成附魔书槽
 					addEnchantment(newStack, slot, true);
@@ -256,6 +255,13 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 						@Override
 						public ResourceLocation getNoItemIcon() {
 							return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+						}
+
+						@Override
+						public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
+							if (!newStack.isEmpty()) {
+								addEnchantment(newStack, slot);
+							}
 						}
 
 					}
