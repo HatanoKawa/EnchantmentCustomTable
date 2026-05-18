@@ -193,8 +193,11 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 						@Override
 						public void onTake(Player player, ItemStack stack) {
-							super.onTake(player, stack);
-							pickEnchantedBook();
+							if (!world.isClientSide()) {
+								pickEnchantedBook();
+								// Vanilla calls setChanged after onTake; refresh StackCopySlot's cache so it keeps the rebuilt result.
+								getItem();
+							}
 						}
 
 					}
@@ -425,9 +428,16 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	public void regenerateEnchantedBookSlot() {
-		List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
 		currentPage = 0;
+		rebuildEnchantedBookSlot();
+	}
+
+	private void rebuildEnchantedBookSlot() {
+		List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
 		totalPage = EnchantmentTableRules.calculatePageCount(enchantments.size(), ENCHANTED_BOOK_SLOT_SIZE, false);
+		if (currentPage >= totalPage) {
+			currentPage = Math.max(totalPage - 1, 0);
+		}
 		clearEnchantedBookSlot();
 		genEnchantedBookSlot();
 	}
@@ -485,7 +495,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 				Config.minimumEmeraldCost,
 				Config.minimumEmeraldBlockCost
 		);
-		genEnchantedBookSlot();
+		rebuildEnchantedBookSlot();
 		return true;
 	}
 }
