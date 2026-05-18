@@ -332,7 +332,7 @@ public class BasicGameTests {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
             EnchantmentConversionMenu menu = conversionMenu(helper, player);
             Holder<Enchantment> depthStrider = enchantment(helper, Enchantments.DEPTH_STRIDER);
-            ResourceLocation depthStriderId = enchantmentId(helper, depthStrider);
+            Identifier depthStriderId = enchantmentId(helper, depthStrider);
 
             menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK, 64));
             menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD_BLOCK, 64));
