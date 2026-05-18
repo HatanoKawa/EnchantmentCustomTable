@@ -47,6 +47,8 @@ public class BasicGameTests {
             new TestRegistration("functional_menus_bind_to_placed_blocks", 40, BasicGameTests::functionalMenusBindToPlacedBlocks),
             new TestRegistration("conversion_table_consumes_configured_payment_and_clears_results_when_exhausted", 40, BasicGameTests::conversionTableConsumesConfiguredPaymentAndClearsResultsWhenExhausted),
             new TestRegistration("conversion_table_search_filters_results_by_client_matched_ids", 40, BasicGameTests::conversionTableSearchFiltersResultsByClientMatchedIds),
+            new TestRegistration("conversion_table_refills_taken_result_slot_after_pick", 40, BasicGameTests::conversionTableRefillsTakenResultSlotAfterPick),
+            new TestRegistration("conversion_table_preserves_search_filter_after_pick", 40, BasicGameTests::conversionTablePreservesSearchFilterAfterPick),
             new TestRegistration("custom_table_splits_single_high_level_book_by_design", 40, BasicGameTests::customTableSplitsSingleHighLevelBookByDesign),
             new TestRegistration("custom_table_merges_duplicate_book_levels_without_vanilla_cap", 40, BasicGameTests::customTableMergesDuplicateBookLevelsWithoutVanillaCap),
             new TestRegistration("custom_table_quick_move_book_into_input_updates_tool", 40, BasicGameTests::customTableQuickMoveBookIntoInputUpdatesTool),
@@ -277,6 +279,96 @@ public class BasicGameTests {
             Config.convertMaxLevelBook = originalConvertMaxLevelBook;
         }
     }
+    public static void conversionTableRefillsTakenResultSlotAfterPick(GameTestHelper helper) {
+        helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
+
+        int originalEmeraldCost = Config.minimumEmeraldCost;
+        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
+        boolean originalConvertMaxLevelBook = Config.convertMaxLevelBook;
+        Config.minimumEmeraldCost = 0;
+        Config.minimumEmeraldBlockCost = 1;
+        Config.convertMaxLevelBook = true;
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantmentConversionMenu menu = conversionMenu(helper, player);
+
+            menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK, 64));
+            menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD_BLOCK, 64));
+
+            assertTrue(helper, menu.totalPage > 0, "Funded conversion table should generate result pages");
+            assertTrue(helper, menu.getSlot(2).getItem().is(Items.ENCHANTED_BOOK), "First result slot should start filled");
+            assertTrue(helper, menu.getSlot(3).getItem().is(Items.ENCHANTED_BOOK), "Second result slot should start filled");
+
+            ItemStack taken = menu.getSlot(2).safeTake(1, 1, player);
+
+            assertTrue(helper, taken.is(Items.ENCHANTED_BOOK), "Taking a result slot should return an enchanted book");
+            assertTrue(helper, menu.getSlot(0).getItem().getCount() == 63, "Taking a result should consume one normal book");
+            assertTrue(helper, menu.getSlot(1).getItem().getCount() == 63, "Taking a result should consume one emerald block");
+            assertTrue(helper, menu.getSlot(2).getItem().is(Items.ENCHANTED_BOOK), "Taken result slot should be refilled immediately");
+            assertTrue(helper, menu.getSlot(3).getItem().is(Items.ENCHANTED_BOOK), "Other visible result slots should remain filled");
+
+            helper.succeed();
+        } finally {
+            Config.minimumEmeraldCost = originalEmeraldCost;
+            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+            Config.convertMaxLevelBook = originalConvertMaxLevelBook;
+        }
+    }
+
+    public static void conversionTablePreservesSearchFilterAfterPick(GameTestHelper helper) {
+        helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
+
+        int originalEmeraldCost = Config.minimumEmeraldCost;
+        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
+        boolean originalConvertMaxLevelBook = Config.convertMaxLevelBook;
+        Config.minimumEmeraldCost = 0;
+        Config.minimumEmeraldBlockCost = 1;
+        Config.convertMaxLevelBook = true;
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantmentConversionMenu menu = conversionMenu(helper, player);
+            Holder<Enchantment> depthStrider = enchantment(helper, Enchantments.DEPTH_STRIDER);
+            ResourceLocation depthStriderId = enchantmentId(helper, depthStrider);
+
+            menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK, 64));
+            menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD_BLOCK, 64));
+            menu.setSearchQuery("深海", "zh_cn", List.of(depthStriderId));
+
+            assertTrue(helper, menu.totalPage == 1, "Single search match should keep one conversion page");
+            assertEnchantmentIdLevel(
+                    helper,
+                    menu.getSlot(2).getItem(),
+                    depthStriderId,
+                    depthStrider.value().getMaxLevel(),
+                    "Filtered conversion result should start as the client-matched enchantment"
+            );
+            assertTrue(helper, menu.getSlot(3).getItem().isEmpty(), "Search-filtered conversion results should not show unrelated enchantments");
+
+            ItemStack taken = menu.getSlot(2).safeTake(1, 1, player);
+
+            assertTrue(helper, taken.is(Items.ENCHANTED_BOOK), "Taking a filtered result should return an enchanted book");
+            assertTrue(helper, menu.getSlot(0).getItem().getCount() == 63, "Taking a filtered result should consume one normal book");
+            assertTrue(helper, menu.getSlot(1).getItem().getCount() == 63, "Taking a filtered result should consume one emerald block");
+            assertTrue(helper, menu.totalPage == 1, "Taking a filtered result should preserve the search page count");
+            assertEnchantmentIdLevel(
+                    helper,
+                    menu.getSlot(2).getItem(),
+                    depthStriderId,
+                    depthStrider.value().getMaxLevel(),
+                    "Taking a filtered result should refill with the same filtered enchantment"
+            );
+            assertTrue(helper, menu.getSlot(3).getItem().isEmpty(), "Taking a filtered result should not repopulate unrelated enchantments");
+
+            helper.succeed();
+        } finally {
+            Config.minimumEmeraldCost = originalEmeraldCost;
+            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+            Config.convertMaxLevelBook = originalConvertMaxLevelBook;
+        }
+    }
+
     public static void customTableSplitsSingleHighLevelBookByDesign(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
