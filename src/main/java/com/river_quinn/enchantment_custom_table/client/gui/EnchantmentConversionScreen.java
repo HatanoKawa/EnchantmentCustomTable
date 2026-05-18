@@ -172,7 +172,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
 
         lastSentSearchQuery = pendingSearchQuery;
         String clientLanguage = getClientLanguage();
-        List<ResourceLocation> matchedEnchantments = findClientLocalizedMatches(pendingSearchQuery);
+        List<Identifier> matchedEnchantments = findClientLocalizedMatches(pendingSearchQuery);
         menuContainer.setSearchQuery(pendingSearchQuery, clientLanguage, matchedEnchantments);
         ClientPacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
                 EnchantmentConversionTableNetData.OperateType.SEARCH.name(),
