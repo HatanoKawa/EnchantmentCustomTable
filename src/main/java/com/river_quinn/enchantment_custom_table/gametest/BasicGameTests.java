@@ -300,7 +300,9 @@ public class BasicGameTests {
             assertTrue(helper, menu.getSlot(2).getItem().is(Items.ENCHANTED_BOOK), "First result slot should start filled");
             assertTrue(helper, menu.getSlot(3).getItem().is(Items.ENCHANTED_BOOK), "Second result slot should start filled");
 
-            ItemStack taken = menu.getSlot(2).safeTake(1, 1, player);
+            player.containerMenu = menu;
+            menu.clicked(2, 0, ClickType.PICKUP, player);
+            ItemStack taken = menu.getCarried();
 
             assertTrue(helper, taken.is(Items.ENCHANTED_BOOK), "Taking a result slot should return an enchanted book");
             assertTrue(helper, menu.getSlot(0).getItem().getCount() == 63, "Taking a result should consume one normal book");
@@ -346,7 +348,9 @@ public class BasicGameTests {
             );
             assertTrue(helper, menu.getSlot(3).getItem().isEmpty(), "Search-filtered conversion results should not show unrelated enchantments");
 
-            ItemStack taken = menu.getSlot(2).safeTake(1, 1, player);
+            player.containerMenu = menu;
+            menu.clicked(2, 0, ClickType.PICKUP, player);
+            ItemStack taken = menu.getCarried();
 
             assertTrue(helper, taken.is(Items.ENCHANTED_BOOK), "Taking a filtered result should return an enchanted book");
             assertTrue(helper, menu.getSlot(0).getItem().getCount() == 63, "Taking a filtered result should consume one normal book");

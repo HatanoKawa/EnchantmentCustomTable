@@ -195,6 +195,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 						public void onTake(Player player, ItemStack stack) {
 							if (!world.isClientSide()) {
 								pickEnchantedBook();
+								// Vanilla calls setChanged after onTake; refresh StackCopySlot's cache so it keeps the rebuilt result.
+								getItem();
 							}
 						}
 
