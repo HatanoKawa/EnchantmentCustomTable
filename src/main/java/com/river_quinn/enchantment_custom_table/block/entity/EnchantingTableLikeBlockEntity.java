@@ -103,7 +103,7 @@ public abstract class EnchantingTableLikeBlockEntity extends BlockEntity impleme
 
     @Override
     public Component getDisplayName() {
-        return null;
+        return Component.translatable("container.enchantment_custom_table.enchanting_table_like");
     }
 
     @Override
