@@ -301,7 +301,7 @@ public class BasicGameTests {
             assertTrue(helper, menu.getSlot(3).getItem().is(Items.ENCHANTED_BOOK), "Second result slot should start filled");
 
             player.containerMenu = menu;
-            menu.clicked(2, 0, ClickType.PICKUP, player);
+            menu.clicked(2, 0, ContainerInput.PICKUP, player);
             ItemStack taken = menu.getCarried();
 
             assertTrue(helper, taken.is(Items.ENCHANTED_BOOK), "Taking a result slot should return an enchanted book");
@@ -332,7 +332,7 @@ public class BasicGameTests {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
             EnchantmentConversionMenu menu = conversionMenu(helper, player);
             Holder<Enchantment> depthStrider = enchantment(helper, Enchantments.DEPTH_STRIDER);
-            ResourceLocation depthStriderId = enchantmentId(helper, depthStrider);
+            Identifier depthStriderId = enchantmentId(helper, depthStrider);
 
             menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK, 64));
             menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD_BLOCK, 64));
@@ -349,7 +349,7 @@ public class BasicGameTests {
             assertTrue(helper, menu.getSlot(3).getItem().isEmpty(), "Search-filtered conversion results should not show unrelated enchantments");
 
             player.containerMenu = menu;
-            menu.clicked(2, 0, ClickType.PICKUP, player);
+            menu.clicked(2, 0, ContainerInput.PICKUP, player);
             ItemStack taken = menu.getCarried();
 
             assertTrue(helper, taken.is(Items.ENCHANTED_BOOK), "Taking a filtered result should return an enchanted book");
