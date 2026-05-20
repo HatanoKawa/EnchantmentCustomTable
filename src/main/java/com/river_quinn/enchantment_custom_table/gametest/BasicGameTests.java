@@ -659,7 +659,7 @@ public class BasicGameTests {
             menu.getSlot(0).setByPlayer(enchantedBook(sharpness, 5));
             player.containerMenu = menu;
 
-            menu.clicked(2, 0, ClickType.PICKUP, player);
+            menu.clicked(2, 0, ContainerInput.PICKUP, player);
 
             assertTrue(helper, player.containerMenu.getCarried().is(Items.ENCHANTED_BOOK), "Taking a split book should put that book on the cursor");
             assertEnchantmentLevel(helper, player.containerMenu.getCarried(), sharpness, 4, "Taken split book should be one level lower than the source");
