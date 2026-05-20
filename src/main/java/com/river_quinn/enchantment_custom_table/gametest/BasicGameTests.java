@@ -102,10 +102,10 @@ public class BasicGameTests {
 
         int originalEmeraldCost = Config.minimumEmeraldCost;
         int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        boolean originalConvertMaxLevelBook = Config.convertMaxLevelBook;
+        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
         Config.minimumEmeraldCost = 3;
         Config.minimumEmeraldBlockCost = 0;
-        Config.convertMaxLevelBook = true;
+        Config.convertOnlyLevelOneBook = false;
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -129,7 +129,7 @@ public class BasicGameTests {
         } finally {
             Config.minimumEmeraldCost = originalEmeraldCost;
             Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
-            Config.convertMaxLevelBook = originalConvertMaxLevelBook;
+            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
         }
     }
 
@@ -139,10 +139,10 @@ public class BasicGameTests {
 
         int originalEmeraldCost = Config.minimumEmeraldCost;
         int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        boolean originalConvertMaxLevelBook = Config.convertMaxLevelBook;
+        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
         Config.minimumEmeraldCost = 1;
         Config.minimumEmeraldBlockCost = 0;
-        Config.convertMaxLevelBook = true;
+        Config.convertOnlyLevelOneBook = false;
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -174,7 +174,44 @@ public class BasicGameTests {
         } finally {
             Config.minimumEmeraldCost = originalEmeraldCost;
             Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
-            Config.convertMaxLevelBook = originalConvertMaxLevelBook;
+            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void conversionTableCanBeLimitedToLevelOneBooks(GameTestHelper helper) {
+        helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
+
+        int originalEmeraldCost = Config.minimumEmeraldCost;
+        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
+        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
+        Config.minimumEmeraldCost = 1;
+        Config.minimumEmeraldBlockCost = 0;
+        Config.convertOnlyLevelOneBook = true;
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantmentConversionMenu menu = conversionMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ResourceLocation sharpnessId = enchantmentId(helper, sharpness);
+
+            menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK));
+            menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD));
+            menu.setSearchQuery("localized-sharpness", "zh_cn", List.of(sharpnessId));
+
+            assertEnchantmentIdLevel(
+                    helper,
+                    menu.getSlot(2).getItem(),
+                    sharpnessId,
+                    1,
+                    "Level-one conversion mode should generate level-one enchanted books"
+            );
+
+            helper.succeed();
+        } finally {
+            Config.minimumEmeraldCost = originalEmeraldCost;
+            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
         }
     }
 
@@ -182,43 +219,266 @@ public class BasicGameTests {
     public static void customTableSplitsSingleHighLevelBookByDesign(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        Player player = helper.makeMockPlayer(GameType.CREATIVE);
-        EnchantingCustomMenu menu = enchantingMenu(helper, player);
-        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+        ConfigSnapshot config = useMergeConfig(false, false);
 
-        menu.getSlot(0).setByPlayer(enchantedBook(sharpness, 8));
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
 
-        helper.assertTrue(menu.totalPage == 1, "High-level single-enchantment books should generate one result page");
-        assertEnchantmentLevel(helper, menu.getSlot(2).getItem(), sharpness, 4, "First split book should contain half the source level");
-        assertEnchantmentLevel(helper, menu.getSlot(3).getItem(), sharpness, 2, "Second split book should contain the next binary level");
-        assertEnchantmentLevel(helper, menu.getSlot(4).getItem(), sharpness, 1, "Third split book should contain the final unique level");
-        helper.assertTrue(menu.getSlot(5).getItem().isEmpty(), "No duplicate split book should be generated");
+            menu.getSlot(0).setByPlayer(enchantedBook(sharpness, 8));
 
-        helper.succeed();
+            helper.assertTrue(menu.totalPage == 1, "High-level single-enchantment books should generate one result page");
+            assertEnchantmentLevel(helper, menu.getSlot(2).getItem(), sharpness, 4, "First split book should contain half the source level");
+            assertEnchantmentLevel(helper, menu.getSlot(3).getItem(), sharpness, 2, "Second split book should contain the next binary level");
+            assertEnchantmentLevel(helper, menu.getSlot(4).getItem(), sharpness, 1, "Third split book should contain the final unique level");
+            helper.assertTrue(menu.getSlot(5).getItem().isEmpty(), "No duplicate split book should be generated");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
     }
 
     @GameTest(template = "gametest/empty", timeoutTicks = 40)
     public static void customTableMergesDuplicateBookLevelsWithoutVanillaCap(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        Player player = helper.makeMockPlayer(GameType.CREATIVE);
-        EnchantingCustomMenu menu = enchantingMenu(helper, player);
-        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
-        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
-        sword.enchant(sharpness, 4);
+        ConfigSnapshot config = useMergeConfig(false, false);
 
-        menu.getSlot(0).setByPlayer(sword);
-        menu.addEnchantment(enchantedBook(sharpness, 4), 1, true);
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 4);
 
-        assertEnchantmentLevel(
-                helper,
-                menu.getSlot(0).getItem(),
-                sharpness,
-                8,
-                "Custom table should add duplicate enchantment levels instead of enforcing vanilla max level"
-        );
+            menu.getSlot(0).setByPlayer(sword);
+            helper.assertTrue(
+                    menu.addEnchantment(enchantedBook(sharpness, 4), 1, true),
+                    "Default merge mode should allow direct over-cap merges"
+            );
 
-        helper.succeed();
+            assertEnchantmentLevel(
+                    helper,
+                    menu.getSlot(0).getItem(),
+                    sharpness,
+                    8,
+                    "Custom table should add duplicate enchantment levels instead of enforcing vanilla max level"
+            );
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableRejectsOvercapMergeWhenLevelLimitIsEnforced(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(true, false);
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 4);
+            ItemStack book = enchantedBook(sharpness, 4);
+
+            menu.getSlot(0).setByPlayer(sword);
+
+            helper.assertTrue(!menu.getSlot(1).mayPlace(book), "Input slot should reject over-cap duplicate books when level limits are enforced");
+            helper.assertTrue(!menu.addEnchantment(book, 1, true), "Core add path should reject over-cap duplicate books when level limits are enforced");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 4, "Rejected merge should leave the tool unchanged");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableIncrementalMergeAddsOneForSameLevel(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(false, true);
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 5);
+
+            menu.getSlot(0).setByPlayer(sword);
+
+            helper.assertTrue(menu.addEnchantment(enchantedBook(sharpness, 5), 1, true), "Incremental merge should accept same-level duplicate books");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 6, "Incremental merge should add one level");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableIncrementalMergeRejectsDifferentLevel(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(false, true);
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 5);
+            ItemStack book = enchantedBook(sharpness, 4);
+
+            menu.getSlot(0).setByPlayer(sword);
+
+            helper.assertTrue(!menu.getSlot(1).mayPlace(book), "Input slot should reject different-level duplicate books in incremental mode");
+            helper.assertTrue(!menu.addEnchantment(book, 1, true), "Core add path should reject different-level duplicate books in incremental mode");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 5, "Rejected incremental merge should leave the tool unchanged");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableIncrementalMergeObeysVanillaCapWhenLevelLimitIsEnforced(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(true, true);
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 5);
+            ItemStack book = enchantedBook(sharpness, 5);
+
+            menu.getSlot(0).setByPlayer(sword);
+
+            helper.assertTrue(!menu.getSlot(1).mayPlace(book), "Input slot should reject incremental merges above the vanilla cap when limits are enforced");
+            helper.assertTrue(!menu.addEnchantment(book, 1, true), "Core add path should reject incremental merges above the vanilla cap when limits are enforced");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 5, "Rejected over-cap incremental merge should leave the tool unchanged");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableIncrementalMergeAllowsNewEnchantments(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(true, true);
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            Holder<Enchantment> unbreaking = enchantment(helper, Enchantments.UNBREAKING);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 5);
+
+            menu.getSlot(0).setByPlayer(sword);
+
+            helper.assertTrue(menu.addEnchantment(enchantedBook(unbreaking, 3), 1, true), "Incremental mode should not block new enchantments");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 5, "Existing enchantment should remain unchanged");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), unbreaking, 3, "New enchantment should be added normally");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableRejectsWholeMultiEnchantmentBookWhenOneEntryIsInvalid(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(false, true);
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            Holder<Enchantment> unbreaking = enchantment(helper, Enchantments.UNBREAKING);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 5);
+            ItemStack book = enchantedBook(sharpness, 4);
+            book.enchant(unbreaking, 3);
+
+            menu.getSlot(0).setByPlayer(sword);
+
+            helper.assertTrue(!menu.addEnchantment(book, 1, true), "A multi-enchantment book should be rejected atomically if any entry is invalid");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 5, "Invalid multi-book should not change existing enchantments");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), unbreaking, 0, "Invalid multi-book should not add otherwise valid new enchantments");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableIncrementalModeSplitsSingleBookIntoMinusOnePair(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(false, true);
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+
+            menu.getSlot(0).setByPlayer(enchantedBook(sharpness, 8));
+
+            helper.assertTrue(menu.totalPage == 1, "High-level single-enchantment books should generate one result page");
+            assertEnchantmentLevel(helper, menu.getSlot(2).getItem(), sharpness, 7, "First incremental split book should be one level lower");
+            assertEnchantmentLevel(helper, menu.getSlot(3).getItem(), sharpness, 7, "Second incremental split book should be one level lower");
+            helper.assertTrue(menu.getSlot(4).getItem().isEmpty(), "Incremental split should only generate the matching pair");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableIncrementalModeTakingSplitBookOnlyDropsSourceBookOneLevel(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(false, true);
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+
+            menu.getSlot(0).setByPlayer(enchantedBook(sharpness, 5));
+            player.containerMenu = menu;
+
+            menu.clicked(2, 0, ClickType.PICKUP, player);
+
+            helper.assertTrue(player.containerMenu.getCarried().is(Items.ENCHANTED_BOOK), "Taking a split book should put that book on the cursor");
+            assertEnchantmentLevel(helper, player.containerMenu.getCarried(), sharpness, 4, "Taken split book should be one level lower than the source");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 4, "Source book should only drop by one level in incremental split mode");
+            assertEnchantmentLevel(helper, menu.getSlot(2).getItem(), sharpness, 3, "Generated split books should refresh from the new source level");
+            assertEnchantmentLevel(helper, menu.getSlot(3).getItem(), sharpness, 3, "Generated split pair should refresh from the new source level");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
     }
 
     @GameTest(template = "gametest/empty", timeoutTicks = 40)
@@ -273,6 +533,23 @@ public class BasicGameTests {
         ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
         book.enchant(enchantment, level);
         return book;
+    }
+
+    private static ConfigSnapshot useMergeConfig(boolean enforceEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {
+        ConfigSnapshot snapshot = new ConfigSnapshot(
+                Config.enforceEnchantmentLevelLimit,
+                Config.incrementalSameLevelMerge
+        );
+        Config.enforceEnchantmentLevelLimit = enforceEnchantmentLevelLimit;
+        Config.incrementalSameLevelMerge = incrementalSameLevelMerge;
+        return snapshot;
+    }
+
+    private record ConfigSnapshot(boolean enforceEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {
+        private void restore() {
+            Config.enforceEnchantmentLevelLimit = enforceEnchantmentLevelLimit;
+            Config.incrementalSameLevelMerge = incrementalSameLevelMerge;
+        }
     }
 
     private static void assertEnchantmentLevel(
