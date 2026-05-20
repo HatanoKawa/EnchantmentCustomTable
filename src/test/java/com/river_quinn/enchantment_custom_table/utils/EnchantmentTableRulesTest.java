@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EnchantmentTableRulesTest {
     private static final EnchantmentTableRules.MergeOptions DIRECT_IGNORE_LIMITS =
-            new EnchantmentTableRules.MergeOptions(true, false);
-    private static final EnchantmentTableRules.MergeOptions DIRECT_ENFORCE_LIMITS =
             new EnchantmentTableRules.MergeOptions(false, false);
+    private static final EnchantmentTableRules.MergeOptions DIRECT_ENFORCE_LIMITS =
+            new EnchantmentTableRules.MergeOptions(true, false);
     private static final EnchantmentTableRules.MergeOptions INCREMENTAL_IGNORE_LIMITS =
-            new EnchantmentTableRules.MergeOptions(true, true);
-    private static final EnchantmentTableRules.MergeOptions INCREMENTAL_ENFORCE_LIMITS =
             new EnchantmentTableRules.MergeOptions(false, true);
+    private static final EnchantmentTableRules.MergeOptions INCREMENTAL_ENFORCE_LIMITS =
+            new EnchantmentTableRules.MergeOptions(true, true);
 
     @Test
     void calculatePageCountReturnsZeroForEmptyListsByDefault() {

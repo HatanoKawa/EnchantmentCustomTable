@@ -22,7 +22,7 @@ public final class EnchantmentTableRules {
     public record EnchantmentLevel(Holder<Enchantment> enchantment, int level) {
     }
 
-    public record MergeOptions(boolean ignoreLevelLimit, boolean incrementalSameLevelMerge) {
+    public record MergeOptions(boolean enforceLevelLimit, boolean incrementalSameLevelMerge) {
     }
 
     public record MergeResult(boolean allowed, ItemEnchantments enchantments) {
@@ -171,7 +171,7 @@ public final class EnchantmentTableRules {
                 currentEnchantments,
                 additions,
                 matcher,
-                new MergeOptions(false, false)
+                new MergeOptions(true, false)
         ).allowed();
     }
 
@@ -197,7 +197,7 @@ public final class EnchantmentTableRules {
             resultLevel = currentLevel + addedLevel;
         }
 
-        if (!options.ignoreLevelLimit() && resultLevel > maxLevel) {
+        if (options.enforceLevelLimit() && resultLevel > maxLevel) {
             return OptionalInt.empty();
         }
         return OptionalInt.of(resultLevel);
@@ -241,7 +241,7 @@ public final class EnchantmentTableRules {
                 baseEnchantments,
                 additions,
                 matcher,
-                new MergeOptions(true, false)
+                new MergeOptions(false, false)
         ).enchantments();
     }
 

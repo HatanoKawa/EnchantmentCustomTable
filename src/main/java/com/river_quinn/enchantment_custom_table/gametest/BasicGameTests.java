@@ -102,10 +102,10 @@ public class BasicGameTests {
 
         int originalEmeraldCost = Config.minimumEmeraldCost;
         int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        boolean originalConvertMaxLevelBook = Config.convertMaxLevelBook;
+        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
         Config.minimumEmeraldCost = 3;
         Config.minimumEmeraldBlockCost = 0;
-        Config.convertMaxLevelBook = true;
+        Config.convertOnlyLevelOneBook = false;
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -129,7 +129,7 @@ public class BasicGameTests {
         } finally {
             Config.minimumEmeraldCost = originalEmeraldCost;
             Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
-            Config.convertMaxLevelBook = originalConvertMaxLevelBook;
+            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
         }
     }
 
@@ -139,10 +139,10 @@ public class BasicGameTests {
 
         int originalEmeraldCost = Config.minimumEmeraldCost;
         int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        boolean originalConvertMaxLevelBook = Config.convertMaxLevelBook;
+        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
         Config.minimumEmeraldCost = 1;
         Config.minimumEmeraldBlockCost = 0;
-        Config.convertMaxLevelBook = true;
+        Config.convertOnlyLevelOneBook = false;
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -174,7 +174,44 @@ public class BasicGameTests {
         } finally {
             Config.minimumEmeraldCost = originalEmeraldCost;
             Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
-            Config.convertMaxLevelBook = originalConvertMaxLevelBook;
+            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void conversionTableCanBeLimitedToLevelOneBooks(GameTestHelper helper) {
+        helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
+
+        int originalEmeraldCost = Config.minimumEmeraldCost;
+        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
+        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
+        Config.minimumEmeraldCost = 1;
+        Config.minimumEmeraldBlockCost = 0;
+        Config.convertOnlyLevelOneBook = true;
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantmentConversionMenu menu = conversionMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ResourceLocation sharpnessId = enchantmentId(helper, sharpness);
+
+            menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK));
+            menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD));
+            menu.setSearchQuery("localized-sharpness", "zh_cn", List.of(sharpnessId));
+
+            assertEnchantmentIdLevel(
+                    helper,
+                    menu.getSlot(2).getItem(),
+                    sharpnessId,
+                    1,
+                    "Level-one conversion mode should generate level-one enchanted books"
+            );
+
+            helper.succeed();
+        } finally {
+            Config.minimumEmeraldCost = originalEmeraldCost;
+            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
         }
     }
 
@@ -182,7 +219,7 @@ public class BasicGameTests {
     public static void customTableSplitsSingleHighLevelBookByDesign(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        ConfigSnapshot config = useMergeConfig(true, false);
+        ConfigSnapshot config = useMergeConfig(false, false);
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -207,7 +244,7 @@ public class BasicGameTests {
     public static void customTableMergesDuplicateBookLevelsWithoutVanillaCap(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        ConfigSnapshot config = useMergeConfig(true, false);
+        ConfigSnapshot config = useMergeConfig(false, false);
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -240,7 +277,7 @@ public class BasicGameTests {
     public static void customTableRejectsOvercapMergeWhenLevelLimitIsEnforced(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        ConfigSnapshot config = useMergeConfig(false, false);
+        ConfigSnapshot config = useMergeConfig(true, false);
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -266,7 +303,7 @@ public class BasicGameTests {
     public static void customTableIncrementalMergeAddsOneForSameLevel(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        ConfigSnapshot config = useMergeConfig(true, true);
+        ConfigSnapshot config = useMergeConfig(false, true);
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -290,7 +327,7 @@ public class BasicGameTests {
     public static void customTableIncrementalMergeRejectsDifferentLevel(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        ConfigSnapshot config = useMergeConfig(true, true);
+        ConfigSnapshot config = useMergeConfig(false, true);
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -316,7 +353,7 @@ public class BasicGameTests {
     public static void customTableIncrementalMergeObeysVanillaCapWhenLevelLimitIsEnforced(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        ConfigSnapshot config = useMergeConfig(false, true);
+        ConfigSnapshot config = useMergeConfig(true, true);
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -342,7 +379,7 @@ public class BasicGameTests {
     public static void customTableIncrementalMergeAllowsNewEnchantments(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        ConfigSnapshot config = useMergeConfig(false, true);
+        ConfigSnapshot config = useMergeConfig(true, true);
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -368,7 +405,7 @@ public class BasicGameTests {
     public static void customTableRejectsWholeMultiEnchantmentBookWhenOneEntryIsInvalid(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        ConfigSnapshot config = useMergeConfig(true, true);
+        ConfigSnapshot config = useMergeConfig(false, true);
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -396,7 +433,7 @@ public class BasicGameTests {
     public static void customTableIncrementalModeSplitsSingleBookIntoMinusOnePair(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        ConfigSnapshot config = useMergeConfig(true, true);
+        ConfigSnapshot config = useMergeConfig(false, true);
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -420,7 +457,7 @@ public class BasicGameTests {
     public static void customTableIncrementalModeTakingSplitBookOnlyDropsSourceBookOneLevel(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
-        ConfigSnapshot config = useMergeConfig(true, true);
+        ConfigSnapshot config = useMergeConfig(false, true);
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -498,19 +535,19 @@ public class BasicGameTests {
         return book;
     }
 
-    private static ConfigSnapshot useMergeConfig(boolean ignoreEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {
+    private static ConfigSnapshot useMergeConfig(boolean enforceEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {
         ConfigSnapshot snapshot = new ConfigSnapshot(
-                Config.ignoreEnchantmentLevelLimit,
+                Config.enforceEnchantmentLevelLimit,
                 Config.incrementalSameLevelMerge
         );
-        Config.ignoreEnchantmentLevelLimit = ignoreEnchantmentLevelLimit;
+        Config.enforceEnchantmentLevelLimit = enforceEnchantmentLevelLimit;
         Config.incrementalSameLevelMerge = incrementalSameLevelMerge;
         return snapshot;
     }
 
-    private record ConfigSnapshot(boolean ignoreEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {
+    private record ConfigSnapshot(boolean enforceEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {
         private void restore() {
-            Config.ignoreEnchantmentLevelLimit = ignoreEnchantmentLevelLimit;
+            Config.enforceEnchantmentLevelLimit = enforceEnchantmentLevelLimit;
             Config.incrementalSameLevelMerge = incrementalSameLevelMerge;
         }
     }

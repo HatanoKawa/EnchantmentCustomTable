@@ -427,7 +427,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 
 	private EnchantmentTableRules.MergeOptions mergeOptions() {
 		return new EnchantmentTableRules.MergeOptions(
-				Config.ignoreEnchantmentLevelLimit,
+				Config.enforceEnchantmentLevelLimit,
 				Config.incrementalSameLevelMerge
 		);
 	}
