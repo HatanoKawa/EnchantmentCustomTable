@@ -28,8 +28,13 @@ public class Config
             .defineInRange("minimumEmeraldBlockCost", 4, 0, 64);
 
     private static final ModConfigSpec.BooleanValue IGNORE_ENCHANTMENT_LEVEL_LIMIT = BUILDER
-            .comment("Ignore enchantment level limit when using enchantment conversion table")
+            .comment("Ignore enchantment level limit when adding enchantments with the custom enchanting table")
             .define("ignoreEnchantmentLevelLimit", true);
+
+    private static final ModConfigSpec.BooleanValue INCREMENTAL_SAME_LEVEL_MERGE = BUILDER
+            .comment("When enabled, duplicate enchantments can only be merged if the current level and the added book level are the same.")
+            .comment("A successful duplicate merge increases the level by 1 instead of adding both levels directly. New enchantments are still added normally.")
+            .define("incrementalSameLevelMerge", false);
 
 //    private static final ModConfigSpec.BooleanValue ENABLE_XP_REQUIREMENT = BUILDER
 //            .comment("Enable XP requirement when using enchanting custom table")
@@ -42,11 +47,12 @@ public class Config
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
-    public static int minimumEmeraldCost;
-    public static int minimumEmeraldBlockCost;
-    public static boolean ignoreEnchantmentLevelLimit;
+    public static int minimumEmeraldCost = 36;
+    public static int minimumEmeraldBlockCost = 4;
+    public static boolean ignoreEnchantmentLevelLimit = true;
+    public static boolean incrementalSameLevelMerge = false;
     public static boolean enableXpRequirement;
-    public static boolean convertMaxLevelBook;
+    public static boolean convertMaxLevelBook = true;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)
@@ -54,6 +60,7 @@ public class Config
         minimumEmeraldCost = MINIMUM_LAPIS_COST.get();
         minimumEmeraldBlockCost = MINIMUM_LAPIS_BLOCK_COST.get();
         ignoreEnchantmentLevelLimit = IGNORE_ENCHANTMENT_LEVEL_LIMIT.get();
+        incrementalSameLevelMerge = INCREMENTAL_SAME_LEVEL_MERGE.get();
 //        enableXpRequirement = ENABLE_XP_REQUIREMENT.get();
         convertMaxLevelBook = CONVERT_MAX_LEVEL_BOOK.get();
     }
