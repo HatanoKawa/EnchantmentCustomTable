@@ -336,7 +336,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public ItemStack getEnchantedBook(Holder<Enchantment> enchantment) {
 		ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
 
-		int enchantmentLevel = Config.convertMaxLevelBook ? enchantment.value().getMaxLevel() : 1;
+		int enchantmentLevel = Config.convertOnlyLevelOneBook ? 1 : enchantment.value().getMaxLevel();
 		enchantedBook.enchant(enchantment, enchantmentLevel);
 
 		return enchantedBook;

@@ -211,7 +211,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 			public boolean mayPlace(ItemStack stack) {
 				return Items.ENCHANTED_BOOK == stack.getItem()
 						&& !itemHandler.getStackInSlot(0).isEmpty()
-						&& (Config.ignoreEnchantmentLevelLimit || checkCanPlaceEnchantedBook(stack));
+						&& checkCanPlaceEnchantedBook(stack);
 //						&& EnchantmentUtils.checkSatisfyXpRequirement(stack, entity);
 			}
 
@@ -248,7 +248,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 						public boolean mayPlace(ItemStack stack) {
 							return Items.ENCHANTED_BOOK == stack.getItem()
 									&& !itemHandler.getStackInSlot(0).isEmpty()
-									&& (Config.ignoreEnchantmentLevelLimit || checkCanPlaceEnchantedBook(stack));
+									&& checkCanPlaceEnchantedBook(stack);
 //									&& EnchantmentUtils.checkSatisfyXpRequirement(stack, entity);
 						}
 
@@ -421,10 +421,18 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	public boolean checkCanPlaceEnchantedBook(ItemStack stack) {
 		var itemToEnchant = itemHandler.getStackInSlot(0);
 		var itemEnchantmentsOnTool = EnchantmentUtils.getEnchantments(itemToEnchant);
-		return EnchantmentTableRules.canAddWithinMaxLevels(
+		return EnchantmentTableRules.tryMergeEnchantments(
 				itemEnchantmentsOnTool,
 				getEnchantmentLevelsFromEnchantedBook(stack),
-				this::isSameEnchantment
+				this::isSameEnchantment,
+				mergeOptions()
+		).allowed();
+	}
+
+	private EnchantmentTableRules.MergeOptions mergeOptions() {
+		return new EnchantmentTableRules.MergeOptions(
+				Config.enforceEnchantmentLevelLimit,
+				Config.incrementalSameLevelMerge
 		);
 	}
 
@@ -568,8 +576,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				// 如果附魔书上的唯一附魔等级大于 1，则需要拆分附魔等级
 				// 如果附魔书上的唯一附魔等级等于 1，则不生成附魔书槽
 				if (enchantmentLevel > 1) {
-					// 二分法拆分附魔等级
-					for (Integer level : EnchantmentTableRules.splitSingleEnchantmentLevels(enchantmentLevel)) {
+					for (Integer level : EnchantmentTableRules.splitSingleEnchantmentLevels(enchantmentLevel, mergeOptions())) {
 						ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
 						enchantedBook.enchant(enchantment, level);
 						enchantmentsOnCurrentTool.add(enchantedBook);
@@ -599,28 +606,32 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		totalPage = currentTotalPage;
 	}
 
-	public void addEnchantment(ItemStack itemStack, int slotIndex) {
-		addEnchantment(itemStack, slotIndex, false);
+	public boolean addEnchantment(ItemStack itemStack, int slotIndex) {
+		return addEnchantment(itemStack, slotIndex, false);
 	}
 
-	public void addEnchantment(ItemStack itemStackToPut, int slotIndex, boolean forceRegenerateEnchantedBookStore) {
+	public boolean addEnchantment(ItemStack itemStackToPut, int slotIndex, boolean forceRegenerateEnchantedBookStore) {
 		var enchantmentInstances = getEnchantmentLevelsFromEnchantedBook(itemStackToPut);
 		if (enchantmentInstances.isEmpty()) {
-			return;
+			return false;
 		}
 
 		ItemStack toolItemStack = itemHandler.getStackInSlot(0);
 		if (toolItemStack.isEmpty()) {
-			return;
+			return false;
 		}
 		//region 将附魔应用到待附魔物品槽中的物品
 		ItemEnchantments itemEnchantments = EnchantmentUtils.getEnchantments(toolItemStack);
-		ItemEnchantments resultEnchantments = EnchantmentTableRules.mergeEnchantments(
+		EnchantmentTableRules.MergeResult result = EnchantmentTableRules.tryMergeEnchantments(
 				itemEnchantments,
 				enchantmentInstances,
-				this::isSameEnchantment
+				this::isSameEnchantment,
+				mergeOptions()
 		);
-		toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), resultEnchantments);
+		if (!result.allowed()) {
+			return false;
+		}
+		toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), result.enchantments());
 		// endregion
 
 		// 新增附魔，重新生成所有附魔书缓存并更新附魔书槽
@@ -628,6 +639,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		updateEnchantedBookSlots();
 
 		playUseSound();
+		return true;
 	}
 
 	public boolean removeEnchantment(ItemStack itemStackToRemove) {
@@ -645,7 +657,8 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		ItemEnchantments resultEnchantments = EnchantmentTableRules.subtractEnchantments(
 				itemEnchantments,
 				enchantmentLevels,
-				this::isSameEnchantment
+				this::isSameEnchantment,
+				shouldUseIncrementalSingleBookSplitRemoval(toolItemStack, itemEnchantments, enchantmentLevels)
 		);
 		toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), resultEnchantments);
 		// endregion
@@ -669,6 +682,17 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 
 		playUseSound();
 		return hasRegenerated;
+	}
+
+	private boolean shouldUseIncrementalSingleBookSplitRemoval(
+			ItemStack toolItemStack,
+			ItemEnchantments itemEnchantments,
+			List<EnchantmentTableRules.EnchantmentLevel> removalEnchantments
+	) {
+		return Config.incrementalSameLevelMerge
+				&& toolItemStack.is(Items.ENCHANTED_BOOK)
+				&& itemEnchantments.size() == 1
+				&& removalEnchantments.size() == 1;
 	}
 
 	public void initMenu() {
