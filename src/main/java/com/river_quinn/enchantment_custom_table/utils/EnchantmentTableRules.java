@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.function.BiPredicate;
 
@@ -19,6 +20,12 @@ public final class EnchantmentTableRules {
     }
 
     public record EnchantmentLevel(Holder<Enchantment> enchantment, int level) {
+    }
+
+    public record MergeOptions(boolean enforceLevelLimit, boolean incrementalSameLevelMerge) {
+    }
+
+    public record MergeResult(boolean allowed, ItemEnchantments enchantments) {
     }
 
     public enum PaymentKind {
@@ -92,8 +99,20 @@ public final class EnchantmentTableRules {
     }
 
     public static List<Integer> splitSingleEnchantmentLevels(int sourceLevel) {
+        return splitSingleEnchantmentLevels(sourceLevel, false);
+    }
+
+    public static List<Integer> splitSingleEnchantmentLevels(int sourceLevel, MergeOptions options) {
+        return splitSingleEnchantmentLevels(sourceLevel, options.incrementalSameLevelMerge());
+    }
+
+    public static List<Integer> splitSingleEnchantmentLevels(int sourceLevel, boolean incrementalSameLevelMerge) {
         if (sourceLevel <= 1) {
             return List.of();
+        }
+
+        if (incrementalSameLevelMerge) {
+            return List.of(sourceLevel - 1, sourceLevel - 1);
         }
 
         List<Integer> levels = new ArrayList<>();
@@ -148,13 +167,69 @@ public final class EnchantmentTableRules {
             List<EnchantmentLevel> additions,
             BiPredicate<Holder<Enchantment>, Holder<Enchantment>> matcher
     ) {
-        for (EnchantmentLevel addition : additions) {
-            int currentLevel = getMatchingEnchantmentLevel(currentEnchantments, addition.enchantment(), matcher);
-            if (currentLevel + addition.level() > addition.enchantment().value().getMaxLevel()) {
-                return false;
-            }
+        return tryMergeEnchantments(
+                currentEnchantments,
+                additions,
+                matcher,
+                new MergeOptions(true, false)
+        ).allowed();
+    }
+
+    public static OptionalInt calculateMergedEnchantmentLevel(
+            int currentLevel,
+            int addedLevel,
+            int maxLevel,
+            MergeOptions options
+    ) {
+        if (addedLevel <= 0) {
+            return OptionalInt.empty();
         }
-        return true;
+
+        int resultLevel;
+        if (currentLevel <= 0) {
+            resultLevel = addedLevel;
+        } else if (options.incrementalSameLevelMerge()) {
+            if (currentLevel != addedLevel) {
+                return OptionalInt.empty();
+            }
+            resultLevel = currentLevel + 1;
+        } else {
+            resultLevel = currentLevel + addedLevel;
+        }
+
+        if (options.enforceLevelLimit() && resultLevel > maxLevel) {
+            return OptionalInt.empty();
+        }
+        return OptionalInt.of(resultLevel);
+    }
+
+    public static MergeResult tryMergeEnchantments(
+            ItemEnchantments baseEnchantments,
+            List<EnchantmentLevel> additions,
+            BiPredicate<Holder<Enchantment>, Holder<Enchantment>> matcher,
+            MergeOptions options
+    ) {
+        ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(baseEnchantments);
+
+        for (EnchantmentLevel addition : additions) {
+            Optional<Holder<Enchantment>> existing = findMatchingEnchantment(mutable.toImmutable(), addition.enchantment(), matcher);
+            int currentLevel = existing
+                    .map(mutable::getLevel)
+                    .orElse(0);
+            OptionalInt resultLevel = calculateMergedEnchantmentLevel(
+                    currentLevel,
+                    addition.level(),
+                    addition.enchantment().value().getMaxLevel(),
+                    options
+            );
+            if (resultLevel.isEmpty()) {
+                return new MergeResult(false, baseEnchantments);
+            }
+
+            mutable.set(existing.orElse(addition.enchantment()), resultLevel.getAsInt());
+        }
+
+        return new MergeResult(true, mutable.toImmutable());
     }
 
     public static ItemEnchantments mergeEnchantments(
@@ -162,18 +237,12 @@ public final class EnchantmentTableRules {
             List<EnchantmentLevel> additions,
             BiPredicate<Holder<Enchantment>, Holder<Enchantment>> matcher
     ) {
-        ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(baseEnchantments);
-
-        for (EnchantmentLevel addition : additions) {
-            Optional<Holder<Enchantment>> existing = findMatchingEnchantment(mutable.toImmutable(), addition.enchantment(), matcher);
-            if (existing.isPresent()) {
-                mutable.set(existing.get(), mutable.getLevel(existing.get()) + addition.level());
-            } else {
-                mutable.set(addition.enchantment(), addition.level());
-            }
-        }
-
-        return mutable.toImmutable();
+        return tryMergeEnchantments(
+                baseEnchantments,
+                additions,
+                matcher,
+                new MergeOptions(false, false)
+        ).enchantments();
     }
 
     public static ItemEnchantments subtractEnchantments(
@@ -181,11 +250,40 @@ public final class EnchantmentTableRules {
             List<EnchantmentLevel> removals,
             BiPredicate<Holder<Enchantment>, Holder<Enchantment>> matcher
     ) {
+        return subtractEnchantments(baseEnchantments, removals, matcher, false);
+    }
+
+    public static OptionalInt calculateRemainingEnchantmentLevel(
+            int currentLevel,
+            int removedLevel,
+            boolean incrementalSingleBookSplit
+    ) {
+        if (currentLevel <= 0 || removedLevel <= 0) {
+            return OptionalInt.empty();
+        }
+
+        if (incrementalSingleBookSplit) {
+            return OptionalInt.of(currentLevel - 1);
+        }
+
+        return OptionalInt.of(currentLevel - removedLevel);
+    }
+
+    public static ItemEnchantments subtractEnchantments(
+            ItemEnchantments baseEnchantments,
+            List<EnchantmentLevel> removals,
+            BiPredicate<Holder<Enchantment>, Holder<Enchantment>> matcher,
+            boolean incrementalSingleBookSplit
+    ) {
         ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(baseEnchantments);
 
         for (EnchantmentLevel removal : removals) {
             Optional<Holder<Enchantment>> existing = findMatchingEnchantment(mutable.toImmutable(), removal.enchantment(), matcher);
-            existing.ifPresent(enchantment -> mutable.set(enchantment, mutable.getLevel(enchantment) - removal.level()));
+            existing.ifPresent(enchantment -> calculateRemainingEnchantmentLevel(
+                    mutable.getLevel(enchantment),
+                    removal.level(),
+                    incrementalSingleBookSplit
+            ).ifPresent(level -> mutable.set(enchantment, level)));
         }
 
         return mutable.toImmutable();
