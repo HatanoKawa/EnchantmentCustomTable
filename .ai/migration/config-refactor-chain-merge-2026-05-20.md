@@ -89,7 +89,8 @@ During the merge run, OpenJDK 25.0.2 was installed through Homebrew and register
 ## Retained Behavior Checklist
 
 - Default custom-table merge behavior still allows over-cap direct level addition.
-- `enforceEnchantmentLevelLimit = true` rejects over-cap additions and merges.
+- `enforceEnchantmentLevelLimit = true` rejects over-cap duplicate merges.
+- `enforceEnchantmentLevelLimit = true` still allows new over-cap enchantments that are not already present on the target item.
 - `incrementalSameLevelMerge = true` changes duplicate merges to same-level, plus-one upgrades.
 - Incremental split mode generates two same-level `sourceLevel - 1` books.
 - Taking an incremental split result reduces the source book by one level.
