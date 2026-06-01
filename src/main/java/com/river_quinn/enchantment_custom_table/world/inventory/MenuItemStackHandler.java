@@ -6,7 +6,7 @@ import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 
 import java.util.Objects;
 
-final class MenuItemStackHandler extends ItemStacksResourceHandler {
+class MenuItemStackHandler extends ItemStacksResourceHandler {
     private final int slotCapacity;
 
     MenuItemStackHandler(int size) {
