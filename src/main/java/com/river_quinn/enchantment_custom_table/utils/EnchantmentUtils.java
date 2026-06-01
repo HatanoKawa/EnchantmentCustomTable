@@ -53,7 +53,7 @@ public class EnchantmentUtils {
     }
 
     public static int getEnchantCost(ItemStack toolItemStack) {
-        if (!Config.enableXpRequirement)
+        if (!Config.snapshot().enableXpRequirement())
             return 0;
 
         var xpLevelToCost = 0;
@@ -68,7 +68,7 @@ public class EnchantmentUtils {
     }
 
     public static boolean checkSatisfyXpRequirement(ItemStack toolItemStack, Player player) {
-        if (!Config.enableXpRequirement)
+        if (!Config.snapshot().enableXpRequirement())
             return true;
 
         var xpLevelToCost = getEnchantCost(toolItemStack);
