@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -64,18 +65,16 @@ public class EnchantingCustomTableBlock extends EnchantingTableLikeBlock {
 
     }
 
-//    @Override
-//    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
-//        if (state.getBlock() != newState.getBlock()) {
-//            BlockEntity blockEntity = world.getBlockEntity(pos);
-//            if (blockEntity instanceof EnchantingCustomTableBlockEntity be) {
-//                // Containers.dropContents(world, pos, be);
-////                be.dropToolInFirstSlotOnRemove();
-//                world.updateNeighbourForOutputSignal(pos, this);
-//            }
-//            super.onRemove(state, world, pos, newState, isMoving);
-//        }
-//    }
-
+    @Override
+    public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+        if (level instanceof Level world) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof EnchantingCustomTableBlockEntity blockEntityWithInventory) {
+                blockEntityWithInventory.dropInventory();
+                world.updateNeighbourForOutputSignal(pos, this);
+            }
+        }
+        super.destroy(level, pos, state);
+    }
 
 }

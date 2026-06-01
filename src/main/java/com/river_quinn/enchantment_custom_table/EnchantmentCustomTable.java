@@ -39,6 +39,7 @@ public class EnchantmentCustomTable
     public EnchantmentCustomTable(IEventBus modEventBus, ModContainer modContainer)
     {
         modEventBus.addListener(ModPayloads::register);
+        modEventBus.addListener(ModCapabilities::register);
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
