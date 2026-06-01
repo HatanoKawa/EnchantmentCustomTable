@@ -33,7 +33,7 @@ Deprecated options must not participate in runtime behavior. This keeps the acti
 
 ## Level Limit Enforcement
 
-`enforceEnchantmentLevelLimit` controls whether the custom enchanting table obeys vanilla maximum levels when adding or merging enchantments.
+`enforceEnchantmentLevelLimit` controls whether duplicate enchantment merges obey vanilla maximum levels.
 
 When `false`:
 
@@ -42,8 +42,8 @@ When `false`:
 
 When `true`:
 
-- Adding a new enchantment above its vanilla max level is rejected.
 - Merging duplicate enchantments is rejected if the result would exceed vanilla max level.
+- Adding a new enchantment entry is still allowed even if the book level is above vanilla max level. This preserves compatibility with mods that intentionally generate over-cap enchanted books.
 
 This option is independent from incremental merge mode.
 
@@ -121,6 +121,7 @@ Coverage should include:
 
 - Default direct-add merge can exceed vanilla max level.
 - `enforceEnchantmentLevelLimit = true` rejects over-cap merge results.
+- `enforceEnchantmentLevelLimit = true` still allows new over-cap enchantments that are not already present on the target item.
 - Incremental mode accepts same-level duplicate merges and adds only one level.
 - Incremental mode rejects different-level duplicate merges.
 - Incremental mode and level-limit enforcement combine correctly.

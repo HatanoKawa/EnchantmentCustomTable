@@ -3,6 +3,7 @@ package com.river_quinn.enchantment_custom_table;
 import com.river_quinn.enchantment_custom_table.init.*;
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntityRenderers;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.slf4j.Logger;
 
@@ -103,6 +104,11 @@ public class EnchantmentCustomTable
         @SubscribeEvent
         public static void register(final RegisterPayloadHandlersEvent event) {
             ModPayloads.register(event);
+        }
+
+        @SubscribeEvent
+        public static void registerCapabilities(final RegisterCapabilitiesEvent event) {
+            ModCapabilities.register(event);
         }
     }
 
