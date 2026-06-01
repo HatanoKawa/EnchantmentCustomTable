@@ -185,8 +185,9 @@ public final class EnchantmentTableRules {
             return OptionalInt.empty();
         }
 
+        boolean mergingDuplicate = currentLevel > 0;
         int resultLevel;
-        if (currentLevel <= 0) {
+        if (!mergingDuplicate) {
             resultLevel = addedLevel;
         } else if (options.incrementalSameLevelMerge()) {
             if (currentLevel != addedLevel) {
@@ -197,7 +198,7 @@ public final class EnchantmentTableRules {
             resultLevel = currentLevel + addedLevel;
         }
 
-        if (options.enforceLevelLimit() && resultLevel > maxLevel) {
+        if (options.enforceLevelLimit() && mergingDuplicate && resultLevel > maxLevel) {
             return OptionalInt.empty();
         }
         return OptionalInt.of(resultLevel);

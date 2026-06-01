@@ -431,6 +431,40 @@ public class BasicGameTests {
     }
 
     @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableLevelLimitAllowsNewOvercapEnchantments(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(true, false);
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            Holder<Enchantment> unbreaking = enchantment(helper, Enchantments.UNBREAKING);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 5);
+            ItemStack overcapNewBook = enchantedBook(unbreaking, unbreaking.value().getMaxLevel() + 2);
+
+            menu.getSlot(0).setByPlayer(sword);
+
+            helper.assertTrue(menu.getSlot(1).mayPlace(overcapNewBook), "Level limits should not reject new over-cap enchantments");
+            helper.assertTrue(menu.addEnchantment(overcapNewBook, 1, true), "Core add path should allow new over-cap enchantments");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 5, "Existing enchantment should remain unchanged");
+            assertEnchantmentLevel(
+                    helper,
+                    menu.getSlot(0).getItem(),
+                    unbreaking,
+                    unbreaking.value().getMaxLevel() + 2,
+                    "New over-cap enchantment should be added even when merge limits are enforced"
+            );
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
     public static void customTableIncrementalMergeAddsOneForSameLevel(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 

@@ -103,6 +103,11 @@ class EnchantmentTableRulesTest {
     }
 
     @Test
+    void enforcedLimitsAllowNewOverCapEnchantments() {
+        assertEquals(7, mergedLevel(0, 7, 5, DIRECT_ENFORCE_LIMITS));
+    }
+
+    @Test
     void incrementalMergeAddsOneForMatchingLevels() {
         assertEquals(6, mergedLevel(5, 5, 5, INCREMENTAL_IGNORE_LIMITS));
     }
@@ -129,7 +134,7 @@ class EnchantmentTableRulesTest {
 
     @Test
     void incrementalModeDoesNotRestrictNewEnchantments() {
-        assertEquals(3, mergedLevel(0, 3, 5, INCREMENTAL_ENFORCE_LIMITS));
+        assertEquals(7, mergedLevel(0, 7, 5, INCREMENTAL_ENFORCE_LIMITS));
     }
 
     @Test
