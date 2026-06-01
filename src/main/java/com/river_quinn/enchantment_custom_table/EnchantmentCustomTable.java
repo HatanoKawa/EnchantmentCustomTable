@@ -4,6 +4,7 @@ import com.river_quinn.enchantment_custom_table.init.*;
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntityRenderers;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.slf4j.Logger;
 
@@ -45,6 +46,7 @@ public class EnchantmentCustomTable
     public EnchantmentCustomTable(IEventBus modEventBus, ModContainer modContainer)
     {
         modEventBus.addListener(ModPayloads::register);
+        modEventBus.addListener(ModCapabilities::register);
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
