@@ -218,11 +218,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 
 			@Override
-			public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-				return Pair.of(
-						InventoryMenu.BLOCK_ATLAS,
-						ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
-				);
+			public ResourceLocation getNoItemIcon() {
+				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
 		});
 
@@ -241,11 +238,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 
 			@Override
-			public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-				return Pair.of(
-						InventoryMenu.BLOCK_ATLAS,
-						ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
-				);
+			public ResourceLocation getNoItemIcon() {
+				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
 		});
 
