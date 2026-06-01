@@ -119,7 +119,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 this.font,
                 generatePageText(),
                 24,
-                51 + 15,
+                9,
                 -1
         );
 
@@ -150,7 +150,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                             EnchantmentConversionTableNetData.OperateType.PREVIOUS_PAGE.name()
                     ));
                 }
-        ).bounds(this.leftPos + 7, this.topPos + 61 + 15, 17, 18).build();
+        ).bounds(this.leftPos + 7, this.topPos + 4, 17, 18).build();
         guistate.put("button:button_left_arrow_button", button_left_arrow_button);
         this.addRenderableWidget(button_left_arrow_button);
 
@@ -161,7 +161,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                             EnchantmentConversionTableNetData.OperateType.NEXT_PAGE.name()
                     ));
                 }
-        ).bounds(this.leftPos + 24, this.topPos + 61 + 15, 17, 18).build();
+        ).bounds(this.leftPos + 24, this.topPos + 4, 17, 18).build();
         guistate.put("button:button_right_arrow_button", button_right_arrow_button);
         this.addRenderableWidget(button_right_arrow_button);
 

@@ -10,6 +10,7 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
@@ -23,8 +24,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.List;
 
@@ -212,6 +215,134 @@ public class BasicGameTests {
             Config.minimumEmeraldCost = originalEmeraldCost;
             Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
             Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void conversionTableCopyModeGeneratesResultAndDisablesCandidates(GameTestHelper helper) {
+        helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
+
+        int originalEmeraldCost = Config.minimumEmeraldCost;
+        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
+        Config.minimumEmeraldCost = 1;
+        Config.minimumEmeraldBlockCost = 0;
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantmentConversionMenu menu = conversionMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+
+            menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK, 2));
+            menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD, 2));
+            menu.getSlot(EnchantmentConversionMenu.TEMPLATE_BOOK_SLOT).setByPlayer(enchantedBook(sharpness, 3));
+
+            helper.assertTrue(menu.totalPage == 0, "Copy mode should disable normal conversion pages");
+            helper.assertTrue(menu.getSlot(2).getItem().isEmpty(), "Copy mode should clear selectable candidate slots");
+            helper.assertTrue(menu.getSlot(0).getItem().getCount() == 1, "Copy mode should consume one normal book for the first copy");
+            helper.assertTrue(menu.getSlot(1).getItem().getCount() == 1, "Copy mode should consume one emerald for the first copy");
+            assertEnchantmentLevel(
+                    helper,
+                    menu.getSlot(EnchantmentConversionMenu.COPY_RESULT_SLOT).getItem(),
+                    sharpness,
+                    3,
+                    "Copy result should match the template book"
+            );
+
+            menu.getSlot(EnchantmentConversionMenu.COPY_RESULT_SLOT).remove(1);
+            menu.getSlot(EnchantmentConversionMenu.COPY_RESULT_SLOT).onTake(player, ItemStack.EMPTY);
+
+            assertEnchantmentLevel(
+                    helper,
+                    menu.getSlot(EnchantmentConversionMenu.COPY_RESULT_SLOT).getItem(),
+                    sharpness,
+                    3,
+                    "Taking a copy should generate the next copy while materials remain"
+            );
+            helper.assertTrue(menu.getSlot(0).getItem().isEmpty(), "Second copy should consume the final normal book");
+            helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "Second copy should consume the final emerald");
+
+            helper.succeed();
+        } finally {
+            Config.minimumEmeraldCost = originalEmeraldCost;
+            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void conversionTableRejectsInvalidCopyTemplates(GameTestHelper helper) {
+        helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        EnchantmentConversionMenu menu = conversionMenu(helper, player);
+        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+        Holder<Enchantment> unbreaking = enchantment(helper, Enchantments.UNBREAKING);
+
+        ItemStack multiEnchantmentBook = enchantedBook(sharpness, 3);
+        multiEnchantmentBook.enchant(unbreaking, 1);
+        ItemStack overMaxBook = enchantedBook(sharpness, sharpness.value().getMaxLevel() + 1);
+
+        helper.assertTrue(
+                !menu.getSlot(EnchantmentConversionMenu.TEMPLATE_BOOK_SLOT).mayPlace(multiEnchantmentBook),
+                "Copy template slot should reject multi-enchantment books"
+        );
+        helper.assertTrue(
+                !menu.getSlot(EnchantmentConversionMenu.TEMPLATE_BOOK_SLOT).mayPlace(overMaxBook),
+                "Copy template slot should reject books above the enchantment max level"
+        );
+
+        helper.succeed();
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void conversionTableAutomationInputsMaterialsAndExtractsCopiesOnly(GameTestHelper helper) {
+        helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
+
+        int originalEmeraldCost = Config.minimumEmeraldCost;
+        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
+        Config.minimumEmeraldCost = 1;
+        Config.minimumEmeraldBlockCost = 0;
+
+        try {
+            EnchantmentConversionTableBlockEntity blockEntity = helper.getBlockEntity(ENCHANTMENT_CONVERSION_TABLE_POS);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            blockEntity.getInventory().setStackInSlot(
+                    EnchantmentConversionTableBlockEntity.TEMPLATE_SLOT,
+                    enchantedBook(sharpness, 2)
+            );
+            IItemHandler handler = helper.getLevel().getCapability(
+                    Capabilities.ItemHandler.BLOCK,
+                    helper.absolutePos(ENCHANTMENT_CONVERSION_TABLE_POS),
+                    Direction.UP
+            );
+
+            helper.assertTrue(handler != null, "Conversion table should expose an item handler capability");
+            helper.assertTrue(handler.insertItem(2, new ItemStack(Items.BOOK), false).getCount() == 1, "Automation should not insert into the output slot");
+            helper.assertTrue(handler.extractItem(0, 1, false).isEmpty(), "Automation should not extract input books");
+
+            helper.assertTrue(handler.insertItem(0, new ItemStack(Items.BOOK, 2), false).isEmpty(), "Automation should insert normal books");
+            helper.assertTrue(handler.insertItem(1, new ItemStack(Items.EMERALD, 2), false).isEmpty(), "Automation should insert payment items");
+            assertEnchantmentLevel(
+                    helper,
+                    handler.getStackInSlot(2),
+                    sharpness,
+                    2,
+                    "Automation should expose the generated copy in its output slot"
+            );
+
+            ItemStack firstCopy = handler.extractItem(2, 1, false);
+            assertEnchantmentLevel(helper, firstCopy, sharpness, 2, "Automation should extract the generated copy");
+            assertEnchantmentLevel(
+                    helper,
+                    handler.getStackInSlot(2),
+                    sharpness,
+                    2,
+                    "Extracting a copy should generate the next copy while materials remain"
+            );
+
+            helper.succeed();
+        } finally {
+            Config.minimumEmeraldCost = originalEmeraldCost;
+            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
         }
     }
 
@@ -474,6 +605,102 @@ public class BasicGameTests {
             assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 4, "Source book should only drop by one level in incremental split mode");
             assertEnchantmentLevel(helper, menu.getSlot(2).getItem(), sharpness, 3, "Generated split books should refresh from the new source level");
             assertEnchantmentLevel(helper, menu.getSlot(3).getItem(), sharpness, 3, "Generated split pair should refresh from the new source level");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableKeepsToolInBlockStorageAfterMenuClose(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        EnchantingCustomMenu menu = enchantingMenu(helper, player);
+        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.enchant(sharpness, 3);
+
+        menu.getSlot(0).setByPlayer(sword);
+        menu.removed(player);
+
+        EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(ENCHANTING_CUSTOM_TABLE_POS);
+        assertEnchantmentLevel(
+                helper,
+                blockEntity.getInventory().getStackInSlot(EnchantingCustomTableBlockEntity.TOOL_SLOT),
+                sharpness,
+                3,
+                "Closing the menu should keep the tool stored in the block entity"
+        );
+
+        helper.succeed();
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableAutomationAppliesAcceptedBook(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(false, false);
+
+        try {
+            EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(ENCHANTING_CUSTOM_TABLE_POS);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 4);
+            blockEntity.getInventory().setStackInSlot(EnchantingCustomTableBlockEntity.TOOL_SLOT, sword);
+
+            IItemHandler handler = helper.getLevel().getCapability(
+                    Capabilities.ItemHandler.BLOCK,
+                    helper.absolutePos(ENCHANTING_CUSTOM_TABLE_POS),
+                    Direction.UP
+            );
+
+            helper.assertTrue(handler != null, "Custom table should expose an item handler capability");
+            helper.assertTrue(handler.insertItem(0, enchantedBook(sharpness, 1), false).isEmpty(), "Automation should consume an accepted enchanted book");
+            helper.assertTrue(handler.extractItem(0, 1, false).isEmpty(), "Automation should not extract the stored tool");
+            assertEnchantmentLevel(
+                    helper,
+                    blockEntity.getInventory().getStackInSlot(EnchantingCustomTableBlockEntity.TOOL_SLOT),
+                    sharpness,
+                    5,
+                    "Automation should apply the accepted book to the stored tool"
+            );
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableAutomationRejectsInvalidBook(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(true, false);
+
+        try {
+            EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(ENCHANTING_CUSTOM_TABLE_POS);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, sharpness.value().getMaxLevel());
+            blockEntity.getInventory().setStackInSlot(EnchantingCustomTableBlockEntity.TOOL_SLOT, sword);
+
+            IItemHandler handler = helper.getLevel().getCapability(
+                    Capabilities.ItemHandler.BLOCK,
+                    helper.absolutePos(ENCHANTING_CUSTOM_TABLE_POS),
+                    Direction.UP
+            );
+            ItemStack rejected = handler.insertItem(0, enchantedBook(sharpness, sharpness.value().getMaxLevel()), false);
+
+            helper.assertTrue(!rejected.isEmpty(), "Automation should return a book that cannot be merged");
+            assertEnchantmentLevel(
+                    helper,
+                    blockEntity.getInventory().getStackInSlot(EnchantingCustomTableBlockEntity.TOOL_SLOT),
+                    sharpness,
+                    sharpness.value().getMaxLevel(),
+                    "Rejected automation input should leave the stored tool unchanged"
+            );
 
             helper.succeed();
         } finally {

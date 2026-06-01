@@ -75,7 +75,7 @@ public class EnchantmentConversionTableBlock extends EnchantingTableLikeBlock {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof EnchantmentConversionTableBlockEntity be) {
-//                be.dropBookAndEmerald();
+                be.dropInventory();
                 world.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, world, pos, newState, isMoving);
