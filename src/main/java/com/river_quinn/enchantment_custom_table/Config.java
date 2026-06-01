@@ -1,6 +1,7 @@
 package com.river_quinn.enchantment_custom_table;
 
 import com.mojang.logging.LogUtils;
+import com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -26,7 +27,8 @@ public class Config
             .defineInRange("minimumEmeraldBlockCost", 4, 0, 64);
 
     private static final ModConfigSpec.BooleanValue ENFORCE_ENCHANTMENT_LEVEL_LIMIT = BUILDER
-            .comment("When enabled, the custom enchanting table enforces each enchantment's vanilla max level.")
+            .comment("When enabled, duplicate enchantment merges cannot exceed each enchantment's vanilla max level.")
+            .comment("Adding a new enchantment entry is still allowed even if another mod created a book above that level.")
             .define("enforceEnchantmentLevelLimit", false);
 
     private static final ModConfigSpec.BooleanValue INCREMENTAL_SAME_LEVEL_MERGE = BUILDER
@@ -60,6 +62,17 @@ public class Config
     public static boolean incrementalSameLevelMerge = false;
     public static boolean enableXpRequirement;
     public static boolean convertOnlyLevelOneBook = false;
+
+    public static TableConfigSnapshot snapshot() {
+        return new TableConfigSnapshot(
+                minimumEmeraldCost,
+                minimumEmeraldBlockCost,
+                enforceEnchantmentLevelLimit,
+                incrementalSameLevelMerge,
+                convertOnlyLevelOneBook,
+                enableXpRequirement
+        );
+    }
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)

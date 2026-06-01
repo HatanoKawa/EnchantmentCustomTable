@@ -69,8 +69,7 @@ public class EnchantingCustomTableBlock extends EnchantingTableLikeBlock {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof EnchantingCustomTableBlockEntity be) {
-                // Containers.dropContents(world, pos, be);
-//                be.dropToolInFirstSlotOnRemove();
+                be.dropInventory();
                 world.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, world, pos, newState, isMoving);
