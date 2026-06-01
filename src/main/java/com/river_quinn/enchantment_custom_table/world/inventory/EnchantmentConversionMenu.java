@@ -2,6 +2,7 @@ package com.river_quinn.enchantment_custom_table.world.inventory;
 
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
@@ -14,8 +15,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -26,7 +25,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,19 +38,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
 	public static final int ENCHANTED_BOOK_SLOT_COLUMN_COUNT = 7;
 	public static final int ENCHANTED_BOOK_SLOT_SIZE = ENCHANTED_BOOK_SLOT_ROW_COUNT * ENCHANTED_BOOK_SLOT_COLUMN_COUNT;
-	public static final int ENCHANTMENT_CONVERSION_SLOT_SIZE = ENCHANTED_BOOK_SLOT_SIZE + 2;
+	public static final int ENCHANTED_BOOK_SLOT_START = 2;
+	public static final int TEMPLATE_BOOK_SLOT = ENCHANTED_BOOK_SLOT_START + ENCHANTED_BOOK_SLOT_SIZE;
+	public static final int COPY_RESULT_SLOT = TEMPLATE_BOOK_SLOT + 1;
+	public static final int ENCHANTMENT_CONVERSION_SLOT_SIZE = COPY_RESULT_SLOT + 1;
 	/**
 	 * index 0: 书本槽
 	 * index 1: 绿宝石槽
 	 * index 2-29: 附魔书槽
+	 * index 30: 待复制附魔书模板槽
+	 * index 31: 复制结果槽
 	 */
-	private final MenuItemStackHandler itemHandler = new MenuItemStackHandler(ENCHANTMENT_CONVERSION_SLOT_SIZE);
+	private final ConversionMenuItemHandler itemHandler;
 
 	public final static HashMap<String, Object> guistate = new HashMap<>();
 	public final Level world;
@@ -56,10 +63,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	private ContainerLevelAccess access = ContainerLevelAccess.NULL;
 	private boolean hasValidPosition = false;
 	private final Map<Integer, Slot> enchantedBookSlots = new HashMap<>();
-	private boolean bound = false;
-	private Supplier<Boolean> boundItemMatcher = null;
-	private Entity boundEntity = null;
 	public EnchantmentConversionTableBlockEntity boundBlockEntity = null;
+	private int lastInventoryVersion = -1;
 	private String searchQuery = "";
 	private String searchClientLanguage = "";
 	private boolean usingClientSearchMatches = false;
@@ -84,6 +89,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 				boundBlockEntity = blockEntity;
 			}
 		}
+		this.itemHandler = new ConversionMenuItemHandler(boundBlockEntity);
 
 		this.addDataSlot(new DataSlot() {
 			@Override
@@ -141,11 +147,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return EnchantmentTableRules.paymentCostFor(
-						stack.getItem(),
-						Config.minimumEmeraldCost,
-						Config.minimumEmeraldBlockCost
-				) > 0;
+				return boundBlockEntity != null
+						? boundBlockEntity.isPaymentItem(stack)
+						: EnchantmentTableRules.paymentCostFor(stack.getItem(), config()) > 0;
 			}
 
 			@Override
@@ -171,8 +175,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 				int xPos = 43 + col * 18;
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
-					new ResourceHandlerSlot(itemHandler, itemHandler::set, final_enchanted_book_index + 2, xPos, yPos) {
-						private final int slot = final_enchanted_book_index + 2;
+					new ResourceHandlerSlot(itemHandler, itemHandler::set, final_enchanted_book_index + ENCHANTED_BOOK_SLOT_START, xPos, yPos) {
+						private final int slot = final_enchanted_book_index + ENCHANTED_BOOK_SLOT_START;
 						private int x = EnchantmentConversionMenu.this.x;
 						private int y = EnchantmentConversionMenu.this.y;
 
@@ -206,11 +210,63 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 		}
 
+		this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, TEMPLATE_BOOK_SLOT, 16, 8 + 51) {
+			@Override
+			public boolean mayPlace(ItemStack stack) {
+				return boundBlockEntity != null && boundBlockEntity.isValidCopyTemplate(stack);
+			}
+
+			@Override
+			public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
+				super.setByPlayer(newStack, oldStack);
+				regenerateEnchantedBookSlot();
+			}
+
+			@Override
+			public ResourceLocation getNoItemIcon() {
+				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+			}
+		});
+
+		this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, COPY_RESULT_SLOT, 16, 8 + 69) {
+			@Override
+			public boolean mayPlace(ItemStack stack) {
+				return false;
+			}
+
+			@Override
+			public void onTake(Player player, ItemStack stack) {
+				super.onTake(player, stack);
+				if (boundBlockEntity != null) {
+					boundBlockEntity.refreshCopyResult();
+				}
+			}
+
+			@Override
+			public ResourceLocation getNoItemIcon() {
+				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+			}
+		});
+
 		for (int si = 0; si < 3; ++si)
 			for (int sj = 0; sj < 9; ++sj)
 				this.addSlot(new Slot(inv, sj + (si + 1) * 9, 0 + 8 + sj * 18, 0 + 84 + si * 18 + 15));
 		for (int si = 0; si < 9; ++si)
 			this.addSlot(new Slot(inv, si, 0 + 8 + si * 18, 0 + 142 + 15));
+
+		regenerateEnchantedBookSlot();
+		if (boundBlockEntity != null) {
+			lastInventoryVersion = boundBlockEntity.getInventoryVersion();
+		}
+	}
+
+	@Override
+	public void broadcastChanges() {
+		super.broadcastChanges();
+		if (boundBlockEntity != null && lastInventoryVersion != boundBlockEntity.getInventoryVersion()) {
+			lastInventoryVersion = boundBlockEntity.getInventoryVersion();
+			regenerateEnchantedBookSlot();
+		}
 	}
 
 	@Override
@@ -249,7 +305,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			slot.onTake(playerIn, itemstack1);
 		}
 
-		if (index < 2) {
+		if (index < 2 || index == TEMPLATE_BOOK_SLOT || index == COPY_RESULT_SLOT) {
 			genEnchantedBookSlot();
 		}
 
@@ -318,10 +374,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	@Override
 	public void removed(Player playerIn) {
 		super.removed(playerIn);
-		if (!bound && playerIn instanceof ServerPlayer) {
-			playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(0));
-			playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(1));
-		}
 	}
 
 	private final List<Holder<Enchantment>> allEnchantments = new ArrayList<>();
@@ -336,7 +388,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public ItemStack getEnchantedBook(Holder<Enchantment> enchantment) {
 		ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
 
-		int enchantmentLevel = Config.convertOnlyLevelOneBook ? 1 : enchantment.value().getMaxLevel();
+		int enchantmentLevel = config().convertOnlyLevelOneBook() ? 1 : enchantment.value().getMaxLevel();
 		enchantedBook.enchant(enchantment, enchantmentLevel);
 
 		return enchantedBook;
@@ -396,12 +448,18 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	public void clearEnchantedBookSlot() {
-		for (int i = 2; i < ENCHANTMENT_CONVERSION_SLOT_SIZE; i++) {
+		for (int i = ENCHANTED_BOOK_SLOT_START; i < TEMPLATE_BOOK_SLOT; i++) {
 			itemHandler.setStackInSlot(i, ItemStack.EMPTY);
 		}
 	}
 
 	public void genEnchantedBookSlot() {
+		if (isCopyMode()) {
+			resetPage();
+			clearEnchantedBookSlot();
+			return;
+		}
+
 		List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
 		boolean hasBook = itemHandler.getStackInSlot(0).is(Items.BOOK);
 		boolean hasEnoughEmerald = hasEnoughPayment();
@@ -413,7 +471,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		}
 
 		for (int i = 0; i < ENCHANTED_BOOK_SLOT_SIZE; i++) {
-			int slotIndex = i + 2;
+			int slotIndex = i + ENCHANTED_BOOK_SLOT_START;
 			int enchantmentIndex = i + currentPage * ENCHANTED_BOOK_SLOT_SIZE;
 
 			if (enchantmentIndex < enchantments.size()) {
@@ -428,6 +486,11 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	public void regenerateEnchantedBookSlot() {
+		if (isCopyMode()) {
+			resetPage();
+			clearEnchantedBookSlot();
+			return;
+		}
 		currentPage = 0;
 		rebuildEnchantedBookSlot();
 	}
@@ -472,15 +535,11 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	public boolean canPickEnchantedBook() {
-		return itemHandler.getStackInSlot(0).is(Items.BOOK) && hasEnoughPayment();
+		return !isCopyMode() && itemHandler.getStackInSlot(0).is(Items.BOOK) && hasEnoughPayment();
 	}
 
 	private boolean hasEnoughPayment() {
-		return EnchantmentTableRules.hasEnoughPayment(
-				itemHandler.getStackInSlot(1),
-				Config.minimumEmeraldCost,
-				Config.minimumEmeraldBlockCost
-		);
+		return EnchantmentTableRules.hasEnoughPayment(itemHandler.getStackInSlot(1), config());
 	}
 
 	public boolean pickEnchantedBook() {
@@ -490,12 +549,125 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		}
 
 		itemHandler.getStackInSlot(0).shrink(1);
-		EnchantmentTableRules.consumePayment(
-				itemHandler.getStackInSlot(1),
-				Config.minimumEmeraldCost,
-				Config.minimumEmeraldBlockCost
-		);
+		EnchantmentTableRules.consumePayment(itemHandler.getStackInSlot(1), config());
 		rebuildEnchantedBookSlot();
 		return true;
+	}
+
+	private boolean isCopyMode() {
+		return boundBlockEntity != null && boundBlockEntity.isCopyMode();
+	}
+
+	private TableConfigView config() {
+		return Config.snapshot();
+	}
+
+	private static class ConversionMenuItemHandler extends MenuItemStackHandler {
+		private final EnchantmentConversionTableBlockEntity blockEntity;
+		private final ItemStackHandler fallbackPersistentHandler = new ItemStackHandler(EnchantmentConversionTableBlockEntity.SLOT_COUNT);
+
+		private ConversionMenuItemHandler(EnchantmentConversionTableBlockEntity blockEntity) {
+			super(ENCHANTMENT_CONVERSION_SLOT_SIZE);
+			this.blockEntity = blockEntity;
+		}
+
+		@Override
+		public ItemStack getStackInSlot(int slot) {
+			return isPersistentSlot(slot)
+					? persistentHandler().getStackInSlot(toPersistentSlot(slot))
+					: super.getStackInSlot(slot);
+		}
+
+		@Override
+		void setStackInSlot(int slot, ItemStack stack) {
+			if (isPersistentSlot(slot)) {
+				persistentHandler().setStackInSlot(toPersistentSlot(slot), stack);
+			} else {
+				super.setStackInSlot(slot, stack);
+			}
+		}
+
+		@Override
+		public void set(int index, ItemResource resource, int amount) {
+			if (isPersistentSlot(index)) {
+				persistentHandler().setStackInSlot(toPersistentSlot(index), resource.toStack(amount));
+			} else {
+				super.set(index, resource, amount);
+			}
+		}
+
+		@Override
+		public ItemResource getResource(int index) {
+			return isPersistentSlot(index) ? ItemResource.of(getStackInSlot(index)) : super.getResource(index);
+		}
+
+		@Override
+		public long getAmountAsLong(int index) {
+			return isPersistentSlot(index) ? getStackInSlot(index).getCount() : super.getAmountAsLong(index);
+		}
+
+		@Override
+		public boolean isValid(int index, ItemResource resource) {
+			if (!isPersistentSlot(index)) {
+				return super.isValid(index, resource);
+			}
+			if (resource.isEmpty()) {
+				return false;
+			}
+			return persistentHandler().isItemValid(toPersistentSlot(index), resource.toStack());
+		}
+
+		@Override
+		public long getCapacityAsLong(int index, ItemResource resource) {
+			if (!isPersistentSlot(index)) {
+				return super.getCapacityAsLong(index, resource);
+			}
+			int slotLimit = persistentHandler().getSlotLimit(toPersistentSlot(index));
+			return resource.isEmpty() ? slotLimit : Math.min(slotLimit, resource.toStack().getMaxStackSize());
+		}
+
+		@Override
+		public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
+			if (!isPersistentSlot(index)) {
+				return super.insert(index, resource, amount, transaction);
+			}
+
+			ItemStack current = getStackInSlot(index);
+			if (resource.isEmpty() || (!current.isEmpty() && !resource.matches(current)) || !isValid(index, resource)) {
+				return 0;
+			}
+			int capacity = (int) getCapacityAsLong(index, resource);
+			return Math.min(amount, Math.max(0, capacity - current.getCount()));
+		}
+
+		@Override
+		public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
+			if (!isPersistentSlot(index)) {
+				return super.extract(index, resource, amount, transaction);
+			}
+
+			ItemStack current = getStackInSlot(index);
+			if (resource.isEmpty() || !resource.matches(current)) {
+				return 0;
+			}
+			return Math.min(amount, current.getCount());
+		}
+
+		private IItemHandlerModifiable persistentHandler() {
+			return blockEntity != null ? blockEntity.getInventory() : fallbackPersistentHandler;
+		}
+
+		private boolean isPersistentSlot(int slot) {
+			return slot < ENCHANTED_BOOK_SLOT_START || slot >= TEMPLATE_BOOK_SLOT;
+		}
+
+		private int toPersistentSlot(int slot) {
+			return switch (slot) {
+				case 0, 1 -> slot;
+				case TEMPLATE_BOOK_SLOT -> EnchantmentConversionTableBlockEntity.TEMPLATE_SLOT;
+				case COPY_RESULT_SLOT -> EnchantmentConversionTableBlockEntity.COPY_RESULT_SLOT;
+				default -> throw new IndexOutOfBoundsException(slot);
+			};
+		}
 	}
 }
