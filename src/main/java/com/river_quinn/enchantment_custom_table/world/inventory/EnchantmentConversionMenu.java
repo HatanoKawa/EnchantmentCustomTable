@@ -3,6 +3,7 @@ package com.river_quinn.enchantment_custom_table.world.inventory;
 import com.mojang.datafixers.util.Pair;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
@@ -151,11 +152,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			public boolean mayPlace(ItemStack stack) {
 				return boundBlockEntity != null
 						? boundBlockEntity.isPaymentItem(stack)
-						: EnchantmentTableRules.paymentCostFor(
-								stack.getItem(),
-								Config.minimumEmeraldCost,
-								Config.minimumEmeraldBlockCost
-						) > 0;
+						: EnchantmentTableRules.paymentCostFor(stack.getItem(), config()) > 0;
 			}
 
 			@Override
@@ -403,7 +400,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public ItemStack getEnchantedBook(Holder<Enchantment> enchantment) {
 		ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
 
-		int enchantmentLevel = Config.convertOnlyLevelOneBook ? 1 : enchantment.value().getMaxLevel();
+		int enchantmentLevel = config().convertOnlyLevelOneBook() ? 1 : enchantment.value().getMaxLevel();
 		enchantedBook.enchant(enchantment, enchantmentLevel);
 
 		return enchantedBook;
@@ -547,11 +544,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	}
 
 	private boolean hasEnoughPayment() {
-		return EnchantmentTableRules.hasEnoughPayment(
-				itemHandler.getStackInSlot(1),
-				Config.minimumEmeraldCost,
-				Config.minimumEmeraldBlockCost
-		);
+		return EnchantmentTableRules.hasEnoughPayment(itemHandler.getStackInSlot(1), config());
 	}
 
 	public boolean pickEnchantedBook() {
@@ -561,17 +554,17 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		}
 
 		itemHandler.getStackInSlot(0).shrink(1);
-		EnchantmentTableRules.consumePayment(
-				itemHandler.getStackInSlot(1),
-				Config.minimumEmeraldCost,
-				Config.minimumEmeraldBlockCost
-		);
+		EnchantmentTableRules.consumePayment(itemHandler.getStackInSlot(1), config());
 		genEnchantedBookSlot();
 		return true;
 	}
 
 	private boolean isCopyMode() {
 		return boundBlockEntity != null && boundBlockEntity.isCopyMode();
+	}
+
+	private TableConfigView config() {
+		return Config.snapshot();
 	}
 
 	private static class ConversionMenuItemHandler extends ItemStackHandler {

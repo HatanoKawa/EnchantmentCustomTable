@@ -1,6 +1,7 @@
 package com.river_quinn.enchantment_custom_table.block.entity;
 
 import com.river_quinn.enchantment_custom_table.Config;
+import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
@@ -82,11 +83,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     }
 
     public boolean isPaymentItem(ItemStack stack) {
-        return EnchantmentTableRules.paymentCostFor(
-                stack.getItem(),
-                Config.minimumEmeraldCost,
-                Config.minimumEmeraldBlockCost
-        ) > 0;
+        return EnchantmentTableRules.paymentCostFor(stack.getItem(), config()) > 0;
     }
 
     public boolean isValidCopyTemplate(ItemStack stack) {
@@ -102,31 +99,31 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         Object2IntMap.Entry<Holder<Enchantment>> entry = enchantments.entrySet().iterator().next();
         Holder<Enchantment> enchantment = EnchantmentUtils.resolveEnchantmentHolder(level, entry.getKey()).orElse(entry.getKey());
         int level = entry.getIntValue();
-        return level > 0 && level <= enchantment.value().getMaxLevel();
+        return EnchantmentTableRules.isValidSingleEnchantmentTemplate(
+                enchantments.size(),
+                level,
+                enchantment.value().getMaxLevel()
+        );
     }
 
     public boolean hasEnoughMaterialsForCopy() {
         return inventory.getStackInSlot(BOOK_SLOT).is(Items.BOOK)
-                && EnchantmentTableRules.hasEnoughPayment(
-                inventory.getStackInSlot(PAYMENT_SLOT),
-                Config.minimumEmeraldCost,
-                Config.minimumEmeraldBlockCost
-        );
+                && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(PAYMENT_SLOT), config());
     }
 
     public void refreshCopyResult() {
-        if (!isCopyMode() || !inventory.getStackInSlot(COPY_RESULT_SLOT).isEmpty() || !hasEnoughMaterialsForCopy()) {
+        if (!EnchantmentTableRules.shouldGenerateCopyResult(
+                isCopyMode(),
+                inventory.getStackInSlot(COPY_RESULT_SLOT).isEmpty(),
+                hasEnoughMaterialsForCopy()
+        )) {
             return;
         }
 
         updatingCopyResult = true;
         try {
             inventory.getStackInSlot(BOOK_SLOT).shrink(1);
-            EnchantmentTableRules.consumePayment(
-                    inventory.getStackInSlot(PAYMENT_SLOT),
-                    Config.minimumEmeraldCost,
-                    Config.minimumEmeraldBlockCost
-            );
+            EnchantmentTableRules.consumePayment(inventory.getStackInSlot(PAYMENT_SLOT), config());
             inventory.setStackInSlot(
                     COPY_RESULT_SLOT,
                     inventory.getStackInSlot(TEMPLATE_SLOT).copyWithCount(1)
@@ -168,6 +165,10 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     private void markInventoryChanged() {
         inventoryVersion++;
         setChanged();
+    }
+
+    private TableConfigView config() {
+        return Config.snapshot();
     }
 
     private class ConversionAutomationItemHandler implements IItemHandler {

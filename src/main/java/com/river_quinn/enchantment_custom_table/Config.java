@@ -1,6 +1,7 @@
 package com.river_quinn.enchantment_custom_table;
 
 import com.mojang.logging.LogUtils;
+import com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -61,6 +62,17 @@ public class Config
     public static boolean incrementalSameLevelMerge = false;
     public static boolean enableXpRequirement;
     public static boolean convertOnlyLevelOneBook = false;
+
+    public static TableConfigSnapshot snapshot() {
+        return new TableConfigSnapshot(
+                minimumEmeraldCost,
+                minimumEmeraldBlockCost,
+                enforceEnchantmentLevelLimit,
+                incrementalSameLevelMerge,
+                convertOnlyLevelOneBook,
+                enableXpRequirement
+        );
+    }
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)

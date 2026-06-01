@@ -170,10 +170,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
     }
 
     private EnchantmentTableRules.MergeOptions mergeOptions() {
-        return new EnchantmentTableRules.MergeOptions(
-                com.river_quinn.enchantment_custom_table.Config.enforceEnchantmentLevelLimit,
-                com.river_quinn.enchantment_custom_table.Config.incrementalSameLevelMerge
-        );
+        return EnchantmentTableRules.MergeOptions.from(com.river_quinn.enchantment_custom_table.Config.snapshot());
     }
 
     private void playUseSound() {

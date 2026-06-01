@@ -440,10 +440,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	}
 
 	private EnchantmentTableRules.MergeOptions mergeOptions() {
-		return new EnchantmentTableRules.MergeOptions(
-				Config.enforceEnchantmentLevelLimit,
-				Config.incrementalSameLevelMerge
-		);
+		return EnchantmentTableRules.MergeOptions.from(Config.snapshot());
 	}
 
 	private boolean isSameEnchantment(Holder<Enchantment> first, Holder<Enchantment> second) {
@@ -707,7 +704,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 			ItemEnchantments itemEnchantments,
 			List<EnchantmentTableRules.EnchantmentLevel> removalEnchantments
 	) {
-		return Config.incrementalSameLevelMerge
+		return Config.snapshot().incrementalSameLevelMerge()
 				&& toolItemStack.is(Items.ENCHANTED_BOOK)
 				&& itemEnchantments.size() == 1
 				&& removalEnchantments.size() == 1;

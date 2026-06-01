@@ -1,5 +1,11 @@
 package com.river_quinn.enchantment_custom_table.utils;
 
+import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
+import com.river_quinn.enchantment_custom_table.core.rules.CopyRules;
+import com.river_quinn.enchantment_custom_table.core.rules.MergeRules;
+import com.river_quinn.enchantment_custom_table.core.rules.PaginationRules;
+import com.river_quinn.enchantment_custom_table.core.rules.PaymentRules;
+import com.river_quinn.enchantment_custom_table.core.rules.SplitRules;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -7,12 +13,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.Set;
 import java.util.function.BiPredicate;
 
 public final class EnchantmentTableRules {
@@ -23,52 +26,47 @@ public final class EnchantmentTableRules {
     }
 
     public record MergeOptions(boolean enforceLevelLimit, boolean incrementalSameLevelMerge) {
+        public static MergeOptions from(TableConfigView config) {
+            return new MergeOptions(
+                    config.enforceEnchantmentLevelLimit(),
+                    config.incrementalSameLevelMerge()
+            );
+        }
     }
 
     public record MergeResult(boolean allowed, ItemEnchantments enchantments) {
     }
 
     public enum PaymentKind {
-        EMERALD,
-        EMERALD_BLOCK,
-        UNSUPPORTED
+        EMERALD(PaymentRules.PaymentKind.EMERALD),
+        EMERALD_BLOCK(PaymentRules.PaymentKind.EMERALD_BLOCK),
+        UNSUPPORTED(PaymentRules.PaymentKind.UNSUPPORTED);
+
+        private final PaymentRules.PaymentKind coreKind;
+
+        PaymentKind(PaymentRules.PaymentKind coreKind) {
+            this.coreKind = coreKind;
+        }
     }
 
     public static int calculatePageCount(int entryCount, int pageSize, boolean keepEmptyPage) {
-        if (pageSize <= 0) {
-            throw new IllegalArgumentException("pageSize must be greater than 0");
-        }
-
-        if (entryCount <= 0) {
-            return keepEmptyPage ? 1 : 0;
-        }
-
-        return (entryCount + pageSize - 1) / pageSize;
+        return PaginationRules.calculatePageCount(entryCount, pageSize, keepEmptyPage);
     }
 
     public static int cacheIndexForGeneratedSlot(int slotIndex, int firstGeneratedSlotIndex, int currentPage, int pageSize) {
-        return (slotIndex - firstGeneratedSlotIndex) + currentPage * pageSize;
+        return PaginationRules.cacheIndexForGeneratedSlot(slotIndex, firstGeneratedSlotIndex, currentPage, pageSize);
     }
 
     public static boolean hasEnoughPayment(int availableCount, int configuredCost) {
-        return configuredCost > 0 && availableCount >= configuredCost;
+        return PaymentRules.hasEnoughPayment(availableCount, configuredCost);
     }
 
     public static int remainingPaymentCount(int availableCount, int configuredCost) {
-        if (!hasEnoughPayment(availableCount, configuredCost)) {
-            return availableCount;
-        }
-        return availableCount - configuredCost;
+        return PaymentRules.remainingPaymentCount(availableCount, configuredCost);
     }
 
     public static int paymentCostForKind(PaymentKind paymentKind, int emeraldCost, int emeraldBlockCost) {
-        if (paymentKind == PaymentKind.EMERALD && emeraldCost > 0) {
-            return emeraldCost;
-        }
-        if (paymentKind == PaymentKind.EMERALD_BLOCK && emeraldBlockCost > 0) {
-            return emeraldBlockCost;
-        }
-        return 0;
+        return PaymentRules.paymentCostForKind(paymentKind.coreKind, emeraldCost, emeraldBlockCost);
     }
 
     public static PaymentKind paymentKindFor(Item item) {
@@ -85,8 +83,16 @@ public final class EnchantmentTableRules {
         return paymentCostForKind(paymentKindFor(item), emeraldCost, emeraldBlockCost);
     }
 
+    public static int paymentCostFor(Item item, TableConfigView config) {
+        return paymentCostFor(item, config.minimumEmeraldCost(), config.minimumEmeraldBlockCost());
+    }
+
     public static boolean hasEnoughPayment(ItemStack paymentStack, int emeraldCost, int emeraldBlockCost) {
         return hasEnoughPayment(paymentStack.getCount(), paymentCostFor(paymentStack.getItem(), emeraldCost, emeraldBlockCost));
+    }
+
+    public static boolean hasEnoughPayment(ItemStack paymentStack, TableConfigView config) {
+        return hasEnoughPayment(paymentStack, config.minimumEmeraldCost(), config.minimumEmeraldBlockCost());
     }
 
     public static boolean consumePayment(ItemStack paymentStack, int emeraldCost, int emeraldBlockCost) {
@@ -98,6 +104,18 @@ public final class EnchantmentTableRules {
         return true;
     }
 
+    public static boolean consumePayment(ItemStack paymentStack, TableConfigView config) {
+        return consumePayment(paymentStack, config.minimumEmeraldCost(), config.minimumEmeraldBlockCost());
+    }
+
+    public static boolean isValidSingleEnchantmentTemplate(int enchantmentCount, int level, int maxLevel) {
+        return CopyRules.isValidSingleEnchantmentTemplate(enchantmentCount, level, maxLevel);
+    }
+
+    public static boolean shouldGenerateCopyResult(boolean copyMode, boolean resultSlotEmpty, boolean hasEnoughMaterials) {
+        return CopyRules.shouldGenerateCopyResult(copyMode, resultSlotEmpty, hasEnoughMaterials);
+    }
+
     public static List<Integer> splitSingleEnchantmentLevels(int sourceLevel) {
         return splitSingleEnchantmentLevels(sourceLevel, false);
     }
@@ -107,28 +125,7 @@ public final class EnchantmentTableRules {
     }
 
     public static List<Integer> splitSingleEnchantmentLevels(int sourceLevel, boolean incrementalSameLevelMerge) {
-        if (sourceLevel <= 1) {
-            return List.of();
-        }
-
-        if (incrementalSameLevelMerge) {
-            return List.of(sourceLevel - 1, sourceLevel - 1);
-        }
-
-        List<Integer> levels = new ArrayList<>();
-        Set<Integer> seenLevels = new LinkedHashSet<>();
-        int remainingLevel = sourceLevel;
-
-        while (remainingLevel > 1) {
-            int levelToAdd = remainingLevel / 2;
-            if (seenLevels.add(levelToAdd)) {
-                levels.add(levelToAdd);
-            }
-
-            remainingLevel -= levelToAdd;
-        }
-
-        return List.copyOf(levels);
+        return SplitRules.splitSingleEnchantmentLevels(sourceLevel, incrementalSameLevelMerge);
     }
 
     public static Optional<Holder<Enchantment>> findMatchingEnchantment(
@@ -181,27 +178,13 @@ public final class EnchantmentTableRules {
             int maxLevel,
             MergeOptions options
     ) {
-        if (addedLevel <= 0) {
-            return OptionalInt.empty();
-        }
-
-        boolean mergingDuplicate = currentLevel > 0;
-        int resultLevel;
-        if (!mergingDuplicate) {
-            resultLevel = addedLevel;
-        } else if (options.incrementalSameLevelMerge()) {
-            if (currentLevel != addedLevel) {
-                return OptionalInt.empty();
-            }
-            resultLevel = currentLevel + 1;
-        } else {
-            resultLevel = currentLevel + addedLevel;
-        }
-
-        if (options.enforceLevelLimit() && mergingDuplicate && resultLevel > maxLevel) {
-            return OptionalInt.empty();
-        }
-        return OptionalInt.of(resultLevel);
+        return MergeRules.calculateMergedEnchantmentLevel(
+                currentLevel,
+                addedLevel,
+                maxLevel,
+                options.enforceLevelLimit(),
+                options.incrementalSameLevelMerge()
+        );
     }
 
     public static MergeResult tryMergeEnchantments(
@@ -259,15 +242,7 @@ public final class EnchantmentTableRules {
             int removedLevel,
             boolean incrementalSingleBookSplit
     ) {
-        if (currentLevel <= 0 || removedLevel <= 0) {
-            return OptionalInt.empty();
-        }
-
-        if (incrementalSingleBookSplit) {
-            return OptionalInt.of(currentLevel - 1);
-        }
-
-        return OptionalInt.of(currentLevel - removedLevel);
+        return MergeRules.calculateRemainingEnchantmentLevel(currentLevel, removedLevel, incrementalSingleBookSplit);
     }
 
     public static ItemEnchantments subtractEnchantments(
