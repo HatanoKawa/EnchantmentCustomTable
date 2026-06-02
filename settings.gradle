@@ -27,6 +27,7 @@ plugins {
 }
 
 include 'fabric'
+include 'common'
 include 'fabric_1_21_1'
 include 'fabric_1_21_9'
 include 'fabric_1_21_11'
