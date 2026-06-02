@@ -31,6 +31,10 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu {
     public static final int TEMPLATE_BOOK_SLOT = ENCHANTED_BOOK_SLOT_START + ENCHANTED_BOOK_SLOT_SIZE;
     public static final int COPY_RESULT_SLOT = TEMPLATE_BOOK_SLOT + 1;
     public static final int ENCHANTMENT_CONVERSION_SLOT_SIZE = COPY_RESULT_SLOT + 1;
+    private static final int PLAYER_MAIN_INVENTORY_SIZE = 27;
+    private static final int PLAYER_INVENTORY_START = ENCHANTMENT_CONVERSION_SLOT_SIZE;
+    private static final int PLAYER_HOTBAR_START = PLAYER_INVENTORY_START + PLAYER_MAIN_INVENTORY_SIZE;
+    private static final int PLAYER_INVENTORY_END = PLAYER_HOTBAR_START + 9;
     private static final int PREVIOUS_PAGE_BUTTON = 0;
     private static final int NEXT_PAGE_BUTTON = 1;
 
@@ -74,7 +78,68 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        return ItemStack.EMPTY;
+        Slot slot = slots.get(index);
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack stack = slot.getItem();
+        ItemStack original = stack.copy();
+        if (index >= ENCHANTED_BOOK_SLOT_START && index < ENCHANTED_BOOK_SLOT_START + ENCHANTED_BOOK_SLOT_SIZE) {
+            ItemStack generatedBook = stack.copy();
+            if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
+                return ItemStack.EMPTY;
+            }
+            if (stack.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            }
+            slot.onTake(player, generatedBook);
+            return original;
+        }
+
+        if (index == COPY_RESULT_SLOT) {
+            ItemStack copiedBook = stack.copy();
+            if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
+                return ItemStack.EMPTY;
+            }
+            if (stack.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            }
+            slot.onTake(player, copiedBook);
+            return original;
+        }
+
+        if (index < ENCHANTMENT_CONVERSION_SLOT_SIZE) {
+            if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (stack.is(Items.BOOK)) {
+            if (!moveItemStackTo(stack, BOOK_SLOT, BOOK_SLOT + 1, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (EnchantmentTableRules.paymentCostFor(stack.getItem(), FabricTableConfig.snapshot()) > 0) {
+            if (!moveItemStackTo(stack, PAYMENT_SLOT, PAYMENT_SLOT + 1, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (blockEntity != null && blockEntity.isValidCopyTemplate(stack)) {
+            if (!moveItemStackTo(stack, TEMPLATE_BOOK_SLOT, TEMPLATE_BOOK_SLOT + 1, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (index < PLAYER_HOTBAR_START) {
+            if (!moveItemStackTo(stack, PLAYER_HOTBAR_START, PLAYER_INVENTORY_END, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_HOTBAR_START, false)) {
+            return ItemStack.EMPTY;
+        }
+
+        if (stack.isEmpty()) {
+            slot.set(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
+        }
+        slot.onTake(player, stack);
+        return original;
     }
 
     @Override

@@ -26,6 +26,10 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     public static final int INPUT_SLOT = 1;
     public static final int GENERATED_SLOT_START = 2;
     public static final int ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE = GENERATED_SLOT_START + ENCHANTED_BOOK_SLOT_SIZE;
+    private static final int PLAYER_MAIN_INVENTORY_SIZE = 27;
+    private static final int PLAYER_INVENTORY_START = ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE;
+    private static final int PLAYER_HOTBAR_START = PLAYER_INVENTORY_START + PLAYER_MAIN_INVENTORY_SIZE;
+    private static final int PLAYER_INVENTORY_END = PLAYER_HOTBAR_START + 9;
     private static final int PREVIOUS_PAGE_BUTTON = 0;
     private static final int NEXT_PAGE_BUTTON = 1;
     private static final int EXPORT_BUTTON = 2;
@@ -70,7 +74,50 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        return ItemStack.EMPTY;
+        Slot slot = slots.get(index);
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack stack = slot.getItem();
+        ItemStack original = stack.copy();
+        if (index >= GENERATED_SLOT_START && index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE) {
+            ItemStack generatedBook = stack.copy();
+            if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
+                return ItemStack.EMPTY;
+            }
+            if (stack.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            }
+            slot.onTake(player, generatedBook);
+            return original;
+        }
+
+        if (index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE) {
+            if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (stack.is(Items.ENCHANTED_BOOK) && session.canApplyEnchantedBook(stack)) {
+            if (!moveItemStackTo(stack, INPUT_SLOT, INPUT_SLOT + 1, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (!moveItemStackTo(stack, TOOL_SLOT, TOOL_SLOT + 1, false)) {
+            if (index < PLAYER_HOTBAR_START) {
+                if (!moveItemStackTo(stack, PLAYER_HOTBAR_START, PLAYER_INVENTORY_END, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_HOTBAR_START, false)) {
+                return ItemStack.EMPTY;
+            }
+        }
+
+        if (stack.isEmpty()) {
+            slot.set(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
+        }
+        slot.onTake(player, stack);
+        return original;
     }
 
     @Override
