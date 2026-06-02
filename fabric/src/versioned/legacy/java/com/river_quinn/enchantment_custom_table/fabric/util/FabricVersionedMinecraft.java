@@ -8,7 +8,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
@@ -31,6 +33,14 @@ public final class FabricVersionedMinecraft {
 
     public static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> payloadType(String path) {
         return new CustomPacketPayload.Type<>(id(path));
+    }
+
+    public static BlockBehaviour.Properties blockProperties(String path) {
+        return BlockBehaviour.Properties.of();
+    }
+
+    public static Item.Properties itemProperties(String path) {
+        return new Item.Properties();
     }
 
     public static Registry<Enchantment> enchantmentRegistry(Level level) {

@@ -1,6 +1,7 @@
 package com.river_quinn.enchantment_custom_table.fabric.block;
 
 import com.river_quinn.enchantment_custom_table.fabric.block.entity.FabricEnchantingTableLikeBlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -18,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
 public abstract class FabricEnchantingTableLikeBlock extends BaseEntityBlock {
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 12, 16);
 
-    protected FabricEnchantingTableLikeBlock() {
-        super(Properties.of()
+    protected FabricEnchantingTableLikeBlock(BlockBehaviour.Properties properties) {
+        super(properties
                 .lightLevel(blockState -> 15)
                 .destroyTime(1)
                 .explosionResistance(3600));

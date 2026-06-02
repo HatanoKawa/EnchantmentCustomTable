@@ -21,6 +21,10 @@ import org.jetbrains.annotations.Nullable;
 public class FabricEnchantingCustomTableBlock extends FabricEnchantingTableLikeBlock {
     public static final MapCodec<FabricEnchantingCustomTableBlock> CODEC = simpleCodec(properties -> new FabricEnchantingCustomTableBlock());
 
+    public FabricEnchantingCustomTableBlock() {
+        super(FabricVersionedMinecraft.blockProperties("enchanting_custom_table"));
+    }
+
     @Override
     protected MapCodec<? extends FabricEnchantingCustomTableBlock> codec() {
         return CODEC;
