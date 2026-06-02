@@ -24,7 +24,7 @@ repositories {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of((findProperty('java_version') ?: '21') as Integer)
 }
 
 sourceSets {
