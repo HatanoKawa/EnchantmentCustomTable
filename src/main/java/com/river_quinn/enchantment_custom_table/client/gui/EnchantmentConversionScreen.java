@@ -1,5 +1,6 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
+import com.river_quinn.enchantment_custom_table.core.net.ConversionTableIntent;
 import com.river_quinn.enchantment_custom_table.network.enchanted_book_converting_table.EnchantmentConversionTableNetData;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,7 +33,6 @@ import java.util.Optional;
 public class EnchantmentConversionScreen extends AbstractContainerScreen<EnchantmentConversionMenu> {
 
     private EnchantmentConversionMenu menuContainer;
-    private final static HashMap<String, Object> guistate = EnchantmentConversionMenu.guistate;
     private final Level world;
     private final int x, y, z;
     private final Player entity;
@@ -139,31 +138,26 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         searchBox.setHint(Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search"));
         searchBox.setValue(pendingSearchQuery);
         searchBox.setResponder(this::queueSearchRequest);
-        guistate.put("text:search_box", searchBox);
         this.addRenderableWidget(searchBox);
 
         button_left_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> {
-                    menuContainer.previousPage();
                     ClientPacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
-                            EnchantmentConversionTableNetData.OperateType.PREVIOUS_PAGE.name()
+                            ConversionTableIntent.PREVIOUS_PAGE
                     ));
                 }
         ).bounds(this.leftPos + 7, this.topPos + 4, 17, 18).build();
-        guistate.put("button:button_left_arrow_button", button_left_arrow_button);
         this.addRenderableWidget(button_left_arrow_button);
 
         button_right_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> {
-                    menuContainer.nextPage();
                     ClientPacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
-                            EnchantmentConversionTableNetData.OperateType.NEXT_PAGE.name()
+                            ConversionTableIntent.NEXT_PAGE
                     ));
                 }
         ).bounds(this.leftPos + 24, this.topPos + 4, 17, 18).build();
-        guistate.put("button:button_right_arrow_button", button_right_arrow_button);
         this.addRenderableWidget(button_right_arrow_button);
 
     }
@@ -183,7 +177,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         List<ResourceLocation> matchedEnchantments = findClientLocalizedMatches(pendingSearchQuery);
         menuContainer.setSearchQuery(pendingSearchQuery, clientLanguage, matchedEnchantments);
         ClientPacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
-                EnchantmentConversionTableNetData.OperateType.SEARCH.name(),
+                ConversionTableIntent.SEARCH,
                 pendingSearchQuery,
                 clientLanguage,
                 matchedEnchantments
