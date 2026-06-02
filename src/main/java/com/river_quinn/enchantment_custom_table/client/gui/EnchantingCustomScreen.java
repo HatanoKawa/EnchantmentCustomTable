@@ -1,16 +1,26 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
+//? if <1.21.6 {
+/*import com.mojang.blaze3d.systems.RenderSystem;
+*///?}
 import com.river_quinn.enchantment_custom_table.core.net.EnchantingTableIntent;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
+//? if >=1.21.9 {
 import net.minecraft.client.input.KeyEvent;
+//?}
 //? if >=26.1 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
 /*import net.minecraft.client.gui.GuiGraphics;*/
 //?}
 import net.minecraft.client.gui.components.Button;
+//? if >=1.21.6 {
 import net.minecraft.client.renderer.RenderPipelines;
+//?}
+//? if <1.21.6 {
+/*import net.minecraft.client.renderer.RenderType;
+*///?}
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,7 +32,11 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
+//? if >=1.21.7 {
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+//?} else {
+/*import net.neoforged.neoforge.network.PacketDistributor;
+*///?}
 
 public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCustomMenu> {
 
@@ -66,7 +80,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         graphics.blit(RenderPipelines.GUI_TEXTURED, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
 
     }
-    //?} else {
+    //?} else if >=1.21.6 {
     /*@Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -79,8 +93,41 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
 
     }
+    *///?} else if >=1.21.2 {
+    /*@Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        guiGraphics.blit(RenderType::guiTextured, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(RenderType::guiTextured, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+
+    }
+    *///?} else {
+    /*@Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        guiGraphics.blit(gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        RenderSystem.disableBlend();
+
+        guiGraphics.blit(arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+
+    }
     *///?}
 
+    //? if >=1.21.9 {
     @Override
     public boolean keyPressed(KeyEvent event) {
         if (event.key() == 256) {
@@ -89,6 +136,16 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         }
         return super.keyPressed(event);
     }
+    //?} else {
+    /*@Override
+    public boolean keyPressed(int key, int b, int c) {
+        if (key == 256) {
+            this.minecraft.player.closeContainer();
+            return true;
+        }
+        return super.keyPressed(key, b, c);
+    }
+    *///?}
 
     public String generatePageText() {
         int currentPage = this.menuContainer.currentPage;
@@ -130,7 +187,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         button_left_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> {
-                    ClientPacketDistributor.sendToServer(new EnchantingCustomTableNetData(
+                    sendToServer(new EnchantingCustomTableNetData(
                             EnchantingTableIntent.PREVIOUS_PAGE
                     ));
                 }
@@ -140,7 +197,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         button_right_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> {
-                    ClientPacketDistributor.sendToServer(new EnchantingCustomTableNetData(
+                    sendToServer(new EnchantingCustomTableNetData(
                             EnchantingTableIntent.NEXT_PAGE
                     ));
                 }
@@ -150,12 +207,20 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         export_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_export"),
                 e -> {
-                    ClientPacketDistributor.sendToServer(new EnchantingCustomTableNetData(
+                    sendToServer(new EnchantingCustomTableNetData(
                             EnchantingTableIntent.EXPORT_ALL_ENCHANTMENTS
                     ));
                 }
         ).bounds(this.leftPos + 7, this.topPos + 61, 52, 18).build();
         this.addRenderableWidget(export_button);
+    }
+
+    private void sendToServer(EnchantingCustomTableNetData payload) {
+        //? if >=1.21.7 {
+        ClientPacketDistributor.sendToServer(payload);
+        //?} else {
+        /*PacketDistributor.sendToServer(payload);
+        *///?}
     }
 
 }

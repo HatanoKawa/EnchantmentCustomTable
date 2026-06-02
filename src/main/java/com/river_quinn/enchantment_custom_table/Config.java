@@ -10,7 +10,11 @@ import org.slf4j.Logger;
 
 // An example config class. This is not required, but it's a good idea to have one to keep your config organized.
 // Demonstrates how to use Neo's config APIs
+//? if >=1.21.6 {
 @EventBusSubscriber(modid = EnchantmentCustomTable.MODID)
+//?} else {
+/*@EventBusSubscriber(modid = EnchantmentCustomTable.MODID, bus = EventBusSubscriber.Bus.MOD)
+*///?}
 public class Config
 {
     private static final Logger LOGGER = LogUtils.getLogger();

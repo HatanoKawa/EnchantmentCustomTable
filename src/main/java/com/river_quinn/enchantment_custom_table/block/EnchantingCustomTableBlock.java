@@ -34,6 +34,13 @@ public class EnchantingCustomTableBlock extends EnchantingTableLikeBlock {
         super(properties);
     }
 
+    //? if <1.21.2 {
+    /*public EnchantingCustomTableBlock() {
+        super();
+    }
+    *///?}
+
+    //? if >=1.21.2 {
     //? if >=1.21.11 {
     public EnchantingCustomTableBlock(Identifier registryName) {
     //?} else {
@@ -41,6 +48,7 @@ public class EnchantingCustomTableBlock extends EnchantingTableLikeBlock {
     *///?}
         super(registryName);
     }
+    //?}
 
     @Override
     protected MapCodec<? extends EnchantingCustomTableBlock> codec() {

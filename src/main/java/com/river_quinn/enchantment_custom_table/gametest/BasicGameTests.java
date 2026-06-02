@@ -9,19 +9,30 @@ import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
+//? if >=1.21.5 {
 import com.mojang.serialization.MapCodec;
+//?}
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+//? if >=1.21.5 {
 import net.minecraft.gametest.framework.FunctionGameTestInstance;
+//?}
+//? if <1.21.5 {
+/*import net.minecraft.gametest.framework.GameTest;
+*///?}
 import net.minecraft.gametest.framework.GameTestHelper;
+//? if >=1.21.5 {
 import net.minecraft.gametest.framework.GameTestInstance;
 import net.minecraft.gametest.framework.TestData;
 import net.minecraft.gametest.framework.TestEnvironmentDefinition;
+//?}
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+//? if >=1.21.5 {
 import net.minecraft.network.chat.MutableComponent;
+//?}
 //? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
 //?} else {
@@ -34,25 +45,52 @@ import net.minecraft.world.inventory.ContainerInput;
 /*import net.minecraft.world.inventory.ClickType;*/
 //?}
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
+//? if >=1.21.5 {
 import net.neoforged.bus.api.SubscribeEvent;
+//?}
+//? if >=1.21.5 {
 import net.neoforged.fml.common.EventBusSubscriber;
+//?} else {
+/*import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+*///?}
 import net.neoforged.neoforge.capabilities.Capabilities;
+//? if >=1.21.5 {
 import net.neoforged.neoforge.event.RegisterGameTestsEvent;
+//?}
+//? if <1.21.9 {
+/*import net.neoforged.neoforge.items.IItemHandler;
+*///?}
+//? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+//?}
 
 import java.util.List;
+//? if >=1.21.5 {
 import java.util.function.Consumer;
+//?}
 
+//? if >=1.21.5 {
+//? if >=1.21.6 {
 @EventBusSubscriber(modid = EnchantmentCustomTable.MODID)
+//?} else {
+/*@EventBusSubscriber(modid = EnchantmentCustomTable.MODID, bus = EventBusSubscriber.Bus.MOD)
+*///?}
+//?} else {
+/*@GameTestHolder(EnchantmentCustomTable.MODID)
+@PrefixGameTestTemplate(false)
+*///?}
 public class BasicGameTests {
     private static final BlockPos ENCHANTING_CUSTOM_TABLE_POS = new BlockPos(1, 1, 1);
     private static final BlockPos ENCHANTMENT_CONVERSION_TABLE_POS = new BlockPos(3, 1, 1);
+    //? if >=1.21.5 {
     //? if >=1.21.11 {
     private static final Identifier EMPTY_TEMPLATE =
             Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "gametest/empty");
@@ -201,25 +239,32 @@ public class BasicGameTests {
             return Component.literal("direct");
         }
     }
+    //?}
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 20)
+    *///?}
     public static void functionalBlocksCreateTheirBlockEntities(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
         helper.assertBlockPresent(ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get(), ENCHANTING_CUSTOM_TABLE_POS);
         assertTrue(helper,
-                helper.getBlockEntity(ENCHANTING_CUSTOM_TABLE_POS, EnchantingCustomTableBlockEntity.class) != null,
+                blockEntity(helper, ENCHANTING_CUSTOM_TABLE_POS, EnchantingCustomTableBlockEntity.class) != null,
                 "Enchanting Custom Table should create its block entity"
         );
 
         helper.assertBlockPresent(ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get(), ENCHANTMENT_CONVERSION_TABLE_POS);
         assertTrue(helper,
-                helper.getBlockEntity(ENCHANTMENT_CONVERSION_TABLE_POS, EnchantmentConversionTableBlockEntity.class) != null,
+                blockEntity(helper, ENCHANTMENT_CONVERSION_TABLE_POS, EnchantmentConversionTableBlockEntity.class) != null,
                 "Enchantment Conversion Table should create its block entity"
         );
 
         helper.succeed();
     }
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void functionalMenusBindToPlacedBlocks(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
@@ -260,6 +305,9 @@ public class BasicGameTests {
 
         helper.succeed();
     }
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void conversionTableConsumesConfiguredPaymentAndClearsResultsWhenExhausted(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
@@ -295,6 +343,9 @@ public class BasicGameTests {
             Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
         }
     }
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void conversionTableSearchFiltersResultsByClientMatchedIds(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
@@ -339,6 +390,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void conversionTableCanBeLimitedToLevelOneBooks(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
@@ -374,6 +428,9 @@ public class BasicGameTests {
             Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
         }
     }
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void conversionTableRefillsTakenResultSlotAfterPick(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
@@ -417,6 +474,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void conversionTablePreservesSearchFilterAfterPick(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
@@ -476,6 +536,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void conversionTableCopyModeGeneratesResultAndDisablesCandidates(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
@@ -525,6 +588,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void conversionTableRejectsInvalidCopyTemplates(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
@@ -549,6 +615,9 @@ public class BasicGameTests {
         helper.succeed();
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void conversionTableAutomationInputsMaterialsAndExtractsCopiesOnly(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
@@ -558,7 +627,8 @@ public class BasicGameTests {
         Config.minimumEmeraldBlockCost = 0;
 
         try {
-            EnchantmentConversionTableBlockEntity blockEntity = helper.getBlockEntity(
+            EnchantmentConversionTableBlockEntity blockEntity = blockEntity(
+                    helper,
                     ENCHANTMENT_CONVERSION_TABLE_POS,
                     EnchantmentConversionTableBlockEntity.class
             );
@@ -567,11 +637,19 @@ public class BasicGameTests {
                     EnchantmentConversionTableBlockEntity.TEMPLATE_SLOT,
                     enchantedBook(sharpness, 2)
             );
+            //? if >=1.21.9 {
             ResourceHandler<ItemResource> handler = helper.getLevel().getCapability(
                     Capabilities.Item.BLOCK,
                     helper.absolutePos(ENCHANTMENT_CONVERSION_TABLE_POS),
                     Direction.UP
             );
+            //?} else {
+            /*IItemHandler handler = helper.getLevel().getCapability(
+                    Capabilities.ItemHandler.BLOCK,
+                    helper.absolutePos(ENCHANTMENT_CONVERSION_TABLE_POS),
+                    Direction.UP
+            );
+            *///?}
 
             assertTrue(helper, handler != null, "Conversion table should expose an item handler capability");
             assertTrue(helper, insertStack(handler, 2, new ItemStack(Items.BOOK)).getCount() == 1, "Automation should not insert into the output slot");
@@ -604,6 +682,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableSplitsSingleHighLevelBookByDesign(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -627,6 +708,9 @@ public class BasicGameTests {
             config.restore();
         }
     }
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableMergesDuplicateBookLevelsWithoutVanillaCap(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -659,6 +743,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableRejectsOvercapMergeWhenLevelLimitIsEnforced(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -684,6 +771,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableLevelLimitAllowsNewOvercapEnchantments(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -717,6 +807,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableIncrementalMergeAddsOneForSameLevel(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -740,6 +833,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableIncrementalMergeRejectsDifferentLevel(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -765,6 +861,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableIncrementalMergeObeysVanillaCapWhenLevelLimitIsEnforced(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -790,6 +889,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableIncrementalMergeAllowsNewEnchantments(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -815,6 +917,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableRejectsWholeMultiEnchantmentBookWhenOneEntryIsInvalid(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -842,6 +947,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableIncrementalModeSplitsSingleBookIntoMinusOnePair(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -865,6 +973,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableIncrementalModeTakingSplitBookOnlyDropsSourceBookOneLevel(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -895,6 +1006,9 @@ public class BasicGameTests {
             config.restore();
         }
     }
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableQuickMoveBookIntoInputUpdatesTool(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -924,6 +1038,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableDragInsertBookIntoGeneratedSlotUpdatesTool(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -952,6 +1069,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableKeepsToolInBlockStorageAfterMenuClose(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -964,7 +1084,8 @@ public class BasicGameTests {
         menu.getSlot(0).setByPlayer(sword);
         menu.removed(player);
 
-        EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(
+        EnchantingCustomTableBlockEntity blockEntity = blockEntity(
+                helper,
                 ENCHANTING_CUSTOM_TABLE_POS,
                 EnchantingCustomTableBlockEntity.class
         );
@@ -979,13 +1100,17 @@ public class BasicGameTests {
         helper.succeed();
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableAutomationAppliesAcceptedBook(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
         ConfigSnapshot config = useMergeConfig(false, false);
 
         try {
-            EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(
+            EnchantingCustomTableBlockEntity blockEntity = blockEntity(
+                    helper,
                     ENCHANTING_CUSTOM_TABLE_POS,
                     EnchantingCustomTableBlockEntity.class
             );
@@ -994,11 +1119,19 @@ public class BasicGameTests {
             sword.enchant(sharpness, 4);
             blockEntity.getInventory().setStackInSlot(EnchantingCustomTableBlockEntity.TOOL_SLOT, sword);
 
+            //? if >=1.21.9 {
             ResourceHandler<ItemResource> handler = helper.getLevel().getCapability(
                     Capabilities.Item.BLOCK,
                     helper.absolutePos(ENCHANTING_CUSTOM_TABLE_POS),
                     Direction.UP
             );
+            //?} else {
+            /*IItemHandler handler = helper.getLevel().getCapability(
+                    Capabilities.ItemHandler.BLOCK,
+                    helper.absolutePos(ENCHANTING_CUSTOM_TABLE_POS),
+                    Direction.UP
+            );
+            *///?}
 
             assertTrue(helper, handler != null, "Custom table should expose an item handler capability");
             assertTrue(helper, insertStack(handler, 0, enchantedBook(sharpness, 1)).isEmpty(), "Automation should consume an accepted enchanted book");
@@ -1017,13 +1150,17 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableAutomationRejectsInvalidBook(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
         ConfigSnapshot config = useMergeConfig(true, false);
 
         try {
-            EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(
+            EnchantingCustomTableBlockEntity blockEntity = blockEntity(
+                    helper,
                     ENCHANTING_CUSTOM_TABLE_POS,
                     EnchantingCustomTableBlockEntity.class
             );
@@ -1032,11 +1169,19 @@ public class BasicGameTests {
             sword.enchant(sharpness, sharpness.value().getMaxLevel());
             blockEntity.getInventory().setStackInSlot(EnchantingCustomTableBlockEntity.TOOL_SLOT, sword);
 
+            //? if >=1.21.9 {
             ResourceHandler<ItemResource> handler = helper.getLevel().getCapability(
                     Capabilities.Item.BLOCK,
                     helper.absolutePos(ENCHANTING_CUSTOM_TABLE_POS),
                     Direction.UP
             );
+            //?} else {
+            /*IItemHandler handler = helper.getLevel().getCapability(
+                    Capabilities.ItemHandler.BLOCK,
+                    helper.absolutePos(ENCHANTING_CUSTOM_TABLE_POS),
+                    Direction.UP
+            );
+            *///?}
             ItemStack rejected = insertStack(handler, 0, enchantedBook(sharpness, sharpness.value().getMaxLevel()));
 
             assertTrue(helper, !rejected.isEmpty(), "Automation should return a book that cannot be merged");
@@ -1054,6 +1199,9 @@ public class BasicGameTests {
         }
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableRemovingGeneratedBookSubtractsFromTool(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -1079,6 +1227,9 @@ public class BasicGameTests {
         helper.succeed();
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableQuickMoveGeneratedBookSubtractsFromTool(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -1100,12 +1251,16 @@ public class BasicGameTests {
         helper.succeed();
     }
 
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableExportAllEnchantmentsMarksStoredToolChanged(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
         Player player = helper.makeMockPlayer(GameType.CREATIVE);
         EnchantingCustomMenu menu = enchantingMenu(helper, player);
-        EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(
+        EnchantingCustomTableBlockEntity blockEntity = blockEntity(
+                helper,
                 ENCHANTING_CUSTOM_TABLE_POS,
                 EnchantingCustomTableBlockEntity.class
         );
@@ -1144,7 +1299,19 @@ public class BasicGameTests {
     }
 
     private static Holder<Enchantment> enchantment(GameTestHelper helper, net.minecraft.resources.ResourceKey<Enchantment> key) {
+        //? if >=1.21.2 {
         return helper.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(key).orElseThrow();
+        //?} else {
+        /*return helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(key);
+        *///?}
+    }
+
+    private static <T extends BlockEntity> T blockEntity(GameTestHelper helper, BlockPos pos, Class<T> type) {
+        //? if >=1.21.5 {
+        return helper.getBlockEntity(pos, type);
+        //?} else {
+        /*return type.cast(helper.getBlockEntity(pos));
+        *///?}
     }
 
     //? if >=1.21.11 {
@@ -1167,6 +1334,7 @@ public class BasicGameTests {
         return book;
     }
 
+    //? if >=1.21.9 {
     private static ItemStack stackInSlot(ResourceHandler<ItemResource> handler, int slot) {
         return handler.getResource(slot).toStack(handler.getAmountAsInt(slot));
     }
@@ -1194,6 +1362,19 @@ public class BasicGameTests {
             return resource.toStack(extracted);
         }
     }
+    //?} else {
+    /*private static ItemStack stackInSlot(IItemHandler handler, int slot) {
+        return handler.getStackInSlot(slot);
+    }
+
+    private static ItemStack insertStack(IItemHandler handler, int slot, ItemStack stack) {
+        return handler.insertItem(slot, stack, false);
+    }
+
+    private static ItemStack extractStack(IItemHandler handler, int slot, int amount) {
+        return handler.extractItem(slot, amount, false);
+    }
+    *///?}
 
     private static ConfigSnapshot useMergeConfig(boolean enforceEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {
         ConfigSnapshot snapshot = new ConfigSnapshot(
@@ -1246,10 +1427,18 @@ public class BasicGameTests {
     }
 
     private static void assertTrue(GameTestHelper helper, boolean condition, String message) {
+        //? if >=1.21.5 {
         helper.assertTrue(condition, Component.literal(message));
+        //?} else {
+        /*helper.assertTrue(condition, message);
+        *///?}
     }
 
     private static void movePlayerTo(Player player, BlockPos pos) {
+        //? if >=1.21.5 {
         player.snapTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 0.0F, 0.0F);
+        //?} else {
+        /*player.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 0.0F, 0.0F);
+        *///?}
     }
 }

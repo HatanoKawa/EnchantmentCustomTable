@@ -41,6 +41,13 @@ public class EnchantmentConversionTableBlock extends EnchantingTableLikeBlock {
         super(properties);
     }
 
+    //? if <1.21.2 {
+    /*public EnchantmentConversionTableBlock() {
+        super();
+    }
+    *///?}
+
+    //? if >=1.21.2 {
     //? if >=1.21.11 {
     public EnchantmentConversionTableBlock(Identifier registryName) {
     //?} else {
@@ -48,6 +55,7 @@ public class EnchantmentConversionTableBlock extends EnchantingTableLikeBlock {
     *///?}
         super(registryName);
     }
+    //?}
 
     @Override
     protected MapCodec<? extends EnchantmentConversionTableBlock> codec() {

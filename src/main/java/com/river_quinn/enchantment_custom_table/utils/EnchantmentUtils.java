@@ -21,9 +21,15 @@ public class EnchantmentUtils {
     public static Holder.Reference<Enchantment> translateEnchantment(Level level, Enchantment enchantment) {
         if (level == null || enchantment == null)
             return null;
+        //? if >=1.21.2 {
         Registry<Enchantment> fullEnchantmentRegistry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         Optional<ResourceKey<Enchantment>> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantment);
         return resourceKey.flatMap(fullEnchantmentRegistry::get).orElse(null);
+        //?} else {
+        /*Registry<Enchantment> fullEnchantmentRegistry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        Optional<ResourceKey<Enchantment>> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantment);
+        return resourceKey.flatMap(fullEnchantmentRegistry::getHolder).orElse(null);
+        *///?}
     }
 
     public static Optional<ResourceKey<Enchantment>> getEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
@@ -36,7 +42,11 @@ public class EnchantmentUtils {
             return holderKey;
         }
 
+        //? if >=1.21.2 {
         Registry<Enchantment> registry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        //?} else {
+        /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        *///?}
         return registry.getResourceKey(enchantment.value());
     }
 
@@ -45,10 +55,17 @@ public class EnchantmentUtils {
             return Optional.empty();
         }
 
+        //? if >=1.21.2 {
         Registry<Enchantment> registry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         return getEnchantmentKey(level, enchantment)
                 .flatMap(registry::get)
                 .map(holder -> holder);
+        //?} else {
+        /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        return getEnchantmentKey(level, enchantment)
+                .flatMap(registry::getHolder)
+                .map(holder -> holder);
+        *///?}
     }
 
     public static ItemEnchantments getEnchantments(ItemStack itemStack) {

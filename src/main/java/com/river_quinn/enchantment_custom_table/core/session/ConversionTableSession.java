@@ -240,7 +240,11 @@ public class ConversionTableSession {
 
     private void loadAllEnchantments() {
         if (allEnchantments.isEmpty()) {
+            //? if >=1.21.2 {
             Registry<Enchantment> fullEnchantmentList = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+            //?} else {
+            /*Registry<Enchantment> fullEnchantmentList = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+            *///?}
             fullEnchantmentList.asHolderIdMap().forEach(allEnchantments::add);
         }
     }

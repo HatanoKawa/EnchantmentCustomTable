@@ -1,5 +1,6 @@
 package com.river_quinn.enchantment_custom_table.world.inventory;
 
+//? if >=1.21.9 {
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
@@ -33,3 +34,4 @@ class MenuItemStackHandler extends ItemStacksResourceHandler {
         return slotCapacity > 0 ? Math.min(capacity, slotCapacity) : capacity;
     }
 }
+//?}

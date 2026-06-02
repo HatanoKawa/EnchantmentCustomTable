@@ -1,5 +1,8 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
+//? if <1.21.6 {
+/*import com.mojang.blaze3d.systems.RenderSystem;
+*///?}
 import com.river_quinn.enchantment_custom_table.core.net.ConversionTableIntent;
 import com.river_quinn.enchantment_custom_table.network.enchanted_book_converting_table.EnchantmentConversionTableNetData;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
@@ -14,9 +17,16 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+//? if >=1.21.9 {
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
+//?}
+//? if >=1.21.6 {
 import net.minecraft.client.renderer.RenderPipelines;
+//?}
+//? if <1.21.6 {
+/*import net.minecraft.client.renderer.RenderType;
+*///?}
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -31,7 +41,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
+//? if >=1.21.7 {
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+//?} else {
+/*import net.neoforged.neoforge.network.PacketDistributor;
+*///?}
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +93,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         graphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
     }
-    //?} else {
+    //?} else if >=1.21.6 {
     /*@Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -90,8 +104,36 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
     }
+    *///?} else if >=1.21.2 {
+    /*@Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        guiGraphics.blit(RenderType::guiTextured, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+    }
+    *///?} else {
+    /*@Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        guiGraphics.blit(gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        RenderSystem.disableBlend();
+    }
     *///?}
 
+    //? if >=1.21.9 {
     @Override
     public boolean keyPressed(KeyEvent event) {
         if (event.key() == 256) {
@@ -113,6 +155,29 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         }
         return super.charTyped(event);
     }
+    //?} else {
+    /*@Override
+    public boolean keyPressed(int key, int b, int c) {
+        if (key == 256) {
+            this.minecraft.player.closeContainer();
+            return true;
+        }
+        if (searchBox != null && searchBox.isFocused()) {
+            if (searchBox.keyPressed(key, b, c) || searchBox.canConsumeInput()) {
+                return true;
+            }
+        }
+        return super.keyPressed(key, b, c);
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        if (searchBox != null && searchBox.charTyped(codePoint, modifiers)) {
+            return true;
+        }
+        return super.charTyped(codePoint, modifiers);
+    }
+    *///?}
 
     @Override
     protected void containerTick() {
@@ -180,7 +245,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         button_left_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> {
-                    ClientPacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
+                    sendToServer(new EnchantmentConversionTableNetData(
                             ConversionTableIntent.PREVIOUS_PAGE
                     ));
                 }
@@ -190,7 +255,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         button_right_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> {
-                    ClientPacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
+                    sendToServer(new EnchantmentConversionTableNetData(
                             ConversionTableIntent.NEXT_PAGE
                     ));
                 }
@@ -217,7 +282,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         /*List<ResourceLocation> matchedEnchantments = findClientLocalizedMatches(pendingSearchQuery);
         *///?}
         menuContainer.setSearchQuery(pendingSearchQuery, clientLanguage, matchedEnchantments);
-        ClientPacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
+        sendToServer(new EnchantmentConversionTableNetData(
                 ConversionTableIntent.SEARCH,
                 pendingSearchQuery,
                 clientLanguage,
@@ -242,7 +307,11 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
             return List.of();
         }
 
+        //? if >=1.21.2 {
         Registry<Enchantment> enchantmentRegistry = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        //?} else {
+        /*Registry<Enchantment> enchantmentRegistry = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        *///?}
         //? if >=1.21.11 {
         List<Identifier> matchedEnchantments = new ArrayList<>();
         //?} else {
@@ -279,5 +348,13 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 enchantmentId.getPath().replace('_', ' '),
                 enchantment.value().description().getString()
         ));
+    }
+
+    private void sendToServer(EnchantmentConversionTableNetData payload) {
+        //? if >=1.21.7 {
+        ClientPacketDistributor.sendToServer(payload);
+        //?} else {
+        /*PacketDistributor.sendToServer(payload);
+        *///?}
     }
 }

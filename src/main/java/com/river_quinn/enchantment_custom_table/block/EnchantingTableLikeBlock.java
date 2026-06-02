@@ -34,6 +34,16 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
                 .explosionResistance(3600));
     }
 
+    //? if <1.21.2 {
+    /*public EnchantingTableLikeBlock() {
+        super(Properties.of()
+                .lightLevel(blockState -> 15)
+                .destroyTime(1)
+                .explosionResistance(3600));
+    }
+    *///?}
+
+    //? if >=1.21.2 {
     //? if >=1.21.11 {
     public EnchantingTableLikeBlock(Identifier registryName) {
     //?} else {
@@ -45,6 +55,7 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
                 .destroyTime(1)
                 .explosionResistance(3600));
     }
+    //?}
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -69,7 +80,11 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
     @SuppressWarnings("unchecked")
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        //? if >=1.21.2 {
         return level.isClientSide() ? (lvl, pos, blockState, t) -> {
+        //?} else {
+        /*return level.isClientSide ? (lvl, pos, blockState, t) -> {
+        *///?}
             if (t instanceof EnchantingTableLikeBlockEntity enchantingTable) {
                 EnchantingTableLikeBlockEntity.bookAnimationTick(lvl, pos, blockState, enchantingTable);
             }

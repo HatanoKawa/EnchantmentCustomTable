@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
 import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
@@ -20,7 +21,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.*;
 import net.neoforged.neoforge.items.ItemStackHandler;
+//? if <1.21.9 {
+/*import net.neoforged.neoforge.items.SlotItemHandler;
+*///?}
+//? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
+//?}
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.Items;
@@ -30,8 +36,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
+//? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+//?}
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -50,7 +58,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	 * index 1: 附加槽，仅接受附魔，添加附魔书后将会立刻将附魔书的附魔添加到待附魔工具中并重新生成附魔书槽
 	 * index 2-22: 附魔书槽
 	 */
+	//? if >=1.21.9 {
 	private final EnchantingMenuItemHandler itemHandler;
+	//?} else {
+	/*private final IItemHandlerModifiable itemHandler;
+	*///?}
 	private final EnchantingTableSession session;
 
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -160,8 +172,13 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				boundBlockEntity = blockEntity;
 			}
 		}
+		//? if >=1.21.9 {
 		this.itemHandler = new EnchantingMenuItemHandler(boundBlockEntity);
-		ResourceHandlerLogicalInventory logicalInventory = new ResourceHandlerLogicalInventory(itemHandler);
+		LogicalInventory logicalInventory = new ResourceHandlerLogicalInventory(itemHandler);
+		//?} else {
+		/*EnchantingMenuInventory logicalInventory = new EnchantingMenuInventory(boundBlockEntity);
+		this.itemHandler = new LogicalInventoryItemHandler(logicalInventory);
+		*///?}
 		this.session = new EnchantingTableSession(
 				world,
 				logicalInventory,
@@ -197,7 +214,12 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 			}
 		});
 
-		this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, 8, 8) {
+		this.addSlot(
+			//? if >=1.21.9 {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, 8, 8) {
+			//?} else {
+			/*new SlotItemHandler(itemHandler, 0, 8, 8) {
+			*///?}
 			@Override
 			public void onQuickCraft(ItemStack newStack, ItemStack oldStack) {
 				super.onQuickCraft(newStack, oldStack);
@@ -222,7 +244,12 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 			}
 		});
 
-		this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, 42, 8) {
+		this.addSlot(
+			//? if >=1.21.9 {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, 42, 8) {
+			//?} else {
+			/*new SlotItemHandler(itemHandler, 1, 42, 8) {
+			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return Items.ENCHANTED_BOOK == stack.getItem()
@@ -269,7 +296,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				int xPos = 61 + col * 18;
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
+					//? if >=1.21.9 {
 					new ResourceHandlerSlot(itemHandler, itemHandler::set, final_enchanted_book_index + 2, xPos, yPos) {
+					//?} else {
+					/*new SlotItemHandler(itemHandler, final_enchanted_book_index + 2, xPos, yPos) {
+					*///?}
 						@Override
 						public boolean mayPlace(ItemStack stack) {
 							return Items.ENCHANTED_BOOK == stack.getItem()
@@ -502,6 +533,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		totalPage = page.totalPage();
 	}
 
+	//? if >=1.21.9 {
 	private static class EnchantingMenuItemHandler extends MenuItemStackHandler {
 		private final EnchantingCustomTableBlockEntity blockEntity;
 		private final ItemStackHandler fallbackToolHandler = new ItemStackHandler(1);
@@ -584,4 +616,62 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 			return blockEntity != null ? blockEntity.getInventory() : fallbackToolHandler;
 		}
 	}
+	//?} else {
+	/*private static class EnchantingMenuInventory implements LogicalInventory {
+		private final EnchantingCustomTableBlockEntity blockEntity;
+		private final LogicalInventory fallbackToolInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(1));
+		private final LogicalInventory virtualInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE - 1));
+
+		private EnchantingMenuInventory(EnchantingCustomTableBlockEntity blockEntity) {
+			this.blockEntity = blockEntity;
+		}
+
+		@Override
+		public int getSlots() {
+			return ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE;
+		}
+
+		@Override
+		public ItemStack getStackInSlot(int slot) {
+			return slot == 0 ? persistentInventory().getStackInSlot(0) : virtualInventory.getStackInSlot(slot - 1);
+		}
+
+		@Override
+		public void setStackInSlot(int slot, ItemStack stack) {
+			if (slot == 0) {
+				persistentInventory().setStackInSlot(0, stack);
+			} else {
+				virtualInventory.setStackInSlot(slot - 1, stack);
+			}
+		}
+
+		@Override
+		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+			return slot == 0
+					? persistentInventory().insertItem(0, stack, simulate)
+					: virtualInventory.insertItem(slot - 1, stack, simulate);
+		}
+
+		@Override
+		public ItemStack extractItem(int slot, int amount, boolean simulate) {
+			return slot == 0
+					? persistentInventory().extractItem(0, amount, simulate)
+					: virtualInventory.extractItem(slot - 1, amount, simulate);
+		}
+
+		@Override
+		public int getSlotLimit(int slot) {
+			return 1;
+		}
+
+		@Override
+		public boolean isItemValid(int slot, ItemStack stack) {
+			return true;
+		}
+
+		private LogicalInventory persistentInventory() {
+			return blockEntity != null ? blockEntity.getLogicalInventory() : fallbackToolInventory;
+		}
+	}
+	*///?}
 }

@@ -17,6 +17,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+//? if <1.21.6 {
+/*import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+*///?}
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Containers;
@@ -27,13 +31,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
+//? if >=1.21.6 {
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+//?}
+//? if <1.21.9 {
+/*import net.neoforged.neoforge.items.IItemHandler;
+*///?}
 import net.neoforged.neoforge.items.ItemStackHandler;
+//? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+//?}
 import org.jetbrains.annotations.Nullable;
 
 public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBlockEntity implements MenuProvider {
@@ -63,7 +74,11 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         }
     };
     private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);
+    //? if >=1.21.9 {
     private final ResourceHandler<ItemResource> automationHandler = new ConversionAutomationItemHandler();
+    //?} else {
+    /*private final IItemHandler automationHandler = new ConversionAutomationItemHandler();
+    *///?}
     private boolean updatingCopyResult = false;
     private int inventoryVersion = 0;
 
@@ -88,9 +103,15 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         return inventoryVersion;
     }
 
+    //? if >=1.21.9 {
     public @Nullable ResourceHandler<ItemResource> getAutomationItemHandler(@Nullable Direction direction) {
         return automationHandler;
     }
+    //?} else {
+    /*public @Nullable IItemHandler getAutomationItemHandler(@Nullable Direction direction) {
+        return automationHandler;
+    }
+    *///?}
 
     public boolean isCopyMode() {
         return isValidCopyTemplate(inventory.getStackInSlot(TEMPLATE_SLOT));
@@ -143,7 +164,13 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     }
 
     public void dropInventory() {
-        if (level == null || level.isClientSide()) {
+        if (level == null
+                //? if >=1.21.6 {
+                || level.isClientSide()
+                //?} else {
+                /*|| level.isClientSide
+                *///?}
+        ) {
             return;
         }
         for (int i = 0; i < inventory.getSlots(); i++) {
@@ -155,6 +182,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         }
     }
 
+    //? if >=1.21.6 {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
@@ -167,6 +195,37 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         input.child("Inventory").ifPresent(inventory::deserialize);
         refreshCopyResult();
     }
+    //?} else if >=1.21.5 {
+    /*@Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("Inventory", inventory.serializeNBT(registries));
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.contains("Inventory")) {
+            tag.getCompound("Inventory").ifPresent(inventoryTag -> inventory.deserializeNBT(registries, inventoryTag));
+        }
+        refreshCopyResult();
+    }
+    *///?} else {
+    /*@Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("Inventory", inventory.serializeNBT(registries));
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.contains("Inventory")) {
+            inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
+        }
+        refreshCopyResult();
+    }
+    *///?}
 
     private void markInventoryChanged() {
         inventoryVersion++;
@@ -177,6 +236,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         return Config.snapshot();
     }
 
+    //? if >=1.21.9 {
     private class ConversionAutomationItemHandler implements ResourceHandler<ItemResource>, AutomationPort {
         private final SnapshotJournal<ItemStack[]> snapshotJournal = new SnapshotJournal<>() {
             @Override
@@ -292,4 +352,80 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
             return extracted.getCount();
         }
     }
+    //?} else {
+    /*private class ConversionAutomationItemHandler implements IItemHandler, AutomationPort {
+        @Override
+        public int getSlots() {
+            return 3;
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return slot == 2 ? inventory.getStackInSlot(COPY_RESULT_SLOT) : ItemStack.EMPTY;
+        }
+
+        @Override
+        public SlotRole getRole(int slot) {
+            return switch (slot) {
+                case 0 -> SlotRole.BOOK_INPUT;
+                case 1 -> SlotRole.PAYMENT;
+                case 2 -> SlotRole.COPY_RESULT;
+                default -> SlotRole.GENERATED_BOOK;
+            };
+        }
+
+        @Override
+        public boolean canInsert(int slot, ItemStack stack) {
+            return isItemValid(slot, stack);
+        }
+
+        @Override
+        public boolean canExtract(int slot) {
+            return slot == 2;
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            int internalSlot = switch (slot) {
+                case 0 -> BOOK_SLOT;
+                case 1 -> PAYMENT_SLOT;
+                default -> -1;
+            };
+            if (internalSlot < 0 || stack.isEmpty() || !inventory.isItemValid(internalSlot, stack)) {
+                return stack;
+            }
+            ItemStack remainder = inventory.insertItem(internalSlot, stack, simulate);
+            if (!simulate) {
+                refreshCopyResult();
+            }
+            return remainder;
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (slot != 2) {
+                return ItemStack.EMPTY;
+            }
+            ItemStack extracted = inventory.extractItem(COPY_RESULT_SLOT, amount, simulate);
+            if (!simulate && !extracted.isEmpty()) {
+                refreshCopyResult();
+            }
+            return extracted;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return slot == 2 ? 1 : 64;
+        }
+
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return switch (slot) {
+                case 0 -> stack.is(Items.BOOK);
+                case 1 -> isPaymentItem(stack);
+                default -> false;
+            };
+        }
+    }
+    *///?}
 }
