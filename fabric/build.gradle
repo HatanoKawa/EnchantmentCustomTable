@@ -1,0 +1,65 @@
+plugins {
+    id 'fabric-loom' version '1.13.4'
+    id 'maven-publish'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = "${mod_id}-fabric"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://maven.fabricmc.net/'
+        metadataSources {
+            mavenPom()
+            artifact()
+            ignoreGradleMetadataRedirection()
+        }
+    }
+    maven { url = 'https://libraries.minecraft.net/' }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+sourceSets {
+    main {
+        java.srcDir rootProject.file('src/common/java')
+        resources.srcDir rootProject.file('src/main/resources')
+        resources.exclude 'META-INF/**'
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${fabric_minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+}
+
+def fabricResourceProperties = [
+        version                 : version,
+        mod_id                  : mod_id,
+        mod_name                : mod_name,
+        mod_description         : mod_description,
+        mod_authors             : mod_authors,
+        mod_license             : mod_license,
+        fabric_minecraft_version: fabric_minecraft_version,
+        fabric_loader_version   : fabric_loader_version
+]
+
+processResources {
+    inputs.properties fabricResourceProperties
+    filesMatching('fabric.mod.json') {
+        expand(fabricResourceProperties)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

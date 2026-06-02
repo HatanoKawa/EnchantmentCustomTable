@@ -1,8 +1,23 @@
 pluginManagement {
     repositories {
         mavenLocal()
+        maven {
+            url = 'https://maven.fabricmc.net/'
+            metadataSources {
+                mavenPom()
+                artifact()
+                ignoreGradleMetadataRedirection()
+            }
+        }
         gradlePluginPortal()
         maven { url = 'https://maven.neoforged.net/releases' }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == 'net.fabricmc.fabric-loom-remap' || requested.id.id == 'fabric-loom') {
+                useModule("net.fabricmc:fabric-loom:${requested.version}")
+            }
+        }
     }
 }
 
@@ -10,6 +25,8 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
     id 'dev.kikugie.stonecutter' version '0.9.4'
 }
+
+include 'fabric'
 
 stonecutter {
     kotlinController = false
