@@ -822,9 +822,7 @@ public class BasicGameTests {
     }
 
     private static ItemStack enchantedBook(Holder<Enchantment> enchantment, int level) {
-        ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-        book.enchant(enchantment, level);
-        return book;
+        return EnchantmentUtils.createEnchantedBook(enchantment, level);
     }
 
     private static ConfigSnapshot useMergeConfig(boolean enforceEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {

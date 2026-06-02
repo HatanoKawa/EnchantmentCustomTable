@@ -5,15 +5,11 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
@@ -30,9 +26,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEntity implements MenuProvider {
     public static final int TOOL_SLOT = 0;
@@ -100,8 +94,8 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         }
         return EnchantmentTableRules.tryMergeEnchantments(
                 EnchantmentUtils.getEnchantments(getToolStack()),
-                getEnchantmentLevelsFromEnchantedBook(stack),
-                this::isSameEnchantment,
+                EnchantmentUtils.getEnchantmentLevels(level, stack),
+                (first, second) -> EnchantmentUtils.isSameEnchantment(level, first, second),
                 mergeOptions
         ).allowed();
     }
@@ -111,7 +105,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
             return false;
         }
 
-        List<EnchantmentTableRules.EnchantmentLevel> enchantmentLevels = getEnchantmentLevelsFromEnchantedBook(stack);
+        List<EnchantmentTableRules.EnchantmentLevel> enchantmentLevels = EnchantmentUtils.getEnchantmentLevels(level, stack);
         if (enchantmentLevels.isEmpty()) {
             return false;
         }
@@ -120,7 +114,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         EnchantmentTableRules.MergeResult result = EnchantmentTableRules.tryMergeEnchantments(
                 EnchantmentUtils.getEnchantments(toolStack),
                 enchantmentLevels,
-                this::isSameEnchantment,
+                (first, second) -> EnchantmentUtils.isSameEnchantment(level, first, second),
                 mergeOptions
         );
         if (!result.allowed()) {
@@ -157,25 +151,6 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         if (tag.contains("Inventory")) {
             inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
         }
-    }
-
-    private List<EnchantmentTableRules.EnchantmentLevel> getEnchantmentLevelsFromEnchantedBook(ItemStack enchantedBookItemStack) {
-        List<EnchantmentTableRules.EnchantmentLevel> enchantmentOfBook = new ArrayList<>();
-        for (Object2IntMap.Entry<Holder<Enchantment>> entry : EnchantmentUtils.getEnchantments(enchantedBookItemStack).entrySet()) {
-            Holder<Enchantment> enchantment = EnchantmentUtils.resolveEnchantmentHolder(level, entry.getKey()).orElse(entry.getKey());
-            enchantmentOfBook.add(new EnchantmentTableRules.EnchantmentLevel(enchantment, entry.getIntValue()));
-        }
-
-        return enchantmentOfBook;
-    }
-
-    private boolean isSameEnchantment(Holder<Enchantment> first, Holder<Enchantment> second) {
-        Optional<ResourceKey<Enchantment>> firstKey = EnchantmentUtils.getEnchantmentKey(level, first);
-        Optional<ResourceKey<Enchantment>> secondKey = EnchantmentUtils.getEnchantmentKey(level, second);
-        if (firstKey.isPresent() && secondKey.isPresent()) {
-            return firstKey.get().equals(secondKey.get());
-        }
-        return first.value().equals(second.value());
     }
 
     private EnchantmentTableRules.MergeOptions mergeOptions() {

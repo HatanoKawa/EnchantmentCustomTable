@@ -10,7 +10,6 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.*;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -83,9 +82,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				// 此段逻辑用于处理第二种情况
 
 				// 新的物品槽对应的附魔书可能同时有多种附魔
-				var enchantmentsOnNewStack = getEnchantmentLevelsFromEnchantedBook(itemStackToPut);
+				var enchantmentsOnNewStack = EnchantmentUtils.getEnchantmentLevels(world, itemStackToPut);
 				// 旧的物品槽对应的附魔书最多只有一种附魔
-				var enchantmentsOnOldStack = getEnchantmentLevelsFromEnchantedBook(itemStackToReplace);
+				var enchantmentsOnOldStack = EnchantmentUtils.getEnchantmentLevels(world, itemStackToReplace);
 				if (enchantmentsOnOldStack.isEmpty()) {
 					super.clicked(slotId, button, clickType, player);
 					return;
@@ -94,7 +93,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				var hasDuplicateEnchantment = EnchantmentTableRules.containsMatchingEnchantment(
 						enchantmentsOnNewStack,
 						enchantmentOnOldStack.enchantment(),
-						this::isSameEnchantment
+						(first, second) -> EnchantmentUtils.isSameEnchantment(world, first, second)
 				);
 				if (hasDuplicateEnchantment) {
 					// 如果新旧物品槽的对应的附魔书有重复的附魔，则直接添加到工具上，合并附魔并不返回旧的附魔书
@@ -339,16 +338,6 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		}
 	}
 
-	private List<EnchantmentTableRules.EnchantmentLevel> getEnchantmentLevelsFromEnchantedBook(ItemStack enchantedBookItemStack) {
-		List<EnchantmentTableRules.EnchantmentLevel> enchantmentOfBook = new ArrayList<>();
-		for (Object2IntMap.Entry<Holder<Enchantment>> entry : EnchantmentUtils.getEnchantments(enchantedBookItemStack).entrySet()) {
-			Holder<Enchantment> enchantment = EnchantmentUtils.resolveEnchantmentHolder(world, entry.getKey()).orElse(entry.getKey());
-			enchantmentOfBook.add(new EnchantmentTableRules.EnchantmentLevel(enchantment, entry.getIntValue()));
-		}
-
-		return enchantmentOfBook;
-	}
-
 	public boolean checkCanPlaceEnchantedBook(ItemStack stack) {
 		if (boundBlockEntity != null) {
 			return boundBlockEntity.canApplyEnchantedBook(stack, mergeOptions());
@@ -357,23 +346,14 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		var itemEnchantmentsOnTool = EnchantmentUtils.getEnchantments(itemToEnchant);
 		return EnchantmentTableRules.tryMergeEnchantments(
 				itemEnchantmentsOnTool,
-				getEnchantmentLevelsFromEnchantedBook(stack),
-				this::isSameEnchantment,
+				EnchantmentUtils.getEnchantmentLevels(world, stack),
+				(first, second) -> EnchantmentUtils.isSameEnchantment(world, first, second),
 				mergeOptions()
 		).allowed();
 	}
 
 	private EnchantmentTableRules.MergeOptions mergeOptions() {
 		return EnchantmentTableRules.MergeOptions.from(Config.snapshot());
-	}
-
-	private boolean isSameEnchantment(Holder<Enchantment> first, Holder<Enchantment> second) {
-		Optional<ResourceKey<Enchantment>> firstKey = EnchantmentUtils.getEnchantmentKey(world, first);
-		Optional<ResourceKey<Enchantment>> secondKey = EnchantmentUtils.getEnchantmentKey(world, second);
-		if (firstKey.isPresent() && secondKey.isPresent()) {
-			return firstKey.get().equals(secondKey.get());
-		}
-		return first.value().equals(second.value());
 	}
 
 	private void playUseSound() {
@@ -510,9 +490,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				// 如果附魔书上的唯一附魔等级等于 1，则不生成附魔书槽
 				if (enchantmentLevel > 1) {
 					for (Integer level : EnchantmentTableRules.splitSingleEnchantmentLevels(enchantmentLevel, mergeOptions())) {
-						ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
-						enchantedBook.enchant(enchantment, level);
-						enchantmentsOnCurrentTool.add(enchantedBook);
+						enchantmentsOnCurrentTool.add(EnchantmentUtils.createEnchantedBook(enchantment, level));
 					}
 				}
 			} else if (!toolItemStack.is(Items.ENCHANTED_BOOK) || enchantments.entrySet().size() > 1) {
@@ -521,9 +499,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
 					Holder<Enchantment> enchantment = EnchantmentUtils.resolveEnchantmentHolder(world, entry.getKey()).orElse(entry.getKey());
 					Integer enchantmentLevel = entry.getValue();
-					ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
-					enchantedBook.enchant(enchantment, enchantmentLevel);
-					enchantmentsOnCurrentTool.add(enchantedBook);
+					enchantmentsOnCurrentTool.add(EnchantmentUtils.createEnchantedBook(enchantment, enchantmentLevel));
 				}
 			}
 		} else {
@@ -552,7 +528,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 			return true;
 		}
 
-		var enchantmentInstances = getEnchantmentLevelsFromEnchantedBook(itemStackToPut);
+		var enchantmentInstances = EnchantmentUtils.getEnchantmentLevels(world, itemStackToPut);
 		if (enchantmentInstances.isEmpty()) {
 			return false;
 		}
@@ -566,7 +542,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		EnchantmentTableRules.MergeResult result = EnchantmentTableRules.tryMergeEnchantments(
 				itemEnchantments,
 				enchantmentInstances,
-				this::isSameEnchantment,
+				(first, second) -> EnchantmentUtils.isSameEnchantment(world, first, second),
 				mergeOptions()
 		);
 		if (!result.allowed()) {
@@ -586,7 +562,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	}
 
 	public boolean removeEnchantment(ItemStack itemStackToRemove) {
-		var enchantmentLevels = getEnchantmentLevelsFromEnchantedBook(itemStackToRemove);
+		var enchantmentLevels = EnchantmentUtils.getEnchantmentLevels(world, itemStackToRemove);
 		if (enchantmentLevels.isEmpty()) {
 			return false;
 		}
@@ -600,7 +576,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		ItemEnchantments resultEnchantments = EnchantmentTableRules.subtractEnchantments(
 				itemEnchantments,
 				enchantmentLevels,
-				this::isSameEnchantment,
+				(first, second) -> EnchantmentUtils.isSameEnchantment(world, first, second),
 				shouldUseIncrementalSingleBookSplitRemoval(toolItemStack, itemEnchantments, enchantmentLevels)
 		);
 		if (!replaceToolEnchantments(toolItemStack, resultEnchantments)) {
