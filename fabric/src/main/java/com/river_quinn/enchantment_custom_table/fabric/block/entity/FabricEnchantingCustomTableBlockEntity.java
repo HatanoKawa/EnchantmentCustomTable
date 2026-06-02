@@ -3,6 +3,9 @@ package com.river_quinn.enchantment_custom_table.fabric.block.entity;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlockEntities;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantingCustomMenu;
+import com.river_quinn.enchantment_custom_table.fabric.transfer.FabricEnchantingAutomationStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -22,6 +25,7 @@ public class FabricEnchantingCustomTableBlockEntity extends FabricEnchantingTabl
             },
             this::markInventoryChanged
     );
+    private final Storage<ItemVariant> automationStorage = new FabricEnchantingAutomationStorage(this);
     private int inventoryVersion = 0;
 
     public FabricEnchantingCustomTableBlockEntity(BlockPos pos, BlockState state) {
@@ -34,6 +38,10 @@ public class FabricEnchantingCustomTableBlockEntity extends FabricEnchantingTabl
 
     public int getInventoryVersion() {
         return inventoryVersion;
+    }
+
+    public Storage<ItemVariant> getAutomationStorage() {
+        return automationStorage;
     }
 
     private void markInventoryChanged() {

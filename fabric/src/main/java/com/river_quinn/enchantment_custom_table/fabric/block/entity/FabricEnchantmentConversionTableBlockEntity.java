@@ -6,9 +6,12 @@ import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInve
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlockEntities;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantmentConversionMenu;
 import com.river_quinn.enchantment_custom_table.fabric.session.FabricConversionTableSession;
+import com.river_quinn.enchantment_custom_table.fabric.transfer.FabricConversionAutomationStorage;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -34,6 +37,7 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
             this::isItemValid,
             this::markInventoryChanged
     );
+    private final Storage<ItemVariant> automationStorage = new FabricConversionAutomationStorage(this);
 
     public FabricEnchantmentConversionTableBlockEntity(BlockPos pos, BlockState state) {
         super(FabricModBlockEntities.ENCHANTMENT_CONVERSION_TABLE, pos, state);
@@ -45,6 +49,10 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
 
     public int getInventoryVersion() {
         return inventoryVersion;
+    }
+
+    public Storage<ItemVariant> getAutomationStorage() {
+        return automationStorage;
     }
 
     public boolean isCopyMode() {
@@ -111,6 +119,18 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
             refreshCopyResult();
         }
         setChanged();
+    }
+
+    public void restoreAutomationSnapshot(ItemStack[] snapshot) {
+        loadingInventory = true;
+        try {
+            inventory.setStackInSlot(FabricEnchantmentConversionMenu.BOOK_SLOT, snapshot[0]);
+            inventory.setStackInSlot(FabricEnchantmentConversionMenu.PAYMENT_SLOT, snapshot[1]);
+            inventory.setStackInSlot(FabricEnchantmentConversionMenu.TEMPLATE_BOOK_SLOT, snapshot[2]);
+            inventory.setStackInSlot(FabricEnchantmentConversionMenu.COPY_RESULT_SLOT, snapshot[3]);
+        } finally {
+            loadingInventory = false;
+        }
     }
 
     @Override
