@@ -5,6 +5,8 @@ import com.mojang.logging.LogUtils;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
+import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
@@ -48,6 +50,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	 * index 2-22: 附魔书槽
 	 */
 	private final IItemHandlerModifiable itemHandler;
+	private final EnchantingTableSession session;
 
 	private static final Logger LOGGER = LogUtils.getLogger();
 	public final Level world;
@@ -103,12 +106,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				}
 			}
 
-			int enchantmentIndexInCache = EnchantmentTableRules.cacheIndexForGeneratedSlot(
-					slotId,
-					2,
-					currentPage,
-					ENCHANTED_BOOK_SLOT_SIZE
-			);
+			int enchantmentIndexInCache = session.cacheIndexForGeneratedSlot(slotId);
 
 			// 以下逻辑用于处理第一种情况
 			if (!itemStackToReplace.isEmpty()) {
@@ -117,8 +115,8 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				var hasRegenerated = removeEnchantment(itemStackToReplace);
 				// 在缓存中删除对应的附魔书
 				// 如果移除附魔书导致了总页数变更，将会触发重新生成附魔书缓存，此时对应的附魔书槽下标可能会产生溢出，所以需要进行判断
-				if (!hasRegenerated && enchantmentIndexInCache < enchantmentsOnCurrentTool.size()) {
-					enchantmentsOnCurrentTool.set(enchantmentIndexInCache, ItemStack.EMPTY);
+				if (!hasRegenerated && enchantmentIndexInCache < session.generatedItemCount()) {
+					session.setGeneratedItem(enchantmentIndexInCache, ItemStack.EMPTY);
 				}
 			} else {
 				// 如果没有待移除的附魔书，则将指针上的物品设置为 0
@@ -153,28 +151,40 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				boundBlockEntity = blockEntity;
 			}
 		}
-		this.itemHandler = new LogicalInventoryItemHandler(new EnchantingMenuInventory(boundBlockEntity));
+		EnchantingMenuInventory logicalInventory = new EnchantingMenuInventory(boundBlockEntity);
+		this.session = new EnchantingTableSession(
+				world,
+				logicalInventory,
+				this::mergeOptions,
+				0,
+				1,
+				2,
+				ENCHANTED_BOOK_SLOT_SIZE
+		);
+		this.itemHandler = new LogicalInventoryItemHandler(logicalInventory);
 
 		this.addDataSlot(new DataSlot() {
 			@Override
 			public int get() {
-				return currentPage;
+				return session.currentPage();
 			}
 
 			@Override
 			public void set(int value) {
-				currentPage = value;
+				session.setCurrentPage(value);
+				syncPageState();
 			}
 		});
 		this.addDataSlot(new DataSlot() {
 			@Override
 			public int get() {
-				return totalPage;
+				return session.totalPage();
 			}
 
 			@Override
 			public void set(int value) {
-				totalPage = value;
+				session.setTotalPage(value);
+				syncPageState();
 			}
 		});
 
@@ -192,7 +202,8 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				if (!newStack.isEmpty()) {
 					// 放置待附魔工具，重新生成附魔书槽
 					genEnchantedBookCache();
-					currentPage = 0;
+					session.setCurrentPage(0);
+					syncPageState();
 					updateEnchantedBookSlots();
 				} else {
 					// 取出待附魔工具，清空附魔书槽
@@ -364,10 +375,6 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	public int currentPage = 0;
 	public int totalPage = 0;
 
-	// 存储当前工具槽中的附魔，用于进行翻页操作
-	// 列表的长度为 ENCHANTED_BOOK_SLOT_SIZE 的整数倍，对于空物品的长度为 ENCHANTED_BOOK_SLOT_SIZE
-	private final List<ItemStack> enchantmentsOnCurrentTool = new ArrayList<>();
-
 	public void exportAllEnchantments() {
 		if (world.isClientSide) {
 			return;
@@ -406,113 +413,45 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	}
 
 	public void resetPage() {
-		currentPage = 0;
-		totalPage = 0;
+		session.resetPage();
+		syncPageState();
 	}
 
 	public void nextPage() {
-		if (currentPage < (totalPage - 1)) {
-			turnPage(currentPage + 1);
-		}
+		session.nextPage();
+		syncPageState();
 	}
 
 	public void previousPage() {
-		if (currentPage > 0) {
-			turnPage(currentPage - 1);
-		}
+		session.previousPage();
+		syncPageState();
 	}
 
 	// 保存当前页的附魔，设置新页面并更新附魔书槽
 	public void turnPage(int targetPage) {
-		if (targetPage < 0 || targetPage >= totalPage) {
-			return;
-		}
-		int indexOffset = currentPage * ENCHANTED_BOOK_SLOT_SIZE;
-		for (int i = 0; i < ENCHANTED_BOOK_SLOT_SIZE; i++) {
-			int indexOfFullList = i + indexOffset;
-			int indexOfSlot = i + 2;
-			if (indexOfFullList < enchantmentsOnCurrentTool.size())
-				enchantmentsOnCurrentTool.set(indexOfFullList, itemHandler.getStackInSlot(indexOfSlot));
-		}
-		currentPage = targetPage;
-		updateEnchantedBookSlots();
+		session.turnPage(targetPage);
+		syncPageState();
 	}
 
 
 	public void updateEnchantedBookSlots() {
-		itemHandler.setStackInSlot(1, ItemStack.EMPTY.copy());
-
-		int indexOffset = currentPage * ENCHANTED_BOOK_SLOT_SIZE;
-		if (totalPage > 0) {
-			// 将附魔书添加到附魔书槽
-			for (int i = 0; i < ENCHANTED_BOOK_SLOT_SIZE; i++) {
-				int indexOfFullList = i + indexOffset;
-				int indexOfSlot = i + 2;
-				itemHandler.setStackInSlot(
-						indexOfSlot,
-						indexOfFullList < enchantmentsOnCurrentTool.size()
-								? enchantmentsOnCurrentTool.get(indexOfFullList)
-								: ItemStack.EMPTY
-				);
-			}
-		}
+		session.updateGeneratedSlots();
+		syncPageState();
 	}
 
 	public void clearCache() {
-		for (int i = 2; i < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE; i++) {
-			itemHandler.setStackInSlot(i, ItemStack.EMPTY);
-		}
-		genEnchantedBookCache();
+		session.clearCache();
+		syncPageState();
 	}
 
 	public void clearPage() {
-		currentPage = 0;
-		totalPage = 0;
+		session.clearPage();
+		syncPageState();
 	}
 
 	public void genEnchantedBookCache() {
-		ItemStack toolItemStack = itemHandler.getStackInSlot(0);
-
-		int currentTotalPage = 1;
-		enchantmentsOnCurrentTool.clear();
-
-		if (!toolItemStack.isEmpty()) {
-			// 若待附魔物品槽不为空，则至少生成一页的附魔书槽
-			ItemEnchantments enchantments = EnchantmentUtils.getEnchantments(toolItemStack);
-			currentTotalPage = EnchantmentTableRules.calculatePageCount(enchantments.entrySet().size(), ENCHANTED_BOOK_SLOT_SIZE, true);
-
-			if (toolItemStack.is(Items.ENCHANTED_BOOK) && enchantments.entrySet().size() == 1) {
-				// 获取唯一附魔的附魔等级
-				var enchantmentObj = enchantments.entrySet().iterator().next();
-				var enchantment = EnchantmentUtils.resolveEnchantmentHolder(world, enchantmentObj.getKey()).orElse(enchantmentObj.getKey());
-				var enchantmentLevel = enchantmentObj.getIntValue();
-				// 如果附魔书上的唯一附魔等级大于 1，则需要拆分附魔等级
-				// 如果附魔书上的唯一附魔等级等于 1，则不生成附魔书槽
-				if (enchantmentLevel > 1) {
-					for (Integer level : EnchantmentTableRules.splitSingleEnchantmentLevels(enchantmentLevel, mergeOptions())) {
-						enchantmentsOnCurrentTool.add(EnchantmentUtils.createEnchantedBook(enchantment, level));
-					}
-				}
-			} else if (!toolItemStack.is(Items.ENCHANTED_BOOK) || enchantments.entrySet().size() > 1) {
-				// 若待附魔工具槽中的物品不是附魔书，或者附魔词条数量大于 1，那么继续生成附魔书槽
-				// 根据待附魔工具槽中的附魔生成对应的附魔书，并添加到 fullEnchantmentList
-				for (Object2IntMap.Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
-					Holder<Enchantment> enchantment = EnchantmentUtils.resolveEnchantmentHolder(world, entry.getKey()).orElse(entry.getKey());
-					Integer enchantmentLevel = entry.getValue();
-					enchantmentsOnCurrentTool.add(EnchantmentUtils.createEnchantedBook(enchantment, enchantmentLevel));
-				}
-			}
-		} else {
-			// 仅当待附魔工具槽中没有物品时，将总页数设置为 0
-			currentTotalPage = 0;
-		}
-		int totalSlots = currentTotalPage * ENCHANTED_BOOK_SLOT_SIZE;
-		// 补全空附魔书槽
-		while(enchantmentsOnCurrentTool.size() < totalSlots) {
-			enchantmentsOnCurrentTool.add(ItemStack.EMPTY);
-		}
-
-		totalPage = currentTotalPage;
+		session.generateCache();
+		syncPageState();
 	}
 
 	public boolean addEnchantment(ItemStack itemStack, int slotIndex) {
@@ -595,11 +534,12 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		var hasRegenerated = false;
 		if (toolItemStack.is(Items.ENCHANTED_BOOK) && resultEnchantments.size() == 1
 				|| totalPage != resultPageSize) {
-			genEnchantedBookCache();
-			currentPage = Math.max(0, Math.min(currentPage, totalPage - 1));
+			session.refreshGeneratedSlotsFromTool();
+			syncPageState();
 			hasRegenerated = true;
+		} else {
+			updateEnchantedBookSlots();
 		}
-		updateEnchantedBookSlots();
 
 		playUseSound();
 		return hasRegenerated;
@@ -628,17 +568,19 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	}
 
 	public void initMenu() {
-		currentPage = 0;
+		session.setCurrentPage(0);
 		refreshGeneratedSlotsFromTool();
 	}
 
 	private void refreshGeneratedSlotsFromTool() {
-		for (int i = 2; i < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE; i++) {
-			itemHandler.setStackInSlot(i, ItemStack.EMPTY);
-		}
-		genEnchantedBookCache();
-		currentPage = totalPage == 0 ? 0 : Math.max(0, Math.min(currentPage, totalPage - 1));
-		updateEnchantedBookSlots();
+		session.refreshGeneratedSlotsFromTool();
+		syncPageState();
+	}
+
+	private void syncPageState() {
+		GeneratedSlotPage page = session.page();
+		currentPage = page.currentPage();
+		totalPage = page.totalPage();
 	}
 
 	private static class EnchantingMenuInventory implements LogicalInventory {
