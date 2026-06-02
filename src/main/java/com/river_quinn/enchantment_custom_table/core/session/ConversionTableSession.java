@@ -2,6 +2,7 @@ package com.river_quinn.enchantment_custom_table.core.session;
 
 import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.platform.TableConfigService;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
@@ -25,13 +26,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class ConversionTableSession {
     private final Level world;
     private final LogicalInventory inventory;
     private final BooleanSupplier copyMode;
-    private final Supplier<TableConfigView> config;
+    private final TableConfigService config;
     private final int bookSlot;
     private final int paymentSlot;
     private final int generatedSlotStart;
@@ -53,7 +53,7 @@ public class ConversionTableSession {
             Level world,
             LogicalInventory inventory,
             BooleanSupplier copyMode,
-            Supplier<TableConfigView> config,
+            TableConfigService config,
             int bookSlot,
             int paymentSlot,
             int generatedSlotStart,
@@ -207,7 +207,7 @@ public class ConversionTableSession {
         }
 
         inventory.getStackInSlot(bookSlot).shrink(1);
-        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.get());
+        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
         generateGeneratedSlots();
         return TableOperationResult.success(true);
     }
@@ -215,7 +215,7 @@ public class ConversionTableSession {
     public static TableOperationResult refreshCopyResult(
             LogicalInventory inventory,
             BooleanSupplier copyMode,
-            Supplier<TableConfigView> config,
+            TableConfigService config,
             int bookSlot,
             int paymentSlot,
             int templateSlot,
@@ -224,13 +224,13 @@ public class ConversionTableSession {
         if (!EnchantmentTableRules.shouldGenerateCopyResult(
                 copyMode.getAsBoolean(),
                 inventory.getStackInSlot(copyResultSlot).isEmpty(),
-                hasEnoughMaterialsForCopy(inventory, config.get(), bookSlot, paymentSlot)
+                hasEnoughMaterialsForCopy(inventory, config.snapshot(), bookSlot, paymentSlot)
         )) {
             return TableOperationResult.failed(false);
         }
 
         inventory.getStackInSlot(bookSlot).shrink(1);
-        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.get());
+        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
         inventory.setStackInSlot(
                 copyResultSlot,
                 inventory.getStackInSlot(templateSlot).copyWithCount(1)
@@ -250,7 +250,7 @@ public class ConversionTableSession {
     }
 
     private ItemStack createEnchantedBook(Holder<Enchantment> enchantment) {
-        int enchantmentLevel = config.get().convertOnlyLevelOneBook() ? 1 : enchantment.value().getMaxLevel();
+        int enchantmentLevel = config.snapshot().convertOnlyLevelOneBook() ? 1 : enchantment.value().getMaxLevel();
         return EnchantmentUtils.createEnchantedBook(enchantment, enchantmentLevel);
     }
 
@@ -288,7 +288,7 @@ public class ConversionTableSession {
     }
 
     private boolean hasEnoughPayment() {
-        return EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.get());
+        return EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
     }
 
     private static boolean hasEnoughMaterialsForCopy(

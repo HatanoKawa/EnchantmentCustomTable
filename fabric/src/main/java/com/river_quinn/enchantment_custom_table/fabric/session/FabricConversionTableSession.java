@@ -1,7 +1,7 @@
 package com.river_quinn.enchantment_custom_table.fabric.session;
 
-import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.platform.TableConfigService;
 import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
 import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
@@ -22,13 +22,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class FabricConversionTableSession {
     private final Level world;
     private final LogicalInventory inventory;
     private final BooleanSupplier copyMode;
-    private final Supplier<TableConfigView> config;
+    private final TableConfigService config;
     private final int bookSlot;
     private final int paymentSlot;
     private final int generatedSlotStart;
@@ -45,7 +44,7 @@ public class FabricConversionTableSession {
             Level world,
             LogicalInventory inventory,
             BooleanSupplier copyMode,
-            Supplier<TableConfigView> config,
+            TableConfigService config,
             int bookSlot,
             int paymentSlot,
             int generatedSlotStart,
@@ -144,7 +143,7 @@ public class FabricConversionTableSession {
     public boolean canPickGeneratedBook() {
         return !copyMode.getAsBoolean()
                 && inventory.getStackInSlot(bookSlot).is(Items.BOOK)
-                && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.get());
+                && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
     }
 
     public TableOperationResult pickGeneratedBook() {
@@ -153,7 +152,7 @@ public class FabricConversionTableSession {
             return TableOperationResult.failed(true);
         }
         inventory.getStackInSlot(bookSlot).shrink(1);
-        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.get());
+        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
         generateGeneratedSlots();
         return TableOperationResult.success(true);
     }
@@ -161,7 +160,7 @@ public class FabricConversionTableSession {
     public static TableOperationResult refreshCopyResult(
             LogicalInventory inventory,
             BooleanSupplier copyMode,
-            Supplier<TableConfigView> config,
+            TableConfigService config,
             int bookSlot,
             int paymentSlot,
             int templateSlot,
@@ -171,12 +170,12 @@ public class FabricConversionTableSession {
                 copyMode.getAsBoolean(),
                 inventory.getStackInSlot(copyResultSlot).isEmpty(),
                 inventory.getStackInSlot(bookSlot).is(Items.BOOK)
-                        && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.get())
+                        && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.snapshot())
         )) {
             return TableOperationResult.failed(false);
         }
         inventory.getStackInSlot(bookSlot).shrink(1);
-        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.get());
+        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
         inventory.setStackInSlot(copyResultSlot, inventory.getStackInSlot(templateSlot).copyWithCount(1));
         return TableOperationResult.success(true);
     }
@@ -201,7 +200,7 @@ public class FabricConversionTableSession {
 
         List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
         if (!inventory.getStackInSlot(bookSlot).is(Items.BOOK)
-                || !EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.get())) {
+                || !EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.snapshot())) {
             resetPage();
             clearGeneratedSlots();
             return;
@@ -229,7 +228,7 @@ public class FabricConversionTableSession {
     }
 
     private ItemStack createEnchantedBook(Holder<Enchantment> enchantment) {
-        int enchantmentLevel = config.get().convertOnlyLevelOneBook() ? 1 : enchantment.value().getMaxLevel();
+        int enchantmentLevel = config.snapshot().convertOnlyLevelOneBook() ? 1 : enchantment.value().getMaxLevel();
         return FabricEnchantmentUtils.createEnchantedBook(enchantment, enchantmentLevel);
     }
 
