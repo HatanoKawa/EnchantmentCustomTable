@@ -29,8 +29,14 @@ java {
 
 sourceSets {
     main {
-        java.srcDir rootProject.file('src/common/java')
-        resources.srcDir rootProject.file('src/main/resources')
+        java.setSrcDirs([
+                rootProject.file('fabric/src/main/java'),
+                rootProject.file('src/common/java')
+        ])
+        resources.setSrcDirs([
+                rootProject.file('fabric/src/main/resources'),
+                rootProject.file('src/main/resources')
+        ])
         resources.exclude 'META-INF/**'
     }
 }

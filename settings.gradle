@@ -27,6 +27,16 @@ plugins {
 }
 
 include 'fabric'
+include 'fabric_1_21_1'
+include 'fabric_1_21_9'
+include 'fabric_1_21_11'
+
+project(':fabric_1_21_1').projectDir = file('fabric_versions/1.21.1')
+project(':fabric_1_21_9').projectDir = file('fabric_versions/1.21.9')
+project(':fabric_1_21_11').projectDir = file('fabric_versions/1.21.11')
+project(':fabric_1_21_1').buildFileName = '../../fabric/build.gradle'
+project(':fabric_1_21_9').buildFileName = '../../fabric/build.gradle'
+project(':fabric_1_21_11').buildFileName = '../../fabric/build.gradle'
 
 stonecutter {
     kotlinController = false
