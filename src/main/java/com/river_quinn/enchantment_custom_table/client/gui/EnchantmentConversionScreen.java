@@ -1,6 +1,7 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.river_quinn.enchantment_custom_table.core.net.ConversionTableIntent;
 import com.river_quinn.enchantment_custom_table.network.enchanted_book_converting_table.EnchantmentConversionTableNetData;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
@@ -144,7 +145,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> {
                     PacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
-                            EnchantmentConversionTableNetData.OperateType.PREVIOUS_PAGE.name()
+                            ConversionTableIntent.PREVIOUS_PAGE
                     ));
                 }
         ).bounds(this.leftPos + 7, this.topPos + 4, 17, 18).build();
@@ -154,7 +155,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> {
                     PacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
-                            EnchantmentConversionTableNetData.OperateType.NEXT_PAGE.name()
+                            ConversionTableIntent.NEXT_PAGE
                     ));
                 }
         ).bounds(this.leftPos + 24, this.topPos + 4, 17, 18).build();
@@ -174,7 +175,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
 
         lastSentSearchQuery = pendingSearchQuery;
         PacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
-                EnchantmentConversionTableNetData.OperateType.SEARCH.name(),
+                ConversionTableIntent.SEARCH,
                 pendingSearchQuery,
                 getClientLanguage(),
                 findClientLocalizedMatches(pendingSearchQuery)
