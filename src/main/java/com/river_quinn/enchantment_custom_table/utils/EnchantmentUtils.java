@@ -1,17 +1,20 @@
 package com.river_quinn.enchantment_custom_table.utils;
 
-import com.river_quinn.enchantment_custom_table.Config;
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentKey;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class EnchantmentUtils {
@@ -52,26 +55,42 @@ public class EnchantmentUtils {
         return itemStack.getOrDefault(EnchantmentHelper.getComponentType(itemStack), ItemEnchantments.EMPTY);
     }
 
-    public static int getEnchantCost(ItemStack toolItemStack) {
-        if (!Config.snapshot().enableXpRequirement())
-            return 0;
-
-        var xpLevelToCost = 0;
-        var itemEnchantments = getEnchantments(toolItemStack);
-        for (var entry : itemEnchantments.entrySet()) {
-            var enchantment = entry.getKey();
-            var level = entry.getValue();
-
-            xpLevelToCost += enchantment.value().getAnvilCost() * level;
+    public static List<EnchantmentTableRules.EnchantmentLevel> getEnchantmentLevels(Level level, ItemStack enchantedBookItemStack) {
+        List<EnchantmentTableRules.EnchantmentLevel> enchantments = new ArrayList<>();
+        for (Object2IntMap.Entry<Holder<Enchantment>> entry : getEnchantments(enchantedBookItemStack).entrySet()) {
+            Holder<Enchantment> enchantment = resolveEnchantmentHolder(level, entry.getKey()).orElse(entry.getKey());
+            enchantments.add(new EnchantmentTableRules.EnchantmentLevel(
+                    enchantment,
+                    getCoreEnchantmentKey(level, enchantment),
+                    entry.getIntValue(),
+                    enchantment.value().getMaxLevel()
+            ));
         }
-        return xpLevelToCost;
+        return enchantments;
     }
 
-    public static boolean checkSatisfyXpRequirement(ItemStack toolItemStack, Player player) {
-        if (!Config.snapshot().enableXpRequirement())
-            return true;
+    public static boolean isSameEnchantment(Level level, Holder<Enchantment> first, Holder<Enchantment> second) {
+        return getCoreEnchantmentKey(level, first).equals(getCoreEnchantmentKey(level, second));
+    }
 
-        var xpLevelToCost = getEnchantCost(toolItemStack);
-        return xpLevelToCost <= player.experienceLevel;
+    public static ItemStack createEnchantedBook(Holder<Enchantment> enchantment, int level) {
+        ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
+        enchantedBook.enchant(enchantment, level);
+        return enchantedBook;
+    }
+
+    public static EnchantmentKey getCoreEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
+        Optional<ResourceKey<Enchantment>> key = getEnchantmentKey(level, enchantment);
+        if (key.isPresent()) {
+            return fromResourceKey(key.get());
+        }
+        return EnchantmentKey.of(
+                "unregistered",
+                enchantment.value().getClass().getName() + "_" + Integer.toHexString(System.identityHashCode(enchantment.value()))
+        );
+    }
+
+    private static EnchantmentKey fromResourceKey(ResourceKey<Enchantment> key) {
+        return EnchantmentKey.of(key.identifier().getNamespace(), key.identifier().getPath());
     }
 }
