@@ -4,17 +4,14 @@ import com.mojang.datafixers.util.Pair;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
+import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSession;
+import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
-import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
-import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -25,19 +22,14 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
@@ -47,6 +39,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	public static final int TEMPLATE_BOOK_SLOT = ENCHANTED_BOOK_SLOT_START + ENCHANTED_BOOK_SLOT_SIZE;
 	public static final int COPY_RESULT_SLOT = TEMPLATE_BOOK_SLOT + 1;
 	public static final int ENCHANTMENT_CONVERSION_SLOT_SIZE = COPY_RESULT_SLOT + 1;
+	private static final int PLAYER_MAIN_INVENTORY_SIZE = 27;
+	private static final int PLAYER_INVENTORY_START = ENCHANTMENT_CONVERSION_SLOT_SIZE;
+	private static final int PLAYER_HOTBAR_START = PLAYER_INVENTORY_START + PLAYER_MAIN_INVENTORY_SIZE;
 	/**
 	 * index 0: 书本槽
 	 * index 1: 绿宝石槽
@@ -54,9 +49,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	 * index 30: 待复制附魔书模板槽
 	 * index 31: 复制结果槽
 	 */
-	private final ItemStackHandler itemHandler;
+	private final IItemHandlerModifiable itemHandler;
+	private final ConversionTableSession session;
 
-	public final static HashMap<String, Object> guistate = new HashMap<>();
 	public final Level world;
 	public final Player entity;
 	public int x, y, z;
@@ -65,10 +60,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	private final Map<Integer, Slot> enchantedBookSlots = new HashMap<>();
 	public EnchantmentConversionTableBlockEntity boundBlockEntity = null;
 	private int lastInventoryVersion = -1;
-	private String searchQuery = "";
-	private String searchClientLanguage = "";
-	private boolean usingClientSearchMatches = false;
-	private Set<ResourceLocation> clientMatchedEnchantments = Set.of();
 
 	public EnchantmentConversionMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
 		super(ModMenus.ENCHANTMENT_CONVERSION.get(), id);
@@ -89,36 +80,45 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 				boundBlockEntity = blockEntity;
 			}
 		}
-		this.itemHandler = new ConversionMenuItemHandler(boundBlockEntity);
+		ConversionMenuInventory logicalInventory = new ConversionMenuInventory(boundBlockEntity);
+		this.session = new ConversionTableSession(
+				world,
+				logicalInventory,
+				this::isCopyMode,
+				this::config,
+				0,
+				1,
+				ENCHANTED_BOOK_SLOT_START,
+				ENCHANTED_BOOK_SLOT_SIZE
+		);
+		this.itemHandler = new LogicalInventoryItemHandler(logicalInventory);
 
 		this.addDataSlot(new DataSlot() {
 			@Override
 			public int get() {
-				return currentPage;
+				return session.currentPage();
 			}
 
 			@Override
 			public void set(int value) {
-				currentPage = value;
+				session.setCurrentPage(value);
+				syncPageState();
 			}
 		});
 		this.addDataSlot(new DataSlot() {
 			@Override
 			public int get() {
-				return totalPage;
+				return session.totalPage();
 			}
 
 			@Override
 			public void set(int value) {
-				totalPage = value;
+				session.setTotalPage(value);
+				syncPageState();
 			}
 		});
 
 		this.addSlot(new SlotItemHandler(itemHandler, 0, 16, 8 + 15) {
-			private final int slot = 0;
-			private int x = EnchantmentConversionMenu.this.x;
-			private int y = EnchantmentConversionMenu.this.y;
-
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return Items.BOOK == stack.getItem();
@@ -144,10 +144,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		});
 
 		this.addSlot(new SlotItemHandler(itemHandler, 1, 16, 26 + 15) {
-			private final int slot = 1;
-			private int x = EnchantmentConversionMenu.this.x;
-			private int y = EnchantmentConversionMenu.this.y;
-
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return boundBlockEntity != null
@@ -182,10 +178,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
 					new SlotItemHandler(itemHandler, final_enchanted_book_index + ENCHANTED_BOOK_SLOT_START, xPos, yPos) {
-						private final int slot = final_enchanted_book_index + ENCHANTED_BOOK_SLOT_START;
-						private int x = EnchantmentConversionMenu.this.x;
-						private int y = EnchantmentConversionMenu.this.y;
-
 						@Override
 						public boolean mayPlace(ItemStack stack) {
 							return false;
@@ -295,15 +287,15 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
 			if (index < ENCHANTMENT_CONVERSION_SLOT_SIZE) {
-				if (!this.moveItemStackTo(itemstack1, ENCHANTMENT_CONVERSION_SLOT_SIZE, this.slots.size(), true))
+				if (!this.moveItemStackTo(itemstack1, PLAYER_INVENTORY_START, this.slots.size(), true))
 					return ItemStack.EMPTY;
 				slot.onQuickCraft(itemstack1, itemstack);
 			} else if (!this.moveItemStackTo(itemstack1, 0, ENCHANTMENT_CONVERSION_SLOT_SIZE, false)) {
-				if (index < ENCHANTMENT_CONVERSION_SLOT_SIZE + 27) {
-					if (!this.moveItemStackTo(itemstack1, ENCHANTMENT_CONVERSION_SLOT_SIZE + 27, this.slots.size(), true))
+				if (index < PLAYER_HOTBAR_START) {
+					if (!this.moveItemStackTo(itemstack1, PLAYER_HOTBAR_START, this.slots.size(), true))
 						return ItemStack.EMPTY;
 				} else {
-					if (!this.moveItemStackTo(itemstack1, ENCHANTMENT_CONVERSION_SLOT_SIZE, ENCHANTMENT_CONVERSION_SLOT_SIZE + 27, false))
+					if (!this.moveItemStackTo(itemstack1, PLAYER_INVENTORY_START, PLAYER_HOTBAR_START, false))
 						return ItemStack.EMPTY;
 				}
 				return ItemStack.EMPTY;
@@ -326,61 +318,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 	@Override
 	protected boolean moveItemStackTo(ItemStack p_38904_, int p_38905_, int p_38906_, boolean p_38907_) {
-		boolean flag = false;
-		int i = p_38905_;
-		if (p_38907_) {
-			i = p_38906_ - 1;
-		}
-		if (p_38904_.isStackable()) {
-			while (!p_38904_.isEmpty() && (p_38907_ ? i >= p_38905_ : i < p_38906_)) {
-				Slot slot = this.slots.get(i);
-				ItemStack itemstack = slot.getItem();
-				if (slot.mayPlace(p_38904_) && !itemstack.isEmpty() && ItemStack.isSameItemSameComponents(p_38904_, itemstack)) {
-					int j = itemstack.getCount() + p_38904_.getCount();
-					int k = slot.getMaxStackSize(itemstack);
-					if (j <= k) {
-						p_38904_.setCount(0);
-						itemstack.setCount(j);
-						slot.set(itemstack);
-						flag = true;
-					} else if (itemstack.getCount() < k) {
-						p_38904_.shrink(k - itemstack.getCount());
-						itemstack.setCount(k);
-						slot.set(itemstack);
-						flag = true;
-					}
-				}
-				if (p_38907_) {
-					i--;
-				} else {
-					i++;
-				}
-			}
-		}
-		if (!p_38904_.isEmpty()) {
-			if (p_38907_) {
-				i = p_38906_ - 1;
-			} else {
-				i = p_38905_;
-			}
-			while (p_38907_ ? i >= p_38905_ : i < p_38906_) {
-				Slot slot1 = this.slots.get(i);
-				ItemStack itemstack1 = slot1.getItem();
-				if (itemstack1.isEmpty() && slot1.mayPlace(p_38904_)) {
-					int l = slot1.getMaxStackSize(p_38904_);
-					slot1.setByPlayer(p_38904_.split(Math.min(p_38904_.getCount(), l)));
-					slot1.setChanged();
-					flag = true;
-					break;
-				}
-				if (p_38907_) {
-					i--;
-				} else {
-					i++;
-				}
-			}
-		}
-		return flag;
+		return MenuStackMover.moveItemStackTo(this.slots, p_38904_, p_38905_, p_38906_, p_38907_);
 	}
 
 	@Override
@@ -388,175 +326,65 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		super.removed(playerIn);
 	}
 
-	private final List<Holder<Enchantment>> allEnchantments = new ArrayList<>();
-
-	public void tryGetAllEnchantments() {
-		if (allEnchantments.isEmpty()) {
-			Registry<Enchantment> fullEnchantmentList = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-			fullEnchantmentList.asHolderIdMap().forEach(allEnchantments::add);
-		}
-	}
-
-	public ItemStack getEnchantedBook(Holder<Enchantment> enchantment) {
-		ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
-
-		int enchantmentLevel = config().convertOnlyLevelOneBook() ? 1 : enchantment.value().getMaxLevel();
-		enchantedBook.enchant(enchantment, enchantmentLevel);
-
-		return enchantedBook;
-	}
-
 	public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
-		searchQuery = EnchantmentSearchRules.sanitizeSearchQuery(query);
-		searchClientLanguage = EnchantmentSearchRules.sanitizeClientLanguage(clientLanguage);
-		usingClientSearchMatches = !EnchantmentSearchRules.isBlankSearch(searchQuery) && matchedEnchantments != null;
-
-		if (usingClientSearchMatches) {
-			clientMatchedEnchantments = matchedEnchantments.stream()
-					.limit(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS)
-					.collect(HashSet::new, Set::add, Set::addAll);
-		} else {
-			clientMatchedEnchantments = Set.of();
-		}
-
-		regenerateEnchantedBookSlot();
+		session.setSearchQuery(query, clientLanguage, matchedEnchantments);
+		syncPageState();
 	}
 
 	public String getSearchQuery() {
-		return searchQuery;
+		return session.searchQuery();
 	}
 
 	public String getSearchClientLanguage() {
-		return searchClientLanguage;
+		return session.searchClientLanguage();
 	}
 
 	public int currentPage = 0;
 	public int totalPage = 0;
 
 	public void nextPage() {
-		if (currentPage < (totalPage - 1)) {
-			turnPage(currentPage + 1);
-		}
+		session.nextPage();
+		syncPageState();
 	}
 
 	public void previousPage() {
-		if (currentPage > 0) {
-			turnPage(currentPage - 1);
-		}
+		session.previousPage();
+		syncPageState();
 	}
 
 	public void turnPage(int page) {
-		if (page < 0 || page >= totalPage) {
-			return;
-		}
-		currentPage = page;
-		clearEnchantedBookSlot();
-		genEnchantedBookSlot();
+		session.turnPage(page);
+		syncPageState();
 	}
 
 	public void resetPage() {
-		currentPage = 0;
-		totalPage = 0;
+		session.resetPage();
+		syncPageState();
 	}
 
 	public void clearEnchantedBookSlot() {
-		for (int i = ENCHANTED_BOOK_SLOT_START; i < TEMPLATE_BOOK_SLOT; i++) {
-			itemHandler.setStackInSlot(i, ItemStack.EMPTY);
-		}
+		session.clearGeneratedSlots();
+		syncPageState();
 	}
 
 	public void genEnchantedBookSlot() {
-		if (isCopyMode()) {
-			resetPage();
-			clearEnchantedBookSlot();
-			return;
-		}
-
-		List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
-		boolean hasBook = itemHandler.getStackInSlot(0).is(Items.BOOK);
-		boolean hasEnoughEmerald = hasEnoughPayment();
-
-		if (!hasBook || !hasEnoughEmerald) {
-			resetPage();
-			clearEnchantedBookSlot();
-			return;
-		}
-
-		for (int i = 0; i < ENCHANTED_BOOK_SLOT_SIZE; i++) {
-			int slotIndex = i + ENCHANTED_BOOK_SLOT_START;
-			int enchantmentIndex = i + currentPage * ENCHANTED_BOOK_SLOT_SIZE;
-
-			if (enchantmentIndex < enchantments.size()) {
-				if (itemHandler.getStackInSlot(slotIndex).isEmpty()) {
-					Holder<Enchantment> enchantment = enchantments.get(enchantmentIndex);
-					itemHandler.setStackInSlot(slotIndex, getEnchantedBook(enchantment));
-				}
-			} else {
-				itemHandler.setStackInSlot(slotIndex, ItemStack.EMPTY);
-			}
-		}
+		session.generateGeneratedSlots();
+		syncPageState();
 	}
 
 	public void regenerateEnchantedBookSlot() {
-		if (isCopyMode()) {
-			resetPage();
-			clearEnchantedBookSlot();
-			return;
-		}
-		List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
-		currentPage = 0;
-		totalPage = EnchantmentTableRules.calculatePageCount(enchantments.size(), ENCHANTED_BOOK_SLOT_SIZE, false);
-		clearEnchantedBookSlot();
-		genEnchantedBookSlot();
-	}
-
-	private List<Holder<Enchantment>> getFilteredEnchantments() {
-		tryGetAllEnchantments();
-		if (EnchantmentSearchRules.isBlankSearch(searchQuery)) {
-			return allEnchantments;
-		}
-
-		return allEnchantments.stream()
-				.filter(this::matchesSearch)
-				.toList();
-	}
-
-	private boolean matchesSearch(Holder<Enchantment> enchantment) {
-		Optional<ResourceLocation> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::location);
-		if (enchantmentId.isPresent() && usingClientSearchMatches && clientMatchedEnchantments.contains(enchantmentId.get())) {
-			return true;
-		}
-
-		List<String> serverCandidates = new ArrayList<>();
-		enchantmentId.ifPresent(id -> {
-			serverCandidates.add(id.toString());
-			serverCandidates.add(id.getNamespace());
-			serverCandidates.add(id.getPath());
-			serverCandidates.add(id.getPath().replace('_', ' '));
-			serverCandidates.add("enchantment." + id.getNamespace() + "." + id.getPath());
-		});
-		serverCandidates.add(enchantment.value().description().getString());
-		return EnchantmentSearchRules.matchesAnyCandidate(searchQuery, serverCandidates);
+		session.regenerateGeneratedSlots();
+		syncPageState();
 	}
 
 	public boolean canPickEnchantedBook() {
-		return !isCopyMode() && itemHandler.getStackInSlot(0).is(Items.BOOK) && hasEnoughPayment();
-	}
-
-	private boolean hasEnoughPayment() {
-		return EnchantmentTableRules.hasEnoughPayment(itemHandler.getStackInSlot(1), config());
+		return session.canPickGeneratedBook();
 	}
 
 	public boolean pickEnchantedBook() {
-		if (!canPickEnchantedBook()) {
-			clearEnchantedBookSlot();
-			return false;
-		}
-
-		itemHandler.getStackInSlot(0).shrink(1);
-		EnchantmentTableRules.consumePayment(itemHandler.getStackInSlot(1), config());
-		genEnchantedBookSlot();
-		return true;
+		var result = session.pickGeneratedBook();
+		syncPageState();
+		return result.success();
 	}
 
 	private boolean isCopyMode() {
@@ -567,13 +395,18 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		return Config.snapshot();
 	}
 
-	private static class ConversionMenuItemHandler extends ItemStackHandler {
-		private final EnchantmentConversionTableBlockEntity blockEntity;
-		private final ItemStackHandler fallbackPersistentHandler = new ItemStackHandler(EnchantmentConversionTableBlockEntity.SLOT_COUNT);
-		private final ItemStackHandler virtualHandler = new ItemStackHandler(ENCHANTED_BOOK_SLOT_SIZE);
+	private void syncPageState() {
+		GeneratedSlotPage page = session.page();
+		currentPage = page.currentPage();
+		totalPage = page.totalPage();
+	}
 
-		private ConversionMenuItemHandler(EnchantmentConversionTableBlockEntity blockEntity) {
-			super(ENCHANTMENT_CONVERSION_SLOT_SIZE);
+	private static class ConversionMenuInventory implements LogicalInventory {
+		private final EnchantmentConversionTableBlockEntity blockEntity;
+		private final LogicalInventory fallbackPersistentInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(EnchantmentConversionTableBlockEntity.SLOT_COUNT));
+		private final LogicalInventory virtualInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(ENCHANTED_BOOK_SLOT_SIZE));
+
+		private ConversionMenuInventory(EnchantmentConversionTableBlockEntity blockEntity) {
 			this.blockEntity = blockEntity;
 		}
 
@@ -585,60 +418,71 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		@Override
 		public ItemStack getStackInSlot(int slot) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				return persistentHandler().getStackInSlot(slot);
+				return persistentInventory().getStackInSlot(slot);
 			}
 			if (slot < TEMPLATE_BOOK_SLOT) {
-				return virtualHandler.getStackInSlot(slot - ENCHANTED_BOOK_SLOT_START);
+				return virtualInventory.getStackInSlot(slot - ENCHANTED_BOOK_SLOT_START);
 			}
-			return persistentHandler().getStackInSlot(toPersistentSlot(slot));
+			return persistentInventory().getStackInSlot(toPersistentSlot(slot));
 		}
 
 		@Override
 		public void setStackInSlot(int slot, ItemStack stack) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				persistentHandler().setStackInSlot(slot, stack);
+				persistentInventory().setStackInSlot(slot, stack);
 			} else if (slot < TEMPLATE_BOOK_SLOT) {
-				virtualHandler.setStackInSlot(slot - ENCHANTED_BOOK_SLOT_START, stack);
+				virtualInventory.setStackInSlot(slot - ENCHANTED_BOOK_SLOT_START, stack);
 			} else {
-				persistentHandler().setStackInSlot(toPersistentSlot(slot), stack);
+				persistentInventory().setStackInSlot(toPersistentSlot(slot), stack);
 			}
 		}
 
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				return persistentHandler().insertItem(slot, stack, simulate);
+				return persistentInventory().insertItem(slot, stack, simulate);
 			}
 			if (slot < TEMPLATE_BOOK_SLOT) {
-				return virtualHandler.insertItem(slot - ENCHANTED_BOOK_SLOT_START, stack, simulate);
+				return virtualInventory.insertItem(slot - ENCHANTED_BOOK_SLOT_START, stack, simulate);
 			}
-			return persistentHandler().insertItem(toPersistentSlot(slot), stack, simulate);
+			return persistentInventory().insertItem(toPersistentSlot(slot), stack, simulate);
 		}
 
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				return persistentHandler().extractItem(slot, amount, simulate);
+				return persistentInventory().extractItem(slot, amount, simulate);
 			}
 			if (slot < TEMPLATE_BOOK_SLOT) {
-				return virtualHandler.extractItem(slot - ENCHANTED_BOOK_SLOT_START, amount, simulate);
+				return virtualInventory.extractItem(slot - ENCHANTED_BOOK_SLOT_START, amount, simulate);
 			}
-			return persistentHandler().extractItem(toPersistentSlot(slot), amount, simulate);
+			return persistentInventory().extractItem(toPersistentSlot(slot), amount, simulate);
+		}
+
+		@Override
+		public int getSlotLimit(int slot) {
+			if (slot < ENCHANTED_BOOK_SLOT_START) {
+				return persistentInventory().getSlotLimit(slot);
+			}
+			if (slot < TEMPLATE_BOOK_SLOT) {
+				return virtualInventory.getSlotLimit(slot - ENCHANTED_BOOK_SLOT_START);
+			}
+			return persistentInventory().getSlotLimit(toPersistentSlot(slot));
 		}
 
 		@Override
 		public boolean isItemValid(int slot, ItemStack stack) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				return persistentHandler().isItemValid(slot, stack);
+				return persistentInventory().isItemValid(slot, stack);
 			}
 			if (slot < TEMPLATE_BOOK_SLOT) {
 				return false;
 			}
-			return persistentHandler().isItemValid(toPersistentSlot(slot), stack);
+			return persistentInventory().isItemValid(toPersistentSlot(slot), stack);
 		}
 
-		private IItemHandlerModifiable persistentHandler() {
-			return blockEntity != null ? blockEntity.getInventory() : fallbackPersistentHandler;
+		private LogicalInventory persistentInventory() {
+			return blockEntity != null ? blockEntity.getLogicalInventory() : fallbackPersistentInventory;
 		}
 
 		private int toPersistentSlot(int slot) {

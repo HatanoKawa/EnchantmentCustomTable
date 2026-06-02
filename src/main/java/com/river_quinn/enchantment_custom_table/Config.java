@@ -45,10 +45,6 @@ public class Config
             .comment("This option is inverted: ignoreEnchantmentLevelLimit=false should become enforceEnchantmentLevelLimit=true.")
             .define("ignoreEnchantmentLevelLimit", DEPRECATED_IGNORE_ENCHANTMENT_LEVEL_LIMIT_DEFAULT);
 
-//    private static final ModConfigSpec.BooleanValue ENABLE_XP_REQUIREMENT = BUILDER
-//            .comment("Enable XP requirement when using enchanting custom table")
-//            .define("enableXpRequirement", false);
-
     private static final ModConfigSpec.BooleanValue CONVERT_MAX_LEVEL_BOOK = BUILDER
             .comment("DEPRECATED and ignored. Use convertOnlyLevelOneBook instead.")
             .comment("This option is inverted: convert_max_level_book=false should become convertOnlyLevelOneBook=true.")
@@ -60,7 +56,6 @@ public class Config
     public static int minimumEmeraldBlockCost = 4;
     public static boolean enforceEnchantmentLevelLimit = false;
     public static boolean incrementalSameLevelMerge = false;
-    public static boolean enableXpRequirement;
     public static boolean convertOnlyLevelOneBook = false;
 
     public static TableConfigSnapshot snapshot() {
@@ -69,8 +64,7 @@ public class Config
                 minimumEmeraldBlockCost,
                 enforceEnchantmentLevelLimit,
                 incrementalSameLevelMerge,
-                convertOnlyLevelOneBook,
-                enableXpRequirement
+                convertOnlyLevelOneBook
         );
     }
 
@@ -81,7 +75,6 @@ public class Config
         minimumEmeraldBlockCost = MINIMUM_LAPIS_BLOCK_COST.get();
         enforceEnchantmentLevelLimit = ENFORCE_ENCHANTMENT_LEVEL_LIMIT.get();
         incrementalSameLevelMerge = INCREMENTAL_SAME_LEVEL_MERGE.get();
-//        enableXpRequirement = ENABLE_XP_REQUIREMENT.get();
         convertOnlyLevelOneBook = CONVERT_ONLY_LEVEL_ONE_BOOK.get();
 
         warnIfDeprecatedBooleanChanged(

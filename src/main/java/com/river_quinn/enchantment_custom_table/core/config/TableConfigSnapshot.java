@@ -5,7 +5,6 @@ public record TableConfigSnapshot(
         int minimumEmeraldBlockCost,
         boolean enforceEnchantmentLevelLimit,
         boolean incrementalSameLevelMerge,
-        boolean convertOnlyLevelOneBook,
-        boolean enableXpRequirement
+        boolean convertOnlyLevelOneBook
 ) implements TableConfigView {
 }

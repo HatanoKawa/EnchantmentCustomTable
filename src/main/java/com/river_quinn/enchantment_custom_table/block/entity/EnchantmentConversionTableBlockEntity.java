@@ -2,10 +2,16 @@ package com.river_quinn.enchantment_custom_table.block.entity;
 
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
+import com.river_quinn.enchantment_custom_table.core.inventory.AutomationPort;
+import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.inventory.SlotRole;
+import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSession;
+import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
+import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
@@ -53,6 +59,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
             }
         }
     };
+    private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);
     private final IItemHandler automationHandler = new ConversionAutomationItemHandler();
     private boolean updatingCopyResult = false;
     private int inventoryVersion = 0;
@@ -68,6 +75,10 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
 
     public ItemStackHandler getInventory() {
         return inventory;
+    }
+
+    public LogicalInventory getLogicalInventory() {
+        return logicalInventory;
     }
 
     public int getInventoryVersion() {
@@ -106,30 +117,24 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         );
     }
 
-    public boolean hasEnoughMaterialsForCopy() {
-        return inventory.getStackInSlot(BOOK_SLOT).is(Items.BOOK)
-                && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(PAYMENT_SLOT), config());
-    }
-
     public void refreshCopyResult() {
-        if (!EnchantmentTableRules.shouldGenerateCopyResult(
-                isCopyMode(),
-                inventory.getStackInSlot(COPY_RESULT_SLOT).isEmpty(),
-                hasEnoughMaterialsForCopy()
-        )) {
-            return;
-        }
-
         updatingCopyResult = true;
+        TableOperationResult result;
         try {
-            inventory.getStackInSlot(BOOK_SLOT).shrink(1);
-            EnchantmentTableRules.consumePayment(inventory.getStackInSlot(PAYMENT_SLOT), config());
-            inventory.setStackInSlot(
-                    COPY_RESULT_SLOT,
-                    inventory.getStackInSlot(TEMPLATE_SLOT).copyWithCount(1)
+            result = ConversionTableSession.refreshCopyResult(
+                    logicalInventory,
+                    this::isCopyMode,
+                    this::config,
+                    BOOK_SLOT,
+                    PAYMENT_SLOT,
+                    TEMPLATE_SLOT,
+                    COPY_RESULT_SLOT
             );
         } finally {
             updatingCopyResult = false;
+        }
+
+        if (result.changed()) {
             markInventoryChanged();
         }
     }
@@ -171,7 +176,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         return Config.snapshot();
     }
 
-    private class ConversionAutomationItemHandler implements IItemHandler {
+    private class ConversionAutomationItemHandler implements IItemHandler, AutomationPort {
         @Override
         public int getSlots() {
             return 3;
@@ -180,6 +185,26 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         @Override
         public ItemStack getStackInSlot(int slot) {
             return slot == 2 ? inventory.getStackInSlot(COPY_RESULT_SLOT) : ItemStack.EMPTY;
+        }
+
+        @Override
+        public SlotRole getRole(int slot) {
+            return switch (slot) {
+                case 0 -> SlotRole.BOOK_INPUT;
+                case 1 -> SlotRole.PAYMENT;
+                case 2 -> SlotRole.COPY_RESULT;
+                default -> SlotRole.GENERATED_BOOK;
+            };
+        }
+
+        @Override
+        public boolean canInsert(int slot, ItemStack stack) {
+            return isItemValid(slot, stack);
+        }
+
+        @Override
+        public boolean canExtract(int slot) {
+            return slot == 2;
         }
 
         @Override
