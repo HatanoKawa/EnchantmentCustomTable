@@ -1,5 +1,8 @@
 package com.river_quinn.enchantment_custom_table.core.rules;
 
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentEntry;
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentKey;
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentList;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CoreRuleTest {
+    private static final EnchantmentKey SHARPNESS = EnchantmentKey.of("minecraft", "sharpness");
+    private static final EnchantmentKey UNBREAKING = EnchantmentKey.of("minecraft", "unbreaking");
+
     @Test
     void directMergeAddsDuplicateLevelsWhenLimitsAreDisabled() {
         OptionalInt result = MergeRules.calculateMergedEnchantmentLevel(5, 5, 5, false, false);
@@ -85,5 +91,65 @@ class CoreRuleTest {
         assertEquals(OptionalInt.of(4), MergeRules.calculateRemainingEnchantmentLevel(5, 4, true));
         assertEquals(OptionalInt.of(1), MergeRules.calculateRemainingEnchantmentLevel(2, 1, true));
         assertEquals(OptionalInt.empty(), MergeRules.calculateRemainingEnchantmentLevel(0, 1, true));
+    }
+
+    @Test
+    void enchantmentMergeRulesUseStableKeysForDuplicateEntries() {
+        EnchantmentList base = EnchantmentList.of(List.of(new EnchantmentEntry(SHARPNESS, 5, 10)));
+
+        EnchantmentMergeRules.MergeResult result = EnchantmentMergeRules.tryMerge(
+                base,
+                List.of(new EnchantmentEntry(SHARPNESS, 5, 10)),
+                new EnchantmentMergeRules.MergeOptions(false, true)
+        );
+
+        assertTrue(result.allowed());
+        assertEquals(6, result.enchantments().levelOf(SHARPNESS));
+    }
+
+    @Test
+    void enchantmentMergeRulesRejectInvalidMultiBookAtomically() {
+        EnchantmentList base = EnchantmentList.of(List.of(new EnchantmentEntry(SHARPNESS, 5, 5)));
+
+        EnchantmentMergeRules.MergeResult result = EnchantmentMergeRules.tryMerge(
+                base,
+                List.of(
+                        new EnchantmentEntry(SHARPNESS, 5, 5),
+                        new EnchantmentEntry(UNBREAKING, 3, 3)
+                ),
+                new EnchantmentMergeRules.MergeOptions(true, false)
+        );
+
+        assertFalse(result.allowed());
+        assertEquals(5, result.enchantments().levelOf(SHARPNESS));
+        assertEquals(0, result.enchantments().levelOf(UNBREAKING));
+    }
+
+    @Test
+    void enchantmentMergeRulesAllowNewOvercapEntriesWhenLimitsAreEnforced() {
+        EnchantmentList base = EnchantmentList.of(List.of(new EnchantmentEntry(SHARPNESS, 5, 5)));
+
+        EnchantmentMergeRules.MergeResult result = EnchantmentMergeRules.tryMerge(
+                base,
+                List.of(new EnchantmentEntry(UNBREAKING, 7, 3)),
+                new EnchantmentMergeRules.MergeOptions(true, false)
+        );
+
+        assertTrue(result.allowed());
+        assertEquals(5, result.enchantments().levelOf(SHARPNESS));
+        assertEquals(7, result.enchantments().levelOf(UNBREAKING));
+    }
+
+    @Test
+    void enchantmentMergeRulesSubtractIncrementalSplitByOneLevel() {
+        EnchantmentList base = EnchantmentList.of(List.of(new EnchantmentEntry(SHARPNESS, 5, 5)));
+
+        EnchantmentList result = EnchantmentMergeRules.subtract(
+                base,
+                List.of(new EnchantmentEntry(SHARPNESS, 4, 5)),
+                true
+        );
+
+        assertEquals(4, result.levelOf(SHARPNESS));
     }
 }
