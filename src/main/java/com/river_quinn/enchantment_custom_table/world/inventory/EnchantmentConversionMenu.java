@@ -56,7 +56,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	 */
 	private final ItemStackHandler itemHandler;
 
-	public final static HashMap<String, Object> guistate = new HashMap<>();
 	public final Level world;
 	public final Player entity;
 	public int x, y, z;
@@ -115,10 +114,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		});
 
 		this.addSlot(new SlotItemHandler(itemHandler, 0, 16, 8 + 15) {
-			private final int slot = 0;
-			private int x = EnchantmentConversionMenu.this.x;
-			private int y = EnchantmentConversionMenu.this.y;
-
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return Items.BOOK == stack.getItem();
@@ -144,10 +139,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		});
 
 		this.addSlot(new SlotItemHandler(itemHandler, 1, 16, 26 + 15) {
-			private final int slot = 1;
-			private int x = EnchantmentConversionMenu.this.x;
-			private int y = EnchantmentConversionMenu.this.y;
-
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return boundBlockEntity != null
@@ -182,10 +173,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
 					new SlotItemHandler(itemHandler, final_enchanted_book_index + ENCHANTED_BOOK_SLOT_START, xPos, yPos) {
-						private final int slot = final_enchanted_book_index + ENCHANTED_BOOK_SLOT_START;
-						private int x = EnchantmentConversionMenu.this.x;
-						private int y = EnchantmentConversionMenu.this.y;
-
 						@Override
 						public boolean mayPlace(ItemStack stack) {
 							return false;

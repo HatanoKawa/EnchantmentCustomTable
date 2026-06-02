@@ -23,7 +23,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,7 +30,6 @@ import java.util.Optional;
 public class EnchantmentConversionScreen extends AbstractContainerScreen<EnchantmentConversionMenu> {
 
     private EnchantmentConversionMenu menuContainer;
-    private final static HashMap<String, Object> guistate = EnchantmentConversionMenu.guistate;
     private final Level world;
     private final int x, y, z;
     private final Player entity;
@@ -140,7 +138,6 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         searchBox.setHint(Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search"));
         searchBox.setValue(pendingSearchQuery);
         searchBox.setResponder(this::queueSearchRequest);
-        guistate.put("text:search_box", searchBox);
         this.addRenderableWidget(searchBox);
 
         button_left_arrow_button = Button.builder(
@@ -151,7 +148,6 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                     ));
                 }
         ).bounds(this.leftPos + 7, this.topPos + 4, 17, 18).build();
-        guistate.put("button:button_left_arrow_button", button_left_arrow_button);
         this.addRenderableWidget(button_left_arrow_button);
 
         button_right_arrow_button = Button.builder(
@@ -162,7 +158,6 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                     ));
                 }
         ).bounds(this.leftPos + 24, this.topPos + 4, 17, 18).build();
-        guistate.put("button:button_right_arrow_button", button_right_arrow_button);
         this.addRenderableWidget(button_right_arrow_button);
 
     }

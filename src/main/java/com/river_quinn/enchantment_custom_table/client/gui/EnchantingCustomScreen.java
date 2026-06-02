@@ -11,15 +11,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.GuiGraphics;
 
-import java.util.HashMap;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCustomMenu> {
 
     private EnchantingCustomMenu menuContainer;
-    private final static HashMap<String, Object> guistate = EnchantingCustomMenu.guistate;
     private final Level world;
     private final int x, y, z;
     private final Player entity;
@@ -99,7 +96,6 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
                     ));
                 }
         ).bounds(this.leftPos + 7, this.topPos + 43, 26, 18).build();
-        guistate.put("button:button_left_arrow_button", button_left_arrow_button);
         this.addRenderableWidget(button_left_arrow_button);
 
         button_right_arrow_button = Button.builder(
@@ -110,7 +106,6 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
                     ));
                 }
         ).bounds(this.leftPos + 33, this.topPos + 43, 26, 18).build();
-        guistate.put("button:button_right_arrow_button", button_right_arrow_button);
         this.addRenderableWidget(button_right_arrow_button);
 
         export_button = Button.builder(
@@ -121,7 +116,6 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
                     ));
                 }
         ).bounds(this.leftPos + 7, this.topPos + 61, 52, 18).build();
-        guistate.put("button:export_button", export_button);
         this.addRenderableWidget(export_button);
     }
 

@@ -17,7 +17,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
@@ -48,7 +47,6 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	private final ItemStackHandler itemHandler;
 
 	private static final Logger LOGGER = LogUtils.getLogger();
-	public final static HashMap<String, Object> guistate = new HashMap<>();
 	public final Level world;
 	public final Player entity;
 	public int x, y, z;
@@ -179,10 +177,6 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		});
 
 		this.addSlot(new SlotItemHandler(itemHandler, 0, 8, 8) {
-			private final int slot = 0;
-			private int x = EnchantingCustomMenu.this.x;
-			private int y = EnchantingCustomMenu.this.y;
-
 			@Override
 			public void onQuickCraft(ItemStack newStack, ItemStack oldStack) {
 				super.onQuickCraft(newStack, oldStack);
@@ -207,16 +201,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		});
 
 		this.addSlot(new SlotItemHandler(itemHandler, 1, 42, 8) {
-			private final int slot = 1;
-			private int x = EnchantingCustomMenu.this.x;
-			private int y = EnchantingCustomMenu.this.y;
-
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return Items.ENCHANTED_BOOK == stack.getItem()
 						&& !getItemHandler().getStackInSlot(0).isEmpty()
 						&& checkCanPlaceEnchantedBook(stack);
-//						&& EnchantmentUtils.checkSatisfyXpRequirement(stack, entity);
 			}
 
 			@Override
@@ -232,7 +221,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				super.setByPlayer(newStack, oldStack);
 				if (!newStack.isEmpty()) {
 					// 放置附魔书，同步添加工具上的附魔，并删除附加槽的附魔书，重新生成附魔书槽
-					addEnchantment(newStack, slot, true);
+					addEnchantment(newStack, 1, true);
 				} else {
 					// 合法情况下不应该存在这种状况
 					LOGGER.warn("stack 1, setByPlayer() called with newStack.isEmpty()");
@@ -248,16 +237,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
 					new SlotItemHandler(itemHandler, final_enchanted_book_index + 2, xPos, yPos) {
-						private final int slot = final_enchanted_book_index + 2;
-						private int x = EnchantingCustomMenu.this.x;
-						private int y = EnchantingCustomMenu.this.y;
-
 						@Override
 						public boolean mayPlace(ItemStack stack) {
 							return Items.ENCHANTED_BOOK == stack.getItem()
 									&& !getItemHandler().getStackInSlot(0).isEmpty()
 									&& checkCanPlaceEnchantedBook(stack);
-//									&& EnchantmentUtils.checkSatisfyXpRequirement(stack, entity);
 						}
 
 						@Override
@@ -404,15 +388,6 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 			playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(1));
 			itemHandler.setStackInSlot(1, ItemStack.EMPTY);
 		}
-	}
-
-	public List<EnchantmentInstance> getEnchantmentInstanceFromEnchantedBook(ItemStack enchantedBookItemStack) {
-		List<EnchantmentInstance> enchantmentOfBook = new ArrayList<>();
-		for (EnchantmentTableRules.EnchantmentLevel entry : getEnchantmentLevelsFromEnchantedBook(enchantedBookItemStack)) {
-			enchantmentOfBook.add(new EnchantmentInstance(entry.enchantment(), entry.level()));
-		}
-
-		return enchantmentOfBook;
 	}
 
 	private List<EnchantmentTableRules.EnchantmentLevel> getEnchantmentLevelsFromEnchantedBook(ItemStack enchantedBookItemStack) {
