@@ -1,17 +1,17 @@
 package com.river_quinn.enchantment_custom_table.block.entity;
 
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
+import com.river_quinn.enchantment_custom_table.core.inventory.AutomationPort;
+import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.inventory.SlotRole;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
+import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
@@ -30,9 +30,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEntity implements MenuProvider {
     public static final int TOOL_SLOT = 0;
@@ -48,6 +46,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
             markInventoryChanged();
         }
     };
+    private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);
     private final IItemHandler automationHandler = new EnchantingAutomationItemHandler();
     private int inventoryVersion = 0;
 
@@ -68,6 +67,10 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         return inventory;
     }
 
+    public LogicalInventory getLogicalInventory() {
+        return logicalInventory;
+    }
+
     public int getInventoryVersion() {
         return inventoryVersion;
     }
@@ -84,14 +87,24 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         inventory.setStackInSlot(TOOL_SLOT, stack);
     }
 
+    public boolean replaceToolEnchantments(ItemEnchantments enchantments) {
+        ItemStack toolStack = getToolStack();
+        if (toolStack.isEmpty()) {
+            return false;
+        }
+        toolStack.set(EnchantmentHelper.getComponentType(toolStack), enchantments);
+        markInventoryChanged();
+        return true;
+    }
+
     public boolean canApplyEnchantedBook(ItemStack stack, EnchantmentTableRules.MergeOptions mergeOptions) {
         if (!stack.is(Items.ENCHANTED_BOOK) || getToolStack().isEmpty() || level == null) {
             return false;
         }
         return EnchantmentTableRules.tryMergeEnchantments(
                 EnchantmentUtils.getEnchantments(getToolStack()),
-                getEnchantmentLevelsFromEnchantedBook(stack),
-                this::isSameEnchantment,
+                EnchantmentUtils.getEnchantmentLevels(level, stack),
+                enchantment -> EnchantmentUtils.getCoreEnchantmentKey(level, enchantment),
                 mergeOptions
         ).allowed();
     }
@@ -101,7 +114,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
             return false;
         }
 
-        List<EnchantmentTableRules.EnchantmentLevel> enchantmentLevels = getEnchantmentLevelsFromEnchantedBook(stack);
+        List<EnchantmentTableRules.EnchantmentLevel> enchantmentLevels = EnchantmentUtils.getEnchantmentLevels(level, stack);
         if (enchantmentLevels.isEmpty()) {
             return false;
         }
@@ -110,7 +123,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         EnchantmentTableRules.MergeResult result = EnchantmentTableRules.tryMergeEnchantments(
                 EnchantmentUtils.getEnchantments(toolStack),
                 enchantmentLevels,
-                this::isSameEnchantment,
+                enchantment -> EnchantmentUtils.getCoreEnchantmentKey(level, enchantment),
                 mergeOptions
         );
         if (!result.allowed()) {
@@ -118,8 +131,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         }
 
         if (!simulate) {
-            toolStack.set(EnchantmentHelper.getComponentType(toolStack), result.enchantments());
-            markInventoryChanged();
+            replaceToolEnchantments(result.enchantments());
             playUseSound();
         }
         return true;
@@ -148,25 +160,6 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         input.child("Inventory").ifPresent(inventory::deserialize);
     }
 
-    private List<EnchantmentTableRules.EnchantmentLevel> getEnchantmentLevelsFromEnchantedBook(ItemStack enchantedBookItemStack) {
-        List<EnchantmentTableRules.EnchantmentLevel> enchantmentOfBook = new ArrayList<>();
-        for (Object2IntMap.Entry<Holder<Enchantment>> entry : EnchantmentUtils.getEnchantments(enchantedBookItemStack).entrySet()) {
-            Holder<Enchantment> enchantment = EnchantmentUtils.resolveEnchantmentHolder(level, entry.getKey()).orElse(entry.getKey());
-            enchantmentOfBook.add(new EnchantmentTableRules.EnchantmentLevel(enchantment, entry.getIntValue()));
-        }
-
-        return enchantmentOfBook;
-    }
-
-    private boolean isSameEnchantment(Holder<Enchantment> first, Holder<Enchantment> second) {
-        Optional<ResourceKey<Enchantment>> firstKey = EnchantmentUtils.getEnchantmentKey(level, first);
-        Optional<ResourceKey<Enchantment>> secondKey = EnchantmentUtils.getEnchantmentKey(level, second);
-        if (firstKey.isPresent() && secondKey.isPresent()) {
-            return firstKey.get().equals(secondKey.get());
-        }
-        return first.value().equals(second.value());
-    }
-
     private EnchantmentTableRules.MergeOptions mergeOptions() {
         return EnchantmentTableRules.MergeOptions.from(com.river_quinn.enchantment_custom_table.Config.snapshot());
     }
@@ -182,7 +175,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         setChanged();
     }
 
-    private class EnchantingAutomationItemHandler implements IItemHandler {
+    private class EnchantingAutomationItemHandler implements IItemHandler, AutomationPort {
         @Override
         public int getSlots() {
             return 1;
@@ -191,6 +184,21 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         @Override
         public ItemStack getStackInSlot(int slot) {
             return ItemStack.EMPTY;
+        }
+
+        @Override
+        public SlotRole getRole(int slot) {
+            return SlotRole.ENCHANTED_BOOK_INPUT;
+        }
+
+        @Override
+        public boolean canInsert(int slot, ItemStack stack) {
+            return isItemValid(slot, stack);
+        }
+
+        @Override
+        public boolean canExtract(int slot) {
+            return false;
         }
 
         @Override

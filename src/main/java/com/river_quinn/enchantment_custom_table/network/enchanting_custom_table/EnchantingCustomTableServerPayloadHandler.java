@@ -1,5 +1,6 @@
 package com.river_quinn.enchantment_custom_table.network.enchanting_custom_table;
 
+import com.river_quinn.enchantment_custom_table.core.net.EnchantingTableIntent;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -10,14 +11,12 @@ public class EnchantingCustomTableServerPayloadHandler {
             return;
         }
 
-        EnchantingCustomTableNetData.OperateType operateType;
-        try {
-            operateType = EnchantingCustomTableNetData.OperateType.valueOf(data.operateType());
-        } catch (IllegalArgumentException | NullPointerException ignored) {
+        EnchantingTableIntent intent = data.intent();
+        if (intent == EnchantingTableIntent.UNKNOWN) {
             return;
         }
 
-        switch (operateType) {
+        switch (intent) {
             case EXPORT_ALL_ENCHANTMENTS -> {
                 menu.exportAllEnchantments();
             }
@@ -26,6 +25,9 @@ public class EnchantingCustomTableServerPayloadHandler {
             }
             case PREVIOUS_PAGE -> {
                 menu.previousPage();
+            }
+            case UNKNOWN -> {
+                return;
             }
         }
         menu.broadcastChanges();

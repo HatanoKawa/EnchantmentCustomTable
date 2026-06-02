@@ -1,5 +1,6 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
+import com.river_quinn.enchantment_custom_table.core.net.EnchantingTableIntent;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
 import net.minecraft.client.gui.components.Button;
@@ -12,14 +13,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.GuiGraphics;
 
-import java.util.HashMap;
-
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCustomMenu> {
 
     private EnchantingCustomMenu menuContainer;
-    private final static HashMap<String, Object> guistate = EnchantingCustomMenu.guistate;
     private final Level world;
     private final int x, y, z;
     private final Player entity;
@@ -92,33 +90,30 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> {
                     PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
-                            EnchantingCustomTableNetData.OperateType.PREVIOUS_PAGE.name()
+                            EnchantingTableIntent.PREVIOUS_PAGE
                     ));
                 }
         ).bounds(this.leftPos + 7, this.topPos + 43, 26, 18).build();
-        guistate.put("button:button_left_arrow_button", button_left_arrow_button);
         this.addRenderableWidget(button_left_arrow_button);
 
         button_right_arrow_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> {
                     PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
-                            EnchantingCustomTableNetData.OperateType.NEXT_PAGE.name()
+                            EnchantingTableIntent.NEXT_PAGE
                     ));
                 }
         ).bounds(this.leftPos + 33, this.topPos + 43, 26, 18).build();
-        guistate.put("button:button_right_arrow_button", button_right_arrow_button);
         this.addRenderableWidget(button_right_arrow_button);
 
         export_button = Button.builder(
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_export"),
                 e -> {
                     PacketDistributor.sendToServer(new EnchantingCustomTableNetData(
-                            EnchantingCustomTableNetData.OperateType.EXPORT_ALL_ENCHANTMENTS.name()
+                            EnchantingTableIntent.EXPORT_ALL_ENCHANTMENTS
                     ));
                 }
         ).bounds(this.leftPos + 7, this.topPos + 61, 52, 18).build();
-        guistate.put("button:export_button", export_button);
         this.addRenderableWidget(export_button);
     }
 
