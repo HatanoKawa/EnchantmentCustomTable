@@ -1,5 +1,6 @@
 package com.river_quinn.enchantment_custom_table.utils;
 
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentKey;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -58,23 +59,38 @@ public class EnchantmentUtils {
         List<EnchantmentTableRules.EnchantmentLevel> enchantments = new ArrayList<>();
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : getEnchantments(enchantedBookItemStack).entrySet()) {
             Holder<Enchantment> enchantment = resolveEnchantmentHolder(level, entry.getKey()).orElse(entry.getKey());
-            enchantments.add(new EnchantmentTableRules.EnchantmentLevel(enchantment, entry.getIntValue()));
+            enchantments.add(new EnchantmentTableRules.EnchantmentLevel(
+                    enchantment,
+                    getCoreEnchantmentKey(level, enchantment),
+                    entry.getIntValue(),
+                    enchantment.value().getMaxLevel()
+            ));
         }
         return enchantments;
     }
 
     public static boolean isSameEnchantment(Level level, Holder<Enchantment> first, Holder<Enchantment> second) {
-        Optional<ResourceKey<Enchantment>> firstKey = getEnchantmentKey(level, first);
-        Optional<ResourceKey<Enchantment>> secondKey = getEnchantmentKey(level, second);
-        if (firstKey.isPresent() && secondKey.isPresent()) {
-            return firstKey.get().equals(secondKey.get());
-        }
-        return first.value().equals(second.value());
+        return getCoreEnchantmentKey(level, first).equals(getCoreEnchantmentKey(level, second));
     }
 
     public static ItemStack createEnchantedBook(Holder<Enchantment> enchantment, int level) {
         ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
         enchantedBook.enchant(enchantment, level);
         return enchantedBook;
+    }
+
+    public static EnchantmentKey getCoreEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
+        Optional<ResourceKey<Enchantment>> key = getEnchantmentKey(level, enchantment);
+        if (key.isPresent()) {
+            return fromResourceKey(key.get());
+        }
+        return EnchantmentKey.of(
+                "unregistered",
+                enchantment.value().getClass().getName() + "_" + Integer.toHexString(System.identityHashCode(enchantment.value()))
+        );
+    }
+
+    private static EnchantmentKey fromResourceKey(ResourceKey<Enchantment> key) {
+        return EnchantmentKey.of(key.location().getNamespace(), key.location().getPath());
     }
 }

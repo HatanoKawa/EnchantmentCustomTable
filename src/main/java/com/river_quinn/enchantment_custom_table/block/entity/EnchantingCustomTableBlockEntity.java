@@ -95,7 +95,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         return EnchantmentTableRules.tryMergeEnchantments(
                 EnchantmentUtils.getEnchantments(getToolStack()),
                 EnchantmentUtils.getEnchantmentLevels(level, stack),
-                (first, second) -> EnchantmentUtils.isSameEnchantment(level, first, second),
+                enchantment -> EnchantmentUtils.getCoreEnchantmentKey(level, enchantment),
                 mergeOptions
         ).allowed();
     }
@@ -114,7 +114,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         EnchantmentTableRules.MergeResult result = EnchantmentTableRules.tryMergeEnchantments(
                 EnchantmentUtils.getEnchantments(toolStack),
                 enchantmentLevels,
-                (first, second) -> EnchantmentUtils.isSameEnchantment(level, first, second),
+                enchantment -> EnchantmentUtils.getCoreEnchantmentKey(level, enchantment),
                 mergeOptions
         );
         if (!result.allowed()) {

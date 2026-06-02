@@ -92,8 +92,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				var enchantmentOnOldStack = enchantmentsOnOldStack.get(0);
 				var hasDuplicateEnchantment = EnchantmentTableRules.containsMatchingEnchantment(
 						enchantmentsOnNewStack,
-						enchantmentOnOldStack.enchantment(),
-						(first, second) -> EnchantmentUtils.isSameEnchantment(world, first, second)
+						enchantmentOnOldStack.key()
 				);
 				if (hasDuplicateEnchantment) {
 					// 如果新旧物品槽的对应的附魔书有重复的附魔，则直接添加到工具上，合并附魔并不返回旧的附魔书
@@ -347,7 +346,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		return EnchantmentTableRules.tryMergeEnchantments(
 				itemEnchantmentsOnTool,
 				EnchantmentUtils.getEnchantmentLevels(world, stack),
-				(first, second) -> EnchantmentUtils.isSameEnchantment(world, first, second),
+				enchantment -> EnchantmentUtils.getCoreEnchantmentKey(world, enchantment),
 				mergeOptions()
 		).allowed();
 	}
@@ -542,7 +541,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		EnchantmentTableRules.MergeResult result = EnchantmentTableRules.tryMergeEnchantments(
 				itemEnchantments,
 				enchantmentInstances,
-				(first, second) -> EnchantmentUtils.isSameEnchantment(world, first, second),
+				enchantment -> EnchantmentUtils.getCoreEnchantmentKey(world, enchantment),
 				mergeOptions()
 		);
 		if (!result.allowed()) {
@@ -576,7 +575,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		ItemEnchantments resultEnchantments = EnchantmentTableRules.subtractEnchantments(
 				itemEnchantments,
 				enchantmentLevels,
-				(first, second) -> EnchantmentUtils.isSameEnchantment(world, first, second),
+				enchantment -> EnchantmentUtils.getCoreEnchantmentKey(world, enchantment),
 				shouldUseIncrementalSingleBookSplitRemoval(toolItemStack, itemEnchantments, enchantmentLevels)
 		);
 		if (!replaceToolEnchantments(toolItemStack, resultEnchantments)) {
