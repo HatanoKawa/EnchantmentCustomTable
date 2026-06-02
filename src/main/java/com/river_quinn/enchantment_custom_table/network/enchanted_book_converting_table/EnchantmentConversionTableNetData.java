@@ -1,5 +1,6 @@
 package com.river_quinn.enchantment_custom_table.network.enchanted_book_converting_table;
 
+import com.river_quinn.enchantment_custom_table.core.net.ConversionTableIntent;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -13,19 +14,13 @@ import java.util.Objects;
 import static com.river_quinn.enchantment_custom_table.EnchantmentCustomTable.MODID;
 
 public record EnchantmentConversionTableNetData(
-        String operateType,
+        ConversionTableIntent intent,
         String searchQuery,
         String clientLanguage,
         List<ResourceLocation> matchedEnchantments
 ) implements CustomPacketPayload {
-    public enum OperateType {
-        NEXT_PAGE,
-        PREVIOUS_PAGE,
-        SEARCH
-    }
-
     public EnchantmentConversionTableNetData {
-        operateType = operateType == null ? "" : operateType;
+        intent = intent == null ? ConversionTableIntent.UNKNOWN : intent;
         searchQuery = EnchantmentSearchRules.sanitizeSearchQuery(searchQuery);
         clientLanguage = EnchantmentSearchRules.sanitizeClientLanguage(clientLanguage);
         matchedEnchantments = matchedEnchantments == null
@@ -36,8 +31,21 @@ public record EnchantmentConversionTableNetData(
                         .toList();
     }
 
+    public EnchantmentConversionTableNetData(ConversionTableIntent intent) {
+        this(intent, "", "", List.of());
+    }
+
     public EnchantmentConversionTableNetData(String operateType) {
-        this(operateType, "", "", List.of());
+        this(ConversionTableIntent.fromNetworkId(operateType), "", "", List.of());
+    }
+
+    public EnchantmentConversionTableNetData(
+            String operateType,
+            String searchQuery,
+            String clientLanguage,
+            List<ResourceLocation> matchedEnchantments
+    ) {
+        this(ConversionTableIntent.fromNetworkId(operateType), searchQuery, clientLanguage, matchedEnchantments);
     }
 
     public static final Type<EnchantmentConversionTableNetData> TYPE =
@@ -45,10 +53,12 @@ public record EnchantmentConversionTableNetData(
 
     private static final StreamCodec<ByteBuf, List<ResourceLocation>> MATCHED_ENCHANTMENTS_CODEC =
             ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));
+    private static final StreamCodec<ByteBuf, ConversionTableIntent> INTENT_CODEC =
+            ByteBufCodecs.stringUtf8(64).map(ConversionTableIntent::fromNetworkId, ConversionTableIntent::networkId);
 
     public static final StreamCodec<ByteBuf, EnchantmentConversionTableNetData> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.stringUtf8(32),
-            EnchantmentConversionTableNetData::operateType,
+            INTENT_CODEC,
+            EnchantmentConversionTableNetData::intent,
             ByteBufCodecs.stringUtf8(EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH),
             EnchantmentConversionTableNetData::searchQuery,
             ByteBufCodecs.stringUtf8(EnchantmentSearchRules.MAX_CLIENT_LANGUAGE_LENGTH),

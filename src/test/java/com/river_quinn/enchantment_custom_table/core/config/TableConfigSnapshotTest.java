@@ -9,13 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TableConfigSnapshotTest {
     @Test
     void snapshotExposesStableConfigValues() {
-        TableConfigView config = new TableConfigSnapshot(36, 4, true, true, false, true);
+        TableConfigView config = new TableConfigSnapshot(36, 4, true, true, false);
 
         assertEquals(36, config.minimumEmeraldCost());
         assertEquals(4, config.minimumEmeraldBlockCost());
         assertTrue(config.enforceEnchantmentLevelLimit());
         assertTrue(config.incrementalSameLevelMerge());
         assertFalse(config.convertOnlyLevelOneBook());
-        assertTrue(config.enableXpRequirement());
     }
 }
