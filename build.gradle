@@ -1,17 +1,20 @@
 plugins {
+    id 'dev.kikugie.stonecutter'
     id 'java-library'
     id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.141'
     id 'idea'
 }
 
-tasks.named('wrapper', Wrapper).configure {
-    // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
-    // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
-    // documentation attached on cursor hover of gradle classes and methods. However, this comes with increased
-    // file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.
-    // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
-    distributionType = Wrapper.DistributionType.BIN
+if (tasks.findByName('wrapper') != null) {
+    tasks.named('wrapper', Wrapper).configure {
+        // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
+        // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
+        // documentation attached on cursor hover of gradle classes and methods. However, this comes with increased
+        // file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.
+        // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
+        distributionType = Wrapper.DistributionType.BIN
+    }
 }
 
 version = mod_version
@@ -30,8 +33,9 @@ tasks.named('jar', Jar).configure {
     archiveVersion = "${project.mod_version}-mc${project.minecraft_version}"
 }
 
-// Mojang ships Java 25 to end users starting in 26.1, so mods should target Java 25.
-java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+def targetJavaVersion = (findProperty('java_version')
+        ?: (minecraft_version.toString().startsWith('26.') ? '25' : '21')) as Integer
+java.toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
 
 neoForge {
     // Specify the version of NeoForge to use.
