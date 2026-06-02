@@ -15,9 +15,6 @@ sourceSets {
         java.setSrcDirs([
                 rootProject.file('src/common/java')
         ])
-        java.exclude 'com/river_quinn/enchantment_custom_table/core/inventory/AutomationPort.java'
-        java.exclude 'com/river_quinn/enchantment_custom_table/core/inventory/LogicalInventory.java'
-        java.exclude 'com/river_quinn/enchantment_custom_table/utils/EnchantmentTableRules.java'
     }
     test {
         java.setSrcDirs([

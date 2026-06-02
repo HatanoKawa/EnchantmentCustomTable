@@ -37,7 +37,8 @@ sourceSets {
         java.setSrcDirs([
                 rootProject.file('fabric/src/main/java'),
                 rootProject.file("fabric/src/versioned/${fabricVersionedSource}/java"),
-                rootProject.file('src/common/java')
+                rootProject.file('src/common/java'),
+                rootProject.file('src/common-minecraft/java')
         ])
         resources.setSrcDirs([
                 rootProject.file('fabric/src/main/resources'),
