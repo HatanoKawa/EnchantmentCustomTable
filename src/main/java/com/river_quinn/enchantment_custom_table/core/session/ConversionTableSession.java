@@ -200,6 +200,32 @@ public class ConversionTableSession {
         return TableOperationResult.success(true);
     }
 
+    public static TableOperationResult refreshCopyResult(
+            LogicalInventory inventory,
+            BooleanSupplier copyMode,
+            Supplier<TableConfigView> config,
+            int bookSlot,
+            int paymentSlot,
+            int templateSlot,
+            int copyResultSlot
+    ) {
+        if (!EnchantmentTableRules.shouldGenerateCopyResult(
+                copyMode.getAsBoolean(),
+                inventory.getStackInSlot(copyResultSlot).isEmpty(),
+                hasEnoughMaterialsForCopy(inventory, config.get(), bookSlot, paymentSlot)
+        )) {
+            return TableOperationResult.failed(false);
+        }
+
+        inventory.getStackInSlot(bookSlot).shrink(1);
+        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.get());
+        inventory.setStackInSlot(
+                copyResultSlot,
+                inventory.getStackInSlot(templateSlot).copyWithCount(1)
+        );
+        return TableOperationResult.success(true);
+    }
+
     private void loadAllEnchantments() {
         if (allEnchantments.isEmpty()) {
             Registry<Enchantment> fullEnchantmentList = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
@@ -243,5 +269,15 @@ public class ConversionTableSession {
 
     private boolean hasEnoughPayment() {
         return EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.get());
+    }
+
+    private static boolean hasEnoughMaterialsForCopy(
+            LogicalInventory inventory,
+            TableConfigView config,
+            int bookSlot,
+            int paymentSlot
+    ) {
+        return inventory.getStackInSlot(bookSlot).is(Items.BOOK)
+                && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config);
     }
 }

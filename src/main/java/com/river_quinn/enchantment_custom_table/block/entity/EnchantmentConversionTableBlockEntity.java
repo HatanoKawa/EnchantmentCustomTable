@@ -5,6 +5,8 @@ import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
 import com.river_quinn.enchantment_custom_table.core.inventory.AutomationPort;
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import com.river_quinn.enchantment_custom_table.core.inventory.SlotRole;
+import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSession;
+import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
@@ -115,30 +117,24 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         );
     }
 
-    public boolean hasEnoughMaterialsForCopy() {
-        return inventory.getStackInSlot(BOOK_SLOT).is(Items.BOOK)
-                && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(PAYMENT_SLOT), config());
-    }
-
     public void refreshCopyResult() {
-        if (!EnchantmentTableRules.shouldGenerateCopyResult(
-                isCopyMode(),
-                inventory.getStackInSlot(COPY_RESULT_SLOT).isEmpty(),
-                hasEnoughMaterialsForCopy()
-        )) {
-            return;
-        }
-
         updatingCopyResult = true;
+        TableOperationResult result;
         try {
-            inventory.getStackInSlot(BOOK_SLOT).shrink(1);
-            EnchantmentTableRules.consumePayment(inventory.getStackInSlot(PAYMENT_SLOT), config());
-            inventory.setStackInSlot(
-                    COPY_RESULT_SLOT,
-                    inventory.getStackInSlot(TEMPLATE_SLOT).copyWithCount(1)
+            result = ConversionTableSession.refreshCopyResult(
+                    logicalInventory,
+                    this::isCopyMode,
+                    this::config,
+                    BOOK_SLOT,
+                    PAYMENT_SLOT,
+                    TEMPLATE_SLOT,
+                    COPY_RESULT_SLOT
             );
         } finally {
             updatingCopyResult = false;
+        }
+
+        if (result.changed()) {
             markInventoryChanged();
         }
     }
