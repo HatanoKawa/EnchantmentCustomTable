@@ -8,6 +8,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 
@@ -26,6 +27,26 @@ public class EnchantingTableSession {
     private final List<ItemStack> generatedItems = new ArrayList<>();
     private int currentPage = 0;
     private int totalPage = 0;
+
+    public record GeneratedBookRemovalResult(boolean success, boolean regenerated) {
+        public static GeneratedBookRemovalResult failed() {
+            return new GeneratedBookRemovalResult(false, false);
+        }
+
+        public static GeneratedBookRemovalResult success(boolean regenerated) {
+            return new GeneratedBookRemovalResult(true, regenerated);
+        }
+    }
+
+    public record ExportEnchantmentsResult(boolean success, boolean playSound, ItemStack exportedStack) {
+        public static ExportEnchantmentsResult failed() {
+            return new ExportEnchantmentsResult(false, false, ItemStack.EMPTY);
+        }
+
+        public static ExportEnchantmentsResult success(ItemStack exportedStack) {
+            return new ExportEnchantmentsResult(true, true, exportedStack);
+        }
+    }
 
     public EnchantingTableSession(
             Level world,
@@ -183,6 +204,126 @@ public class EnchantingTableSession {
         updateGeneratedSlots();
     }
 
+    public boolean canApplyEnchantedBook(ItemStack stack) {
+        if (!stack.is(Items.ENCHANTED_BOOK)) {
+            return false;
+        }
+        ItemStack toolItemStack = inventory.getStackInSlot(toolSlot);
+        if (toolItemStack.isEmpty()) {
+            return false;
+        }
+        return EnchantmentTableRules.tryMergeEnchantments(
+                EnchantmentUtils.getEnchantments(toolItemStack),
+                EnchantmentUtils.getEnchantmentLevels(world, stack),
+                enchantment -> EnchantmentUtils.getCoreEnchantmentKey(world, enchantment),
+                mergeOptions.get()
+        ).allowed();
+    }
+
+    public TableOperationResult applyEnchantedBook(ItemStack stack) {
+        if (!stack.is(Items.ENCHANTED_BOOK)) {
+            return TableOperationResult.failed(false);
+        }
+        List<EnchantmentTableRules.EnchantmentLevel> enchantmentLevels = EnchantmentUtils.getEnchantmentLevels(world, stack);
+        if (enchantmentLevels.isEmpty()) {
+            return TableOperationResult.failed(false);
+        }
+
+        ItemStack toolItemStack = inventory.getStackInSlot(toolSlot);
+        if (toolItemStack.isEmpty()) {
+            return TableOperationResult.failed(false);
+        }
+
+        EnchantmentTableRules.MergeResult result = EnchantmentTableRules.tryMergeEnchantments(
+                EnchantmentUtils.getEnchantments(toolItemStack),
+                enchantmentLevels,
+                enchantment -> EnchantmentUtils.getCoreEnchantmentKey(world, enchantment),
+                mergeOptions.get()
+        );
+        if (!result.allowed() || !replaceToolEnchantments(result.enchantments())) {
+            return TableOperationResult.failed(false);
+        }
+
+        generateCache();
+        updateGeneratedSlots();
+        return TableOperationResult.success(true);
+    }
+
+    public GeneratedBookRemovalResult removeGeneratedBook(ItemStack stack) {
+        List<EnchantmentTableRules.EnchantmentLevel> enchantmentLevels = EnchantmentUtils.getEnchantmentLevels(world, stack);
+        if (enchantmentLevels.isEmpty()) {
+            return GeneratedBookRemovalResult.failed();
+        }
+
+        ItemStack toolItemStack = inventory.getStackInSlot(toolSlot);
+        if (toolItemStack.isEmpty()) {
+            return GeneratedBookRemovalResult.failed();
+        }
+
+        ItemEnchantments itemEnchantments = EnchantmentUtils.getEnchantments(toolItemStack);
+        ItemEnchantments resultEnchantments = EnchantmentTableRules.subtractEnchantments(
+                itemEnchantments,
+                enchantmentLevels,
+                enchantment -> EnchantmentUtils.getCoreEnchantmentKey(world, enchantment),
+                shouldUseIncrementalSingleBookSplitRemoval(toolItemStack, itemEnchantments, enchantmentLevels)
+        );
+        if (!replaceToolEnchantments(resultEnchantments)) {
+            return GeneratedBookRemovalResult.failed();
+        }
+
+        int resultPageSize = EnchantmentTableRules.calculatePageCount(
+                resultEnchantments.size(),
+                generatedSlotCount,
+                true
+        );
+        boolean shouldRegenerate = (toolItemStack.is(Items.ENCHANTED_BOOK) && resultEnchantments.size() == 1)
+                || totalPage != resultPageSize;
+        if (shouldRegenerate) {
+            refreshGeneratedSlotsFromTool();
+        } else {
+            updateGeneratedSlots();
+        }
+        return GeneratedBookRemovalResult.success(shouldRegenerate);
+    }
+
+    public ExportEnchantmentsResult exportAllEnchantments() {
+        if (world.isClientSide) {
+            return ExportEnchantmentsResult.failed();
+        }
+
+        ItemStack toolItemStack = inventory.getStackInSlot(toolSlot);
+        ItemEnchantments itemEnchantments = EnchantmentUtils.getEnchantments(toolItemStack);
+        if (toolItemStack.is(Items.ENCHANTED_BOOK)) {
+            inventory.setStackInSlot(toolSlot, ItemStack.EMPTY);
+            clearCache();
+            clearPage();
+            return ExportEnchantmentsResult.success(toolItemStack.copy());
+        }
+        if (!toolItemStack.isEmpty() && !itemEnchantments.isEmpty()) {
+            ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(itemEnchantments);
+            ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
+
+            for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
+                Holder<Enchantment> enchantment = EnchantmentUtils.resolveEnchantmentHolder(world, entry.getKey()).orElse(entry.getKey());
+                int enchantmentLevel = entry.getIntValue();
+
+                mutable.set(enchantment, 0);
+                enchantedBook.enchant(enchantment, enchantmentLevel);
+            }
+
+            if (!replaceToolEnchantments(mutable.toImmutable())) {
+                return ExportEnchantmentsResult.failed();
+            }
+            clearCache();
+            clearPage();
+            return ExportEnchantmentsResult.success(enchantedBook);
+        }
+
+        clearCache();
+        clearPage();
+        return ExportEnchantmentsResult.failed();
+    }
+
     private void saveCurrentPageSlots() {
         int indexOffset = currentPage * generatedSlotCount;
         for (int i = 0; i < generatedSlotCount; i++) {
@@ -198,5 +339,26 @@ public class EnchantingTableSession {
         for (int i = generatedSlotStart; i < generatedSlotStart + generatedSlotCount; i++) {
             inventory.setStackInSlot(i, ItemStack.EMPTY);
         }
+    }
+
+    private boolean shouldUseIncrementalSingleBookSplitRemoval(
+            ItemStack toolItemStack,
+            ItemEnchantments itemEnchantments,
+            List<EnchantmentTableRules.EnchantmentLevel> removalEnchantments
+    ) {
+        return mergeOptions.get().incrementalSameLevelMerge()
+                && toolItemStack.is(Items.ENCHANTED_BOOK)
+                && itemEnchantments.size() == 1
+                && removalEnchantments.size() == 1;
+    }
+
+    private boolean replaceToolEnchantments(ItemEnchantments enchantments) {
+        ItemStack toolItemStack = inventory.getStackInSlot(toolSlot);
+        if (toolItemStack.isEmpty()) {
+            return false;
+        }
+        toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), enchantments);
+        inventory.setStackInSlot(toolSlot, toolItemStack);
+        return true;
     }
 }

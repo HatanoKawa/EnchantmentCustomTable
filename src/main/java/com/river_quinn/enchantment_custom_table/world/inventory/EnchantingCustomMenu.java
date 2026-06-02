@@ -11,15 +11,11 @@ import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.*;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
@@ -350,17 +346,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	}
 
 	public boolean checkCanPlaceEnchantedBook(ItemStack stack) {
-		if (boundBlockEntity != null) {
-			return boundBlockEntity.canApplyEnchantedBook(stack, mergeOptions());
-		}
-		var itemToEnchant = itemHandler.getStackInSlot(0);
-		var itemEnchantmentsOnTool = EnchantmentUtils.getEnchantments(itemToEnchant);
-		return EnchantmentTableRules.tryMergeEnchantments(
-				itemEnchantmentsOnTool,
-				EnchantmentUtils.getEnchantmentLevels(world, stack),
-				enchantment -> EnchantmentUtils.getCoreEnchantmentKey(world, enchantment),
-				mergeOptions()
-		).allowed();
+		return session.canApplyEnchantedBook(stack);
 	}
 
 	private EnchantmentTableRules.MergeOptions mergeOptions() {
@@ -376,40 +362,14 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	public int totalPage = 0;
 
 	public void exportAllEnchantments() {
-		if (world.isClientSide) {
-			return;
+		EnchantingTableSession.ExportEnchantmentsResult result = session.exportAllEnchantments();
+		syncPageState();
+		if (result.success()) {
+			entity.getInventory().placeItemBackInInventory(result.exportedStack());
 		}
-
-        ItemStack toolItemStack = itemHandler.getStackInSlot(0);
-		ItemEnchantments itemEnchantments = EnchantmentUtils.getEnchantments(toolItemStack);
-		if (toolItemStack.getItem() == Items.ENCHANTED_BOOK) {
-			// 如果待附魔物品槽中的物品是附魔书，则直接返回
-			entity.getInventory().placeItemBackInInventory(toolItemStack);
-			itemHandler.setStackInSlot(0, ItemStack.EMPTY);
-
-			playUseSound();
-		} else if (!toolItemStack.isEmpty() && !itemEnchantments.isEmpty()) {
-			ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(itemEnchantments);
-			ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
-
-			for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
-				Holder<Enchantment> enchantment = EnchantmentUtils.resolveEnchantmentHolder(world, entry.getKey()).orElse(entry.getKey());
-				int enchantmentLevel = entry.getIntValue();
-
-				// set 方法在 level 小于等于 0 时会移除对应附魔
-				mutable.set(enchantment, 0);
-				enchantedBook.enchant(enchantment, enchantmentLevel);
-			}
-
-			if (!replaceToolEnchantments(toolItemStack, mutable.toImmutable())) {
-				return;
-			}
-			entity.getInventory().placeItemBackInInventory(enchantedBook);
-
+		if (result.playSound()) {
 			playUseSound();
 		}
-		clearCache();
-		clearPage();
 	}
 
 	public void resetPage() {
@@ -459,112 +419,23 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	}
 
 	public boolean addEnchantment(ItemStack itemStackToPut, int slotIndex, boolean forceRegenerateEnchantedBookStore) {
-		if (boundBlockEntity != null) {
-			if (!boundBlockEntity.tryApplyEnchantedBook(itemStackToPut, mergeOptions(), false)) {
-				return false;
-			}
-			refreshGeneratedSlotsFromTool();
-			return true;
-		}
-
-		var enchantmentInstances = EnchantmentUtils.getEnchantmentLevels(world, itemStackToPut);
-		if (enchantmentInstances.isEmpty()) {
+		if (!session.applyEnchantedBook(itemStackToPut).success()) {
+			syncPageState();
 			return false;
 		}
-
-		ItemStack toolItemStack = itemHandler.getStackInSlot(0);
-		if (toolItemStack.isEmpty()) {
-			return false;
-		}
-		//region 将附魔应用到待附魔物品槽中的物品
-		ItemEnchantments itemEnchantments = EnchantmentUtils.getEnchantments(toolItemStack);
-		EnchantmentTableRules.MergeResult result = EnchantmentTableRules.tryMergeEnchantments(
-				itemEnchantments,
-				enchantmentInstances,
-				enchantment -> EnchantmentUtils.getCoreEnchantmentKey(world, enchantment),
-				mergeOptions()
-		);
-		if (!result.allowed()) {
-			return false;
-		}
-		if (!replaceToolEnchantments(toolItemStack, result.enchantments())) {
-			return false;
-		}
-		// endregion
-
-		// 新增附魔，重新生成所有附魔书缓存并更新附魔书槽
-		genEnchantedBookCache();
-		updateEnchantedBookSlots();
-
+		syncPageState();
 		playUseSound();
 		return true;
 	}
 
 	public boolean removeEnchantment(ItemStack itemStackToRemove) {
-		var enchantmentLevels = EnchantmentUtils.getEnchantmentLevels(world, itemStackToRemove);
-		if (enchantmentLevels.isEmpty()) {
+		EnchantingTableSession.GeneratedBookRemovalResult result = session.removeGeneratedBook(itemStackToRemove);
+		syncPageState();
+		if (!result.success()) {
 			return false;
 		}
-
-		//region 将附魔应用到待附魔物品槽中的物品
-		ItemStack toolItemStack = itemHandler.getStackInSlot(0);
-		if (toolItemStack.isEmpty()) {
-			return false;
-		}
-		ItemEnchantments itemEnchantments = EnchantmentUtils.getEnchantments(toolItemStack);
-		ItemEnchantments resultEnchantments = EnchantmentTableRules.subtractEnchantments(
-				itemEnchantments,
-				enchantmentLevels,
-				enchantment -> EnchantmentUtils.getCoreEnchantmentKey(world, enchantment),
-				shouldUseIncrementalSingleBookSplitRemoval(toolItemStack, itemEnchantments, enchantmentLevels)
-		);
-		if (!replaceToolEnchantments(toolItemStack, resultEnchantments)) {
-			return false;
-		}
-		// endregion
-
-		int resultPageSize = EnchantmentTableRules.calculatePageCount(
-				resultEnchantments.size(),
-				ENCHANTED_BOOK_SLOT_SIZE,
-				true
-		);
-		// 在以下情况重新生成附魔书槽：
-		// 1. 待附魔物品本身是附魔书，并且附魔后的附魔词条数量为 1
-		// 2. 物品附魔前后的页数不同
-		var hasRegenerated = false;
-		if (toolItemStack.is(Items.ENCHANTED_BOOK) && resultEnchantments.size() == 1
-				|| totalPage != resultPageSize) {
-			session.refreshGeneratedSlotsFromTool();
-			syncPageState();
-			hasRegenerated = true;
-		} else {
-			updateEnchantedBookSlots();
-		}
-
 		playUseSound();
-		return hasRegenerated;
-	}
-
-	private boolean shouldUseIncrementalSingleBookSplitRemoval(
-			ItemStack toolItemStack,
-			ItemEnchantments itemEnchantments,
-			List<EnchantmentTableRules.EnchantmentLevel> removalEnchantments
-	) {
-		return Config.snapshot().incrementalSameLevelMerge()
-				&& toolItemStack.is(Items.ENCHANTED_BOOK)
-				&& itemEnchantments.size() == 1
-				&& removalEnchantments.size() == 1;
-	}
-
-	private boolean replaceToolEnchantments(ItemStack toolItemStack, ItemEnchantments enchantments) {
-		if (toolItemStack.isEmpty()) {
-			return false;
-		}
-		if (boundBlockEntity != null) {
-			return boundBlockEntity.replaceToolEnchantments(enchantments);
-		}
-		toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), enchantments);
-		return true;
+		return result.regenerated();
 	}
 
 	public void initMenu() {
