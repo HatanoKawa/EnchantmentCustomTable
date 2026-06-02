@@ -22,9 +22,17 @@ import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
+//?} else {
+/*import net.minecraft.resources.ResourceLocation;*/
+//?}
 import net.minecraft.world.entity.player.Player;
+//? if >=26.1 {
 import net.minecraft.world.inventory.ContainerInput;
+//?} else {
+/*import net.minecraft.world.inventory.ClickType;*/
+//?}
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -45,8 +53,13 @@ import java.util.function.Consumer;
 public class BasicGameTests {
     private static final BlockPos ENCHANTING_CUSTOM_TABLE_POS = new BlockPos(1, 1, 1);
     private static final BlockPos ENCHANTMENT_CONVERSION_TABLE_POS = new BlockPos(3, 1, 1);
+    //? if >=1.21.11 {
     private static final Identifier EMPTY_TEMPLATE =
             Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "gametest/empty");
+    //?} else {
+    /*private static final ResourceLocation EMPTY_TEMPLATE =
+            ResourceLocation.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "gametest/empty");
+    *///?}
     private static final List<TestRegistration> TESTS = List.of(
             new TestRegistration("functional_blocks_create_their_block_entities", 20, BasicGameTests::functionalBlocksCreateTheirBlockEntities),
             new TestRegistration("functional_menus_bind_to_placed_blocks", 40, BasicGameTests::functionalMenusBindToPlacedBlocks),
@@ -85,9 +98,19 @@ public class BasicGameTests {
             return;
         }
 
+        //? if >=26.1 {
         Holder<TestEnvironmentDefinition<?>> environment = event.registerEnvironment(
                 Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "default")
         );
+        //?} else if >=1.21.11 {
+        /*Holder<TestEnvironmentDefinition> environment = event.registerEnvironment(
+                Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "default")
+        );
+        *///?} else {
+        /*Holder<TestEnvironmentDefinition> environment = event.registerEnvironment(
+                ResourceLocation.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "default")
+        );
+        *///?}
 
         for (TestRegistration test : TESTS) {
             registerTest(event, environment, test);
@@ -96,7 +119,11 @@ public class BasicGameTests {
 
     private static void registerTest(
             RegisterGameTestsEvent event,
+            //? if >=26.1 {
             Holder<TestEnvironmentDefinition<?>> environment,
+            //?} else {
+            /*Holder<TestEnvironmentDefinition> environment,
+            *///?}
             TestRegistration test
     ) {
         event.registerTest(
@@ -134,9 +161,15 @@ public class BasicGameTests {
         }
     }
 
+    //? if >=1.21.11 {
     private static Identifier testId(String name) {
         return Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, name);
     }
+    //?} else {
+    /*private static ResourceLocation testId(String name) {
+        return ResourceLocation.fromNamespaceAndPath(EnchantmentCustomTable.MODID, name);
+    }
+    *///?}
 
     private record TestRegistration(String name, int timeoutTicks, Consumer<GameTestHelper> function) {
     }
@@ -144,7 +177,11 @@ public class BasicGameTests {
     private static final class DirectGameTestInstance extends GameTestInstance {
         private final Consumer<GameTestHelper> function;
 
+        //? if >=26.1 {
         private DirectGameTestInstance(TestData<Holder<TestEnvironmentDefinition<?>>> testData, Consumer<GameTestHelper> function) {
+        //?} else {
+        /*private DirectGameTestInstance(TestData<Holder<TestEnvironmentDefinition>> testData, Consumer<GameTestHelper> function) {
+        *///?}
             super(testData);
             this.function = function;
         }
@@ -272,7 +309,7 @@ public class BasicGameTests {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
             EnchantmentConversionMenu menu = conversionMenu(helper, player);
             Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
-            Identifier sharpnessId = enchantmentId(helper, sharpness);
+            var sharpnessId = enchantmentId(helper, sharpness);
 
             menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK, 2));
             menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD, 2));
@@ -316,7 +353,7 @@ public class BasicGameTests {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
             EnchantmentConversionMenu menu = conversionMenu(helper, player);
             Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
-            Identifier sharpnessId = enchantmentId(helper, sharpness);
+            var sharpnessId = enchantmentId(helper, sharpness);
 
             menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK));
             menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD));
@@ -359,7 +396,11 @@ public class BasicGameTests {
             assertTrue(helper, menu.getSlot(3).getItem().is(Items.ENCHANTED_BOOK), "Second result slot should start filled");
 
             player.containerMenu = menu;
+            //? if >=26.1 {
             menu.clicked(2, 0, ContainerInput.PICKUP, player);
+            //?} else {
+            /*menu.clicked(2, 0, ClickType.PICKUP, player);
+            *///?}
             ItemStack taken = menu.getCarried();
 
             assertTrue(helper, taken.is(Items.ENCHANTED_BOOK), "Taking a result slot should return an enchanted book");
@@ -390,7 +431,7 @@ public class BasicGameTests {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
             EnchantmentConversionMenu menu = conversionMenu(helper, player);
             Holder<Enchantment> depthStrider = enchantment(helper, Enchantments.DEPTH_STRIDER);
-            Identifier depthStriderId = enchantmentId(helper, depthStrider);
+            var depthStriderId = enchantmentId(helper, depthStrider);
 
             menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK, 64));
             menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD_BLOCK, 64));
@@ -407,7 +448,11 @@ public class BasicGameTests {
             assertTrue(helper, menu.getSlot(3).getItem().isEmpty(), "Search-filtered conversion results should not show unrelated enchantments");
 
             player.containerMenu = menu;
+            //? if >=26.1 {
             menu.clicked(2, 0, ContainerInput.PICKUP, player);
+            //?} else {
+            /*menu.clicked(2, 0, ClickType.PICKUP, player);
+            *///?}
             ItemStack taken = menu.getCarried();
 
             assertTrue(helper, taken.is(Items.ENCHANTED_BOOK), "Taking a filtered result should return an enchanted book");
@@ -833,7 +878,11 @@ public class BasicGameTests {
             menu.getSlot(0).setByPlayer(enchantedBook(sharpness, 5));
             player.containerMenu = menu;
 
+            //? if >=26.1 {
             menu.clicked(2, 0, ContainerInput.PICKUP, player);
+            //?} else {
+            /*menu.clicked(2, 0, ClickType.PICKUP, player);
+            *///?}
 
             assertTrue(helper, player.containerMenu.getCarried().is(Items.ENCHANTED_BOOK), "Taking a split book should put that book on the cursor");
             assertEnchantmentLevel(helper, player.containerMenu.getCarried(), sharpness, 4, "Taken split book should be one level lower than the source");
@@ -1017,7 +1066,11 @@ public class BasicGameTests {
         menu.getSlot(0).setByPlayer(sword);
         player.containerMenu = menu;
 
+        //? if >=26.1 {
         menu.clicked(2, 0, ContainerInput.PICKUP, player);
+        //?} else {
+        /*menu.clicked(2, 0, ClickType.PICKUP, player);
+        *///?}
 
         assertTrue(helper, player.containerMenu.getCarried().is(Items.ENCHANTED_BOOK), "Taking a generated book should put that book on the cursor");
         assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 0, "Removing a generated book should remove the matching tool enchantment");
@@ -1094,11 +1147,19 @@ public class BasicGameTests {
         return helper.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(key).orElseThrow();
     }
 
+    //? if >=1.21.11 {
     private static Identifier enchantmentId(GameTestHelper helper, Holder<Enchantment> enchantment) {
         return EnchantmentUtils.getEnchantmentKey(helper.getLevel(), enchantment)
                 .orElseThrow()
                 .identifier();
     }
+    //?} else {
+    /*private static ResourceLocation enchantmentId(GameTestHelper helper, Holder<Enchantment> enchantment) {
+        return EnchantmentUtils.getEnchantmentKey(helper.getLevel(), enchantment)
+                .orElseThrow()
+                .location();
+    }
+    *///?}
 
     private static ItemStack enchantedBook(Holder<Enchantment> enchantment, int level) {
         ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
@@ -1165,13 +1226,17 @@ public class BasicGameTests {
     private static void assertEnchantmentIdLevel(
             GameTestHelper helper,
             ItemStack stack,
+            //? if >=1.21.11 {
             Identifier enchantmentId,
+            //?} else {
+            /*ResourceLocation enchantmentId,
+            *///?}
             int expectedLevel,
             String message
     ) {
         int actualLevel = 0;
         for (var entry : EnchantmentUtils.getEnchantments(stack).entrySet()) {
-            Identifier entryId = enchantmentId(helper, entry.getKey());
+            var entryId = enchantmentId(helper, entry.getKey());
             if (enchantmentId.equals(entryId)) {
                 actualLevel = entry.getIntValue();
                 break;

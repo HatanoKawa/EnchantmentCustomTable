@@ -8,7 +8,11 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
+//?} else {
+/*import net.minecraft.resources.ResourceLocation;*/
+//?}
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -37,7 +41,11 @@ public class ConversionTableSession {
     private String searchQuery = "";
     private String searchClientLanguage = "";
     private boolean usingClientSearchMatches = false;
+    //? if >=1.21.11 {
     private Set<Identifier> clientMatchedEnchantments = Set.of();
+    //?} else {
+    /*private Set<ResourceLocation> clientMatchedEnchantments = Set.of();
+    *///?}
     private int currentPage = 0;
     private int totalPage = 0;
 
@@ -81,7 +89,11 @@ public class ConversionTableSession {
         this.totalPage = totalPage;
     }
 
+    //? if >=1.21.11 {
     public void setSearchQuery(String query, String clientLanguage, List<Identifier> matchedEnchantments) {
+    //?} else {
+    /*public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
+    *///?}
         searchQuery = EnchantmentSearchRules.sanitizeSearchQuery(query);
         searchClientLanguage = EnchantmentSearchRules.sanitizeClientLanguage(clientLanguage);
         usingClientSearchMatches = !EnchantmentSearchRules.isBlankSearch(searchQuery) && matchedEnchantments != null;
@@ -250,7 +262,11 @@ public class ConversionTableSession {
     }
 
     private boolean matchesSearch(Holder<Enchantment> enchantment) {
+        //? if >=1.21.11 {
         Optional<Identifier> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::identifier);
+        //?} else {
+        /*Optional<ResourceLocation> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::location);
+        *///?}
         if (enchantmentId.isPresent() && usingClientSearchMatches && clientMatchedEnchantments.contains(enchantmentId.get())) {
             return true;
         }

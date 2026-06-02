@@ -91,6 +91,10 @@ public class EnchantmentUtils {
     }
 
     private static EnchantmentKey fromResourceKey(ResourceKey<Enchantment> key) {
+        //? if >=1.21.11 {
         return EnchantmentKey.of(key.identifier().getNamespace(), key.identifier().getPath());
+        //?} else {
+        /*return EnchantmentKey.of(key.location().getNamespace(), key.location().getPath());
+        *///?}
     }
 }

@@ -6,7 +6,11 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
 import net.minecraft.client.Minecraft;
+//? if >=26.1 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else {
+/*import net.minecraft.client.gui.GuiGraphics;*/
+//?}
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -18,7 +22,11 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
+//?} else {
+/*import net.minecraft.resources.ResourceLocation;*/
+//?}
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -44,7 +52,13 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     private int searchUpdateDelayTicks = -1;
 
     public EnchantmentConversionScreen(EnchantmentConversionMenu container, Inventory inventory, Component text) {
+        //? if >=26.1 {
         super(container, inventory, text, 176, 181);
+        //?} else {
+        /*super(container, inventory, text);
+        this.imageWidth = 176;
+        this.imageHeight = 181;
+        *///?}
         this.menuContainer = container;
         this.world = container.world;
         this.x = container.x;
@@ -53,13 +67,30 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         this.entity = container.entity;
     }
 
+    //? if >=1.21.11 {
     private static final Identifier gui_bg_texture = Identifier.parse("enchantment_custom_table:textures/screens/enchantment_conversion.png");
+    //?} else {
+    /*private static final ResourceLocation gui_bg_texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchantment_conversion.png");
+    *///?}
 
+    //? if >=26.1 {
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         graphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
     }
+    //?} else {
+    /*@Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+    }
+    *///?}
 
     @Override
     public boolean keyPressed(KeyEvent event) {
@@ -103,6 +134,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         return (currentPage + 1) + "/" + totalPage;
     }
 
+    //? if >=26.1 {
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         graphics.centeredText(
@@ -114,6 +146,19 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         );
 
     }
+    //?} else {
+    /*@Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        guiGraphics.drawCenteredString(
+                this.font,
+                generatePageText(),
+                24,
+                9,
+                -1
+        );
+
+    }
+    *///?}
 
     @Override
     public void init() {
@@ -166,7 +211,11 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
 
         lastSentSearchQuery = pendingSearchQuery;
         String clientLanguage = getClientLanguage();
+        //? if >=1.21.11 {
         List<Identifier> matchedEnchantments = findClientLocalizedMatches(pendingSearchQuery);
+        //?} else {
+        /*List<ResourceLocation> matchedEnchantments = findClientLocalizedMatches(pendingSearchQuery);
+        *///?}
         menuContainer.setSearchQuery(pendingSearchQuery, clientLanguage, matchedEnchantments);
         ClientPacketDistributor.sendToServer(new EnchantmentConversionTableNetData(
                 ConversionTableIntent.SEARCH,
@@ -184,15 +233,27 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         return EnchantmentSearchRules.sanitizeClientLanguage(minecraft.getLanguageManager().getSelected());
     }
 
+    //? if >=1.21.11 {
     private List<Identifier> findClientLocalizedMatches(String query) {
+    //?} else {
+    /*private List<ResourceLocation> findClientLocalizedMatches(String query) {
+    *///?}
         if (EnchantmentSearchRules.isBlankSearch(query)) {
             return List.of();
         }
 
         Registry<Enchantment> enchantmentRegistry = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        //? if >=1.21.11 {
         List<Identifier> matchedEnchantments = new ArrayList<>();
+        //?} else {
+        /*List<ResourceLocation> matchedEnchantments = new ArrayList<>();
+        *///?}
         enchantmentRegistry.asHolderIdMap().forEach(enchantment -> {
+            //? if >=1.21.11 {
             Optional<Identifier> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::identifier);
+            //?} else {
+            /*Optional<ResourceLocation> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::location);
+            *///?}
             if (enchantmentId.isEmpty()) {
                 return;
             }
@@ -206,7 +267,11 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 : matchedEnchantments;
     }
 
+    //? if >=1.21.11 {
     private boolean matchesClientSearch(String query, Holder<Enchantment> enchantment, Identifier enchantmentId) {
+    //?} else {
+    /*private boolean matchesClientSearch(String query, Holder<Enchantment> enchantment, ResourceLocation enchantmentId) {
+    *///?}
         return EnchantmentSearchRules.matchesAnyCandidate(query, List.of(
                 enchantmentId.toString(),
                 enchantmentId.getNamespace(),

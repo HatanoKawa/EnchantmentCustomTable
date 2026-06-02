@@ -6,7 +6,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
+//?} else {
+/*import net.minecraft.resources.ResourceLocation;*/
+//?}
 
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +21,11 @@ public record EnchantmentConversionTableNetData(
         ConversionTableIntent intent,
         String searchQuery,
         String clientLanguage,
+        //? if >=1.21.11 {
         List<Identifier> matchedEnchantments
+        //?} else {
+        /*List<ResourceLocation> matchedEnchantments
+        *///?}
 ) implements CustomPacketPayload {
     public EnchantmentConversionTableNetData {
         intent = intent == null ? ConversionTableIntent.UNKNOWN : intent;
@@ -43,16 +51,29 @@ public record EnchantmentConversionTableNetData(
             String operateType,
             String searchQuery,
             String clientLanguage,
+            //? if >=1.21.11 {
             List<Identifier> matchedEnchantments
+            //?} else {
+            /*List<ResourceLocation> matchedEnchantments
+            *///?}
     ) {
         this(ConversionTableIntent.fromNetworkId(operateType), searchQuery, clientLanguage, matchedEnchantments);
     }
 
     public static final Type<EnchantmentConversionTableNetData> TYPE =
+            //? if >=1.21.11 {
             new Type<>(Identifier.fromNamespaceAndPath(MODID, "enchantment_conversion"));
+            //?} else {
+            /*new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "enchantment_conversion"));
+            *///?}
 
+    //? if >=1.21.11 {
     private static final StreamCodec<ByteBuf, List<Identifier>> MATCHED_ENCHANTMENTS_CODEC =
             Identifier.STREAM_CODEC.apply(ByteBufCodecs.list(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));
+    //?} else {
+    /*private static final StreamCodec<ByteBuf, List<ResourceLocation>> MATCHED_ENCHANTMENTS_CODEC =
+            ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));
+    *///?}
     private static final StreamCodec<ByteBuf, ConversionTableIntent> INTENT_CODEC =
             ByteBufCodecs.stringUtf8(64).map(ConversionTableIntent::fromNetworkId, ConversionTableIntent::networkId);
 

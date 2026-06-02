@@ -11,7 +11,11 @@ import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import net.minecraft.core.*;
+//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
+//?} else {
+/*import net.minecraft.resources.ResourceLocation;*/
+//?}
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.*;
@@ -60,7 +64,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	private int lastInventoryVersion = -1;
 
 	@Override
+	//? if >=26.1 {
 	public void clicked(int slotId, int button, ContainerInput clickType, Player player) {
+	//?} else {
+	/*public void clicked(int slotId, int button, ClickType clickType, Player player) {
+	*///?}
 		// 在 1.21.2 版本及以上时，在尝试堆叠 isSameItemSameComponents 判定为 true 的附魔书时不会触发 setByPlayer 方法，
 		// 因此将对于附魔书槽操作的逻辑迁移到更底层的 clicked 方法中
 
@@ -72,7 +80,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		if (
 				slotId >= 2 &&
 				slotId < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE &&
+				//? if >=26.1 {
 				clickType != ContainerInput.QUICK_MOVE &&
+				//?} else {
+				/*clickType != ClickType.QUICK_MOVE &&
+				*///?}
 				(itemStackToPut.isEmpty() || getSlot(slotId).mayPlace(entity.containerMenu.getCarried()))
 		) {
 			var itemStackToReplace = itemHandler.getStackInSlot(slotId);
@@ -219,9 +231,22 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 			}
 
 			@Override
+			//? if >=1.21.11 {
 			public Identifier getNoItemIcon() {
 				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
+			//?} else if >=1.21.4 {
+			/*public ResourceLocation getNoItemIcon() {
+				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+			}
+			*///?} else {
+			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+				return Pair.of(
+						InventoryMenu.BLOCK_ATLAS,
+						ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
+				);
+			}
+			*///?}
 
 			@Override
 			public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
@@ -253,9 +278,22 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 						}
 
 						@Override
+						//? if >=1.21.11 {
 						public Identifier getNoItemIcon() {
 							return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 						}
+						//?} else if >=1.21.4 {
+						/*public ResourceLocation getNoItemIcon() {
+							return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+						}
+						*///?} else {
+						/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+							return Pair.of(
+									InventoryMenu.BLOCK_ATLAS,
+									ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
+							);
+						}
+						*///?}
 
 						@Override
 						public void setByPlayer(ItemStack newStack, ItemStack oldStack) {

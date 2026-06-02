@@ -4,13 +4,21 @@ import com.river_quinn.enchantment_custom_table.core.net.EnchantingTableIntent;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
 import net.minecraft.client.input.KeyEvent;
+//? if >=26.1 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else {
+/*import net.minecraft.client.gui.GuiGraphics;*/
+//?}
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
+//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
+//?} else {
+/*import net.minecraft.resources.ResourceLocation;*/
+//?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
@@ -27,7 +35,13 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
     Button export_button;
 
     public EnchantingCustomScreen(EnchantingCustomMenu container, Inventory inventory, Component text) {
+        //? if >=26.1 {
         super(container, inventory, text, 176, 166);
+        //?} else {
+        /*super(container, inventory, text);
+        this.imageWidth = 176;
+        this.imageHeight = 166;
+        *///?}
         this.menuContainer = container;
         this.world = container.world;
         this.x = container.x;
@@ -36,9 +50,15 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         this.entity = container.entity;
     }
 
+    //? if >=1.21.11 {
     private static final Identifier gui_bg_texture = Identifier.parse("enchantment_custom_table:textures/screens/enchanting_custom.png");
     private static final Identifier arrow_texture = Identifier.parse("enchantment_custom_table:textures/screens/left_arrow.png");
+    //?} else {
+    /*private static final ResourceLocation gui_bg_texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/enchanting_custom.png");
+    private static final ResourceLocation arrow_texture = ResourceLocation.parse("enchantment_custom_table:textures/screens/left_arrow.png");
+    *///?}
 
+    //? if >=26.1 {
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(graphics, mouseX, mouseY, partialTicks);
@@ -46,6 +66,20 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         graphics.blit(RenderPipelines.GUI_TEXTURED, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
 
     }
+    //?} else {
+    /*@Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+
+    }
+    *///?}
 
     @Override
     public boolean keyPressed(KeyEvent event) {
@@ -64,6 +98,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         return (currentPage + 1) + "/" + totalPage;
     }
 
+    //? if >=26.1 {
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         graphics.centeredText(
@@ -75,6 +110,19 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         );
 
     }
+    //?} else {
+    /*@Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        guiGraphics.drawCenteredString(
+                this.font,
+                generatePageText(),
+                35,
+                33,
+                -1
+        );
+
+    }
+    *///?}
 
     @Override
     public void init() {

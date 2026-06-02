@@ -1,5 +1,6 @@
 package com.river_quinn.enchantment_custom_table.world.inventory;
 
+import com.mojang.datafixers.util.Pair;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
@@ -10,7 +11,11 @@ import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
+//?} else {
+/*import net.minecraft.resources.ResourceLocation;*/
+//?}
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -134,9 +139,22 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 
 			@Override
+			//? if >=1.21.11 {
 			public Identifier getNoItemIcon() {
 				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
+			//?} else if >=1.21.4 {
+			/*public ResourceLocation getNoItemIcon() {
+				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+			}
+			*///?} else {
+			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+				return Pair.of(
+						InventoryMenu.BLOCK_ATLAS,
+						ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
+				);
+			}
+			*///?}
 		});
 
 		this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, 16, 26 + 15) {
@@ -158,9 +176,22 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 
 			@Override
+			//? if >=1.21.11 {
 			public Identifier getNoItemIcon() {
 				return Identifier.withDefaultNamespace("container/slot/emerald");
 			}
+			//?} else if >=1.21.4 {
+			/*public ResourceLocation getNoItemIcon() {
+				return ResourceLocation.withDefaultNamespace("container/slot/emerald");
+			}
+			*///?} else {
+			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+				return Pair.of(
+						InventoryMenu.BLOCK_ATLAS,
+						ResourceLocation.tryParse("minecraft:item/empty_slot_emerald")
+				);
+			}
+			*///?}
 		});
 
 		int enchanted_book_index = 0;
@@ -177,9 +208,22 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 						}
 
 						@Override
+						//? if >=1.21.11 {
 						public Identifier getNoItemIcon() {
 							return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 						}
+						//?} else if >=1.21.4 {
+						/*public ResourceLocation getNoItemIcon() {
+							return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+						}
+						*///?} else {
+						/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+							return Pair.of(
+									InventoryMenu.BLOCK_ATLAS,
+									ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
+							);
+						}
+						*///?}
 
 						@Override
 						public boolean mayPickup(Player player) {
@@ -213,9 +257,22 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 
 			@Override
+			//? if >=1.21.11 {
 			public Identifier getNoItemIcon() {
 				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
+			//?} else if >=1.21.4 {
+			/*public ResourceLocation getNoItemIcon() {
+				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+			}
+			*///?} else {
+			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+				return Pair.of(
+						InventoryMenu.BLOCK_ATLAS,
+						ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
+				);
+			}
+			*///?}
 		});
 
 		this.addSlot(new ResourceHandlerSlot(itemHandler, itemHandler::set, COPY_RESULT_SLOT, 16, 8 + 69) {
@@ -233,9 +290,22 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 			}
 
 			@Override
+			//? if >=1.21.11 {
 			public Identifier getNoItemIcon() {
 				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
+			//?} else if >=1.21.4 {
+			/*public ResourceLocation getNoItemIcon() {
+				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+			}
+			*///?} else {
+			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+				return Pair.of(
+						InventoryMenu.BLOCK_ATLAS,
+						ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
+				);
+			}
+			*///?}
 		});
 
 		for (int si = 0; si < 3; ++si)
@@ -312,7 +382,11 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		super.removed(playerIn);
 	}
 
+	//? if >=1.21.11 {
 	public void setSearchQuery(String query, String clientLanguage, List<Identifier> matchedEnchantments) {
+	//?} else {
+	/*public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
+	*///?}
 		session.setSearchQuery(query, clientLanguage, matchedEnchantments);
 		syncPageState();
 	}
