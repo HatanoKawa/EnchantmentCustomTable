@@ -3,11 +3,13 @@ package com.river_quinn.enchantment_custom_table.block.entity;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
 import com.river_quinn.enchantment_custom_table.core.inventory.AutomationPort;
+import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import com.river_quinn.enchantment_custom_table.core.inventory.SlotRole;
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
+import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
@@ -55,6 +57,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
             }
         }
     };
+    private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);
     private final IItemHandler automationHandler = new ConversionAutomationItemHandler();
     private boolean updatingCopyResult = false;
     private int inventoryVersion = 0;
@@ -70,6 +73,10 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
 
     public ItemStackHandler getInventory() {
         return inventory;
+    }
+
+    public LogicalInventory getLogicalInventory() {
+        return logicalInventory;
     }
 
     public int getInventoryVersion() {

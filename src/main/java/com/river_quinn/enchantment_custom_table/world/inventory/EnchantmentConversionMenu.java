@@ -502,8 +502,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 
 	private static class ConversionMenuInventory implements LogicalInventory {
 		private final EnchantmentConversionTableBlockEntity blockEntity;
-		private final ItemStackHandler fallbackPersistentHandler = new ItemStackHandler(EnchantmentConversionTableBlockEntity.SLOT_COUNT);
-		private final ItemStackHandler virtualHandler = new ItemStackHandler(ENCHANTED_BOOK_SLOT_SIZE);
+		private final LogicalInventory fallbackPersistentInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(EnchantmentConversionTableBlockEntity.SLOT_COUNT));
+		private final LogicalInventory virtualInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(ENCHANTED_BOOK_SLOT_SIZE));
 
 		private ConversionMenuInventory(EnchantmentConversionTableBlockEntity blockEntity) {
 			this.blockEntity = blockEntity;
@@ -517,71 +517,71 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		@Override
 		public ItemStack getStackInSlot(int slot) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				return persistentHandler().getStackInSlot(slot);
+				return persistentInventory().getStackInSlot(slot);
 			}
 			if (slot < TEMPLATE_BOOK_SLOT) {
-				return virtualHandler.getStackInSlot(slot - ENCHANTED_BOOK_SLOT_START);
+				return virtualInventory.getStackInSlot(slot - ENCHANTED_BOOK_SLOT_START);
 			}
-			return persistentHandler().getStackInSlot(toPersistentSlot(slot));
+			return persistentInventory().getStackInSlot(toPersistentSlot(slot));
 		}
 
 		@Override
 		public void setStackInSlot(int slot, ItemStack stack) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				persistentHandler().setStackInSlot(slot, stack);
+				persistentInventory().setStackInSlot(slot, stack);
 			} else if (slot < TEMPLATE_BOOK_SLOT) {
-				virtualHandler.setStackInSlot(slot - ENCHANTED_BOOK_SLOT_START, stack);
+				virtualInventory.setStackInSlot(slot - ENCHANTED_BOOK_SLOT_START, stack);
 			} else {
-				persistentHandler().setStackInSlot(toPersistentSlot(slot), stack);
+				persistentInventory().setStackInSlot(toPersistentSlot(slot), stack);
 			}
 		}
 
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				return persistentHandler().insertItem(slot, stack, simulate);
+				return persistentInventory().insertItem(slot, stack, simulate);
 			}
 			if (slot < TEMPLATE_BOOK_SLOT) {
-				return virtualHandler.insertItem(slot - ENCHANTED_BOOK_SLOT_START, stack, simulate);
+				return virtualInventory.insertItem(slot - ENCHANTED_BOOK_SLOT_START, stack, simulate);
 			}
-			return persistentHandler().insertItem(toPersistentSlot(slot), stack, simulate);
+			return persistentInventory().insertItem(toPersistentSlot(slot), stack, simulate);
 		}
 
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				return persistentHandler().extractItem(slot, amount, simulate);
+				return persistentInventory().extractItem(slot, amount, simulate);
 			}
 			if (slot < TEMPLATE_BOOK_SLOT) {
-				return virtualHandler.extractItem(slot - ENCHANTED_BOOK_SLOT_START, amount, simulate);
+				return virtualInventory.extractItem(slot - ENCHANTED_BOOK_SLOT_START, amount, simulate);
 			}
-			return persistentHandler().extractItem(toPersistentSlot(slot), amount, simulate);
+			return persistentInventory().extractItem(toPersistentSlot(slot), amount, simulate);
 		}
 
 		@Override
 		public int getSlotLimit(int slot) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				return persistentHandler().getSlotLimit(slot);
+				return persistentInventory().getSlotLimit(slot);
 			}
 			if (slot < TEMPLATE_BOOK_SLOT) {
-				return virtualHandler.getSlotLimit(slot - ENCHANTED_BOOK_SLOT_START);
+				return virtualInventory.getSlotLimit(slot - ENCHANTED_BOOK_SLOT_START);
 			}
-			return persistentHandler().getSlotLimit(toPersistentSlot(slot));
+			return persistentInventory().getSlotLimit(toPersistentSlot(slot));
 		}
 
 		@Override
 		public boolean isItemValid(int slot, ItemStack stack) {
 			if (slot < ENCHANTED_BOOK_SLOT_START) {
-				return persistentHandler().isItemValid(slot, stack);
+				return persistentInventory().isItemValid(slot, stack);
 			}
 			if (slot < TEMPLATE_BOOK_SLOT) {
 				return false;
 			}
-			return persistentHandler().isItemValid(toPersistentSlot(slot), stack);
+			return persistentInventory().isItemValid(toPersistentSlot(slot), stack);
 		}
 
-		private IItemHandlerModifiable persistentHandler() {
-			return blockEntity != null ? blockEntity.getInventory() : fallbackPersistentHandler;
+		private LogicalInventory persistentInventory() {
+			return blockEntity != null ? blockEntity.getLogicalInventory() : fallbackPersistentInventory;
 		}
 
 		private int toPersistentSlot(int slot) {

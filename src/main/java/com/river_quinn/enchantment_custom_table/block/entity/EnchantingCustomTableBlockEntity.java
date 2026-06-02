@@ -2,10 +2,12 @@ package com.river_quinn.enchantment_custom_table.block.entity;
 
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
 import com.river_quinn.enchantment_custom_table.core.inventory.AutomationPort;
+import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import com.river_quinn.enchantment_custom_table.core.inventory.SlotRole;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
+import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,6 +46,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
             markInventoryChanged();
         }
     };
+    private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);
     private final IItemHandler automationHandler = new EnchantingAutomationItemHandler();
     private int inventoryVersion = 0;
 
@@ -62,6 +65,10 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
 
     public ItemStackHandler getInventory() {
         return inventory;
+    }
+
+    public LogicalInventory getLogicalInventory() {
+        return logicalInventory;
     }
 
     public int getInventoryVersion() {

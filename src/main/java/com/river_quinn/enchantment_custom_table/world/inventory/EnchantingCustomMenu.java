@@ -643,8 +643,8 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 
 	private static class EnchantingMenuInventory implements LogicalInventory {
 		private final EnchantingCustomTableBlockEntity blockEntity;
-		private final ItemStackHandler fallbackToolHandler = new ItemStackHandler(1);
-		private final ItemStackHandler virtualHandler = new ItemStackHandler(ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE - 1);
+		private final LogicalInventory fallbackToolInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(1));
+		private final LogicalInventory virtualInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE - 1));
 
 		private EnchantingMenuInventory(EnchantingCustomTableBlockEntity blockEntity) {
 			this.blockEntity = blockEntity;
@@ -657,30 +657,30 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 
 		@Override
 		public ItemStack getStackInSlot(int slot) {
-			return slot == 0 ? persistentHandler().getStackInSlot(0) : virtualHandler.getStackInSlot(slot - 1);
+			return slot == 0 ? persistentInventory().getStackInSlot(0) : virtualInventory.getStackInSlot(slot - 1);
 		}
 
 		@Override
 		public void setStackInSlot(int slot, ItemStack stack) {
 			if (slot == 0) {
-				persistentHandler().setStackInSlot(0, stack);
+				persistentInventory().setStackInSlot(0, stack);
 			} else {
-				virtualHandler.setStackInSlot(slot - 1, stack);
+				virtualInventory.setStackInSlot(slot - 1, stack);
 			}
 		}
 
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 			return slot == 0
-					? persistentHandler().insertItem(0, stack, simulate)
-					: virtualHandler.insertItem(slot - 1, stack, simulate);
+					? persistentInventory().insertItem(0, stack, simulate)
+					: virtualInventory.insertItem(slot - 1, stack, simulate);
 		}
 
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate) {
 			return slot == 0
-					? persistentHandler().extractItem(0, amount, simulate)
-					: virtualHandler.extractItem(slot - 1, amount, simulate);
+					? persistentInventory().extractItem(0, amount, simulate)
+					: virtualInventory.extractItem(slot - 1, amount, simulate);
 		}
 
 		@Override
@@ -693,8 +693,8 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 			return true;
 		}
 
-		private IItemHandlerModifiable persistentHandler() {
-			return blockEntity != null ? blockEntity.getInventory() : fallbackToolHandler;
+		private LogicalInventory persistentInventory() {
+			return blockEntity != null ? blockEntity.getLogicalInventory() : fallbackToolInventory;
 		}
 	}
 }
