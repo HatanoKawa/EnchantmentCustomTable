@@ -2,6 +2,8 @@ package com.river_quinn.enchantment_custom_table.block.entity;
 
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
+import com.river_quinn.enchantment_custom_table.core.inventory.AutomationPort;
+import com.river_quinn.enchantment_custom_table.core.inventory.SlotRole;
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
@@ -171,7 +173,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         return Config.snapshot();
     }
 
-    private class ConversionAutomationItemHandler implements IItemHandler {
+    private class ConversionAutomationItemHandler implements IItemHandler, AutomationPort {
         @Override
         public int getSlots() {
             return 3;
@@ -180,6 +182,26 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         @Override
         public ItemStack getStackInSlot(int slot) {
             return slot == 2 ? inventory.getStackInSlot(COPY_RESULT_SLOT) : ItemStack.EMPTY;
+        }
+
+        @Override
+        public SlotRole getRole(int slot) {
+            return switch (slot) {
+                case 0 -> SlotRole.BOOK_INPUT;
+                case 1 -> SlotRole.PAYMENT;
+                case 2 -> SlotRole.COPY_RESULT;
+                default -> SlotRole.GENERATED_BOOK;
+            };
+        }
+
+        @Override
+        public boolean canInsert(int slot, ItemStack stack) {
+            return isItemValid(slot, stack);
+        }
+
+        @Override
+        public boolean canExtract(int slot) {
+            return slot == 2;
         }
 
         @Override

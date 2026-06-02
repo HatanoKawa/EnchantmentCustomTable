@@ -1,6 +1,8 @@
 package com.river_quinn.enchantment_custom_table.block.entity;
 
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
+import com.river_quinn.enchantment_custom_table.core.inventory.AutomationPort;
+import com.river_quinn.enchantment_custom_table.core.inventory.SlotRole;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
@@ -168,7 +170,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         setChanged();
     }
 
-    private class EnchantingAutomationItemHandler implements IItemHandler {
+    private class EnchantingAutomationItemHandler implements IItemHandler, AutomationPort {
         @Override
         public int getSlots() {
             return 1;
@@ -177,6 +179,21 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         @Override
         public ItemStack getStackInSlot(int slot) {
             return ItemStack.EMPTY;
+        }
+
+        @Override
+        public SlotRole getRole(int slot) {
+            return SlotRole.ENCHANTED_BOOK_INPUT;
+        }
+
+        @Override
+        public boolean canInsert(int slot, ItemStack stack) {
+            return isItemValid(slot, stack);
+        }
+
+        @Override
+        public boolean canExtract(int slot) {
+            return false;
         }
 
         @Override

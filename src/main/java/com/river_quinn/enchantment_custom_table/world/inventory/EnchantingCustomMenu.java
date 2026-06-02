@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
@@ -46,7 +47,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 	 * index 1: 附加槽，仅接受附魔，添加附魔书后将会立刻将附魔书的附魔添加到待附魔工具中并重新生成附魔书槽
 	 * index 2-22: 附魔书槽
 	 */
-	private final ItemStackHandler itemHandler;
+	private final IItemHandlerModifiable itemHandler;
 
 	private static final Logger LOGGER = LogUtils.getLogger();
 	public final Level world;
@@ -152,7 +153,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				boundBlockEntity = blockEntity;
 			}
 		}
-		this.itemHandler = new EnchantingMenuItemHandler(boundBlockEntity);
+		this.itemHandler = new LogicalInventoryItemHandler(new EnchantingMenuInventory(boundBlockEntity));
 
 		this.addDataSlot(new DataSlot() {
 			@Override
@@ -640,13 +641,12 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		updateEnchantedBookSlots();
 	}
 
-	private static class EnchantingMenuItemHandler extends ItemStackHandler {
+	private static class EnchantingMenuInventory implements LogicalInventory {
 		private final EnchantingCustomTableBlockEntity blockEntity;
 		private final ItemStackHandler fallbackToolHandler = new ItemStackHandler(1);
 		private final ItemStackHandler virtualHandler = new ItemStackHandler(ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE - 1);
 
-		private EnchantingMenuItemHandler(EnchantingCustomTableBlockEntity blockEntity) {
-			super(ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE);
+		private EnchantingMenuInventory(EnchantingCustomTableBlockEntity blockEntity) {
 			this.blockEntity = blockEntity;
 		}
 

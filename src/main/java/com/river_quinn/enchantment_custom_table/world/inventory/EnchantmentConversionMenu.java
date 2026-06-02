@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
+import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
@@ -57,7 +58,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 	 * index 30: 待复制附魔书模板槽
 	 * index 31: 复制结果槽
 	 */
-	private final ItemStackHandler itemHandler;
+	private final IItemHandlerModifiable itemHandler;
 
 	public final Level world;
 	public final Player entity;
@@ -91,7 +92,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 				boundBlockEntity = blockEntity;
 			}
 		}
-		this.itemHandler = new ConversionMenuItemHandler(boundBlockEntity);
+		this.itemHandler = new LogicalInventoryItemHandler(new ConversionMenuInventory(boundBlockEntity));
 
 		this.addDataSlot(new DataSlot() {
 			@Override
@@ -499,13 +500,12 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		return Config.snapshot();
 	}
 
-	private static class ConversionMenuItemHandler extends ItemStackHandler {
+	private static class ConversionMenuInventory implements LogicalInventory {
 		private final EnchantmentConversionTableBlockEntity blockEntity;
 		private final ItemStackHandler fallbackPersistentHandler = new ItemStackHandler(EnchantmentConversionTableBlockEntity.SLOT_COUNT);
 		private final ItemStackHandler virtualHandler = new ItemStackHandler(ENCHANTED_BOOK_SLOT_SIZE);
 
-		private ConversionMenuItemHandler(EnchantmentConversionTableBlockEntity blockEntity) {
-			super(ENCHANTMENT_CONVERSION_SLOT_SIZE);
+		private ConversionMenuInventory(EnchantmentConversionTableBlockEntity blockEntity) {
 			this.blockEntity = blockEntity;
 		}
 
@@ -556,6 +556,17 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 				return virtualHandler.extractItem(slot - ENCHANTED_BOOK_SLOT_START, amount, simulate);
 			}
 			return persistentHandler().extractItem(toPersistentSlot(slot), amount, simulate);
+		}
+
+		@Override
+		public int getSlotLimit(int slot) {
+			if (slot < ENCHANTED_BOOK_SLOT_START) {
+				return persistentHandler().getSlotLimit(slot);
+			}
+			if (slot < TEMPLATE_BOOK_SLOT) {
+				return virtualHandler.getSlotLimit(slot - ENCHANTED_BOOK_SLOT_START);
+			}
+			return persistentHandler().getSlotLimit(toPersistentSlot(slot));
 		}
 
 		@Override
