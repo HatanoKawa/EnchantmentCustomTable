@@ -5,7 +5,8 @@ import com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlocks;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
-import com.river_quinn.enchantment_custom_table.fabric.session.FabricEnchantingTableSession;
+import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
+import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
@@ -41,7 +42,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     public final int z;
     private final ContainerLevelAccess access;
     private final FabricTableInventory inventory;
-    private final FabricEnchantingTableSession session;
+    private final EnchantingTableSession session;
 
     public FabricEnchantingCustomMenu(int id, Inventory inventory, BlockPos pos) {
         super(FabricModMenus.ENCHANTING_CUSTOM, id);
@@ -57,9 +58,10 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         this.inventory = blockEntity != null
                 ? blockEntity.getInventory()
                 : new FabricTableInventory(ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE, slot -> 1, (slot, stack) -> false, () -> {});
-        this.session = new FabricEnchantingTableSession(
+        this.session = new EnchantingTableSession(
                 world,
                 this.inventory,
+                FabricEnchantmentUtils.service(),
                 () -> EnchantmentTableRules.MergeOptions.from(FabricTableConfig.snapshot()),
                 TOOL_SLOT,
                 INPUT_SLOT,
@@ -131,7 +133,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             case PREVIOUS_PAGE_BUTTON -> session.previousPage();
             case NEXT_PAGE_BUTTON -> session.nextPage();
             case EXPORT_BUTTON -> {
-                FabricEnchantingTableSession.ExportEnchantmentsResult result = session.exportAllEnchantments();
+                EnchantingTableSession.ExportEnchantmentsResult result = session.exportAllEnchantments();
                 if (result.success() && !player.getInventory().add(result.exportedStack())) {
                     player.drop(result.exportedStack(), false);
                 }

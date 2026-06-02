@@ -1,6 +1,7 @@
 package com.river_quinn.enchantment_custom_table.fabric.util;
 
 import com.river_quinn.enchantment_custom_table.core.access.EnchantmentKey;
+import com.river_quinn.enchantment_custom_table.core.platform.EnchantmentAccessService;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
@@ -17,7 +18,33 @@ import java.util.List;
 import java.util.Optional;
 
 public final class FabricEnchantmentUtils {
+    private static final EnchantmentAccessService SERVICE = new EnchantmentAccessService() {
+        @Override
+        public Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, Holder<Enchantment> enchantment) {
+            return FabricEnchantmentUtils.resolveEnchantmentHolder(level, enchantment);
+        }
+
+        @Override
+        public ItemEnchantments getEnchantments(ItemStack itemStack) {
+            return FabricEnchantmentUtils.getEnchantments(itemStack);
+        }
+
+        @Override
+        public EnchantmentKey getCoreEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
+            return FabricEnchantmentUtils.getCoreEnchantmentKey(level, enchantment);
+        }
+
+        @Override
+        public void setEnchantments(ItemStack itemStack, ItemEnchantments enchantments) {
+            EnchantmentHelper.setEnchantments(itemStack, enchantments);
+        }
+    };
+
     private FabricEnchantmentUtils() {
+    }
+
+    public static EnchantmentAccessService service() {
+        return SERVICE;
     }
 
     public static Optional<ResourceKey<Enchantment>> getEnchantmentKey(Level level, Holder<Enchantment> enchantment) {

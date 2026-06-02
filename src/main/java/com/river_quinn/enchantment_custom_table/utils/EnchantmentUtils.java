@@ -1,6 +1,7 @@
 package com.river_quinn.enchantment_custom_table.utils;
 
 import com.river_quinn.enchantment_custom_table.core.access.EnchantmentKey;
+import com.river_quinn.enchantment_custom_table.core.platform.EnchantmentAccessService;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -18,6 +19,32 @@ import java.util.List;
 import java.util.Optional;
 
 public class EnchantmentUtils {
+    private static final EnchantmentAccessService SERVICE = new EnchantmentAccessService() {
+        @Override
+        public Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, Holder<Enchantment> enchantment) {
+            return EnchantmentUtils.resolveEnchantmentHolder(level, enchantment);
+        }
+
+        @Override
+        public ItemEnchantments getEnchantments(ItemStack itemStack) {
+            return EnchantmentUtils.getEnchantments(itemStack);
+        }
+
+        @Override
+        public EnchantmentKey getCoreEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
+            return EnchantmentUtils.getCoreEnchantmentKey(level, enchantment);
+        }
+
+        @Override
+        public void setEnchantments(ItemStack itemStack, ItemEnchantments enchantments) {
+            itemStack.set(EnchantmentHelper.getComponentType(itemStack), enchantments);
+        }
+    };
+
+    public static EnchantmentAccessService service() {
+        return SERVICE;
+    }
+
     public static Holder.Reference<Enchantment> translateEnchantment(Level level, Enchantment enchantment) {
         if (level == null || enchantment == null)
             return null;

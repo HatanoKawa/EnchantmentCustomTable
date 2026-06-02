@@ -182,6 +182,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		this.session = new EnchantingTableSession(
 				world,
 				logicalInventory,
+				EnchantmentUtils.service(),
 				this::mergeOptions,
 				0,
 				1,
