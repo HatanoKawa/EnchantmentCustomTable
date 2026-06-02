@@ -228,7 +228,7 @@ public class ConversionTableSession {
 
     private void loadAllEnchantments() {
         if (allEnchantments.isEmpty()) {
-            Registry<Enchantment> fullEnchantmentList = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+            Registry<Enchantment> fullEnchantmentList = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
             fullEnchantmentList.asHolderIdMap().forEach(allEnchantments::add);
         }
     }
