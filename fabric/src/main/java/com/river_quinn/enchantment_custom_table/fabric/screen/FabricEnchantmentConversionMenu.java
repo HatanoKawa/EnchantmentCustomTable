@@ -5,7 +5,8 @@ import com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlocks;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
-import com.river_quinn.enchantment_custom_table.fabric.session.FabricConversionTableSession;
+import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSession;
+import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
@@ -44,7 +45,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu {
     public final int z;
     private final ContainerLevelAccess access;
     private final FabricTableInventory inventory;
-    private final FabricConversionTableSession session;
+    private final ConversionTableSession session;
     private final FabricEnchantmentConversionTableBlockEntity blockEntity;
 
     public FabricEnchantmentConversionMenu(int id, Inventory inventory, BlockPos pos) {
@@ -59,9 +60,10 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu {
         this.inventory = blockEntity != null
                 ? blockEntity.getInventory()
                 : new FabricTableInventory(ENCHANTMENT_CONVERSION_SLOT_SIZE, slot -> 1, (slot, stack) -> false, () -> {});
-        this.session = new FabricConversionTableSession(
+        this.session = new ConversionTableSession(
                 world,
                 this.inventory,
+                FabricEnchantmentUtils.service(),
                 () -> blockEntity != null && blockEntity.isCopyMode(),
                 FabricTableConfig::snapshot,
                 BOOK_SLOT,

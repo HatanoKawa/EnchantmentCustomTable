@@ -21,6 +21,18 @@ import java.util.Optional;
 public class EnchantmentUtils {
     private static final EnchantmentAccessService SERVICE = new EnchantmentAccessService() {
         @Override
+        public List<Holder<Enchantment>> allEnchantments(Level level) {
+            List<Holder<Enchantment>> enchantments = new ArrayList<>();
+            //? if >=1.21.2 {
+            Registry<Enchantment> registry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+            //?} else {
+            /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+            *///?}
+            registry.asHolderIdMap().forEach(enchantments::add);
+            return enchantments;
+        }
+
+        @Override
         public Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, Holder<Enchantment> enchantment) {
             return EnchantmentUtils.resolveEnchantmentHolder(level, enchantment);
         }

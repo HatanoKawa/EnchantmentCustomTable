@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EnchantmentAccessService {
+    List<Holder<Enchantment>> allEnchantments(Level level);
+
     Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, Holder<Enchantment> enchantment);
 
     ItemEnchantments getEnchantments(ItemStack itemStack);

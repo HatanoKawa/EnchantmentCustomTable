@@ -10,6 +10,7 @@ import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
+import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 //? if >=1.21.11 {
@@ -105,6 +106,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		this.session = new ConversionTableSession(
 				world,
 				logicalInventory,
+				EnchantmentUtils.service(),
 				this::isCopyMode,
 				this::config,
 				0,

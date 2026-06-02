@@ -20,6 +20,13 @@ import java.util.Optional;
 public final class FabricEnchantmentUtils {
     private static final EnchantmentAccessService SERVICE = new EnchantmentAccessService() {
         @Override
+        public List<Holder<Enchantment>> allEnchantments(Level level) {
+            List<Holder<Enchantment>> enchantments = new ArrayList<>();
+            FabricVersionedMinecraft.enchantmentRegistry(level).asHolderIdMap().forEach(enchantments::add);
+            return enchantments;
+        }
+
+        @Override
         public Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, Holder<Enchantment> enchantment) {
             return FabricEnchantmentUtils.resolveEnchantmentHolder(level, enchantment);
         }

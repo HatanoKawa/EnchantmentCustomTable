@@ -5,7 +5,7 @@ import com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlockEntities;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantmentConversionMenu;
-import com.river_quinn.enchantment_custom_table.fabric.session.FabricConversionTableSession;
+import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSession;
 import com.river_quinn.enchantment_custom_table.fabric.transfer.FabricConversionAutomationStorage;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
@@ -87,7 +87,7 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
         updatingCopyResult = true;
         TableOperationResult result;
         try {
-            result = FabricConversionTableSession.refreshCopyResult(
+            result = ConversionTableSession.refreshCopyResult(
                     inventory,
                     this::isCopyMode,
                     FabricTableConfig::snapshot,

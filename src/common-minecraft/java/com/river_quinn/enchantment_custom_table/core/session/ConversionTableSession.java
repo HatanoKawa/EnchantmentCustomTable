@@ -1,16 +1,12 @@
-package com.river_quinn.enchantment_custom_table.fabric.session;
+package com.river_quinn.enchantment_custom_table.core.session;
 
+import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.platform.EnchantmentAccessService;
 import com.river_quinn.enchantment_custom_table.core.platform.TableConfigService;
-import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
-import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
-import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
-import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -19,13 +15,13 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 
-public class FabricConversionTableSession {
+public class ConversionTableSession {
     private final Level world;
     private final LogicalInventory inventory;
+    private final EnchantmentAccessService enchantments;
     private final BooleanSupplier copyMode;
     private final TableConfigService config;
     private final int bookSlot;
@@ -33,6 +29,7 @@ public class FabricConversionTableSession {
     private final int generatedSlotStart;
     private final int generatedSlotCount;
     private final List<Holder<Enchantment>> allEnchantments = new ArrayList<>();
+
     private String searchQuery = "";
     private String searchClientLanguage = "";
     private boolean usingClientSearchMatches = false;
@@ -40,9 +37,10 @@ public class FabricConversionTableSession {
     private int currentPage = 0;
     private int totalPage = 0;
 
-    public FabricConversionTableSession(
+    public ConversionTableSession(
             Level world,
             LogicalInventory inventory,
+            EnchantmentAccessService enchantments,
             BooleanSupplier copyMode,
             TableConfigService config,
             int bookSlot,
@@ -52,6 +50,7 @@ public class FabricConversionTableSession {
     ) {
         this.world = world;
         this.inventory = inventory;
+        this.enchantments = enchantments;
         this.copyMode = copyMode;
         this.config = config;
         this.bookSlot = bookSlot;
@@ -88,6 +87,7 @@ public class FabricConversionTableSession {
         searchQuery = EnchantmentSearchRules.sanitizeSearchQuery(query);
         searchClientLanguage = EnchantmentSearchRules.sanitizeClientLanguage(clientLanguage);
         usingClientSearchMatches = !EnchantmentSearchRules.isBlankSearch(searchQuery) && matchedEnchantments != null;
+
         if (usingClientSearchMatches) {
             clientMatchedEnchantments = matchedEnchantments.stream()
                     .limit(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS)
@@ -95,6 +95,7 @@ public class FabricConversionTableSession {
         } else {
             clientMatchedEnchantments = Set.of();
         }
+
         regenerateGeneratedSlots();
     }
 
@@ -107,7 +108,7 @@ public class FabricConversionTableSession {
     }
 
     public void nextPage() {
-        if (currentPage < totalPage - 1) {
+        if (currentPage < (totalPage - 1)) {
             turnPage(currentPage + 1);
         }
     }
@@ -127,6 +128,49 @@ public class FabricConversionTableSession {
         generateGeneratedSlots();
     }
 
+    public void resetPage() {
+        currentPage = 0;
+        totalPage = 0;
+    }
+
+    public void clearGeneratedSlots() {
+        for (int i = 0; i < generatedSlotCount; i++) {
+            inventory.setStackInSlot(generatedSlotStart + i, ItemStack.EMPTY);
+        }
+    }
+
+    public void generateGeneratedSlots() {
+        if (copyMode.getAsBoolean()) {
+            resetPage();
+            clearGeneratedSlots();
+            return;
+        }
+
+        List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
+        boolean hasBook = inventory.getStackInSlot(bookSlot).is(Items.BOOK);
+        boolean hasEnoughPayment = hasEnoughPayment();
+
+        if (!hasBook || !hasEnoughPayment) {
+            resetPage();
+            clearGeneratedSlots();
+            return;
+        }
+
+        for (int i = 0; i < generatedSlotCount; i++) {
+            int slotIndex = i + generatedSlotStart;
+            int enchantmentIndex = i + currentPage * generatedSlotCount;
+
+            if (enchantmentIndex < enchantments.size()) {
+                if (inventory.getStackInSlot(slotIndex).isEmpty()) {
+                    Holder<Enchantment> enchantment = enchantments.get(enchantmentIndex);
+                    inventory.setStackInSlot(slotIndex, createEnchantedBook(enchantment));
+                }
+            } else {
+                inventory.setStackInSlot(slotIndex, ItemStack.EMPTY);
+            }
+        }
+    }
+
     public void regenerateGeneratedSlots() {
         if (copyMode.getAsBoolean()) {
             resetPage();
@@ -143,7 +187,7 @@ public class FabricConversionTableSession {
     public boolean canPickGeneratedBook() {
         return !copyMode.getAsBoolean()
                 && inventory.getStackInSlot(bookSlot).is(Items.BOOK)
-                && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
+                && hasEnoughPayment();
     }
 
     public TableOperationResult pickGeneratedBook() {
@@ -151,6 +195,7 @@ public class FabricConversionTableSession {
             clearGeneratedSlots();
             return TableOperationResult.failed(true);
         }
+
         inventory.getStackInSlot(bookSlot).shrink(1);
         EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
         generateGeneratedSlots();
@@ -169,67 +214,29 @@ public class FabricConversionTableSession {
         if (!EnchantmentTableRules.shouldGenerateCopyResult(
                 copyMode.getAsBoolean(),
                 inventory.getStackInSlot(copyResultSlot).isEmpty(),
-                inventory.getStackInSlot(bookSlot).is(Items.BOOK)
-                        && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.snapshot())
+                hasEnoughMaterialsForCopy(inventory, config.snapshot(), bookSlot, paymentSlot)
         )) {
             return TableOperationResult.failed(false);
         }
+
         inventory.getStackInSlot(bookSlot).shrink(1);
         EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
-        inventory.setStackInSlot(copyResultSlot, inventory.getStackInSlot(templateSlot).copyWithCount(1));
+        inventory.setStackInSlot(
+                copyResultSlot,
+                inventory.getStackInSlot(templateSlot).copyWithCount(1)
+        );
         return TableOperationResult.success(true);
-    }
-
-    private void resetPage() {
-        currentPage = 0;
-        totalPage = 0;
-    }
-
-    private void clearGeneratedSlots() {
-        for (int i = 0; i < generatedSlotCount; i++) {
-            inventory.setStackInSlot(generatedSlotStart + i, ItemStack.EMPTY);
-        }
-    }
-
-    private void generateGeneratedSlots() {
-        if (copyMode.getAsBoolean()) {
-            resetPage();
-            clearGeneratedSlots();
-            return;
-        }
-
-        List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
-        if (!inventory.getStackInSlot(bookSlot).is(Items.BOOK)
-                || !EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.snapshot())) {
-            resetPage();
-            clearGeneratedSlots();
-            return;
-        }
-
-        for (int i = 0; i < generatedSlotCount; i++) {
-            int slotIndex = i + generatedSlotStart;
-            int enchantmentIndex = i + currentPage * generatedSlotCount;
-            if (enchantmentIndex < enchantments.size()) {
-                if (inventory.getStackInSlot(slotIndex).isEmpty()) {
-                    Holder<Enchantment> enchantment = enchantments.get(enchantmentIndex);
-                    inventory.setStackInSlot(slotIndex, createEnchantedBook(enchantment));
-                }
-            } else {
-                inventory.setStackInSlot(slotIndex, ItemStack.EMPTY);
-            }
-        }
     }
 
     private void loadAllEnchantments() {
         if (allEnchantments.isEmpty()) {
-            Registry<Enchantment> fullEnchantmentList = FabricVersionedMinecraft.enchantmentRegistry(world);
-            fullEnchantmentList.asHolderIdMap().forEach(allEnchantments::add);
+            allEnchantments.addAll(enchantments.allEnchantments(world));
         }
     }
 
     private ItemStack createEnchantedBook(Holder<Enchantment> enchantment) {
         int enchantmentLevel = config.snapshot().convertOnlyLevelOneBook() ? 1 : enchantment.value().getMaxLevel();
-        return FabricEnchantmentUtils.createEnchantedBook(enchantment, enchantmentLevel);
+        return enchantments.createEnchantedBook(enchantment, enchantmentLevel);
     }
 
     private List<Holder<Enchantment>> getFilteredEnchantments() {
@@ -237,23 +244,39 @@ public class FabricConversionTableSession {
         if (EnchantmentSearchRules.isBlankSearch(searchQuery)) {
             return allEnchantments;
         }
-        return allEnchantments.stream().filter(this::matchesSearch).toList();
+
+        return allEnchantments.stream()
+                .filter(this::matchesSearch)
+                .toList();
     }
 
     private boolean matchesSearch(Holder<Enchantment> enchantment) {
-        Optional<ResourceKey<Enchantment>> enchantmentId = FabricEnchantmentUtils.getEnchantmentKey(world, enchantment);
-        if (enchantmentId.isPresent() && usingClientSearchMatches && clientMatchedEnchantments.contains(FabricVersionedMinecraft.keyId(enchantmentId.get()))) {
+        var enchantmentId = enchantments.getCoreEnchantmentKey(world, enchantment);
+        if (usingClientSearchMatches && clientMatchedEnchantments.contains(enchantmentId.asString())) {
             return true;
         }
+
         List<String> serverCandidates = new ArrayList<>();
-        enchantmentId.ifPresent(id -> {
-            serverCandidates.add(FabricVersionedMinecraft.keyId(id));
-            serverCandidates.add(FabricVersionedMinecraft.keyNamespace(id));
-            serverCandidates.add(FabricVersionedMinecraft.keyPath(id));
-            serverCandidates.add(FabricVersionedMinecraft.keyPath(id).replace('_', ' '));
-            serverCandidates.add("enchantment." + FabricVersionedMinecraft.keyNamespace(id) + "." + FabricVersionedMinecraft.keyPath(id));
-        });
+        serverCandidates.add(enchantmentId.asString());
+        serverCandidates.add(enchantmentId.namespace());
+        serverCandidates.add(enchantmentId.path());
+        serverCandidates.add(enchantmentId.path().replace('_', ' '));
+        serverCandidates.add("enchantment." + enchantmentId.namespace() + "." + enchantmentId.path());
         serverCandidates.add(enchantment.value().description().getString());
         return EnchantmentSearchRules.matchesAnyCandidate(searchQuery, serverCandidates);
+    }
+
+    private boolean hasEnoughPayment() {
+        return EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
+    }
+
+    private static boolean hasEnoughMaterialsForCopy(
+            LogicalInventory inventory,
+            TableConfigView config,
+            int bookSlot,
+            int paymentSlot
+    ) {
+        return inventory.getStackInSlot(bookSlot).is(Items.BOOK)
+                && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config);
     }
 }
