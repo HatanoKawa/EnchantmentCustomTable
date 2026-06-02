@@ -3,6 +3,7 @@ package com.river_quinn.enchantment_custom_table.fabric.block;
 import com.mojang.serialization.MapCodec;
 import com.river_quinn.enchantment_custom_table.fabric.block.entity.FabricEnchantingCustomTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantingCustomMenu;
+import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -32,7 +33,7 @@ public class FabricEnchantingCustomTableBlock extends FabricEnchantingTableLikeB
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             serverPlayer.openMenu(new ExtendedScreenHandlerFactory<BlockPos>() {
                 @Override
                 public BlockPos getScreenOpeningData(ServerPlayer player) {
@@ -50,6 +51,6 @@ public class FabricEnchantingCustomTableBlock extends FabricEnchantingTableLikeB
                 }
             });
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return FabricVersionedMinecraft.sidedSuccess(level);
     }
 }

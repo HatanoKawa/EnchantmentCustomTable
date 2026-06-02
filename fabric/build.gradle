@@ -27,10 +27,16 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of((findProperty('java_version') ?: '21') as Integer)
 }
 
+def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '1.21.1'
+def fabricVersionedSource = fabricMinecraftVersionValue == '1.21.1'
+        ? 'legacy'
+        : (fabricMinecraftVersionValue == '1.21.9' ? 'modern' : 'identifier')
+
 sourceSets {
     main {
         java.setSrcDirs([
                 rootProject.file('fabric/src/main/java'),
+                rootProject.file("fabric/src/versioned/${fabricVersionedSource}/java"),
                 rootProject.file('src/common/java')
         ])
         resources.setSrcDirs([

@@ -9,7 +9,6 @@ import com.river_quinn.enchantment_custom_table.fabric.network.FabricModPayloads
 import com.river_quinn.enchantment_custom_table.fabric.transfer.FabricItemStorageAdapters;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,4 @@ public class EnchantmentCustomTableFabric implements ModInitializer {
         LOGGER.info("Initialized EnchantmentCustomTable Fabric pilot");
     }
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
-    }
 }

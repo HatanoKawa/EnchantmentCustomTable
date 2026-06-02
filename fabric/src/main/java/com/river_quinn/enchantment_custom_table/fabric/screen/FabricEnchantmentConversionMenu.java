@@ -8,7 +8,6 @@ import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInve
 import com.river_quinn.enchantment_custom_table.fabric.session.FabricConversionTableSession;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -167,7 +166,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu {
         return session.totalPage();
     }
 
-    public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
+    public void setSearchQuery(String query, String clientLanguage, List<String> matchedEnchantments) {
         session.setSearchQuery(query, clientLanguage, matchedEnchantments);
     }
 

@@ -38,7 +38,7 @@ public abstract class FabricEnchantingTableLikeBlock extends BaseEntityBlock {
     @SuppressWarnings("unchecked")
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? (lvl, pos, blockState, blockEntity) -> {
+        return level.isClientSide() ? (lvl, pos, blockState, blockEntity) -> {
             if (blockEntity instanceof FabricEnchantingTableLikeBlockEntity enchantingTable) {
                 FabricEnchantingTableLikeBlockEntity.bookAnimationTick(lvl, pos, blockState, enchantingTable);
             }

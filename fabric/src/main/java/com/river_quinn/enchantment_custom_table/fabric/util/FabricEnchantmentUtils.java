@@ -4,8 +4,6 @@ import com.river_quinn.enchantment_custom_table.core.access.EnchantmentKey;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -30,7 +28,7 @@ public final class FabricEnchantmentUtils {
         if (holderKey.isPresent()) {
             return holderKey;
         }
-        Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        var registry = FabricVersionedMinecraft.enchantmentRegistry(level);
         return registry.getResourceKey(enchantment.value());
     }
 
@@ -38,9 +36,8 @@ public final class FabricEnchantmentUtils {
         if (level == null || enchantment == null) {
             return Optional.empty();
         }
-        Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
         return getEnchantmentKey(level, enchantment)
-                .flatMap(registry::getHolder)
+                .flatMap(key -> FabricVersionedMinecraft.resolveEnchantmentHolder(level, key))
                 .map(holder -> holder);
     }
 
@@ -71,7 +68,10 @@ public final class FabricEnchantmentUtils {
     public static EnchantmentKey getCoreEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
         Optional<ResourceKey<Enchantment>> key = getEnchantmentKey(level, enchantment);
         if (key.isPresent()) {
-            return EnchantmentKey.of(key.get().location().getNamespace(), key.get().location().getPath());
+            return EnchantmentKey.of(
+                    FabricVersionedMinecraft.keyNamespace(key.get()),
+                    FabricVersionedMinecraft.keyPath(key.get())
+            );
         }
         return EnchantmentKey.of(
                 "unregistered",

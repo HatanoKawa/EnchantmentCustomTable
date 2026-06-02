@@ -199,7 +199,7 @@ public class FabricEnchantingTableSession {
     }
 
     public ExportEnchantmentsResult exportAllEnchantments() {
-        if (world.isClientSide) {
+        if (world.isClientSide()) {
             return ExportEnchantmentsResult.failed();
         }
 

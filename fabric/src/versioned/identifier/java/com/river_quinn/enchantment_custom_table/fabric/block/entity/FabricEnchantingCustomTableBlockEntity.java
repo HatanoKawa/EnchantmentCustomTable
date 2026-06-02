@@ -6,13 +6,13 @@ import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantingCu
 import com.river_quinn.enchantment_custom_table.fabric.transfer.FabricEnchantingAutomationStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class FabricEnchantingCustomTableBlockEntity extends FabricEnchantingTableLikeBlockEntity {
     private final FabricTableInventory inventory = new FabricTableInventory(
@@ -50,18 +50,18 @@ public class FabricEnchantingCustomTableBlockEntity extends FabricEnchantingTabl
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
         NonNullList<ItemStack> persistentItems = NonNullList.withSize(1, ItemStack.EMPTY);
         persistentItems.set(0, inventory.getStackInSlot(FabricEnchantingCustomMenu.TOOL_SLOT));
-        tag.put("Inventory", ContainerHelper.saveAllItems(new CompoundTag(), persistentItems, registries));
+        ContainerHelper.saveAllItems(output.child("Inventory"), persistentItems);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
         NonNullList<ItemStack> persistentItems = NonNullList.withSize(1, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(tag.getCompound("Inventory"), persistentItems, registries);
+        input.child("Inventory").ifPresent(inventoryInput -> ContainerHelper.loadAllItems(inventoryInput, persistentItems));
         inventory.setStackInSlot(FabricEnchantingCustomMenu.TOOL_SLOT, persistentItems.get(0));
     }
 }

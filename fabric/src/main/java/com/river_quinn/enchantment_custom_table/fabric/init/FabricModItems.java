@@ -1,7 +1,6 @@
 package com.river_quinn.enchantment_custom_table.fabric.init;
 
-import com.river_quinn.enchantment_custom_table.fabric.EnchantmentCustomTableFabric;
-import net.minecraft.core.Registry;
+import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -14,7 +13,7 @@ public final class FabricModItems {
     }
 
     public static void register() {
-        Registry.register(BuiltInRegistries.ITEM, EnchantmentCustomTableFabric.id("enchanting_custom_table"), ENCHANTING_CUSTOM_TABLE_ITEM);
-        Registry.register(BuiltInRegistries.ITEM, EnchantmentCustomTableFabric.id("enchantment_conversion_table"), ENCHANTMENT_CONVERSION_TABLE_ITEM);
+        FabricVersionedMinecraft.register(BuiltInRegistries.ITEM, "enchanting_custom_table", ENCHANTING_CUSTOM_TABLE_ITEM);
+        FabricVersionedMinecraft.register(BuiltInRegistries.ITEM, "enchantment_conversion_table", ENCHANTMENT_CONVERSION_TABLE_ITEM);
     }
 }

@@ -1,17 +1,18 @@
 package com.river_quinn.enchantment_custom_table.fabric.client.gui;
 
-import com.river_quinn.enchantment_custom_table.fabric.EnchantmentCustomTableFabric;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantingCustomMenu;
+import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class FabricEnchantingCustomScreen extends AbstractContainerScreen<FabricEnchantingCustomMenu> {
-    private static final ResourceLocation GUI_BACKGROUND = EnchantmentCustomTableFabric.id("textures/screens/enchanting_custom.png");
-    private static final ResourceLocation ARROW = EnchantmentCustomTableFabric.id("textures/screens/left_arrow.png");
+    private static final Identifier GUI_BACKGROUND = FabricVersionedMinecraft.id("textures/screens/enchanting_custom.png");
+    private static final Identifier ARROW = FabricVersionedMinecraft.id("textures/screens/left_arrow.png");
 
     public FabricEnchantingCustomScreen(FabricEnchantingCustomMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -47,8 +48,8 @@ public class FabricEnchantingCustomScreen extends AbstractContainerScreen<Fabric
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        graphics.blit(GUI_BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
-        graphics.blit(ARROW, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, ARROW, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
     }
 
     @Override

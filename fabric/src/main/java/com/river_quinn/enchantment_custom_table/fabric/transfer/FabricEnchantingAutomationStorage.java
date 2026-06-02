@@ -103,7 +103,7 @@ public class FabricEnchantingAutomationStorage extends SnapshotParticipant<ItemS
 
     private void playUseSound() {
         Level level = blockEntity.getLevel();
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             level.playSound(null, blockEntity.getBlockPos(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }

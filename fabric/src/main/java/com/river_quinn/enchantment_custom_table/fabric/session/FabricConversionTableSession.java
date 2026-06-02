@@ -5,13 +5,12 @@ import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
 import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
+import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -38,7 +37,7 @@ public class FabricConversionTableSession {
     private String searchQuery = "";
     private String searchClientLanguage = "";
     private boolean usingClientSearchMatches = false;
-    private Set<ResourceLocation> clientMatchedEnchantments = Set.of();
+    private Set<String> clientMatchedEnchantments = Set.of();
     private int currentPage = 0;
     private int totalPage = 0;
 
@@ -86,7 +85,7 @@ public class FabricConversionTableSession {
         setSearchQuery(query, "", List.of());
     }
 
-    public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
+    public void setSearchQuery(String query, String clientLanguage, List<String> matchedEnchantments) {
         searchQuery = EnchantmentSearchRules.sanitizeSearchQuery(query);
         searchClientLanguage = EnchantmentSearchRules.sanitizeClientLanguage(clientLanguage);
         usingClientSearchMatches = !EnchantmentSearchRules.isBlankSearch(searchQuery) && matchedEnchantments != null;
@@ -224,7 +223,7 @@ public class FabricConversionTableSession {
 
     private void loadAllEnchantments() {
         if (allEnchantments.isEmpty()) {
-            Registry<Enchantment> fullEnchantmentList = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+            Registry<Enchantment> fullEnchantmentList = FabricVersionedMinecraft.enchantmentRegistry(world);
             fullEnchantmentList.asHolderIdMap().forEach(allEnchantments::add);
         }
     }
@@ -244,16 +243,16 @@ public class FabricConversionTableSession {
 
     private boolean matchesSearch(Holder<Enchantment> enchantment) {
         Optional<ResourceKey<Enchantment>> enchantmentId = FabricEnchantmentUtils.getEnchantmentKey(world, enchantment);
-        if (enchantmentId.isPresent() && usingClientSearchMatches && clientMatchedEnchantments.contains(enchantmentId.get().location())) {
+        if (enchantmentId.isPresent() && usingClientSearchMatches && clientMatchedEnchantments.contains(FabricVersionedMinecraft.keyId(enchantmentId.get()))) {
             return true;
         }
         List<String> serverCandidates = new ArrayList<>();
         enchantmentId.ifPresent(id -> {
-            serverCandidates.add(id.location().toString());
-            serverCandidates.add(id.location().getNamespace());
-            serverCandidates.add(id.location().getPath());
-            serverCandidates.add(id.location().getPath().replace('_', ' '));
-            serverCandidates.add("enchantment." + id.location().getNamespace() + "." + id.location().getPath());
+            serverCandidates.add(FabricVersionedMinecraft.keyId(id));
+            serverCandidates.add(FabricVersionedMinecraft.keyNamespace(id));
+            serverCandidates.add(FabricVersionedMinecraft.keyPath(id));
+            serverCandidates.add(FabricVersionedMinecraft.keyPath(id).replace('_', ' '));
+            serverCandidates.add("enchantment." + FabricVersionedMinecraft.keyNamespace(id) + "." + FabricVersionedMinecraft.keyPath(id));
         });
         serverCandidates.add(enchantment.value().description().getString());
         return EnchantmentSearchRules.matchesAnyCandidate(searchQuery, serverCandidates);
