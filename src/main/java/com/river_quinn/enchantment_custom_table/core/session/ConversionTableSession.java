@@ -9,12 +9,6 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-//? if >=1.21.11 {
-import net.minecraft.resources.Identifier;
-//?} else {
-/*import net.minecraft.resources.ResourceLocation;*/
-//?}
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -23,7 +17,6 @@ import net.minecraft.world.level.Level;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 
@@ -41,11 +34,7 @@ public class ConversionTableSession {
     private String searchQuery = "";
     private String searchClientLanguage = "";
     private boolean usingClientSearchMatches = false;
-    //? if >=1.21.11 {
-    private Set<Identifier> clientMatchedEnchantments = Set.of();
-    //?} else {
-    /*private Set<ResourceLocation> clientMatchedEnchantments = Set.of();
-    *///?}
+    private Set<String> clientMatchedEnchantments = Set.of();
     private int currentPage = 0;
     private int totalPage = 0;
 
@@ -89,11 +78,7 @@ public class ConversionTableSession {
         this.totalPage = totalPage;
     }
 
-    //? if >=1.21.11 {
-    public void setSearchQuery(String query, String clientLanguage, List<Identifier> matchedEnchantments) {
-    //?} else {
-    /*public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
-    *///?}
+    public void setSearchQuery(String query, String clientLanguage, List<String> matchedEnchantments) {
         searchQuery = EnchantmentSearchRules.sanitizeSearchQuery(query);
         searchClientLanguage = EnchantmentSearchRules.sanitizeClientLanguage(clientLanguage);
         usingClientSearchMatches = !EnchantmentSearchRules.isBlankSearch(searchQuery) && matchedEnchantments != null;
@@ -266,23 +251,17 @@ public class ConversionTableSession {
     }
 
     private boolean matchesSearch(Holder<Enchantment> enchantment) {
-        //? if >=1.21.11 {
-        Optional<Identifier> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::identifier);
-        //?} else {
-        /*Optional<ResourceLocation> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::location);
-        *///?}
-        if (enchantmentId.isPresent() && usingClientSearchMatches && clientMatchedEnchantments.contains(enchantmentId.get())) {
+        var enchantmentId = EnchantmentUtils.getCoreEnchantmentKey(world, enchantment);
+        if (usingClientSearchMatches && clientMatchedEnchantments.contains(enchantmentId.asString())) {
             return true;
         }
 
         List<String> serverCandidates = new ArrayList<>();
-        enchantmentId.ifPresent(id -> {
-            serverCandidates.add(id.toString());
-            serverCandidates.add(id.getNamespace());
-            serverCandidates.add(id.getPath());
-            serverCandidates.add(id.getPath().replace('_', ' '));
-            serverCandidates.add("enchantment." + id.getNamespace() + "." + id.getPath());
-        });
+        serverCandidates.add(enchantmentId.asString());
+        serverCandidates.add(enchantmentId.namespace());
+        serverCandidates.add(enchantmentId.path());
+        serverCandidates.add(enchantmentId.path().replace('_', ' '));
+        serverCandidates.add("enchantment." + enchantmentId.namespace() + "." + enchantmentId.path());
         serverCandidates.add(enchantment.value().description().getString());
         return EnchantmentSearchRules.matchesAnyCandidate(searchQuery, serverCandidates);
     }

@@ -21,11 +21,7 @@ public record EnchantmentConversionTableNetData(
         ConversionTableIntent intent,
         String searchQuery,
         String clientLanguage,
-        //? if >=1.21.11 {
-        List<Identifier> matchedEnchantments
-        //?} else {
-        /*List<ResourceLocation> matchedEnchantments
-        *///?}
+        List<String> matchedEnchantments
 ) implements CustomPacketPayload {
     public EnchantmentConversionTableNetData {
         intent = intent == null ? ConversionTableIntent.UNKNOWN : intent;
@@ -51,11 +47,7 @@ public record EnchantmentConversionTableNetData(
             String operateType,
             String searchQuery,
             String clientLanguage,
-            //? if >=1.21.11 {
-            List<Identifier> matchedEnchantments
-            //?} else {
-            /*List<ResourceLocation> matchedEnchantments
-            *///?}
+            List<String> matchedEnchantments
     ) {
         this(ConversionTableIntent.fromNetworkId(operateType), searchQuery, clientLanguage, matchedEnchantments);
     }
@@ -67,13 +59,8 @@ public record EnchantmentConversionTableNetData(
             /*new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "enchantment_conversion"));
             *///?}
 
-    //? if >=1.21.11 {
-    private static final StreamCodec<ByteBuf, List<Identifier>> MATCHED_ENCHANTMENTS_CODEC =
-            Identifier.STREAM_CODEC.apply(ByteBufCodecs.list(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));
-    //?} else {
-    /*private static final StreamCodec<ByteBuf, List<ResourceLocation>> MATCHED_ENCHANTMENTS_CODEC =
-            ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));
-    *///?}
+    private static final StreamCodec<ByteBuf, List<String>> MATCHED_ENCHANTMENTS_CODEC =
+            ByteBufCodecs.stringUtf8(256).apply(ByteBufCodecs.list(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));
     private static final StreamCodec<ByteBuf, ConversionTableIntent> INTENT_CODEC =
             ByteBufCodecs.stringUtf8(64).map(ConversionTableIntent::fromNetworkId, ConversionTableIntent::networkId);
 

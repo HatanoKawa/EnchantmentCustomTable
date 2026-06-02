@@ -1314,19 +1314,9 @@ public class BasicGameTests {
         *///?}
     }
 
-    //? if >=1.21.11 {
-    private static Identifier enchantmentId(GameTestHelper helper, Holder<Enchantment> enchantment) {
-        return EnchantmentUtils.getEnchantmentKey(helper.getLevel(), enchantment)
-                .orElseThrow()
-                .identifier();
+    private static String enchantmentId(GameTestHelper helper, Holder<Enchantment> enchantment) {
+        return EnchantmentUtils.getCoreEnchantmentKey(helper.getLevel(), enchantment).asString();
     }
-    //?} else {
-    /*private static ResourceLocation enchantmentId(GameTestHelper helper, Holder<Enchantment> enchantment) {
-        return EnchantmentUtils.getEnchantmentKey(helper.getLevel(), enchantment)
-                .orElseThrow()
-                .location();
-    }
-    *///?}
 
     private static ItemStack enchantedBook(Holder<Enchantment> enchantment, int level) {
         ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
@@ -1407,11 +1397,7 @@ public class BasicGameTests {
     private static void assertEnchantmentIdLevel(
             GameTestHelper helper,
             ItemStack stack,
-            //? if >=1.21.11 {
-            Identifier enchantmentId,
-            //?} else {
-            /*ResourceLocation enchantmentId,
-            *///?}
+            String enchantmentId,
             int expectedLevel,
             String message
     ) {

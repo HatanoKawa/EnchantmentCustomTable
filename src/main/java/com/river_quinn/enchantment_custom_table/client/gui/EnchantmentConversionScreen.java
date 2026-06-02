@@ -276,11 +276,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
 
         lastSentSearchQuery = pendingSearchQuery;
         String clientLanguage = getClientLanguage();
-        //? if >=1.21.11 {
-        List<Identifier> matchedEnchantments = findClientLocalizedMatches(pendingSearchQuery);
-        //?} else {
-        /*List<ResourceLocation> matchedEnchantments = findClientLocalizedMatches(pendingSearchQuery);
-        *///?}
+        List<String> matchedEnchantments = findClientLocalizedMatches(pendingSearchQuery);
         menuContainer.setSearchQuery(pendingSearchQuery, clientLanguage, matchedEnchantments);
         sendToServer(new EnchantmentConversionTableNetData(
                 ConversionTableIntent.SEARCH,
@@ -298,11 +294,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         return EnchantmentSearchRules.sanitizeClientLanguage(minecraft.getLanguageManager().getSelected());
     }
 
-    //? if >=1.21.11 {
-    private List<Identifier> findClientLocalizedMatches(String query) {
-    //?} else {
-    /*private List<ResourceLocation> findClientLocalizedMatches(String query) {
-    *///?}
+    private List<String> findClientLocalizedMatches(String query) {
         if (EnchantmentSearchRules.isBlankSearch(query)) {
             return List.of();
         }
@@ -312,11 +304,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         //?} else {
         /*Registry<Enchantment> enchantmentRegistry = world.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
         *///?}
-        //? if >=1.21.11 {
-        List<Identifier> matchedEnchantments = new ArrayList<>();
-        //?} else {
-        /*List<ResourceLocation> matchedEnchantments = new ArrayList<>();
-        *///?}
+        List<String> matchedEnchantments = new ArrayList<>();
         enchantmentRegistry.asHolderIdMap().forEach(enchantment -> {
             //? if >=1.21.11 {
             Optional<Identifier> enchantmentId = EnchantmentUtils.getEnchantmentKey(world, enchantment).map(ResourceKey::identifier);
@@ -328,7 +316,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
             }
 
             if (matchesClientSearch(query, enchantment, enchantmentId.get())) {
-                matchedEnchantments.add(enchantmentId.get());
+                matchedEnchantments.add(enchantmentId.get().toString());
             }
         });
         return matchedEnchantments.size() > EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS

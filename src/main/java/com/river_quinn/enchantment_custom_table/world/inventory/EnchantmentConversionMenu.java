@@ -422,11 +422,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu {
 		super.removed(playerIn);
 	}
 
-	//? if >=1.21.11 {
-	public void setSearchQuery(String query, String clientLanguage, List<Identifier> matchedEnchantments) {
-	//?} else {
-	/*public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
-	*///?}
+	public void setSearchQuery(String query, String clientLanguage, List<String> matchedEnchantments) {
 		session.setSearchQuery(query, clientLanguage, matchedEnchantments);
 		syncPageState();
 	}
