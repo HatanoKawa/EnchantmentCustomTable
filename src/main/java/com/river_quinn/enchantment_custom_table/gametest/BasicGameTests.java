@@ -647,6 +647,64 @@ public class BasicGameTests {
     }
 
     @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableQuickMovingInputBookAppliesAndRefreshes(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        ConfigSnapshot config = useMergeConfig(false, false);
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantingCustomMenu menu = enchantingMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+            ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+            sword.enchant(sharpness, 4);
+
+            menu.getSlot(0).setByPlayer(sword);
+            player.getInventory().setItem(0, enchantedBook(sharpness, 1));
+            player.containerMenu = menu;
+
+            ItemStack moved = menu.quickMoveStack(player, EnchantingCustomMenu.ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE + 27);
+
+            helper.assertTrue(!moved.isEmpty(), "Shift-moving an accepted book should report the moved stack");
+            helper.assertTrue(menu.getSlot(1).getItem().isEmpty(), "Input slot should be cleared after the shifted book is applied");
+            assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 5, "Shift-moving an input book should apply it to the tool");
+            assertEnchantmentLevel(helper, menu.getSlot(2).getItem(), sharpness, 5, "Generated slots should refresh after shift-moving an input book");
+
+            helper.succeed();
+        } finally {
+            config.restore();
+        }
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableQuickMovingGeneratedBookSubtractsFromTool(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        EnchantingCustomMenu menu = enchantingMenu(helper, player);
+        EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(ENCHANTING_CUSTOM_TABLE_POS);
+        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.enchant(sharpness, 5);
+
+        menu.getSlot(0).setByPlayer(sword);
+        int versionBeforeRemove = blockEntity.getInventoryVersion();
+        player.containerMenu = menu;
+
+        ItemStack moved = menu.quickMoveStack(player, 2);
+
+        helper.assertTrue(moved.is(Items.ENCHANTED_BOOK), "Shift-moving a generated book should move an enchanted book");
+        assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 0, "Shift-moving a generated book should remove the matching tool enchantment");
+        helper.assertTrue(menu.getSlot(2).getItem().isEmpty(), "Generated slots should clear after the source enchantment is removed by shift move");
+        helper.assertTrue(
+                blockEntity.getInventoryVersion() > versionBeforeRemove,
+                "Shift-moving a generated book should mark stored tool enchantments as changed"
+        );
+
+        helper.succeed();
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
     public static void customTableKeepsToolInBlockStorageAfterMenuClose(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -748,11 +806,13 @@ public class BasicGameTests {
 
         Player player = helper.makeMockPlayer(GameType.CREATIVE);
         EnchantingCustomMenu menu = enchantingMenu(helper, player);
+        EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(ENCHANTING_CUSTOM_TABLE_POS);
         Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
         ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
         sword.enchant(sharpness, 5);
 
         menu.getSlot(0).setByPlayer(sword);
+        int versionBeforeRemove = blockEntity.getInventoryVersion();
         player.containerMenu = menu;
 
         menu.clicked(2, 0, ClickType.PICKUP, player);
@@ -760,6 +820,35 @@ public class BasicGameTests {
         helper.assertTrue(player.containerMenu.getCarried().is(Items.ENCHANTED_BOOK), "Taking a generated book should put that book on the cursor");
         assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 0, "Removing a generated book should remove the matching tool enchantment");
         helper.assertTrue(menu.getSlot(2).getItem().isEmpty(), "Generated books should clear after the source enchantment is removed");
+        helper.assertTrue(
+                blockEntity.getInventoryVersion() > versionBeforeRemove,
+                "Removing a generated book should mark stored tool enchantments as changed"
+        );
+
+        helper.succeed();
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableExportAllEnchantmentsMarksStoredToolChanged(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        EnchantingCustomMenu menu = enchantingMenu(helper, player);
+        EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(ENCHANTING_CUSTOM_TABLE_POS);
+        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.enchant(sharpness, 5);
+
+        menu.getSlot(0).setByPlayer(sword);
+        int versionBeforeExport = blockEntity.getInventoryVersion();
+
+        menu.exportAllEnchantments();
+
+        assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 0, "Exporting should remove the enchantment from the stored tool");
+        helper.assertTrue(
+                blockEntity.getInventoryVersion() > versionBeforeExport,
+                "Exporting enchantments should mark stored tool enchantments as changed"
+        );
 
         helper.succeed();
     }
@@ -791,9 +880,7 @@ public class BasicGameTests {
     }
 
     private static ItemStack enchantedBook(Holder<Enchantment> enchantment, int level) {
-        ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
-        book.enchant(enchantment, level);
-        return book;
+        return EnchantmentUtils.createEnchantedBook(enchantment, level);
     }
 
     private static ConfigSnapshot useMergeConfig(boolean enforceEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {
