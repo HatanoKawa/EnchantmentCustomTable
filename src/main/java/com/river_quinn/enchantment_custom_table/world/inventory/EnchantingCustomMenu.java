@@ -465,7 +465,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				enchantedBook.enchant(enchantment, enchantmentLevel);
 			}
 
-			toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), mutable.toImmutable());
+			if (!replaceToolEnchantments(toolItemStack, mutable.toImmutable())) {
+				return;
+			}
 			entity.getInventory().placeItemBackInInventory(enchantedBook);
 
 			playUseSound();
@@ -621,7 +623,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 		if (!result.allowed()) {
 			return false;
 		}
-		toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), result.enchantments());
+		if (!replaceToolEnchantments(toolItemStack, result.enchantments())) {
+			return false;
+		}
 		// endregion
 
 		// 新增附魔，重新生成所有附魔书缓存并更新附魔书槽
@@ -650,7 +654,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				this::isSameEnchantment,
 				shouldUseIncrementalSingleBookSplitRemoval(toolItemStack, itemEnchantments, enchantmentLevels)
 		);
-		toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), resultEnchantments);
+		if (!replaceToolEnchantments(toolItemStack, resultEnchantments)) {
+			return false;
+		}
 		// endregion
 
 		int resultPageSize = EnchantmentTableRules.calculatePageCount(
@@ -683,6 +689,17 @@ public class EnchantingCustomMenu extends AbstractContainerMenu {
 				&& toolItemStack.is(Items.ENCHANTED_BOOK)
 				&& itemEnchantments.size() == 1
 				&& removalEnchantments.size() == 1;
+	}
+
+	private boolean replaceToolEnchantments(ItemStack toolItemStack, ItemEnchantments enchantments) {
+		if (toolItemStack.isEmpty()) {
+			return false;
+		}
+		if (boundBlockEntity != null) {
+			return boundBlockEntity.replaceToolEnchantments(enchantments);
+		}
+		toolItemStack.set(EnchantmentHelper.getComponentType(toolItemStack), enchantments);
+		return true;
 	}
 
 	public void initMenu() {

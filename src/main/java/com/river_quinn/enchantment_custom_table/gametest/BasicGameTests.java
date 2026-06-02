@@ -748,11 +748,13 @@ public class BasicGameTests {
 
         Player player = helper.makeMockPlayer(GameType.CREATIVE);
         EnchantingCustomMenu menu = enchantingMenu(helper, player);
+        EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(ENCHANTING_CUSTOM_TABLE_POS);
         Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
         ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
         sword.enchant(sharpness, 5);
 
         menu.getSlot(0).setByPlayer(sword);
+        int versionBeforeRemove = blockEntity.getInventoryVersion();
         player.containerMenu = menu;
 
         menu.clicked(2, 0, ClickType.PICKUP, player);
@@ -760,6 +762,35 @@ public class BasicGameTests {
         helper.assertTrue(player.containerMenu.getCarried().is(Items.ENCHANTED_BOOK), "Taking a generated book should put that book on the cursor");
         assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 0, "Removing a generated book should remove the matching tool enchantment");
         helper.assertTrue(menu.getSlot(2).getItem().isEmpty(), "Generated books should clear after the source enchantment is removed");
+        helper.assertTrue(
+                blockEntity.getInventoryVersion() > versionBeforeRemove,
+                "Removing a generated book should mark stored tool enchantments as changed"
+        );
+
+        helper.succeed();
+    }
+
+    @GameTest(template = "gametest/empty", timeoutTicks = 40)
+    public static void customTableExportAllEnchantmentsMarksStoredToolChanged(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        EnchantingCustomMenu menu = enchantingMenu(helper, player);
+        EnchantingCustomTableBlockEntity blockEntity = helper.getBlockEntity(ENCHANTING_CUSTOM_TABLE_POS);
+        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.enchant(sharpness, 5);
+
+        menu.getSlot(0).setByPlayer(sword);
+        int versionBeforeExport = blockEntity.getInventoryVersion();
+
+        menu.exportAllEnchantments();
+
+        assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 0, "Exporting should remove the enchantment from the stored tool");
+        helper.assertTrue(
+                blockEntity.getInventoryVersion() > versionBeforeExport,
+                "Exporting enchantments should mark stored tool enchantments as changed"
+        );
 
         helper.succeed();
     }

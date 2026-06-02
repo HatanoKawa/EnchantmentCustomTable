@@ -84,6 +84,16 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         inventory.setStackInSlot(TOOL_SLOT, stack);
     }
 
+    public boolean replaceToolEnchantments(ItemEnchantments enchantments) {
+        ItemStack toolStack = getToolStack();
+        if (toolStack.isEmpty()) {
+            return false;
+        }
+        toolStack.set(EnchantmentHelper.getComponentType(toolStack), enchantments);
+        markInventoryChanged();
+        return true;
+    }
+
     public boolean canApplyEnchantedBook(ItemStack stack, EnchantmentTableRules.MergeOptions mergeOptions) {
         if (!stack.is(Items.ENCHANTED_BOOK) || getToolStack().isEmpty() || level == null) {
             return false;
@@ -118,8 +128,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         }
 
         if (!simulate) {
-            toolStack.set(EnchantmentHelper.getComponentType(toolStack), result.enchantments());
-            markInventoryChanged();
+            replaceToolEnchantments(result.enchantments());
             playUseSound();
         }
         return true;
