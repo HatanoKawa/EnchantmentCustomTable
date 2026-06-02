@@ -4,6 +4,7 @@ import com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlockEntities;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlocks;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModItems;
+import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +22,7 @@ public class EnchantmentCustomTableFabric implements ModInitializer {
         FabricModBlocks.register();
         FabricModItems.register();
         FabricModBlockEntities.register();
+        FabricModMenus.register();
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
             entries.accept(FabricModItems.ENCHANTING_CUSTOM_TABLE_ITEM);
             entries.accept(FabricModItems.ENCHANTMENT_CONVERSION_TABLE_ITEM);

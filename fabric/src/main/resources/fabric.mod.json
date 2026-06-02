@@ -12,6 +12,9 @@
   "entrypoints": {
     "main": [
       "com.river_quinn.enchantment_custom_table.fabric.EnchantmentCustomTableFabric"
+    ],
+    "client": [
+      "com.river_quinn.enchantment_custom_table.fabric.client.EnchantmentCustomTableFabricClient"
     ]
   },
   "depends": {
