@@ -38,4 +38,20 @@ public enum EnchantingTableIntent {
             return UNKNOWN;
         }
     }
+
+    public boolean dispatchTo(EnchantingTableActions actions) {
+        if (actions == null) {
+            return false;
+        }
+
+        switch (this) {
+            case EXPORT_ALL_ENCHANTMENTS -> actions.exportAllEnchantments();
+            case NEXT_PAGE -> actions.nextPage();
+            case PREVIOUS_PAGE -> actions.previousPage();
+            case UNKNOWN -> {
+                return false;
+            }
+        }
+        return true;
+    }
 }

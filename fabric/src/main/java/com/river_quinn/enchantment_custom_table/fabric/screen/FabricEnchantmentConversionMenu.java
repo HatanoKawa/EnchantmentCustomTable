@@ -5,6 +5,7 @@ import com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlocks;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
+import com.river_quinn.enchantment_custom_table.core.net.ConversionTableActions;
 import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSession;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
@@ -21,7 +22,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-public class FabricEnchantmentConversionMenu extends AbstractContainerMenu {
+public class FabricEnchantmentConversionMenu extends AbstractContainerMenu implements ConversionTableActions {
     public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
     public static final int ENCHANTED_BOOK_SLOT_COLUMN_COUNT = 7;
     public static final int ENCHANTED_BOOK_SLOT_SIZE = ENCHANTED_BOOK_SLOT_ROW_COUNT * ENCHANTED_BOOK_SLOT_COLUMN_COUNT;
@@ -151,8 +152,8 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu {
     @Override
     public boolean clickMenuButton(Player player, int id) {
         switch (id) {
-            case PREVIOUS_PAGE_BUTTON -> session.previousPage();
-            case NEXT_PAGE_BUTTON -> session.nextPage();
+            case PREVIOUS_PAGE_BUTTON -> previousPage();
+            case NEXT_PAGE_BUTTON -> nextPage();
             default -> {
                 return false;
             }
@@ -168,6 +169,17 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu {
         return session.totalPage();
     }
 
+    @Override
+    public void nextPage() {
+        session.nextPage();
+    }
+
+    @Override
+    public void previousPage() {
+        session.previousPage();
+    }
+
+    @Override
     public void setSearchQuery(String query, String clientLanguage, List<String> matchedEnchantments) {
         session.setSearchQuery(query, clientLanguage, matchedEnchantments);
     }

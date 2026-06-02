@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.net.EnchantingTableActions;
 import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
 import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
@@ -45,7 +46,7 @@ import org.slf4j.Logger;
 
 import java.util.*;
 
-public class EnchantingCustomMenu extends AbstractContainerMenu {
+public class EnchantingCustomMenu extends AbstractContainerMenu implements EnchantingTableActions {
 	public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
 	public static final int ENCHANTED_BOOK_SLOT_COLUMN_COUNT = 6;
 	public static final int ENCHANTED_BOOK_SLOT_SIZE = ENCHANTED_BOOK_SLOT_ROW_COUNT * ENCHANTED_BOOK_SLOT_COLUMN_COUNT;

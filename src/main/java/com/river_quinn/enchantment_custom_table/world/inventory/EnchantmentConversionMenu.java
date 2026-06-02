@@ -5,6 +5,7 @@ import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.net.ConversionTableActions;
 import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSession;
 import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
@@ -43,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EnchantmentConversionMenu extends AbstractContainerMenu {
+public class EnchantmentConversionMenu extends AbstractContainerMenu implements ConversionTableActions {
 	public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
 	public static final int ENCHANTED_BOOK_SLOT_COLUMN_COUNT = 7;
 	public static final int ENCHANTED_BOOK_SLOT_SIZE = ENCHANTED_BOOK_SLOT_ROW_COUNT * ENCHANTED_BOOK_SLOT_COLUMN_COUNT;

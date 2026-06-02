@@ -1,6 +1,7 @@
 package com.river_quinn.enchantment_custom_table.core.net;
 
 import java.util.Arrays;
+import java.util.List;
 
 public enum ConversionTableIntent {
     UNKNOWN("unknown"),
@@ -37,5 +38,26 @@ public enum ConversionTableIntent {
         } catch (IllegalArgumentException ignored) {
             return UNKNOWN;
         }
+    }
+
+    public boolean dispatchTo(
+            ConversionTableActions actions,
+            String searchQuery,
+            String clientLanguage,
+            List<String> matchedEnchantments
+    ) {
+        if (actions == null) {
+            return false;
+        }
+
+        switch (this) {
+            case NEXT_PAGE -> actions.nextPage();
+            case PREVIOUS_PAGE -> actions.previousPage();
+            case SEARCH -> actions.setSearchQuery(searchQuery, clientLanguage, matchedEnchantments);
+            case UNKNOWN -> {
+                return false;
+            }
+        }
+        return true;
     }
 }
