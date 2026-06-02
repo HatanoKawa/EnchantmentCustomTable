@@ -11,14 +11,17 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -33,6 +36,9 @@ public class FabricConversionTableSession {
     private final int generatedSlotCount;
     private final List<Holder<Enchantment>> allEnchantments = new ArrayList<>();
     private String searchQuery = "";
+    private String searchClientLanguage = "";
+    private boolean usingClientSearchMatches = false;
+    private Set<ResourceLocation> clientMatchedEnchantments = Set.of();
     private int currentPage = 0;
     private int totalPage = 0;
 
@@ -77,8 +83,29 @@ public class FabricConversionTableSession {
     }
 
     public void setSearchQuery(String query) {
+        setSearchQuery(query, "", List.of());
+    }
+
+    public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
         searchQuery = EnchantmentSearchRules.sanitizeSearchQuery(query);
+        searchClientLanguage = EnchantmentSearchRules.sanitizeClientLanguage(clientLanguage);
+        usingClientSearchMatches = !EnchantmentSearchRules.isBlankSearch(searchQuery) && matchedEnchantments != null;
+        if (usingClientSearchMatches) {
+            clientMatchedEnchantments = matchedEnchantments.stream()
+                    .limit(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS)
+                    .collect(HashSet::new, Set::add, Set::addAll);
+        } else {
+            clientMatchedEnchantments = Set.of();
+        }
         regenerateGeneratedSlots();
+    }
+
+    public String searchQuery() {
+        return searchQuery;
+    }
+
+    public String searchClientLanguage() {
+        return searchClientLanguage;
     }
 
     public void nextPage() {
@@ -217,6 +244,9 @@ public class FabricConversionTableSession {
 
     private boolean matchesSearch(Holder<Enchantment> enchantment) {
         Optional<ResourceKey<Enchantment>> enchantmentId = FabricEnchantmentUtils.getEnchantmentKey(world, enchantment);
+        if (enchantmentId.isPresent() && usingClientSearchMatches && clientMatchedEnchantments.contains(enchantmentId.get().location())) {
+            return true;
+        }
         List<String> serverCandidates = new ArrayList<>();
         enchantmentId.ifPresent(id -> {
             serverCandidates.add(id.location().toString());

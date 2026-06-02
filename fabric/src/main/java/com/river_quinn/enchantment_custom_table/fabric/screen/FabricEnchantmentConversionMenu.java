@@ -8,6 +8,7 @@ import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInve
 import com.river_quinn.enchantment_custom_table.fabric.session.FabricConversionTableSession;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -17,6 +18,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public class FabricEnchantmentConversionMenu extends AbstractContainerMenu {
     public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
@@ -97,6 +100,10 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu {
 
     public int totalPage() {
         return session.totalPage();
+    }
+
+    public void setSearchQuery(String query, String clientLanguage, List<ResourceLocation> matchedEnchantments) {
+        session.setSearchQuery(query, clientLanguage, matchedEnchantments);
     }
 
     private void addPageDataSlots() {
