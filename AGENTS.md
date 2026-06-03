@@ -37,6 +37,10 @@ Use the Gradle wrapper from the repository root. Prefer explicit project paths n
 - `./gradlew :1.21.1:runServer`, `./gradlew :fabric_1_21_1:runServer`, or `./gradlew :fabric_26_1_2:runServer` launches a local dedicated server for a specific platform/version.
 - `./gradlew :1.21.1:runData` regenerates NeoForge data into `src/generated/resources`.
 - `./gradlew :1.21.1:runGameTestServer` runs registered NeoForge game tests.
+- `./gradlew :verifyCommon` runs shared JVM tests.
+- `./gradlew :verifyRepresentative` runs common tests plus representative first/latest/26.x builds for both platforms.
+- `./gradlew :verifyNeoForgeAll`, `./gradlew :verifyFabricAll`, or `./gradlew :verifyAll` run the full corresponding build matrices.
+- `./gradlew :verifyCi` mirrors the complete verification set expected by GitHub Actions.
 
 For latest NeoForge `26.x` builds on this local machine, the launcher manifest may need to be supplied from the Gradle cache:
 

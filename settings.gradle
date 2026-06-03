@@ -75,3 +75,91 @@ stonecutter {
         vcsVersion = '26.1.2'
     }
 }
+
+def neoForgeVersionProjects = [
+        '1.21.1',
+        '1.21.2',
+        '1.21.3',
+        '1.21.4',
+        '1.21.5',
+        '1.21.6',
+        '1.21.7',
+        '1.21.8',
+        '1.21.9',
+        '1.21.10',
+        '1.21.11',
+        '26.1',
+        '26.1.1',
+        '26.1.2'
+]
+def fabricVersionProjects = [
+        'fabric_1_21_1',
+        'fabric_1_21_2',
+        'fabric_1_21_3',
+        'fabric_1_21_4',
+        'fabric_1_21_5',
+        'fabric_1_21_6',
+        'fabric_1_21_7',
+        'fabric_1_21_8',
+        'fabric_1_21_9',
+        'fabric_1_21_10',
+        'fabric_1_21_11',
+        'fabric_26_1_2'
+]
+
+gradle.rootProject {
+    tasks.register('verifyCommon') {
+        group = 'verification'
+        description = 'Runs fast shared JVM tests.'
+        dependsOn ':common:test'
+    }
+
+    tasks.register('verifyNeoForgeVersions') {
+        group = 'verification'
+        description = 'Builds all Stonecutter NeoForge version projects.'
+        dependsOn neoForgeVersionProjects.collect { ":${it}:build" }
+    }
+
+    tasks.register('verifyNeoForgeAll') {
+        group = 'verification'
+        description = 'Builds all NeoForge version projects plus the latest NeoForge platform project.'
+        dependsOn ':verifyNeoForgeVersions', ':neoforge:build'
+    }
+
+    tasks.register('verifyFabricVersions') {
+        group = 'verification'
+        description = 'Builds all Fabric version projects.'
+        dependsOn fabricVersionProjects.collect { ":${it}:build" }
+    }
+
+    tasks.register('verifyFabricAll') {
+        group = 'verification'
+        description = 'Builds all Fabric version projects plus the default Fabric platform project.'
+        dependsOn ':verifyFabricVersions', ':fabric:build'
+    }
+
+    tasks.register('verifyRepresentative') {
+        group = 'verification'
+        description = 'Runs common tests and representative first/latest/26.x platform builds.'
+        dependsOn ':verifyCommon',
+                ':1.21.1:build',
+                ':26.1.2:build',
+                ':neoforge:build',
+                ':fabric_1_21_1:build',
+                ':fabric_1_21_11:build',
+                ':fabric_26_1_2:build',
+                ':fabric:build'
+    }
+
+    tasks.register('verifyAll') {
+        group = 'verification'
+        description = 'Runs common tests and every NeoForge/Fabric build target.'
+        dependsOn ':verifyCommon', ':verifyNeoForgeAll', ':verifyFabricAll'
+    }
+
+    tasks.register('verifyCi') {
+        group = 'verification'
+        description = 'Runs the full verification set expected by CI.'
+        dependsOn ':verifyAll'
+    }
+}
