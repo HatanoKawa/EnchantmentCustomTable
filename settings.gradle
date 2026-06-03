@@ -30,14 +30,38 @@ include 'fabric'
 include 'common'
 include 'neoforge'
 include 'fabric_1_21_1'
+include 'fabric_1_21_2'
+include 'fabric_1_21_3'
+include 'fabric_1_21_4'
+include 'fabric_1_21_5'
+include 'fabric_1_21_6'
+include 'fabric_1_21_7'
+include 'fabric_1_21_8'
 include 'fabric_1_21_9'
+include 'fabric_1_21_10'
 include 'fabric_1_21_11'
 
 project(':fabric_1_21_1').projectDir = file('fabric_versions/1.21.1')
+project(':fabric_1_21_2').projectDir = file('fabric_versions/1.21.2')
+project(':fabric_1_21_3').projectDir = file('fabric_versions/1.21.3')
+project(':fabric_1_21_4').projectDir = file('fabric_versions/1.21.4')
+project(':fabric_1_21_5').projectDir = file('fabric_versions/1.21.5')
+project(':fabric_1_21_6').projectDir = file('fabric_versions/1.21.6')
+project(':fabric_1_21_7').projectDir = file('fabric_versions/1.21.7')
+project(':fabric_1_21_8').projectDir = file('fabric_versions/1.21.8')
 project(':fabric_1_21_9').projectDir = file('fabric_versions/1.21.9')
+project(':fabric_1_21_10').projectDir = file('fabric_versions/1.21.10')
 project(':fabric_1_21_11').projectDir = file('fabric_versions/1.21.11')
 project(':fabric_1_21_1').buildFileName = '../../fabric/build.gradle'
+project(':fabric_1_21_2').buildFileName = '../../fabric/build.gradle'
+project(':fabric_1_21_3').buildFileName = '../../fabric/build.gradle'
+project(':fabric_1_21_4').buildFileName = '../../fabric/build.gradle'
+project(':fabric_1_21_5').buildFileName = '../../fabric/build.gradle'
+project(':fabric_1_21_6').buildFileName = '../../fabric/build.gradle'
+project(':fabric_1_21_7').buildFileName = '../../fabric/build.gradle'
+project(':fabric_1_21_8').buildFileName = '../../fabric/build.gradle'
 project(':fabric_1_21_9').buildFileName = '../../fabric/build.gradle'
+project(':fabric_1_21_10').buildFileName = '../../fabric/build.gradle'
 project(':fabric_1_21_11').buildFileName = '../../fabric/build.gradle'
 
 stonecutter {

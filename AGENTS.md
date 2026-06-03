@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-This is a Java 21 multi-loader Minecraft mod. NeoForge is still the primary platform and is managed through Stonecutter for Minecraft `1.21.1` through `26.1.2`. Fabric support currently covers representative versions `1.21.1`, `1.21.9`, and `1.21.11`; Fabric `26.x` is not enabled yet because the current Fabric mapping/tooling metadata is not available for that line.
+This is a Java 21 multi-loader Minecraft mod. NeoForge is still the primary platform and is managed through Stonecutter for Minecraft `1.21.1` through `26.1.2`. Fabric support currently covers Minecraft `1.21.1` through `1.21.11`; Fabric `26.x` is not enabled yet because it needs the Fabric 26.1+ non-remap / official-names build model.
 
 Main shared code is split by dependency level:
 
@@ -15,7 +15,7 @@ Platform and version projects live in separate directories:
 
 - `common/`: pure JVM Gradle subproject for fast common tests.
 - `neoforge/`: latest NeoForge platform subproject, currently targeting `26.1.2`.
-- `fabric/`: Fabric platform source, resources, and shared Fabric build script. Version-specific Fabric source layers live under `fabric/src/versioned/{legacy,modern,identifier}`.
+- `fabric/`: Fabric platform source, resources, and shared Fabric build script. Version-specific Fabric source layers live under `fabric/src/versioned/*`.
 - `fabric_versions/`: Fabric version project directories. Each supported version has a `gradle.properties` file and reuses `fabric/build.gradle` through `settings.gradle`.
 - `versions/`: Stonecutter version metadata for the NeoForge root matrix.
 
@@ -30,7 +30,7 @@ Use the Gradle wrapper from the repository root. Prefer explicit project paths n
 - `./gradlew :common:test` runs fast shared JVM tests.
 - `./gradlew :1.21.1:build`, `./gradlew :1.21.11:build`, or `./gradlew :26.1.2:build` builds a NeoForge Stonecutter version project.
 - `./gradlew :neoforge:build` builds the latest NeoForge platform subproject.
-- `./gradlew :fabric_1_21_1:build`, `./gradlew :fabric_1_21_9:build`, or `./gradlew :fabric_1_21_11:build` builds a supported Fabric version project.
+- `./gradlew :fabric_1_21_1:build` through `./gradlew :fabric_1_21_11:build` build supported Fabric version projects.
 - `./gradlew :fabric:build` builds the default Fabric project, currently using the `1.21.1` defaults.
 - `./gradlew :1.21.1:runClient` or `./gradlew :fabric_1_21_1:runClient` launches a local client for manual testing on a specific platform/version.
 - `./gradlew :1.21.1:runServer` or `./gradlew :fabric_1_21_1:runServer` launches a local dedicated server for a specific platform/version.
@@ -41,6 +41,12 @@ For latest NeoForge `26.x` builds on this local machine, the launcher manifest m
 
 ```sh
 ./gradlew -PneoForge.neoFormRuntime.launcherManifestUrl=file:///Users/river_quinn/.gradle/caches/neoformruntime/artifacts/minecraft_launcher_manifest.json :26.1.2:build
+```
+
+When building the full Fabric `1.21.1` through `1.21.11` matrix in one command, avoid Gradle/Loom remap OOM by running with one worker and a larger heap:
+
+```sh
+./gradlew --no-daemon --no-configuration-cache --max-workers=1 -Dorg.gradle.jvmargs=-Xmx4g :fabric_1_21_1:build :fabric_1_21_2:build :fabric_1_21_3:build :fabric_1_21_4:build :fabric_1_21_5:build :fabric_1_21_6:build :fabric_1_21_7:build :fabric_1_21_8:build :fabric_1_21_9:build :fabric_1_21_10:build :fabric_1_21_11:build
 ```
 
 ## Coding Style & Naming Conventions

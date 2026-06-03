@@ -28,9 +28,19 @@ java {
 }
 
 def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '1.21.1'
-def fabricVersionedSource = fabricMinecraftVersionValue == '1.21.1'
-        ? 'legacy'
-        : (fabricMinecraftVersionValue == '1.21.9' ? 'modern' : 'identifier')
+def fabricVersionedSource = [
+        '1.21.1' : 'legacy',
+        '1.21.2' : 'legacy_render',
+        '1.21.3' : 'legacy_render',
+        '1.21.4' : 'legacy_render',
+        '1.21.5' : 'legacy_optional_tag',
+        '1.21.6' : 'modern_legacy_input',
+        '1.21.7' : 'modern_legacy_input',
+        '1.21.8' : 'modern_legacy_input',
+        '1.21.9' : 'modern',
+        '1.21.10': 'modern',
+        '1.21.11': 'identifier'
+][fabricMinecraftVersionValue] ?: 'identifier'
 
 sourceSets {
     main {
