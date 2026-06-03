@@ -2,18 +2,46 @@
 
 ## Project Structure & Module Organization
 
-This is a Java 21 NeoForge mod for Minecraft 1.21.1. Main code lives in `src/main/java/com/river_quinn/enchantment_custom_table`, organized by responsibility: `block`, `block/entity`, `client/gui`, `world/inventory`, `network`, `renderer`, `init`, and `utils`. Resources live in `src/main/resources`, including mod assets under `assets/enchantment_custom_table`, data files under `data/enchantment_custom_table`, documentation images under `doc`, and metadata templates under `src/main/templates`. Generated resources are written to `src/generated/resources` by the data run config and are included in the main resource set.
+This is a Java 21 multi-loader Minecraft mod. NeoForge is still the primary platform and is managed through Stonecutter for Minecraft `1.21.1` through `26.1.2`. Fabric support currently covers representative versions `1.21.1`, `1.21.9`, and `1.21.11`; Fabric `26.x` is not enabled yet because the current Fabric mapping/tooling metadata is not available for that line.
+
+Main shared code is split by dependency level:
+
+- `src/common/java`: pure Java logic with no Minecraft or loader imports.
+- `src/common-minecraft/java`: Minecraft-dependent common logic with no NeoForge/Fabric imports.
+- `src/main/java`: NeoForge platform implementation used by the root Stonecutter NeoForge matrix and the `:neoforge` project.
+- `src/test/java`: shared JVM tests for common table rules and session behavior.
+
+Platform and version projects live in separate directories:
+
+- `common/`: pure JVM Gradle subproject for fast common tests.
+- `neoforge/`: latest NeoForge platform subproject, currently targeting `26.1.2`.
+- `fabric/`: Fabric platform source, resources, and shared Fabric build script. Version-specific Fabric source layers live under `fabric/src/versioned/{legacy,modern,identifier}`.
+- `fabric_versions/`: Fabric version project directories. Each supported version has a `gradle.properties` file and reuses `fabric/build.gradle` through `settings.gradle`.
+- `versions/`: Stonecutter version metadata for the NeoForge root matrix.
+
+Do not use `fabric/versions/` as an active version matrix location. If that directory appears locally and only contains empty version folders, it is migration residue rather than tracked project structure.
+
+Resources live in `src/main/resources`, including mod assets under `assets/enchantment_custom_table`, data files under `data/enchantment_custom_table`, documentation images under `doc`, and metadata templates under `src/main/templates`. Fabric-specific metadata lives in `fabric/src/main/resources`. Generated resources are written to `src/generated/resources` by the data run config and are included in the main resource set.
 
 ## Build, Test, and Development Commands
 
-Use the Gradle wrapper from the repository root:
+Use the Gradle wrapper from the repository root. Prefer explicit project paths now that the workspace contains multiple platform/version projects.
 
-- `./gradlew build` compiles the mod, processes resources, and creates build artifacts.
-- `./gradlew runClient` launches a local Minecraft client for manual testing.
-- `./gradlew runServer` launches a local dedicated server with `--nogui`.
-- `./gradlew runData` regenerates data into `src/generated/resources`.
-- `./gradlew test` runs JVM tests if a `src/test` tree is added.
-- `./gradlew runGameTestServer` runs registered NeoForge game tests; add tests before relying on this target.
+- `./gradlew :common:test` runs fast shared JVM tests.
+- `./gradlew :1.21.1:build`, `./gradlew :1.21.11:build`, or `./gradlew :26.1.2:build` builds a NeoForge Stonecutter version project.
+- `./gradlew :neoforge:build` builds the latest NeoForge platform subproject.
+- `./gradlew :fabric_1_21_1:build`, `./gradlew :fabric_1_21_9:build`, or `./gradlew :fabric_1_21_11:build` builds a supported Fabric version project.
+- `./gradlew :fabric:build` builds the default Fabric project, currently using the `1.21.1` defaults.
+- `./gradlew :1.21.1:runClient` or `./gradlew :fabric_1_21_1:runClient` launches a local client for manual testing on a specific platform/version.
+- `./gradlew :1.21.1:runServer` or `./gradlew :fabric_1_21_1:runServer` launches a local dedicated server for a specific platform/version.
+- `./gradlew :1.21.1:runData` regenerates NeoForge data into `src/generated/resources`.
+- `./gradlew :1.21.1:runGameTestServer` runs registered NeoForge game tests.
+
+For latest NeoForge `26.x` builds on this local machine, the launcher manifest may need to be supplied from the Gradle cache:
+
+```sh
+./gradlew -PneoForge.neoFormRuntime.launcherManifestUrl=file:///Users/river_quinn/.gradle/caches/neoformruntime/artifacts/minecraft_launcher_manifest.json :26.1.2:build
+```
 
 ## Coding Style & Naming Conventions
 
@@ -21,7 +49,9 @@ Use UTF-8 and Java 21. Follow the existing Java style: 4-space indentation, brac
 
 ## Testing Guidelines
 
-There are currently no checked-in automated tests. Prefer focused tests for shared logic such as enchantment conversion and book handling. Put JVM tests in `src/test/java` with names ending in `Test`. Put NeoForge game tests under the mod namespace `enchantment_custom_table` so the configured run tasks can discover them. Always run `./gradlew build` after code or resource changes, and use `./gradlew runClient` for GUI, menu, renderer, and in-game behavior checks.
+Prefer focused tests for shared logic such as enchantment conversion, book handling, config behavior, and table session behavior. Put JVM tests in `src/test/java` with names ending in `Test`. Put NeoForge game tests under the mod namespace `enchantment_custom_table` so the configured run tasks can discover them.
+
+For shared logic changes, start with `./gradlew :common:test`. For cross-platform behavior changes, also build the representative Fabric projects and at least one NeoForge Stonecutter project. Always use `runClient` for GUI, menu, renderer, and in-game behavior checks.
 
 ## Commit & Pull Request Guidelines
 
