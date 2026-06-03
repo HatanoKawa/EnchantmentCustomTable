@@ -7,9 +7,8 @@ import com.river_quinn.enchantment_custom_table.fabric.init.FabricModItems;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import com.river_quinn.enchantment_custom_table.fabric.network.FabricModPayloads;
 import com.river_quinn.enchantment_custom_table.fabric.transfer.FabricItemStorageAdapters;
+import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.world.item.CreativeModeTabs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +25,10 @@ public class EnchantmentCustomTableFabric implements ModInitializer {
         FabricModMenus.register();
         FabricModPayloads.register();
         FabricItemStorageAdapters.register();
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
-            entries.accept(FabricModItems.ENCHANTING_CUSTOM_TABLE_ITEM);
-            entries.accept(FabricModItems.ENCHANTMENT_CONVERSION_TABLE_ITEM);
-        });
+        FabricVersionedMinecraft.registerFunctionalBlockItems(
+                FabricModItems.ENCHANTING_CUSTOM_TABLE_ITEM,
+                FabricModItems.ENCHANTMENT_CONVERSION_TABLE_ITEM
+        );
         LOGGER.info("Initialized EnchantmentCustomTable Fabric pilot");
     }
 

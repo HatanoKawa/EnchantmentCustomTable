@@ -14,7 +14,7 @@ pluginManagement {
     }
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id == 'net.fabricmc.fabric-loom-remap' || requested.id.id == 'fabric-loom') {
+            if (requested.id.id == 'net.fabricmc.fabric-loom-remap' || requested.id.id == 'fabric-loom' || requested.id.id == 'net.fabricmc.fabric-loom') {
                 useModule("net.fabricmc:fabric-loom:${requested.version}")
             }
         }
@@ -40,6 +40,7 @@ include 'fabric_1_21_8'
 include 'fabric_1_21_9'
 include 'fabric_1_21_10'
 include 'fabric_1_21_11'
+include 'fabric_26_1_2'
 
 project(':fabric_1_21_1').projectDir = file('fabric_versions/1.21.1')
 project(':fabric_1_21_2').projectDir = file('fabric_versions/1.21.2')
@@ -52,6 +53,7 @@ project(':fabric_1_21_8').projectDir = file('fabric_versions/1.21.8')
 project(':fabric_1_21_9').projectDir = file('fabric_versions/1.21.9')
 project(':fabric_1_21_10').projectDir = file('fabric_versions/1.21.10')
 project(':fabric_1_21_11').projectDir = file('fabric_versions/1.21.11')
+project(':fabric_26_1_2').projectDir = file('fabric_versions/26.1.2')
 project(':fabric_1_21_1').buildFileName = '../../fabric/build.gradle'
 project(':fabric_1_21_2').buildFileName = '../../fabric/build.gradle'
 project(':fabric_1_21_3').buildFileName = '../../fabric/build.gradle'
@@ -63,6 +65,7 @@ project(':fabric_1_21_8').buildFileName = '../../fabric/build.gradle'
 project(':fabric_1_21_9').buildFileName = '../../fabric/build.gradle'
 project(':fabric_1_21_10').buildFileName = '../../fabric/build.gradle'
 project(':fabric_1_21_11').buildFileName = '../../fabric/build.gradle'
+project(':fabric_26_1_2').buildFileName = '../../fabric/build-26.gradle'
 
 stonecutter {
     kotlinController = false

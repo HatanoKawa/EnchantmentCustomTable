@@ -1,10 +1,10 @@
 package com.river_quinn.enchantment_custom_table.fabric.util;
 
 import com.river_quinn.enchantment_custom_table.fabric.EnchantmentCustomTableFabric;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuType;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -13,16 +13,18 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ItemLike;
@@ -43,8 +45,8 @@ public final class FabricVersionedMinecraft {
         return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
     }
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(EnchantmentCustomTableFabric.MODID, path);
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(EnchantmentCustomTableFabric.MODID, path);
     }
 
     public static <V, T extends V> T register(Registry<V> registry, String path, T value) {
@@ -66,11 +68,11 @@ public final class FabricVersionedMinecraft {
     }
 
     public static <T extends AbstractContainerMenu> MenuType<T> blockPosMenuType(BlockPosMenuFactory<T> factory) {
-        return new ExtendedScreenHandlerType<>(factory::create, BlockPos.STREAM_CODEC);
+        return new ExtendedMenuType<>(factory::create, BlockPos.STREAM_CODEC);
     }
 
     public static void openBlockPosMenu(ServerPlayer serverPlayer, Component title, BlockPos pos, BlockPosMenuFactory<?> factory) {
-        serverPlayer.openMenu(new ExtendedScreenHandlerFactory<BlockPos>() {
+        serverPlayer.openMenu(new ExtendedMenuProvider<BlockPos>() {
             @Override
             public BlockPos getScreenOpeningData(ServerPlayer player) {
                 return pos;
@@ -89,9 +91,9 @@ public final class FabricVersionedMinecraft {
     }
 
     public static void registerFunctionalBlockItems(ItemLike... items) {
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(output -> {
             for (ItemLike item : items) {
-                entries.accept(item);
+                output.accept(new ItemStack(item), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             }
         });
     }
@@ -100,7 +102,7 @@ public final class FabricVersionedMinecraft {
             CustomPacketPayload.Type<T> type,
             StreamCodec<? super RegistryFriendlyByteBuf, T> codec
     ) {
-        PayloadTypeRegistry.playC2S().register(type, codec);
+        PayloadTypeRegistry.serverboundPlay().register(type, codec);
     }
 
     public static Registry<Enchantment> enchantmentRegistry(Level level) {
@@ -108,18 +110,18 @@ public final class FabricVersionedMinecraft {
     }
 
     public static Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, ResourceKey<Enchantment> key) {
-        return enchantmentRegistry(level).get(key.location()).map(holder -> holder);
+        return enchantmentRegistry(level).get(key.identifier()).map(holder -> holder);
     }
 
     public static String keyId(ResourceKey<?> key) {
-        return key.location().toString();
+        return key.identifier().toString();
     }
 
     public static String keyNamespace(ResourceKey<?> key) {
-        return key.location().getNamespace();
+        return key.identifier().getNamespace();
     }
 
     public static String keyPath(ResourceKey<?> key) {
-        return key.location().getPath();
+        return key.identifier().getPath();
     }
 }

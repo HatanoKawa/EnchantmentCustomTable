@@ -2,7 +2,7 @@ package com.river_quinn.enchantment_custom_table.fabric.network;
 
 import com.river_quinn.enchantment_custom_table.core.net.ConversionTableIntent;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantmentConversionMenu;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public final class FabricModPayloads {
@@ -10,7 +10,7 @@ public final class FabricModPayloads {
     }
 
     public static void register() {
-        PayloadTypeRegistry.playC2S().register(FabricConversionSearchPayload.TYPE, FabricConversionSearchPayload.CODEC);
+        FabricVersionedMinecraft.registerServerboundPlayPayload(FabricConversionSearchPayload.TYPE, FabricConversionSearchPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(FabricConversionSearchPayload.TYPE, (payload, context) -> {
             if (context.player().containerMenu instanceof FabricEnchantmentConversionMenu menu) {
                 ConversionTableIntent.SEARCH.dispatchTo(

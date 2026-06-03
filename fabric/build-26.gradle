@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.13.4'
+    id 'net.fabricmc.fabric-loom' version '1.17.0-alpha.14'
     id 'maven-publish'
 }
 
@@ -24,29 +24,14 @@ repositories {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of((findProperty('java_version') ?: '21') as Integer)
+    toolchain.languageVersion = JavaLanguageVersion.of((findProperty('java_version') ?: '25') as Integer)
 }
-
-def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '1.21.1'
-def fabricVersionedSource = [
-        '1.21.1' : 'legacy',
-        '1.21.2' : 'legacy_render',
-        '1.21.3' : 'legacy_render',
-        '1.21.4' : 'legacy_render',
-        '1.21.5' : 'legacy_optional_tag',
-        '1.21.6' : 'modern_legacy_input',
-        '1.21.7' : 'modern_legacy_input',
-        '1.21.8' : 'modern_legacy_input',
-        '1.21.9' : 'modern',
-        '1.21.10': 'modern',
-        '1.21.11': 'identifier'
-][fabricMinecraftVersionValue] ?: 'identifier'
 
 sourceSets {
     main {
         java.setSrcDirs([
                 rootProject.file('fabric/src/main/java'),
-                rootProject.file("fabric/src/versioned/${fabricVersionedSource}/java"),
+                rootProject.file('fabric/src/versioned/official26/java'),
                 rootProject.file('src/common/java'),
                 rootProject.file('src/common-minecraft/java')
         ])
@@ -65,9 +50,8 @@ sourceSets {
 
 dependencies {
     minecraft "com.mojang:minecraft:${fabric_minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
     testImplementation platform('org.junit:junit-bom:5.10.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -84,7 +68,7 @@ def fabricResourceProperties = [
         mod_license             : mod_license,
         fabric_minecraft_version: fabric_minecraft_version,
         fabric_loader_version   : fabric_loader_version,
-        fabric_java_version     : findProperty('fabric_java_version') ?: findProperty('java_version') ?: '21'
+        fabric_java_version     : findProperty('fabric_java_version') ?: findProperty('java_version') ?: '25'
 ]
 
 processResources {
