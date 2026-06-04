@@ -217,7 +217,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
     }
 
     private void addTableSlots() {
-        addSlot(new TableSlot(BOOK_SLOT, 16, 23) {
+        addSlot(new TableSlot(BOOK_SLOT, 16, 23, FabricEmptySlotIcon.BOOK) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(Items.BOOK);
@@ -229,7 +229,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                 regenerateGeneratedSlots();
             }
         });
-        addSlot(new TableSlot(PAYMENT_SLOT, 16, 41) {
+        addSlot(new TableSlot(PAYMENT_SLOT, 16, 41, FabricEmptySlotIcon.EMERALD) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return EnchantmentTableRules.paymentCostFor(stack.getItem(), FabricTableConfig.snapshot()) > 0;
@@ -246,7 +246,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
             int yPos = 23 + row * 18;
             for (int column = 0; column < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; column++) {
                 int xPos = 43 + column * 18;
-                addSlot(new TableSlot(ENCHANTED_BOOK_SLOT_START + generatedBookIndex, xPos, yPos) {
+                addSlot(new TableSlot(ENCHANTED_BOOK_SLOT_START + generatedBookIndex, xPos, yPos, FabricEmptySlotIcon.BOOK) {
                     @Override
                     public boolean mayPlace(ItemStack stack) {
                         return false;
@@ -266,7 +266,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                 generatedBookIndex++;
             }
         }
-        addSlot(new TableSlot(TEMPLATE_BOOK_SLOT, 16, 59) {
+        addSlot(new TableSlot(TEMPLATE_BOOK_SLOT, 16, 59, FabricEmptySlotIcon.BOOK) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return blockEntity != null && blockEntity.isValidCopyTemplate(stack);
@@ -278,7 +278,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                 regenerateGeneratedSlots();
             }
         });
-        addSlot(new TableSlot(COPY_RESULT_SLOT, 16, 77) {
+        addSlot(new TableSlot(COPY_RESULT_SLOT, 16, 77, FabricEmptySlotIcon.BOOK) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
@@ -305,9 +305,13 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
         }
     }
 
-    private class TableSlot extends Slot {
+    private class TableSlot extends FabricTableSlot {
         TableSlot(int index, int x, int y) {
-            super(inventory, index, x, y);
+            this(index, x, y, FabricEmptySlotIcon.NONE);
+        }
+
+        TableSlot(int index, int x, int y, FabricEmptySlotIcon emptyIcon) {
+            super(inventory, index, x, y, emptyIcon);
         }
 
         @Override

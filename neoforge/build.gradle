@@ -24,6 +24,9 @@ tasks.named('jar', Jar).configure {
 def targetJavaVersion = (findProperty('java_version')
         ?: (minecraft_version.toString().startsWith('26.') ? '25' : '21')) as Integer
 java.toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+def recipeResourceDir = rootProject.file(minecraft_version.toString() == '1.21.1'
+        ? 'src/versioned/resources/recipe_1_21_1'
+        : 'src/versioned/resources/recipe_1_21_2_plus')
 
 neoForge {
     version = project.neo_version
@@ -67,6 +70,7 @@ sourceSets {
         ])
         resources.setSrcDirs([
                 rootProject.file('src/main/resources'),
+                recipeResourceDir,
                 rootProject.file('src/generated/resources')
         ])
     }

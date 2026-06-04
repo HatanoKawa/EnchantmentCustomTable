@@ -28,10 +28,13 @@ java {
 }
 
 def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '1.21.1'
+def recipeResourceDir = rootProject.file(fabricMinecraftVersionValue == '1.21.1'
+        ? 'src/versioned/resources/recipe_1_21_1'
+        : 'src/versioned/resources/recipe_1_21_2_plus')
 def fabricVersionedSource = [
         '1.21.1' : 'legacy',
-        '1.21.2' : 'legacy_render',
-        '1.21.3' : 'legacy_render',
+        '1.21.2' : 'legacy_pair_render',
+        '1.21.3' : 'legacy_pair_render',
         '1.21.4' : 'legacy_render',
         '1.21.5' : 'legacy_optional_tag',
         '1.21.6' : 'modern_legacy_input',
@@ -52,7 +55,8 @@ sourceSets {
         ])
         resources.setSrcDirs([
                 rootProject.file('fabric/src/main/resources'),
-                rootProject.file('src/main/resources')
+                rootProject.file('src/main/resources'),
+                recipeResourceDir
         ])
         resources.exclude 'META-INF/**'
     }

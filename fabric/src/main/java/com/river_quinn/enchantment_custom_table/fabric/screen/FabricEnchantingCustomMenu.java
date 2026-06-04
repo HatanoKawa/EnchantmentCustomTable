@@ -190,7 +190,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                 }
             }
         });
-        addSlot(new TableSlot(INPUT_SLOT, 42, 8) {
+        addSlot(new TableSlot(INPUT_SLOT, 42, 8, FabricEmptySlotIcon.BOOK) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(Items.ENCHANTED_BOOK) && session.canApplyEnchantedBook(stack);
@@ -210,7 +210,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             int yPos = 8 + row * 18;
             for (int column = 0; column < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; column++) {
                 int xPos = 62 + column * 18;
-                addSlot(new TableSlot(GENERATED_SLOT_START + generatedBookIndex, xPos, yPos) {
+                addSlot(new TableSlot(GENERATED_SLOT_START + generatedBookIndex, xPos, yPos, FabricEmptySlotIcon.BOOK) {
                     @Override
                     public boolean mayPlace(ItemStack stack) {
                         return false;
@@ -243,9 +243,13 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         }
     }
 
-    private class TableSlot extends Slot {
+    private class TableSlot extends FabricTableSlot {
         TableSlot(int index, int x, int y) {
-            super(inventory, index, x, y);
+            this(index, x, y, FabricEmptySlotIcon.NONE);
+        }
+
+        TableSlot(int index, int x, int y, FabricEmptySlotIcon emptyIcon) {
+            super(inventory, index, x, y, emptyIcon);
         }
 
         @Override

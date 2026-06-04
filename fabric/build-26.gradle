@@ -27,6 +27,11 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of((findProperty('java_version') ?: '25') as Integer)
 }
 
+def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '26.1.2'
+def recipeResourceDir = rootProject.file(fabricMinecraftVersionValue == '1.21.1'
+        ? 'src/versioned/resources/recipe_1_21_1'
+        : 'src/versioned/resources/recipe_1_21_2_plus')
+
 sourceSets {
     main {
         java.setSrcDirs([
@@ -37,7 +42,8 @@ sourceSets {
         ])
         resources.setSrcDirs([
                 rootProject.file('fabric/src/main/resources'),
-                rootProject.file('src/main/resources')
+                rootProject.file('src/main/resources'),
+                recipeResourceDir
         ])
         resources.exclude 'META-INF/**'
     }

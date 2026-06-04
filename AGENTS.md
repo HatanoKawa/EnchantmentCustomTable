@@ -31,7 +31,7 @@ Use the Gradle wrapper from the repository root. Prefer explicit project paths n
 - `./gradlew :1.21.1:build`, `./gradlew :1.21.11:build`, or `./gradlew :26.1.2:build` builds a NeoForge Stonecutter version project.
 - `./gradlew :neoforge:build` builds the latest NeoForge platform subproject.
 - `./gradlew :fabric_1_21_1:build` through `./gradlew :fabric_1_21_11:build` build supported remapped Fabric `1.21.x` version projects.
-- `./gradlew :fabric_26_1_2:build` builds the official-names Fabric `26.1.2` project and requires Java 25.
+- `./gradlew :fabric_26_1:build`, `./gradlew :fabric_26_1_1:build`, or `./gradlew :fabric_26_1_2:build` builds an official-names Fabric `26.x` project and requires Java 25.
 - `./gradlew :fabric:build` builds the default Fabric project, currently using the `1.21.1` defaults.
 - `./gradlew :1.21.1:runClient`, `./gradlew :fabric_1_21_1:runClient`, or `./gradlew :fabric_26_1_2:runClient` launches a local client for manual testing on a specific platform/version.
 - `./gradlew :1.21.1:runServer`, `./gradlew :fabric_1_21_1:runServer`, or `./gradlew :fabric_26_1_2:runServer` launches a local dedicated server for a specific platform/version.
@@ -57,7 +57,7 @@ JAVA_HOME=/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home ./gradlew 
 When building the full Fabric matrix in one command, avoid Gradle/Loom remap OOM by running with one worker and a larger heap:
 
 ```sh
-JAVA_HOME=/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home ./gradlew --no-daemon --no-configuration-cache --max-workers=1 -Dorg.gradle.jvmargs=-Xmx4g :fabric_1_21_1:build :fabric_1_21_2:build :fabric_1_21_3:build :fabric_1_21_4:build :fabric_1_21_5:build :fabric_1_21_6:build :fabric_1_21_7:build :fabric_1_21_8:build :fabric_1_21_9:build :fabric_1_21_10:build :fabric_1_21_11:build :fabric_26_1_2:build
+JAVA_HOME=/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home ./gradlew --no-daemon --no-configuration-cache --max-workers=1 -Dorg.gradle.jvmargs=-Xmx4g :fabric_1_21_1:build :fabric_1_21_2:build :fabric_1_21_3:build :fabric_1_21_4:build :fabric_1_21_5:build :fabric_1_21_6:build :fabric_1_21_7:build :fabric_1_21_8:build :fabric_1_21_9:build :fabric_1_21_10:build :fabric_1_21_11:build :fabric_26_1:build :fabric_26_1_1:build :fabric_26_1_2:build
 ```
 
 ## Coding Style & Naming Conventions

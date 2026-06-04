@@ -4,16 +4,16 @@
   "key": {
     "#": "minecraft:quartz_block",
     "B": "minecraft:book",
-    "E": "minecraft:emerald_block",
+    "D": "minecraft:diamond_block",
     "L": "minecraft:lapis_block"
   },
   "pattern": [
     "LBL",
-    "E#E",
+    "D#D",
     "###"
   ],
   "result": {
     "count": 1,
-    "id": "enchantment_custom_table:enchantment_conversion_table"
+    "id": "enchantment_custom_table:enchanting_custom_table"
   }
 }
