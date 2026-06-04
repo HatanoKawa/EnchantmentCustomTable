@@ -17,17 +17,38 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.sprite.SpriteGetter;
 import net.minecraft.client.resources.model.sprite.SpriteId;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public class EnchantingCustomTableRenderer<T extends EnchantingTableLikeBlockEntity> implements BlockEntityRenderer<T, EnchantTableRenderState> {
-    public static final SpriteId BOOK_TEXTURE = Sheets.BLOCK_ENTITIES_MAPPER.defaultNamespaceApply("enchantment/enchanting_table_book");
+    private static final String MOD_ID = "enchantment_custom_table";
+    private static final String CUSTOM_TABLE_BOOK = "enchantment/enchanting_custom_table_book";
+    private static final String CONVERSION_TABLE_BOOK = "enchantment/enchantment_conversion_table_book";
     private final SpriteGetter sprites;
     private final BookModel bookModel;
+    private final SpriteId bookTexture;
 
     public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context) {
+        this(context, bookTexture(CUSTOM_TABLE_BOOK));
+    }
+
+    public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context, SpriteId bookTexture) {
         this.sprites = context.sprites();
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
+        this.bookTexture = bookTexture;
+    }
+
+    public static EnchantingCustomTableRenderer<EnchantingTableLikeBlockEntity> enchantingCustom(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer<>(context, bookTexture(CUSTOM_TABLE_BOOK));
+    }
+
+    public static EnchantingCustomTableRenderer<EnchantingTableLikeBlockEntity> enchantmentConversion(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer<>(context, bookTexture(CONVERSION_TABLE_BOOK));
+    }
+
+    private static SpriteId bookTexture(String path) {
+        return Sheets.BLOCK_ENTITIES_MAPPER.apply(Identifier.fromNamespaceAndPath(MOD_ID, path));
     }
 
     @Override
@@ -82,7 +103,7 @@ public class EnchantingCustomTableRenderer<T extends EnchantingTableLikeBlockEnt
                 renderState.lightCoords,
                 OverlayTexture.NO_OVERLAY,
                 -1,
-                BOOK_TEXTURE,
+                this.bookTexture,
                 this.sprites,
                 0,
                 renderState.breakProgress
@@ -108,17 +129,38 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.MaterialSet;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public class EnchantingCustomTableRenderer<T extends EnchantingTableLikeBlockEntity> implements BlockEntityRenderer<T, EnchantTableRenderState> {
-    public static final Material BOOK_LOCATION = Sheets.BLOCK_ENTITIES_MAPPER.defaultNamespaceApply("enchanting_table_book");
+    private static final String MOD_ID = "enchantment_custom_table";
+    private static final String CUSTOM_TABLE_BOOK = "enchanting_custom_table_book";
+    private static final String CONVERSION_TABLE_BOOK = "enchantment_conversion_table_book";
     private final MaterialSet materials;
     private final BookModel bookModel;
+    private final Material bookLocation;
 
     public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context) {
+        this(context, bookLocation(CUSTOM_TABLE_BOOK));
+    }
+
+    public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context, Material bookLocation) {
         this.materials = context.materials();
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
+        this.bookLocation = bookLocation;
+    }
+
+    public static EnchantingCustomTableRenderer<EnchantingTableLikeBlockEntity> enchantingCustom(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer<>(context, bookLocation(CUSTOM_TABLE_BOOK));
+    }
+
+    public static EnchantingCustomTableRenderer<EnchantingTableLikeBlockEntity> enchantmentConversion(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer<>(context, bookLocation(CONVERSION_TABLE_BOOK));
+    }
+
+    private static Material bookLocation(String path) {
+        return Sheets.BLOCK_ENTITIES_MAPPER.apply(Identifier.fromNamespaceAndPath(MOD_ID, path));
     }
 
     @Override
@@ -170,11 +212,11 @@ public class EnchantingCustomTableRenderer<T extends EnchantingTableLikeBlockEnt
                 this.bookModel,
                 bookState,
                 poseStack,
-                BOOK_LOCATION.renderType(RenderTypes::entitySolid),
+                this.bookLocation.renderType(RenderTypes::entitySolid),
                 renderState.lightCoords,
                 OverlayTexture.NO_OVERLAY,
                 -1,
-                this.materials.get(BOOK_LOCATION),
+                this.materials.get(this.bookLocation),
                 0,
                 renderState.breakProgress
         );
@@ -199,17 +241,38 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.MaterialSet;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public class EnchantingCustomTableRenderer<T extends EnchantingTableLikeBlockEntity> implements BlockEntityRenderer<T, EnchantTableRenderState> {
-    public static final Material BOOK_LOCATION = Sheets.BLOCK_ENTITIES_MAPPER.defaultNamespaceApply("enchanting_table_book");
+    private static final String MOD_ID = "enchantment_custom_table";
+    private static final String CUSTOM_TABLE_BOOK = "enchanting_custom_table_book";
+    private static final String CONVERSION_TABLE_BOOK = "enchantment_conversion_table_book";
     private final MaterialSet materials;
     private final BookModel bookModel;
+    private final Material bookLocation;
 
     public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context) {
+        this(context, bookLocation(CUSTOM_TABLE_BOOK));
+    }
+
+    public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context, Material bookLocation) {
         this.materials = context.materials();
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
+        this.bookLocation = bookLocation;
+    }
+
+    public static EnchantingCustomTableRenderer<EnchantingTableLikeBlockEntity> enchantingCustom(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer<>(context, bookLocation(CUSTOM_TABLE_BOOK));
+    }
+
+    public static EnchantingCustomTableRenderer<EnchantingTableLikeBlockEntity> enchantmentConversion(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer<>(context, bookLocation(CONVERSION_TABLE_BOOK));
+    }
+
+    private static Material bookLocation(String path) {
+        return Sheets.BLOCK_ENTITIES_MAPPER.apply(ResourceLocation.fromNamespaceAndPath(MOD_ID, path));
     }
 
     @Override
@@ -261,11 +324,11 @@ public class EnchantingCustomTableRenderer<T extends EnchantingTableLikeBlockEnt
                 this.bookModel,
                 bookState,
                 poseStack,
-                BOOK_LOCATION.renderType(RenderType::entitySolid),
+                this.bookLocation.renderType(RenderType::entitySolid),
                 renderState.lightCoords,
                 OverlayTexture.NO_OVERLAY,
                 -1,
-                this.materials.get(BOOK_LOCATION),
+                this.materials.get(this.bookLocation),
                 0,
                 renderState.breakProgress
         );
@@ -290,11 +353,31 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public class EnchantingCustomTableRenderer implements BlockEntityRenderer<EnchantingTableLikeBlockEntity> {
-    public static final Material BOOK_LOCATION;
+    private static final String MOD_ID = "enchantment_custom_table";
+    private static final String CUSTOM_TABLE_BOOK = "entity/enchanting_custom_table_book";
+    private static final String CONVERSION_TABLE_BOOK = "entity/enchantment_conversion_table_book";
     private final BookModel bookModel;
+    private final Material bookLocation;
 
     public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context) {
+        this(context, bookLocation(CUSTOM_TABLE_BOOK));
+    }
+
+    public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context, Material bookLocation) {
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
+        this.bookLocation = bookLocation;
+    }
+
+    public static EnchantingCustomTableRenderer enchantingCustom(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer(context, bookLocation(CUSTOM_TABLE_BOOK));
+    }
+
+    public static EnchantingCustomTableRenderer enchantmentConversion(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer(context, bookLocation(CONVERSION_TABLE_BOOK));
+    }
+
+    private static Material bookLocation(String path) {
+        return new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.fromNamespaceAndPath(MOD_ID, path));
     }
 
     public void render(EnchantingTableLikeBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, Vec3 vec3) {
@@ -319,13 +402,9 @@ public class EnchantingCustomTableRenderer implements BlockEntityRenderer<Enchan
         float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
         float f6 = Mth.lerp(partialTick, blockEntity.oOpen, blockEntity.open);
         this.bookModel.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
-        VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
+        VertexConsumer vertexconsumer = this.bookLocation.buffer(bufferSource, RenderType::entitySolid);
         this.bookModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay);
         poseStack.popPose();
-    }
-
-    static {
-        BOOK_LOCATION = new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.withDefaultNamespace("entity/enchanting_table_book"));
     }
 }
 *///?} else if >=1.21.2 {
@@ -345,11 +424,31 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class EnchantingCustomTableRenderer implements BlockEntityRenderer<EnchantingTableLikeBlockEntity> {
-    public static final Material BOOK_LOCATION;
+    private static final String MOD_ID = "enchantment_custom_table";
+    private static final String CUSTOM_TABLE_BOOK = "entity/enchanting_custom_table_book";
+    private static final String CONVERSION_TABLE_BOOK = "entity/enchantment_conversion_table_book";
     private final BookModel bookModel;
+    private final Material bookLocation;
 
     public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context) {
+        this(context, bookLocation(CUSTOM_TABLE_BOOK));
+    }
+
+    public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context, Material bookLocation) {
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
+        this.bookLocation = bookLocation;
+    }
+
+    public static EnchantingCustomTableRenderer enchantingCustom(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer(context, bookLocation(CUSTOM_TABLE_BOOK));
+    }
+
+    public static EnchantingCustomTableRenderer enchantmentConversion(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer(context, bookLocation(CONVERSION_TABLE_BOOK));
+    }
+
+    private static Material bookLocation(String path) {
+        return new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.fromNamespaceAndPath(MOD_ID, path));
     }
 
     public void render(EnchantingTableLikeBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
@@ -374,13 +473,9 @@ public class EnchantingCustomTableRenderer implements BlockEntityRenderer<Enchan
         float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
         float f6 = Mth.lerp(partialTick, blockEntity.oOpen, blockEntity.open);
         this.bookModel.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
-        VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
+        VertexConsumer vertexconsumer = this.bookLocation.buffer(bufferSource, RenderType::entitySolid);
         this.bookModel.renderToBuffer(poseStack, vertexconsumer, packedLight, packedOverlay);
         poseStack.popPose();
-    }
-
-    static {
-        BOOK_LOCATION = new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.withDefaultNamespace("entity/enchanting_table_book"));
     }
 }
 *///?} else {
@@ -403,11 +498,31 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 
 public class EnchantingCustomTableRenderer implements BlockEntityRenderer<EnchantingTableLikeBlockEntity> {
-    public static final Material BOOK_LOCATION;
+    private static final String MOD_ID = "enchantment_custom_table";
+    private static final String CUSTOM_TABLE_BOOK = "entity/enchanting_custom_table_book";
+    private static final String CONVERSION_TABLE_BOOK = "entity/enchantment_conversion_table_book";
     private final BookModel bookModel;
+    private final Material bookLocation;
 
     public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context) {
+        this(context, bookLocation(CUSTOM_TABLE_BOOK));
+    }
+
+    public EnchantingCustomTableRenderer(BlockEntityRendererProvider.Context context, Material bookLocation) {
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
+        this.bookLocation = bookLocation;
+    }
+
+    public static EnchantingCustomTableRenderer enchantingCustom(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer(context, bookLocation(CUSTOM_TABLE_BOOK));
+    }
+
+    public static EnchantingCustomTableRenderer enchantmentConversion(BlockEntityRendererProvider.Context context) {
+        return new EnchantingCustomTableRenderer(context, bookLocation(CONVERSION_TABLE_BOOK));
+    }
+
+    private static Material bookLocation(String path) {
+        return new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.fromNamespaceAndPath(MOD_ID, path));
     }
 
     public void render(EnchantingTableLikeBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
@@ -432,7 +547,7 @@ public class EnchantingCustomTableRenderer implements BlockEntityRenderer<Enchan
         float f5 = Mth.frac(f3 + 0.75F) * 1.6F - 0.3F;
         float f6 = Mth.lerp(partialTick, blockEntity.oOpen, blockEntity.open);
         this.bookModel.setupAnim(f, Mth.clamp(f4, 0.0F, 1.0F), Mth.clamp(f5, 0.0F, 1.0F), f6);
-        VertexConsumer vertexconsumer = BOOK_LOCATION.buffer(bufferSource, RenderType::entitySolid);
+        VertexConsumer vertexconsumer = this.bookLocation.buffer(bufferSource, RenderType::entitySolid);
         this.bookModel.render(poseStack, vertexconsumer, packedLight, packedOverlay, -1);
         poseStack.popPose();
     }
@@ -442,8 +557,5 @@ public class EnchantingCustomTableRenderer implements BlockEntityRenderer<Enchan
         return new AABB((double)pos.getX(), (double)pos.getY(), (double)pos.getZ(), (double)pos.getX() + (double)1.0F, (double)pos.getY() + (double)1.5F, (double)pos.getZ() + (double)1.0F);
     }
 
-    static {
-        BOOK_LOCATION = new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.withDefaultNamespace("entity/enchanting_table_book"));
-    }
 }
 *///?}

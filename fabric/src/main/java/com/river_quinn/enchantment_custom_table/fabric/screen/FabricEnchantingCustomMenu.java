@@ -6,9 +6,12 @@ import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlocks;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
 import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
+import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -18,6 +21,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
@@ -137,6 +142,9 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                 if (result.success() && !player.getInventory().add(result.exportedStack())) {
                     player.drop(result.exportedStack(), false);
                 }
+                if (result.playSound()) {
+                    playUseSound();
+                }
             }
             default -> {
                 return false;
@@ -200,7 +208,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             public void setChanged() {
                 ItemStack stack = getItem();
                 super.setChanged();
-                if (!stack.isEmpty() && session.applyEnchantedBook(stack.copyWithCount(1)).changed()) {
+                if (!stack.isEmpty() && applyEnchantedBook(stack.copyWithCount(1))) {
                     inventory.setStackInSlot(INPUT_SLOT, ItemStack.EMPTY);
                 }
             }
@@ -213,7 +221,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                 addSlot(new TableSlot(GENERATED_SLOT_START + generatedBookIndex, xPos, yPos, FabricEmptySlotIcon.BOOK) {
                     @Override
                     public boolean mayPlace(ItemStack stack) {
-                        return false;
+                        return stack.is(Items.ENCHANTED_BOOK) && session.canApplyEnchantedBook(stack);
                     }
 
                     @Override
@@ -224,11 +232,66 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                     @Override
                     public void onTake(Player player, ItemStack stack) {
                         super.onTake(player, stack);
-                        session.removeGeneratedBook(stack);
+                        removeGeneratedBook(stack);
+                    }
+
+                    @Override
+                    public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
+                        handleGeneratedSlotSetByPlayer(getContainerSlot(), newStack, oldStack);
                     }
                 });
                 generatedBookIndex++;
             }
+        }
+    }
+
+    private void handleGeneratedSlotSetByPlayer(int slotIndex, ItemStack newStack, ItemStack oldStack) {
+        if (newStack.isEmpty()) {
+            inventory.setStackInSlot(slotIndex, ItemStack.EMPTY);
+            return;
+        }
+
+        boolean hasDuplicateEnchantment = hasDuplicateEnchantment(newStack, oldStack);
+        if (!oldStack.isEmpty() && !hasDuplicateEnchantment) {
+            removeGeneratedBook(oldStack);
+        }
+
+        if (applyEnchantedBook(newStack.copyWithCount(1)) && hasDuplicateEnchantment) {
+            entity.containerMenu.setCarried(ItemStack.EMPTY.copy());
+        }
+    }
+
+    private boolean hasDuplicateEnchantment(ItemStack newStack, ItemStack oldStack) {
+        if (newStack.isEmpty() || oldStack.isEmpty()) {
+            return false;
+        }
+        List<EnchantmentTableRules.EnchantmentLevel> newEnchantments = FabricEnchantmentUtils.getEnchantmentLevels(world, newStack);
+        List<EnchantmentTableRules.EnchantmentLevel> oldEnchantments = FabricEnchantmentUtils.getEnchantmentLevels(world, oldStack);
+        if (oldEnchantments.isEmpty()) {
+            return false;
+        }
+        return EnchantmentTableRules.containsMatchingEnchantment(newEnchantments, oldEnchantments.get(0).key());
+    }
+
+    private boolean applyEnchantedBook(ItemStack stack) {
+        TableOperationResult result = session.applyEnchantedBook(stack);
+        if (result.success() && result.changed()) {
+            playUseSound();
+        }
+        return result.success();
+    }
+
+    private boolean removeGeneratedBook(ItemStack stack) {
+        EnchantingTableSession.GeneratedBookRemovalResult result = session.removeGeneratedBook(stack);
+        if (result.success()) {
+            playUseSound();
+        }
+        return result.success();
+    }
+
+    private void playUseSound() {
+        if (!world.isClientSide()) {
+            world.playSound(null, new BlockPos(x, y, z), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }
 
