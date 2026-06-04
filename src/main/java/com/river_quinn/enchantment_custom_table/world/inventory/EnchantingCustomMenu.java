@@ -21,9 +21,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.*;
-import net.neoforged.neoforge.items.ItemStackHandler;
 //? if <1.21.9 {
-/*import net.neoforged.neoforge.items.SlotItemHandler;
+/*import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 *///?}
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
@@ -36,7 +37,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
@@ -538,7 +538,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	//? if >=1.21.9 {
 	private static class EnchantingMenuItemHandler extends MenuItemStackHandler {
 		private final EnchantingCustomTableBlockEntity blockEntity;
-		private final ItemStackHandler fallbackToolHandler = new ItemStackHandler(1);
+		private final MenuItemStackHandler fallbackToolHandler = new MenuItemStackHandler(1, 1);
 
 		private EnchantingMenuItemHandler(EnchantingCustomTableBlockEntity blockEntity) {
 			super(ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE, 1);
@@ -551,7 +551,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		}
 
 		@Override
-		void setStackInSlot(int slot, ItemStack stack) {
+		public void setStackInSlot(int slot, ItemStack stack) {
 			if (slot == 0) {
 				persistentHandler().setStackInSlot(0, stack);
 			} else {
@@ -614,7 +614,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 			return Math.min(amount, current.getCount());
 		}
 
-		private IItemHandlerModifiable persistentHandler() {
+		private MenuItemStackHandler persistentHandler() {
 			return blockEntity != null ? blockEntity.getInventory() : fallbackToolHandler;
 		}
 	}

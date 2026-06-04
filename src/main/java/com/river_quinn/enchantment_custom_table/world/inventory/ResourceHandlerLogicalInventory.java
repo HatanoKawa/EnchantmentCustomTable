@@ -5,10 +5,10 @@ import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 
-class ResourceHandlerLogicalInventory implements LogicalInventory {
+public class ResourceHandlerLogicalInventory implements LogicalInventory {
     private final MenuItemStackHandler handler;
 
-    ResourceHandlerLogicalInventory(MenuItemStackHandler handler) {
+    public ResourceHandlerLogicalInventory(MenuItemStackHandler handler) {
         this.handler = handler;
     }
 

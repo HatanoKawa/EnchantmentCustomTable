@@ -11,7 +11,12 @@ import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
-import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
+//? if >=1.21.9 {
+import com.river_quinn.enchantment_custom_table.world.inventory.MenuItemStackHandler;
+import com.river_quinn.enchantment_custom_table.world.inventory.ResourceHandlerLogicalInventory;
+//?} else {
+/*import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
+*///?}
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
@@ -37,8 +42,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 //?}
 //? if <1.21.9 {
 /*import net.neoforged.neoforge.items.IItemHandler;
-*///?}
 import net.neoforged.neoforge.items.ItemStackHandler;
+*///?}
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
@@ -54,7 +59,33 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     public static final int COPY_RESULT_SLOT = 3;
     public static final int SLOT_COUNT = 4;
 
-    private final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT) {
+    //? if >=1.21.9 {
+    private final MenuItemStackHandler inventory = new MenuItemStackHandler(SLOT_COUNT, 64) {
+        @Override
+        public boolean isValid(int slot, ItemResource resource) {
+            if (resource.isEmpty()) {
+                return false;
+            }
+            ItemStack stack = resource.toStack();
+            return switch (slot) {
+                case BOOK_SLOT -> stack.is(Items.BOOK);
+                case PAYMENT_SLOT -> isPaymentItem(stack);
+                case TEMPLATE_SLOT -> isValidCopyTemplate(stack);
+                default -> false;
+            };
+        }
+
+        @Override
+        protected void onContentsChanged(int slot, ItemStack previousContents) {
+            markInventoryChanged();
+            if (!updatingCopyResult) {
+                refreshCopyResult();
+            }
+        }
+    };
+    private final LogicalInventory logicalInventory = new ResourceHandlerLogicalInventory(inventory);
+    //?} else {
+    /*private final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return switch (slot) {
@@ -74,6 +105,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         }
     };
     private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);
+    *///?}
     //? if >=1.21.9 {
     private final ResourceHandler<ItemResource> automationHandler = new ConversionAutomationItemHandler();
     //?} else {
@@ -91,9 +123,15 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         return new EnchantmentConversionMenu(i, inventory, new FriendlyByteBuf(Unpooled.buffer()).writeBlockPos(this.worldPosition));
     }
 
-    public ItemStackHandler getInventory() {
+    //? if >=1.21.9 {
+    public MenuItemStackHandler getInventory() {
         return inventory;
     }
+    //?} else {
+    /*public ItemStackHandler getInventory() {
+        return inventory;
+    }
+    *///?}
 
     public LogicalInventory getLogicalInventory() {
         return logicalInventory;

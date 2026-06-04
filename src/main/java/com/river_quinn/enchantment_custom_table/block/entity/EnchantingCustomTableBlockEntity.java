@@ -7,7 +7,12 @@ import com.river_quinn.enchantment_custom_table.core.inventory.SlotRole;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
-import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
+//? if >=1.21.9 {
+import com.river_quinn.enchantment_custom_table.world.inventory.MenuItemStackHandler;
+import com.river_quinn.enchantment_custom_table.world.inventory.ResourceHandlerLogicalInventory;
+//?} else {
+/*import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
+*///?}
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,8 +39,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 //?}
 //? if <1.21.9 {
 /*import net.neoforged.neoforge.items.IItemHandler;
-*///?}
 import net.neoforged.neoforge.items.ItemStackHandler;
+*///?}
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
@@ -49,7 +54,16 @@ import java.util.List;
 public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEntity implements MenuProvider {
     public static final int TOOL_SLOT = 0;
 
-    private final ItemStackHandler inventory = new ItemStackHandler(1) {
+    //? if >=1.21.9 {
+    private final MenuItemStackHandler inventory = new MenuItemStackHandler(1, 1) {
+        @Override
+        protected void onContentsChanged(int slot, ItemStack previousContents) {
+            markInventoryChanged();
+        }
+    };
+    private final LogicalInventory logicalInventory = new ResourceHandlerLogicalInventory(inventory);
+    //?} else {
+    /*private final ItemStackHandler inventory = new ItemStackHandler(1) {
         @Override
         public int getSlotLimit(int slot) {
             return 1;
@@ -61,6 +75,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         }
     };
     private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);
+    *///?}
     //? if >=1.21.9 {
     private final ResourceHandler<ItemResource> automationHandler = new EnchantingAutomationItemHandler();
     //?} else {
@@ -81,9 +96,15 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         return this.worldPosition;
     }
 
-    public ItemStackHandler getInventory() {
+    //? if >=1.21.9 {
+    public MenuItemStackHandler getInventory() {
         return inventory;
     }
+    //?} else {
+    /*public ItemStackHandler getInventory() {
+        return inventory;
+    }
+    *///?}
 
     public LogicalInventory getLogicalInventory() {
         return logicalInventory;

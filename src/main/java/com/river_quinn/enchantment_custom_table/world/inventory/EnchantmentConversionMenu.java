@@ -29,10 +29,10 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemStackHandler;
 //? if <1.21.9 {
-/*import net.neoforged.neoforge.items.SlotItemHandler;
+/*import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 *///?}
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.ItemResource;
@@ -503,7 +503,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 	//? if >=1.21.9 {
 	private static class ConversionMenuItemHandler extends MenuItemStackHandler {
 		private final EnchantmentConversionTableBlockEntity blockEntity;
-		private final ItemStackHandler fallbackPersistentHandler = new ItemStackHandler(EnchantmentConversionTableBlockEntity.SLOT_COUNT);
+		private final MenuItemStackHandler fallbackPersistentHandler = new MenuItemStackHandler(EnchantmentConversionTableBlockEntity.SLOT_COUNT, 64);
 
 		private ConversionMenuItemHandler(EnchantmentConversionTableBlockEntity blockEntity) {
 			super(ENCHANTMENT_CONVERSION_SLOT_SIZE);
@@ -518,7 +518,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 		}
 
 		@Override
-		void setStackInSlot(int slot, ItemStack stack) {
+		public void setStackInSlot(int slot, ItemStack stack) {
 			if (isPersistentSlot(slot)) {
 				persistentHandler().setStackInSlot(toPersistentSlot(slot), stack);
 			} else {
@@ -561,7 +561,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			if (!isPersistentSlot(index)) {
 				return super.getCapacityAsLong(index, resource);
 			}
-			int slotLimit = persistentHandler().getSlotLimit(toPersistentSlot(index));
+			int slotLimit = persistentHandler().getCapacityAsInt(toPersistentSlot(index), resource);
 			return resource.isEmpty() ? slotLimit : Math.min(slotLimit, resource.toStack().getMaxStackSize());
 		}
 
@@ -592,7 +592,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			return Math.min(amount, current.getCount());
 		}
 
-		private IItemHandlerModifiable persistentHandler() {
+		private MenuItemStackHandler persistentHandler() {
 			return blockEntity != null ? blockEntity.getInventory() : fallbackPersistentHandler;
 		}
 
