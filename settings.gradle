@@ -116,6 +116,10 @@ def fabricVersionProjects = [
 ]
 
 gradle.rootProject {
+    def releaseModId = providers.gradleProperty('mod_id').get()
+    def releaseModVersion = providers.gradleProperty('mod_version').get()
+    def releaseArtifactsDir = layout.buildDirectory.dir('release-artifacts')
+
     tasks.register('verifyCommon') {
         group = 'verification'
         description = 'Runs fast shared JVM tests.'
@@ -171,5 +175,54 @@ gradle.rootProject {
         group = 'verification'
         description = 'Runs the full verification set expected by CI.'
         dependsOn ':verifyAll'
+    }
+
+    tasks.register('cleanReleaseArtifacts', Delete) {
+        group = 'build'
+        description = 'Deletes collected release artifacts.'
+        delete releaseArtifactsDir
+    }
+
+    tasks.register('buildReleaseArtifacts', Copy) {
+        group = 'build'
+        description = 'Builds all publishable NeoForge/Fabric version projects and collects release jars.'
+        dependsOn ':cleanReleaseArtifacts'
+        dependsOn ':common:build'
+        dependsOn neoForgeVersionProjects.collect { ":${it}:build" }
+        dependsOn fabricVersionProjects.collect { ":${it}:build" }
+        duplicatesStrategy = DuplicatesStrategy.FAIL
+        into releaseArtifactsDir
+
+        def expectedJarNames = []
+        neoForgeVersionProjects.each { minecraftVersion ->
+            def jarName = "${releaseModId}-${releaseModVersion}-neoforge-mc${minecraftVersion}.jar"
+            expectedJarNames.add(jarName)
+            from(project(":${minecraftVersion}").layout.buildDirectory.dir('libs')) {
+                include jarName
+            }
+        }
+
+        fabricVersionProjects.each { projectName ->
+            def minecraftVersion = projectName.substring('fabric_'.length()).replace('_', '.')
+            def jarName = "${releaseModId}-${releaseModVersion}-fabric-mc${minecraftVersion}.jar"
+            expectedJarNames.add(jarName)
+            from(project(":${projectName}").layout.buildDirectory.dir('libs')) {
+                include jarName
+            }
+        }
+
+        doLast {
+            def outputDir = releaseArtifactsDir.get().asFile
+            def actualJarNames = outputDir.exists()
+                    ? outputDir.listFiles().findAll { it.name.endsWith('.jar') }.collect { it.name }.sort()
+                    : []
+            def expectedSortedJarNames = expectedJarNames.sort()
+            def missingJarNames = expectedSortedJarNames - actualJarNames
+            def unexpectedJarNames = actualJarNames - expectedSortedJarNames
+
+            if (!missingJarNames.empty || !unexpectedJarNames.empty) {
+                throw new GradleException("Release artifact collection mismatch. Missing: ${missingJarNames}; unexpected: ${unexpectedJarNames}")
+            }
+        }
     }
 }

@@ -42,8 +42,9 @@ Use the Gradle wrapper from the repository root. Prefer explicit project paths n
 - `./gradlew :verifyRepresentative` runs common tests plus representative first/latest/26.x builds for both platforms.
 - `./gradlew :verifyNeoForgeAll`, `./gradlew :verifyFabricAll`, or `./gradlew :verifyAll` run the full corresponding build matrices.
 - `./gradlew :verifyCi` mirrors the complete verification set expected by GitHub Actions.
+- `./gradlew buildReleaseArtifacts` runs the common build, builds every publishable NeoForge/Fabric version target, validates the release jar set, and collects release jars into `build/release-artifacts/`.
 
-Running `./gradlew clean build` performs a full multi-project build across all included NeoForge and Fabric version projects and regenerates release jars with the current naming scheme. NeoForge version artifacts are written to `versions/<mc_version>/build/libs/`, Fabric version artifacts are written to `fabric_versions/<mc_version>/build/libs/`, the latest NeoForge platform artifact is written to `neoforge/build/libs/`, and the default Fabric project artifact is written to `fabric/build/libs/`. Prefer the version-project artifacts for publishing because the latest/default platform projects duplicate entries from the version matrix.
+Running `./gradlew clean build` performs a full multi-project build across all included NeoForge and Fabric version projects and regenerates release jars with the current naming scheme. NeoForge version artifacts are written to `versions/<mc_version>/build/libs/`, Fabric version artifacts are written to `fabric_versions/<mc_version>/build/libs/`, the latest NeoForge platform artifact is written to `neoforge/build/libs/`, and the default Fabric project artifact is written to `fabric/build/libs/`. Prefer `./gradlew buildReleaseArtifacts` for publishing because it skips the duplicate latest/default platform artifacts and collects only version-project release jars into one directory.
 
 For latest NeoForge `26.x` builds on this local machine, the launcher manifest may need to be supplied from the Gradle cache:
 
