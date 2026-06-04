@@ -7,7 +7,7 @@ version = mod_version
 group = mod_group_id
 
 base {
-    archivesName = "${mod_id}-fabric"
+    archivesName = mod_id
 }
 
 repositories {
@@ -28,6 +28,10 @@ java {
 }
 
 def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '1.21.1'
+tasks.withType(AbstractArchiveTask).configureEach {
+    archiveVersion = "${project.mod_version}-fabric-mc${fabricMinecraftVersionValue}"
+}
+
 def recipeResourceDir = rootProject.file(fabricMinecraftVersionValue == '1.21.1'
         ? 'src/versioned/resources/recipe_1_21_1'
         : 'src/versioned/resources/recipe_1_21_2_plus')

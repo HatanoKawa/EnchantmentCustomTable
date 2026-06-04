@@ -27,6 +27,7 @@ Resources live in `src/main/resources`, including mod assets under `assets/encha
 
 Use the Gradle wrapper from the repository root. Prefer explicit project paths now that the workspace contains multiple platform/version projects.
 
+- The default Gradle heap is `-Xmx4G`, and `org.gradle.workers.max=1` is set to keep full matrix builds stable on local machines. Override `--max-workers` only for smaller targeted builds when you need speed.
 - `./gradlew :common:test` runs fast shared JVM tests.
 - `./gradlew :1.21.1:build`, `./gradlew :1.21.11:build`, or `./gradlew :26.1.2:build` builds a NeoForge Stonecutter version project.
 - `./gradlew :neoforge:build` builds the latest NeoForge platform subproject.
@@ -41,6 +42,8 @@ Use the Gradle wrapper from the repository root. Prefer explicit project paths n
 - `./gradlew :verifyRepresentative` runs common tests plus representative first/latest/26.x builds for both platforms.
 - `./gradlew :verifyNeoForgeAll`, `./gradlew :verifyFabricAll`, or `./gradlew :verifyAll` run the full corresponding build matrices.
 - `./gradlew :verifyCi` mirrors the complete verification set expected by GitHub Actions.
+
+Running `./gradlew clean build` performs a full multi-project build across all included NeoForge and Fabric version projects and regenerates release jars with the current naming scheme. NeoForge version artifacts are written to `versions/<mc_version>/build/libs/`, Fabric version artifacts are written to `fabric_versions/<mc_version>/build/libs/`, the latest NeoForge platform artifact is written to `neoforge/build/libs/`, and the default Fabric project artifact is written to `fabric/build/libs/`. Prefer the version-project artifacts for publishing because the latest/default platform projects duplicate entries from the version matrix.
 
 For latest NeoForge `26.x` builds on this local machine, the launcher manifest may need to be supplied from the Gradle cache:
 

@@ -30,7 +30,7 @@ base {
 }
 
 tasks.named('jar', Jar).configure {
-    archiveVersion = "${project.mod_version}-mc${project.minecraft_version}"
+    archiveVersion = "${project.mod_version}-neoforge-mc${project.minecraft_version}"
 }
 
 def targetJavaVersion = (findProperty('java_version')
