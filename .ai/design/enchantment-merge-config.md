@@ -24,12 +24,12 @@ Current behavior-oriented boolean options:
 - `incrementalSameLevelMerge = false`
 - `convertOnlyLevelOneBook = false`
 
-Deprecated compatibility options are retained only to emit migration warnings when set to a non-default value:
+Deprecated compatibility options were removed during the next major release cleanup:
 
 - `ignoreEnchantmentLevelLimit`
 - `convert_max_level_book`
 
-Deprecated options must not participate in runtime behavior. This keeps the active behavior controlled by one clear path.
+These options no longer participate in runtime behavior, config generation, or warning output. Old config files should be regenerated or migrated to the current behavior-oriented fields above.
 
 ## Level Limit Enforcement
 

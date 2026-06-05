@@ -8,6 +8,11 @@
     "${mod_authors}"
   ],
   "license": "${mod_license}",
+  "contact": {
+    "homepage": "https://modrinth.com/mod/enchantment-custom-table",
+    "issues": "https://github.com/HatanoKawa/EnchantmentCustomTable/issues",
+    "sources": "https://github.com/HatanoKawa/EnchantmentCustomTable"
+  },
   "environment": "*",
   "entrypoints": {
     "main": [

@@ -29,7 +29,7 @@ public class EnchantmentCustomTableFabric implements ModInitializer {
                 FabricModItems.ENCHANTING_CUSTOM_TABLE_ITEM,
                 FabricModItems.ENCHANTMENT_CONVERSION_TABLE_ITEM
         );
-        LOGGER.info("Initialized EnchantmentCustomTable Fabric pilot");
+        LOGGER.info("Initialized EnchantmentCustomTable Fabric");
     }
 
 }
