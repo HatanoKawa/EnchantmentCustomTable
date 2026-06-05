@@ -77,6 +77,10 @@ import java.util.List;
 import java.util.function.Consumer;
 //?}
 
+import static com.river_quinn.enchantment_custom_table.gametest.GameTestAssertions.assertEnchantmentIdLevel;
+import static com.river_quinn.enchantment_custom_table.gametest.GameTestAssertions.assertEnchantmentLevel;
+import static com.river_quinn.enchantment_custom_table.gametest.GameTestAssertions.assertTrue;
+
 //? if >=1.21.5 {
 //? if >=1.21.6 {
 @EventBusSubscriber(modid = EnchantmentCustomTable.MODID)
@@ -1381,43 +1385,6 @@ public class BasicGameTests {
             Config.enforceEnchantmentLevelLimit = enforceEnchantmentLevelLimit;
             Config.incrementalSameLevelMerge = incrementalSameLevelMerge;
         }
-    }
-
-    private static void assertEnchantmentLevel(
-            GameTestHelper helper,
-            ItemStack stack,
-            Holder<Enchantment> enchantment,
-            int expectedLevel,
-            String message
-    ) {
-        int actualLevel = EnchantmentUtils.getEnchantments(stack).getLevel(enchantment);
-        assertTrue(helper, actualLevel == expectedLevel, message + " (expected " + expectedLevel + ", got " + actualLevel + ")");
-    }
-
-    private static void assertEnchantmentIdLevel(
-            GameTestHelper helper,
-            ItemStack stack,
-            String enchantmentId,
-            int expectedLevel,
-            String message
-    ) {
-        int actualLevel = 0;
-        for (var entry : EnchantmentUtils.getEnchantments(stack).entrySet()) {
-            var entryId = enchantmentId(helper, entry.getKey());
-            if (enchantmentId.equals(entryId)) {
-                actualLevel = entry.getIntValue();
-                break;
-            }
-        }
-        assertTrue(helper, actualLevel == expectedLevel, message + " (expected " + expectedLevel + ", got " + actualLevel + ")");
-    }
-
-    private static void assertTrue(GameTestHelper helper, boolean condition, String message) {
-        //? if >=1.21.5 {
-        helper.assertTrue(condition, Component.literal(message));
-        //?} else {
-        /*helper.assertTrue(condition, message);
-        *///?}
     }
 
     private static void movePlayerTo(Player player, BlockPos pos) {
