@@ -56,12 +56,12 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
             if (minecraft != null && minecraft.gameMode != null) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 0);
             }
-        }).bounds(this.leftPos + 7, this.topPos + 4, 17, 18).build());
+        }).bounds(this.leftPos + 7, this.topPos + 7 + 1 * 18 + 15, 18, 18).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"), button -> {
             if (minecraft != null && minecraft.gameMode != null) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 1);
             }
-        }).bounds(this.leftPos + 24, this.topPos + 4, 17, 18).build());
+        }).bounds(this.leftPos + 25, this.topPos + 7 + 1 * 18 + 15, 18, 18).build());
     }
 
     @Override
@@ -108,7 +108,7 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        graphics.centeredText(this.font, generatePageText(), 24, 66, 0xFFFFFFFF);
+        graphics.centeredText(this.font, generatePageText(), 25, 45 + 15, 0xFFFFFFFF);
     }
 
     private String generatePageText() {

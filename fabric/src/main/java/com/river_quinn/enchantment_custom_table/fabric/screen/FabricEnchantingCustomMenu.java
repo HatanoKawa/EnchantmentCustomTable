@@ -48,6 +48,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final FabricTableInventory inventory;
     private final EnchantingTableSession session;
+    private boolean suppressGeneratedSlotTakeRemoval;
 
     public FabricEnchantingCustomMenu(int id, Inventory inventory, BlockPos pos) {
         super(FabricModMenus.ENCHANTING_CUSTOM, id);
@@ -89,14 +90,29 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
         if (index >= GENERATED_SLOT_START && index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE) {
+            int enchantmentIndexInCache = session.cacheIndexForGeneratedSlot(index);
             ItemStack generatedBook = stack.copy();
             if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
                 return ItemStack.EMPTY;
             }
             if (stack.isEmpty()) {
                 slot.set(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
             }
-            slot.onTake(player, generatedBook);
+            suppressGeneratedSlotTakeRemoval = true;
+            try {
+                slot.onTake(player, generatedBook);
+            } finally {
+                suppressGeneratedSlotTakeRemoval = false;
+            }
+            EnchantingTableSession.GeneratedBookRemovalResult removalResult = removeGeneratedBook(generatedBook);
+            if (removalResult.success()
+                    && !removalResult.regenerated()
+                    && enchantmentIndexInCache < session.generatedItemCount()) {
+                session.setGeneratedItem(enchantmentIndexInCache, ItemStack.EMPTY);
+                session.updateGeneratedSlots();
+            }
             return original;
         }
 
@@ -232,7 +248,9 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                     @Override
                     public void onTake(Player player, ItemStack stack) {
                         super.onTake(player, stack);
-                        removeGeneratedBook(stack);
+                        if (!suppressGeneratedSlotTakeRemoval) {
+                            removeGeneratedBook(stack);
+                        }
                     }
 
                     @Override
@@ -281,12 +299,12 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         return result.success();
     }
 
-    private boolean removeGeneratedBook(ItemStack stack) {
+    private EnchantingTableSession.GeneratedBookRemovalResult removeGeneratedBook(ItemStack stack) {
         EnchantingTableSession.GeneratedBookRemovalResult result = session.removeGeneratedBook(stack);
         if (result.success()) {
             playUseSound();
         }
-        return result.success();
+        return result;
     }
 
     private void playUseSound() {
