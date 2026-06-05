@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": "minecraft:quartz_block",
+    "#": "#enchantment_custom_table:quartz_blocks",
     "B": "minecraft:book",
     "E": "minecraft:emerald_block",
     "L": "minecraft:lapis_block"

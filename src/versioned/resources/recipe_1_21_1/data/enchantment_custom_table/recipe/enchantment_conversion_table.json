@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "#": {
-      "item": "minecraft:quartz_block"
+      "tag": "enchantment_custom_table:quartz_blocks"
     },
     "B": {
       "item": "minecraft:book"

@@ -32,9 +32,7 @@ public final class FabricTableConfig {
 
         try (Reader reader = Files.newBufferedReader(configPath)) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            JsonTableConfigCodec.ParseResult result = JsonTableConfigCodec.parse(root);
-            snapshot = result.snapshot();
-            result.deprecatedWarnings().forEach(FabricTableConfig::warnDeprecatedChanged);
+            snapshot = JsonTableConfigCodec.parse(root);
         } catch (RuntimeException | IOException exception) {
             EnchantmentCustomTableFabric.LOGGER.warn("Failed to load Fabric config {}, using defaults", configPath, exception);
             snapshot = JsonTableConfigCodec.defaultSnapshot();
@@ -54,13 +52,5 @@ public final class FabricTableConfig {
         } catch (IOException exception) {
             EnchantmentCustomTableFabric.LOGGER.warn("Failed to write default Fabric config {}", configPath, exception);
         }
-    }
-
-    private static void warnDeprecatedChanged(JsonTableConfigCodec.DeprecatedOptionWarning warning) {
-        EnchantmentCustomTableFabric.LOGGER.warn(
-                "Config option '{}' is deprecated and ignored. Use '{}' instead.",
-                warning.optionName(),
-                warning.replacementName()
-        );
     }
 }

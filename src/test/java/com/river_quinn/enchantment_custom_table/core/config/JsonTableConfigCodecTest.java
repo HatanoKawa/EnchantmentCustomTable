@@ -10,10 +10,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class JsonTableConfigCodecTest {
     @Test
     void emptyConfigUsesDefaults() {
-        JsonTableConfigCodec.ParseResult result = JsonTableConfigCodec.parse(new JsonObject());
+        TableConfigSnapshot snapshot = JsonTableConfigCodec.parse(new JsonObject());
 
-        assertEquals(JsonTableConfigCodec.defaultSnapshot(), result.snapshot());
-        assertTrue(result.deprecatedWarnings().isEmpty());
+        assertEquals(JsonTableConfigCodec.defaultSnapshot(), snapshot);
+    }
+
+    @Test
+    void nullConfigUsesDefaults() {
+        TableConfigSnapshot snapshot = JsonTableConfigCodec.parse(null);
+
+        assertEquals(JsonTableConfigCodec.defaultSnapshot(), snapshot);
     }
 
     @Test
@@ -25,7 +31,7 @@ class JsonTableConfigCodecTest {
         root.addProperty(JsonTableConfigCodec.INCREMENTAL_SAME_LEVEL_MERGE, true);
         root.addProperty(JsonTableConfigCodec.CONVERT_ONLY_LEVEL_ONE_BOOK, true);
 
-        TableConfigSnapshot snapshot = JsonTableConfigCodec.parse(root).snapshot();
+        TableConfigSnapshot snapshot = JsonTableConfigCodec.parse(root);
 
         assertEquals(12, snapshot.minimumEmeraldCost());
         assertEquals(2, snapshot.minimumEmeraldBlockCost());
@@ -35,40 +41,15 @@ class JsonTableConfigCodecTest {
     }
 
     @Test
-    void deprecatedFieldsAtDefaultDoNotWarn() {
+    void defaultJsonContainsOnlyCurrentFields() {
         JsonObject root = JsonTableConfigCodec.defaultJson();
 
-        JsonTableConfigCodec.ParseResult result = JsonTableConfigCodec.parse(root);
-
-        assertTrue(result.deprecatedWarnings().isEmpty());
-    }
-
-    @Test
-    void deprecatedFieldsWarnWhenNonDefault() {
-        JsonObject root = new JsonObject();
-        root.addProperty(JsonTableConfigCodec.DEPRECATED_IGNORE_ENCHANTMENT_LEVEL_LIMIT, false);
-        root.addProperty(JsonTableConfigCodec.DEPRECATED_CONVERT_MAX_LEVEL_BOOK, false);
-
-        JsonTableConfigCodec.ParseResult result = JsonTableConfigCodec.parse(root);
-
-        assertEquals(2, result.deprecatedWarnings().size());
-        assertEquals(JsonTableConfigCodec.DEPRECATED_IGNORE_ENCHANTMENT_LEVEL_LIMIT, result.deprecatedWarnings().get(0).optionName());
-        assertEquals(JsonTableConfigCodec.ENFORCE_ENCHANTMENT_LEVEL_LIMIT, result.deprecatedWarnings().get(0).replacementName());
-        assertEquals(JsonTableConfigCodec.DEPRECATED_CONVERT_MAX_LEVEL_BOOK, result.deprecatedWarnings().get(1).optionName());
-        assertEquals(JsonTableConfigCodec.CONVERT_ONLY_LEVEL_ONE_BOOK, result.deprecatedWarnings().get(1).replacementName());
-    }
-
-    @Test
-    void deprecatedFieldsAreIgnoredForBehavior() {
-        JsonObject root = new JsonObject();
-        root.addProperty(JsonTableConfigCodec.ENFORCE_ENCHANTMENT_LEVEL_LIMIT, false);
-        root.addProperty(JsonTableConfigCodec.CONVERT_ONLY_LEVEL_ONE_BOOK, false);
-        root.addProperty(JsonTableConfigCodec.DEPRECATED_IGNORE_ENCHANTMENT_LEVEL_LIMIT, false);
-        root.addProperty(JsonTableConfigCodec.DEPRECATED_CONVERT_MAX_LEVEL_BOOK, false);
-
-        TableConfigSnapshot snapshot = JsonTableConfigCodec.parse(root).snapshot();
-
-        assertFalse(snapshot.enforceEnchantmentLevelLimit());
-        assertFalse(snapshot.convertOnlyLevelOneBook());
+        assertTrue(root.has(JsonTableConfigCodec.MINIMUM_EMERALD_COST));
+        assertTrue(root.has(JsonTableConfigCodec.MINIMUM_EMERALD_BLOCK_COST));
+        assertTrue(root.has(JsonTableConfigCodec.ENFORCE_ENCHANTMENT_LEVEL_LIMIT));
+        assertTrue(root.has(JsonTableConfigCodec.INCREMENTAL_SAME_LEVEL_MERGE));
+        assertTrue(root.has(JsonTableConfigCodec.CONVERT_ONLY_LEVEL_ONE_BOOK));
+        assertFalse(root.has("ignoreEnchantmentLevelLimit"));
+        assertFalse(root.has("convert_max_level_book"));
     }
 }
