@@ -1,5 +1,6 @@
 package com.river_quinn.enchantment_custom_table.fabric.client.gui;
 
+import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantingCustomMenu;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -25,29 +26,29 @@ public class FabricEnchantingCustomScreen extends AbstractContainerScreen<Fabric
             if (minecraft != null && minecraft.gameMode != null) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 0);
             }
-        }).bounds(this.leftPos + 7, this.topPos + 43, 26, 18).build());
+        }).bounds(this.leftPos + TableMenuLayout.Enchanting.PREVIOUS_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Enchanting.PAGE_BUTTON_Y, TableMenuLayout.Enchanting.PAGE_BUTTON_WIDTH, TableMenuLayout.Enchanting.PAGE_BUTTON_HEIGHT).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"), button -> {
             if (minecraft != null && minecraft.gameMode != null) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 1);
             }
-        }).bounds(this.leftPos + 33, this.topPos + 43, 26, 18).build());
+        }).bounds(this.leftPos + TableMenuLayout.Enchanting.NEXT_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Enchanting.PAGE_BUTTON_Y, TableMenuLayout.Enchanting.PAGE_BUTTON_WIDTH, TableMenuLayout.Enchanting.PAGE_BUTTON_HEIGHT).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_export"), button -> {
             if (minecraft != null && minecraft.gameMode != null) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 2);
             }
-        }).bounds(this.leftPos + 7, this.topPos + 61, 52, 18).build());
+        }).bounds(this.leftPos + TableMenuLayout.Enchanting.EXPORT_BUTTON_X, this.topPos + TableMenuLayout.Enchanting.EXPORT_BUTTON_Y, TableMenuLayout.Enchanting.EXPORT_BUTTON_WIDTH, TableMenuLayout.Enchanting.EXPORT_BUTTON_HEIGHT).build());
     }
 
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, ARROW, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, ARROW, this.leftPos + TableMenuLayout.Enchanting.ARROW_X, this.topPos + TableMenuLayout.Enchanting.ARROW_Y, 0, 0, 12, 9, 12, 9);
     }
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        graphics.centeredText(this.font, generatePageText(), 35, 33, 0xFFFFFFFF);
+        graphics.centeredText(this.font, generatePageText(), TableMenuLayout.Enchanting.PAGE_LABEL_X, TableMenuLayout.Enchanting.PAGE_LABEL_Y, 0xFFFFFFFF);
     }
 
     private String generatePageText() {

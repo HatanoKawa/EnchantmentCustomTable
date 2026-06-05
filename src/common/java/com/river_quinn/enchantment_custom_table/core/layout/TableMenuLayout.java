@@ -38,4 +38,39 @@ public final class TableMenuLayout {
             return GENERATED_SLOT_START_Y + row * SLOT_SIZE;
         }
     }
+
+    public static final class Enchanting {
+        public static final int TOOL_SLOT_X = 8;
+        public static final int TOOL_SLOT_Y = 8;
+        public static final int INPUT_SLOT_X = 42;
+        public static final int INPUT_SLOT_Y = 8;
+        public static final int GENERATED_SLOT_START_X = 61;
+        public static final int GENERATED_SLOT_START_Y = 8;
+        public static final int PLAYER_INVENTORY_X = 8;
+        public static final int PLAYER_INVENTORY_Y = 84;
+        public static final int ARROW_X = 27;
+        public static final int ARROW_Y = 12;
+        public static final int PAGE_LABEL_X = 35;
+        public static final int PAGE_LABEL_Y = 33;
+        public static final int PREVIOUS_PAGE_BUTTON_X = 7;
+        public static final int NEXT_PAGE_BUTTON_X = 33;
+        public static final int PAGE_BUTTON_Y = 43;
+        public static final int PAGE_BUTTON_WIDTH = 26;
+        public static final int PAGE_BUTTON_HEIGHT = 18;
+        public static final int EXPORT_BUTTON_X = 7;
+        public static final int EXPORT_BUTTON_Y = 61;
+        public static final int EXPORT_BUTTON_WIDTH = 52;
+        public static final int EXPORT_BUTTON_HEIGHT = 18;
+
+        private Enchanting() {
+        }
+
+        public static int generatedSlotX(int column) {
+            return GENERATED_SLOT_START_X + column * SLOT_SIZE;
+        }
+
+        public static int generatedSlotY(int row) {
+            return GENERATED_SLOT_START_Y + row * SLOT_SIZE;
+        }
+    }
 }

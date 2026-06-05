@@ -4,6 +4,7 @@ package com.river_quinn.enchantment_custom_table.client.gui;
 /*import com.mojang.blaze3d.systems.RenderSystem;
 *///?}
 import com.river_quinn.enchantment_custom_table.core.net.EnchantingTableIntent;
+import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
 //? if >=1.21.9 {
@@ -77,7 +78,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         graphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, arrow_texture, this.leftPos + TableMenuLayout.Enchanting.ARROW_X, this.topPos + TableMenuLayout.Enchanting.ARROW_Y, 0, 0, 12, 9, 12, 9);
 
     }
     //?} else if >=1.21.6 {
@@ -90,7 +91,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, arrow_texture, this.leftPos + TableMenuLayout.Enchanting.ARROW_X, this.topPos + TableMenuLayout.Enchanting.ARROW_Y, 0, 0, 12, 9, 12, 9);
 
     }
     *///?} else if >=1.21.2 {
@@ -104,7 +105,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
     protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int gx, int gy) {
         RenderSystem.setShaderColor(1, 1, 1, 1);
         guiGraphics.blit(RenderType::guiTextured, gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
-        guiGraphics.blit(RenderType::guiTextured, arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+        guiGraphics.blit(RenderType::guiTextured, arrow_texture, this.leftPos + TableMenuLayout.Enchanting.ARROW_X, this.topPos + TableMenuLayout.Enchanting.ARROW_Y, 0, 0, 12, 9, 12, 9);
 
     }
     *///?} else {
@@ -122,7 +123,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         guiGraphics.blit(gui_bg_texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         RenderSystem.disableBlend();
 
-        guiGraphics.blit(arrow_texture, this.leftPos + 27, this.topPos + 12, 0, 0, 12, 9, 12, 9);
+        guiGraphics.blit(arrow_texture, this.leftPos + TableMenuLayout.Enchanting.ARROW_X, this.topPos + TableMenuLayout.Enchanting.ARROW_Y, 0, 0, 12, 9, 12, 9);
 
     }
     *///?}
@@ -161,8 +162,8 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         graphics.centeredText(
                 this.font,
                 generatePageText(),
-                35,
-                33,
+                TableMenuLayout.Enchanting.PAGE_LABEL_X,
+                TableMenuLayout.Enchanting.PAGE_LABEL_Y,
                 0xFFFFFFFF
         );
 
@@ -173,8 +174,8 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
         guiGraphics.drawCenteredString(
                 this.font,
                 generatePageText(),
-                35,
-                33,
+                TableMenuLayout.Enchanting.PAGE_LABEL_X,
+                TableMenuLayout.Enchanting.PAGE_LABEL_Y,
                 -1
         );
 
@@ -191,7 +192,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
                             EnchantingTableIntent.PREVIOUS_PAGE
                     ));
                 }
-        ).bounds(this.leftPos + 7, this.topPos + 43, 26, 18).build();
+        ).bounds(this.leftPos + TableMenuLayout.Enchanting.PREVIOUS_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Enchanting.PAGE_BUTTON_Y, TableMenuLayout.Enchanting.PAGE_BUTTON_WIDTH, TableMenuLayout.Enchanting.PAGE_BUTTON_HEIGHT).build();
         this.addRenderableWidget(button_left_arrow_button);
 
         button_right_arrow_button = Button.builder(
@@ -201,7 +202,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
                             EnchantingTableIntent.NEXT_PAGE
                     ));
                 }
-        ).bounds(this.leftPos + 33, this.topPos + 43, 26, 18).build();
+        ).bounds(this.leftPos + TableMenuLayout.Enchanting.NEXT_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Enchanting.PAGE_BUTTON_Y, TableMenuLayout.Enchanting.PAGE_BUTTON_WIDTH, TableMenuLayout.Enchanting.PAGE_BUTTON_HEIGHT).build();
         this.addRenderableWidget(button_right_arrow_button);
 
         export_button = Button.builder(
@@ -211,7 +212,7 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
                             EnchantingTableIntent.EXPORT_ALL_ENCHANTMENTS
                     ));
                 }
-        ).bounds(this.leftPos + 7, this.topPos + 61, 52, 18).build();
+        ).bounds(this.leftPos + TableMenuLayout.Enchanting.EXPORT_BUTTON_X, this.topPos + TableMenuLayout.Enchanting.EXPORT_BUTTON_Y, TableMenuLayout.Enchanting.EXPORT_BUTTON_WIDTH, TableMenuLayout.Enchanting.EXPORT_BUTTON_HEIGHT).build();
         this.addRenderableWidget(export_button);
     }
 

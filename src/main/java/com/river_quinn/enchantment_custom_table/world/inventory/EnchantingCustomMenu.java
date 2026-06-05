@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.core.net.EnchantingTableActions;
 import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
 import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
@@ -218,9 +219,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 
 		this.addSlot(
 			//? if >=1.21.9 {
-			new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, 8, 8) {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, TableMenuLayout.Enchanting.TOOL_SLOT_X, TableMenuLayout.Enchanting.TOOL_SLOT_Y) {
 			//?} else {
-			/*new SlotItemHandler(itemHandler, 0, 8, 8) {
+			/*new SlotItemHandler(itemHandler, 0, TableMenuLayout.Enchanting.TOOL_SLOT_X, TableMenuLayout.Enchanting.TOOL_SLOT_Y) {
 			*///?}
 			@Override
 			public void onQuickCraft(ItemStack newStack, ItemStack oldStack) {
@@ -248,9 +249,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 
 		this.addSlot(
 			//? if >=1.21.9 {
-			new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, 42, 8) {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, TableMenuLayout.Enchanting.INPUT_SLOT_X, TableMenuLayout.Enchanting.INPUT_SLOT_Y) {
 			//?} else {
-			/*new SlotItemHandler(itemHandler, 1, 42, 8) {
+			/*new SlotItemHandler(itemHandler, 1, TableMenuLayout.Enchanting.INPUT_SLOT_X, TableMenuLayout.Enchanting.INPUT_SLOT_Y) {
 			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
@@ -293,9 +294,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 
 		int enchanted_book_index = 0;
 		for (int row = 0; row < ENCHANTED_BOOK_SLOT_ROW_COUNT; row++) {
-			int yPos = 8 + row * 18;
+			int yPos = TableMenuLayout.Enchanting.generatedSlotY(row);
 			for (int col = 0; col < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; col++) {
-				int xPos = 61 + col * 18;
+				int xPos = TableMenuLayout.Enchanting.generatedSlotX(col);
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
 					//? if >=1.21.9 {
@@ -345,9 +346,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 
 		for (int si = 0; si < 3; ++si)
 			for (int sj = 0; sj < 9; ++sj)
-				this.addSlot(new Slot(inv, sj + (si + 1) * 9, 0 + 8 + sj * 18, 0 + 84 + si * 18));
+				this.addSlot(new Slot(inv, sj + (si + 1) * 9, TableMenuLayout.Enchanting.PLAYER_INVENTORY_X + sj * TableMenuLayout.SLOT_SIZE, TableMenuLayout.Enchanting.PLAYER_INVENTORY_Y + si * TableMenuLayout.SLOT_SIZE));
 		for (int si = 0; si < 9; ++si)
-			this.addSlot(new Slot(inv, si, 0 + 8 + si * 18, 0 + 142));
+			this.addSlot(new Slot(inv, si, TableMenuLayout.Enchanting.PLAYER_INVENTORY_X + si * TableMenuLayout.SLOT_SIZE, TableMenuLayout.Enchanting.PLAYER_INVENTORY_Y + 58));
 
 		initMenu();
 		if (boundBlockEntity != null) {
