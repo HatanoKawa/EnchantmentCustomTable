@@ -31,3 +31,18 @@ Checks:
 4. Confirm the template slot is at `8, 77` and the copy result slot is at `26, 77`.
 5. Confirm the page label appears centered at `25, 60`.
 6. Confirm previous/next page buttons use the same placement and size as the current NeoForge GUI.
+
+## Enchantment Conversion Table Reload Boundary
+
+Scope: NeoForge 1.21.1, NeoForge 26.1.2, Fabric 1.21.1, and Fabric 26.1.2 representative clients.
+
+Checks:
+
+1. Open the enchantment conversion table with enough books and payment to show generated results.
+2. Run `/reload` while the table screen is open.
+3. Change the search text or use page controls to force the generated list to refresh.
+4. Confirm the generated enchanted book list is still valid and no stale/ghost entries remain.
+
+Notes:
+
+- The session should rebuild its enchantment list from the current registry on each generation pass instead of keeping a long-lived per-menu cache.

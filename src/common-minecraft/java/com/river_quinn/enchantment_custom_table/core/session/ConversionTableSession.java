@@ -28,7 +28,6 @@ public class ConversionTableSession {
     private final int paymentSlot;
     private final int generatedSlotStart;
     private final int generatedSlotCount;
-    private final List<Holder<Enchantment>> allEnchantments = new ArrayList<>();
 
     private String searchQuery = "";
     private String searchClientLanguage = "";
@@ -228,24 +227,18 @@ public class ConversionTableSession {
         return TableOperationResult.success(true);
     }
 
-    private void loadAllEnchantments() {
-        if (allEnchantments.isEmpty()) {
-            allEnchantments.addAll(enchantments.allEnchantments(world));
-        }
-    }
-
     private ItemStack createEnchantedBook(Holder<Enchantment> enchantment) {
         int enchantmentLevel = config.snapshot().convertOnlyLevelOneBook() ? 1 : enchantment.value().getMaxLevel();
         return enchantments.createEnchantedBook(enchantment, enchantmentLevel);
     }
 
     private List<Holder<Enchantment>> getFilteredEnchantments() {
-        loadAllEnchantments();
+        List<Holder<Enchantment>> availableEnchantments = enchantments.allEnchantments(world);
         if (EnchantmentSearchRules.isBlankSearch(searchQuery)) {
-            return allEnchantments;
+            return availableEnchantments;
         }
 
-        return allEnchantments.stream()
+        return availableEnchantments.stream()
                 .filter(this::matchesSearch)
                 .toList();
     }
