@@ -1,5 +1,6 @@
 package com.river_quinn.enchantment_custom_table.fabric.client.gui;
 
+import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.fabric.network.FabricConversionSearchPayload;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantmentConversionMenu;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
@@ -56,12 +57,12 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
             if (minecraft != null && minecraft.gameMode != null) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 0);
             }
-        }).bounds(this.leftPos + 7, this.topPos + 7 + 1 * 18 + 15, 18, 18).build());
+        }).bounds(this.leftPos + TableMenuLayout.Conversion.PREVIOUS_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y, TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH, TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"), button -> {
             if (minecraft != null && minecraft.gameMode != null) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, 1);
             }
-        }).bounds(this.leftPos + 25, this.topPos + 7 + 1 * 18 + 15, 18, 18).build());
+        }).bounds(this.leftPos + TableMenuLayout.Conversion.NEXT_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y, TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH, TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT).build());
     }
 
     @Override
@@ -108,7 +109,7 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        graphics.centeredText(this.font, generatePageText(), 25, 45 + 15, 0xFFFFFFFF);
+        graphics.centeredText(this.font, generatePageText(), TableMenuLayout.Conversion.PAGE_LABEL_X, TableMenuLayout.Conversion.PAGE_LABEL_Y, 0xFFFFFFFF);
     }
 
     private String generatePageText() {

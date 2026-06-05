@@ -4,6 +4,7 @@ package com.river_quinn.enchantment_custom_table.client.gui;
 /*import com.mojang.blaze3d.systems.RenderSystem;
 *///?}
 import com.river_quinn.enchantment_custom_table.core.net.ConversionTableIntent;
+import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.network.enchanted_book_converting_table.EnchantmentConversionTableNetData;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
@@ -205,8 +206,8 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         graphics.centeredText(
                 this.font,
                 generatePageText(),
-                25,
-                45 + 15,
+                TableMenuLayout.Conversion.PAGE_LABEL_X,
+                TableMenuLayout.Conversion.PAGE_LABEL_Y,
                 0xFFFFFFFF
         );
 
@@ -217,8 +218,8 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         guiGraphics.drawCenteredString(
                 this.font,
                 generatePageText(),
-                25,
-                45 + 15,
+                TableMenuLayout.Conversion.PAGE_LABEL_X,
+                TableMenuLayout.Conversion.PAGE_LABEL_Y,
                 -1
         );
 
@@ -249,7 +250,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                             ConversionTableIntent.PREVIOUS_PAGE
                     ));
                 }
-        ).bounds(this.leftPos + 7, this.topPos + 7 + 1 * 18 + 15, 18, 18).build();
+        ).bounds(this.leftPos + TableMenuLayout.Conversion.PREVIOUS_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y, TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH, TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT).build();
         this.addRenderableWidget(button_left_arrow_button);
 
         button_right_arrow_button = Button.builder(
@@ -259,7 +260,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                             ConversionTableIntent.NEXT_PAGE
                     ));
                 }
-        ).bounds(this.leftPos + 25, this.topPos + 7 + 1 * 18 + 15, 18, 18).build();
+        ).bounds(this.leftPos + TableMenuLayout.Conversion.NEXT_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y, TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH, TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT).build();
         this.addRenderableWidget(button_right_arrow_button);
 
     }

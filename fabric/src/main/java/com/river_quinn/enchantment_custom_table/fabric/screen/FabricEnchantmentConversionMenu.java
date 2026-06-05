@@ -5,6 +5,7 @@ import com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlocks;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
+import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.core.net.ConversionTableActions;
 import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSession;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
@@ -75,7 +76,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
         addPageDataSlots();
         addTableSlots();
         regenerateGeneratedSlots();
-        addPlayerInventory(inventory, 8, 99);
+        addPlayerInventory(inventory, TableMenuLayout.Conversion.PLAYER_INVENTORY_X, TableMenuLayout.Conversion.PLAYER_INVENTORY_Y);
     }
 
     @Override
@@ -217,7 +218,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
     }
 
     private void addTableSlots() {
-        addSlot(new TableSlot(BOOK_SLOT, 8, 23, FabricEmptySlotIcon.BOOK) {
+        addSlot(new TableSlot(BOOK_SLOT, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y, FabricEmptySlotIcon.BOOK) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(Items.BOOK);
@@ -229,7 +230,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                 regenerateGeneratedSlots();
             }
         });
-        addSlot(new TableSlot(PAYMENT_SLOT, 26, 23, FabricEmptySlotIcon.EMERALD) {
+        addSlot(new TableSlot(PAYMENT_SLOT, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y, FabricEmptySlotIcon.EMERALD) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return EnchantmentTableRules.paymentCostFor(stack.getItem(), FabricTableConfig.snapshot()) > 0;
@@ -243,9 +244,9 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
         });
         int generatedBookIndex = 0;
         for (int row = 0; row < ENCHANTED_BOOK_SLOT_ROW_COUNT; row++) {
-            int yPos = 23 + row * 18;
+            int yPos = TableMenuLayout.Conversion.generatedSlotY(row);
             for (int column = 0; column < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; column++) {
-                int xPos = 44 + column * 18;
+                int xPos = TableMenuLayout.Conversion.generatedSlotX(column);
                 addSlot(new TableSlot(ENCHANTED_BOOK_SLOT_START + generatedBookIndex, xPos, yPos, FabricEmptySlotIcon.BOOK) {
                     @Override
                     public boolean mayPlace(ItemStack stack) {
@@ -266,7 +267,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                 generatedBookIndex++;
             }
         }
-        addSlot(new TableSlot(TEMPLATE_BOOK_SLOT, 8, 77, FabricEmptySlotIcon.BOOK) {
+        addSlot(new TableSlot(TEMPLATE_BOOK_SLOT, TableMenuLayout.Conversion.TEMPLATE_SLOT_X, TableMenuLayout.Conversion.TEMPLATE_SLOT_Y, FabricEmptySlotIcon.BOOK) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return blockEntity != null && blockEntity.isValidCopyTemplate(stack);
@@ -278,7 +279,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                 regenerateGeneratedSlots();
             }
         });
-        addSlot(new TableSlot(COPY_RESULT_SLOT, 26, 77, FabricEmptySlotIcon.BOOK) {
+        addSlot(new TableSlot(COPY_RESULT_SLOT, TableMenuLayout.Conversion.COPY_RESULT_SLOT_X, TableMenuLayout.Conversion.COPY_RESULT_SLOT_Y, FabricEmptySlotIcon.BOOK) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
@@ -297,11 +298,11 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
     private void addPlayerInventory(Inventory inventory, int xOffset, int yOffset) {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-                addSlot(new Slot(inventory, column + (row + 1) * 9, xOffset + column * 18, yOffset + row * 18));
+                addSlot(new Slot(inventory, column + (row + 1) * 9, xOffset + column * TableMenuLayout.SLOT_SIZE, yOffset + row * TableMenuLayout.SLOT_SIZE));
             }
         }
         for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(inventory, column, xOffset + column * 18, yOffset + 58));
+            addSlot(new Slot(inventory, column, xOffset + column * TableMenuLayout.SLOT_SIZE, yOffset + 58));
         }
     }
 

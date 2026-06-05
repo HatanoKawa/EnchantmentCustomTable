@@ -5,6 +5,7 @@ import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.core.config.TableConfigView;
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.core.net.ConversionTableActions;
 import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSession;
 import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
@@ -55,7 +56,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 	private static final int PLAYER_MAIN_INVENTORY_SIZE = 27;
 	private static final int PLAYER_INVENTORY_START = ENCHANTMENT_CONVERSION_SLOT_SIZE;
 	private static final int PLAYER_HOTBAR_START = PLAYER_INVENTORY_START + PLAYER_MAIN_INVENTORY_SIZE;
-	private static final int SLOT_WIDTH = 18;
 	/**
 	 * index 0: 书本槽
 	 * index 1: 绿宝石槽
@@ -144,9 +144,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		this.addSlot(
 			//? if >=1.21.9 {
-			new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, 8, 8 + 15) {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y) {
 			//?} else {
-			/*new SlotItemHandler(itemHandler, 0, 8, 8 + 15) {
+			/*new SlotItemHandler(itemHandler, 0, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y) {
 			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
@@ -184,9 +184,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		this.addSlot(
 			//? if >=1.21.9 {
-			new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, 26, 8 + 15) {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y) {
 			//?} else {
-			/*new SlotItemHandler(itemHandler, 1, 26, 8 + 15) {
+			/*new SlotItemHandler(itemHandler, 1, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y) {
 			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
@@ -226,9 +226,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		int enchanted_book_index = 0;
 		for (int row = 0; row < ENCHANTED_BOOK_SLOT_ROW_COUNT; row++) {
-			int yPos = 8 + row * SLOT_WIDTH + 15;
+			int yPos = TableMenuLayout.Conversion.generatedSlotY(row);
 			for (int col = 0; col < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; col++) {
-				int xPos = 44 + col * SLOT_WIDTH;
+				int xPos = TableMenuLayout.Conversion.generatedSlotX(col);
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
 					//? if >=1.21.9 {
@@ -280,9 +280,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		this.addSlot(
 			//? if >=1.21.9 {
-			new ResourceHandlerSlot(itemHandler, itemHandler::set, TEMPLATE_BOOK_SLOT, 8, 8 + 3 * SLOT_WIDTH + 15) {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, TEMPLATE_BOOK_SLOT, TableMenuLayout.Conversion.TEMPLATE_SLOT_X, TableMenuLayout.Conversion.TEMPLATE_SLOT_Y) {
 			//?} else {
-			/*new SlotItemHandler(itemHandler, TEMPLATE_BOOK_SLOT, 8, 8 + 3 * SLOT_WIDTH + 15) {
+			/*new SlotItemHandler(itemHandler, TEMPLATE_BOOK_SLOT, TableMenuLayout.Conversion.TEMPLATE_SLOT_X, TableMenuLayout.Conversion.TEMPLATE_SLOT_Y) {
 			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
@@ -316,9 +316,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		this.addSlot(
 			//? if >=1.21.9 {
-			new ResourceHandlerSlot(itemHandler, itemHandler::set, COPY_RESULT_SLOT, 26, 8 + 3 * SLOT_WIDTH + 15) {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, COPY_RESULT_SLOT, TableMenuLayout.Conversion.COPY_RESULT_SLOT_X, TableMenuLayout.Conversion.COPY_RESULT_SLOT_Y) {
 			//?} else {
-			/*new SlotItemHandler(itemHandler, COPY_RESULT_SLOT, 26, 8 + 3 * SLOT_WIDTH + 15) {
+			/*new SlotItemHandler(itemHandler, COPY_RESULT_SLOT, TableMenuLayout.Conversion.COPY_RESULT_SLOT_X, TableMenuLayout.Conversion.COPY_RESULT_SLOT_Y) {
 			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
@@ -354,9 +354,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		for (int si = 0; si < 3; ++si)
 			for (int sj = 0; sj < 9; ++sj)
-				this.addSlot(new Slot(inv, sj + (si + 1) * 9, 0 + 8 + sj * 18, 0 + 84 + si * 18 + 15));
+				this.addSlot(new Slot(inv, sj + (si + 1) * 9, TableMenuLayout.Conversion.PLAYER_INVENTORY_X + sj * TableMenuLayout.SLOT_SIZE, TableMenuLayout.Conversion.PLAYER_INVENTORY_Y + si * TableMenuLayout.SLOT_SIZE));
 		for (int si = 0; si < 9; ++si)
-			this.addSlot(new Slot(inv, si, 0 + 8 + si * 18, 0 + 142 + 15));
+			this.addSlot(new Slot(inv, si, TableMenuLayout.Conversion.PLAYER_INVENTORY_X + si * TableMenuLayout.SLOT_SIZE, TableMenuLayout.Conversion.PLAYER_INVENTORY_Y + 58));
 
 		regenerateEnchantedBookSlot();
 		if (boundBlockEntity != null) {
