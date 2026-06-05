@@ -55,6 +55,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 	private static final int PLAYER_MAIN_INVENTORY_SIZE = 27;
 	private static final int PLAYER_INVENTORY_START = ENCHANTMENT_CONVERSION_SLOT_SIZE;
 	private static final int PLAYER_HOTBAR_START = PLAYER_INVENTORY_START + PLAYER_MAIN_INVENTORY_SIZE;
+	private static final int SLOT_WIDTH = 18;
 	/**
 	 * index 0: 书本槽
 	 * index 1: 绿宝石槽
@@ -143,9 +144,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		this.addSlot(
 			//? if >=1.21.9 {
-			new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, 16, 8 + 15) {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, 8, 8 + 15) {
 			//?} else {
-			/*new SlotItemHandler(itemHandler, 0, 16, 8 + 15) {
+			/*new SlotItemHandler(itemHandler, 0, 8, 8 + 15) {
 			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
@@ -183,9 +184,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		this.addSlot(
 			//? if >=1.21.9 {
-			new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, 16, 26 + 15) {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, 26, 8 + 15) {
 			//?} else {
-			/*new SlotItemHandler(itemHandler, 1, 16, 26 + 15) {
+			/*new SlotItemHandler(itemHandler, 1, 26, 8 + 15) {
 			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
@@ -225,9 +226,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		int enchanted_book_index = 0;
 		for (int row = 0; row < ENCHANTED_BOOK_SLOT_ROW_COUNT; row++) {
-			int yPos = 8 + row * 18 + 15;
+			int yPos = 8 + row * SLOT_WIDTH + 15;
 			for (int col = 0; col < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; col++) {
-				int xPos = 43 + col * 18;
+				int xPos = 44 + col * SLOT_WIDTH;
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
 					//? if >=1.21.9 {
@@ -279,9 +280,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		this.addSlot(
 			//? if >=1.21.9 {
-			new ResourceHandlerSlot(itemHandler, itemHandler::set, TEMPLATE_BOOK_SLOT, 16, 8 + 51) {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, TEMPLATE_BOOK_SLOT, 8, 8 + 3 * SLOT_WIDTH + 15) {
 			//?} else {
-			/*new SlotItemHandler(itemHandler, TEMPLATE_BOOK_SLOT, 16, 8 + 51) {
+			/*new SlotItemHandler(itemHandler, TEMPLATE_BOOK_SLOT, 8, 8 + 3 * SLOT_WIDTH + 15) {
 			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
@@ -315,9 +316,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 		this.addSlot(
 			//? if >=1.21.9 {
-			new ResourceHandlerSlot(itemHandler, itemHandler::set, COPY_RESULT_SLOT, 16, 8 + 69) {
+			new ResourceHandlerSlot(itemHandler, itemHandler::set, COPY_RESULT_SLOT, 26, 8 + 3 * SLOT_WIDTH + 15) {
 			//?} else {
-			/*new SlotItemHandler(itemHandler, COPY_RESULT_SLOT, 16, 8 + 69) {
+			/*new SlotItemHandler(itemHandler, COPY_RESULT_SLOT, 26, 8 + 3 * SLOT_WIDTH + 15) {
 			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {

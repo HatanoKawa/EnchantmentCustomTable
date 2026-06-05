@@ -2,7 +2,7 @@
   "parent": "block/block",
   "textures": {
     "particle": "enchantment_custom_table:block/enchanting_custom_table_bottom",
-    "bottom": "enchantment_custom_table:block/enchanting_custom_table_bottom",
+    "bottom": "minecraft:block/chiseled_quartz_block_top",
     "top": "enchantment_custom_table:block/enchanting_custom_table_top",
     "side": "enchantment_custom_table:block/enchanting_custom_table_side"
   },

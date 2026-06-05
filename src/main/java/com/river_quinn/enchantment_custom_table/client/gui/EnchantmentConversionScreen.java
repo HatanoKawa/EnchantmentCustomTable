@@ -205,8 +205,8 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         graphics.centeredText(
                 this.font,
                 generatePageText(),
-                24,
-                51 + 15,
+                25,
+                45 + 15,
                 0xFFFFFFFF
         );
 
@@ -217,8 +217,8 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         guiGraphics.drawCenteredString(
                 this.font,
                 generatePageText(),
-                24,
-                9,
+                25,
+                45 + 15,
                 -1
         );
 
@@ -249,7 +249,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                             ConversionTableIntent.PREVIOUS_PAGE
                     ));
                 }
-        ).bounds(this.leftPos + 7, this.topPos + 4, 17, 18).build();
+        ).bounds(this.leftPos + 7, this.topPos + 7 + 1 * 18 + 15, 18, 18).build();
         this.addRenderableWidget(button_left_arrow_button);
 
         button_right_arrow_button = Button.builder(
@@ -259,7 +259,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                             ConversionTableIntent.NEXT_PAGE
                     ));
                 }
-        ).bounds(this.leftPos + 24, this.topPos + 4, 17, 18).build();
+        ).bounds(this.leftPos + 25, this.topPos + 7 + 1 * 18 + 15, 18, 18).build();
         this.addRenderableWidget(button_right_arrow_button);
 
     }
