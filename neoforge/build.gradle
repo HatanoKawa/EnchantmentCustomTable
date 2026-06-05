@@ -123,7 +123,7 @@ publishing {
     }
     repositories {
         maven {
-            url "file://${project.projectDir}/repo"
+            url = uri(layout.projectDirectory.dir("repo"))
         }
     }
 }
