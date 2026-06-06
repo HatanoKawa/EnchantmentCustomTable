@@ -22,6 +22,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class FabricEnchantmentConversionMenu extends AbstractContainerMenu implements ConversionTableActions {
     public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
@@ -267,7 +268,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
             int yPos = TableMenuLayout.Conversion.generatedSlotY(row);
             for (int column = 0; column < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; column++) {
                 int xPos = TableMenuLayout.Conversion.generatedSlotX(column);
-                addSlot(new TableSlot(ENCHANTED_BOOK_SLOT_START + generatedBookIndex, xPos, yPos, FabricEmptySlotIcon.BOOK) {
+                addSlot(new TableSlot(ENCHANTED_BOOK_SLOT_START + generatedBookIndex, xPos, yPos, this::generatedBookSlotIcon) {
                     @Override
                     public boolean mayPlace(ItemStack stack) {
                         return false;
@@ -287,7 +288,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                 generatedBookIndex++;
             }
         }
-        addSlot(new TableSlot(TEMPLATE_BOOK_SLOT, TableMenuLayout.Conversion.TEMPLATE_SLOT_X, TableMenuLayout.Conversion.TEMPLATE_SLOT_Y, FabricEmptySlotIcon.BOOK) {
+        addSlot(new TableSlot(TEMPLATE_BOOK_SLOT, TableMenuLayout.Conversion.TEMPLATE_SLOT_X, TableMenuLayout.Conversion.TEMPLATE_SLOT_Y, FabricEmptySlotIcon.COPY_TEMPLATE) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return blockEntity != null && blockEntity.isValidCopyTemplate(stack);
@@ -299,7 +300,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                 regenerateGeneratedSlots();
             }
         });
-        addSlot(new TableSlot(COPY_RESULT_SLOT, TableMenuLayout.Conversion.COPY_RESULT_SLOT_X, TableMenuLayout.Conversion.COPY_RESULT_SLOT_Y, FabricEmptySlotIcon.BOOK) {
+        addSlot(new TableSlot(COPY_RESULT_SLOT, TableMenuLayout.Conversion.COPY_RESULT_SLOT_X, TableMenuLayout.Conversion.COPY_RESULT_SLOT_Y, FabricEmptySlotIcon.OUTPUT) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
@@ -326,12 +327,22 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
         }
     }
 
+    private FabricEmptySlotIcon generatedBookSlotIcon() {
+        return blockEntity != null && blockEntity.isCopyMode()
+                ? FabricEmptySlotIcon.DISABLED
+                : FabricEmptySlotIcon.BOOK;
+    }
+
     private class TableSlot extends FabricTableSlot {
         TableSlot(int index, int x, int y) {
             this(index, x, y, FabricEmptySlotIcon.NONE);
         }
 
         TableSlot(int index, int x, int y, FabricEmptySlotIcon emptyIcon) {
+            super(inventory, index, x, y, emptyIcon);
+        }
+
+        TableSlot(int index, int x, int y, Supplier<FabricEmptySlotIcon> emptyIcon) {
             super(inventory, index, x, y, emptyIcon);
         }
 

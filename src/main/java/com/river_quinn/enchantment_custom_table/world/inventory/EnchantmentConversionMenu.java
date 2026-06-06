@@ -236,17 +236,25 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 						@Override
 						//? if >=1.21.11 {
 						public Identifier getNoItemIcon() {
-							return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+							return Identifier.fromNamespaceAndPath(
+									"enchantment_custom_table",
+									isCopyMode() ? "container/slot/empty_slot_book_disabled" : "container/slot/empty_slot_book"
+							);
 						}
 						//?} else if >=1.21.4 {
 						/*public ResourceLocation getNoItemIcon() {
-							return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
+							return ResourceLocation.fromNamespaceAndPath(
+									"enchantment_custom_table",
+									isCopyMode() ? "container/slot/empty_slot_book_disabled" : "container/slot/empty_slot_book"
+							);
 						}
 						*///?} else {
 						/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 							return Pair.of(
 									InventoryMenu.BLOCK_ATLAS,
-									ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
+									ResourceLocation.tryParse(isCopyMode()
+											? "enchantment_custom_table:item/empty_slot_book_disabled"
+											: "enchantment_custom_table:item/empty_slot_book")
 							);
 						}
 						*///?}
