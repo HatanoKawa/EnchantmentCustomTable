@@ -100,7 +100,7 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
             updatingCopyResult = false;
         }
         if (result.changed()) {
-            markInventoryChanged();
+            markInventoryChanged(FabricEnchantmentConversionMenu.COPY_RESULT_SLOT);
         }
     }
 
@@ -113,7 +113,11 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
         };
     }
 
-    private void markInventoryChanged() {
+    private void markInventoryChanged(int slot) {
+        if (slot >= FabricEnchantmentConversionMenu.ENCHANTED_BOOK_SLOT_START
+                && slot < FabricEnchantmentConversionMenu.TEMPLATE_BOOK_SLOT) {
+            return;
+        }
         inventoryVersion++;
         if (!updatingCopyResult && !loadingInventory) {
             refreshCopyResult();

@@ -49,6 +49,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
     private final FabricTableInventory inventory;
     private final ConversionTableSession session;
     private final FabricEnchantmentConversionTableBlockEntity blockEntity;
+    private int lastInventoryVersion = -1;
 
     public FabricEnchantmentConversionMenu(int id, Inventory inventory, BlockPos pos) {
         super(FabricModMenus.ENCHANTMENT_CONVERSION, id);
@@ -76,6 +77,9 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
         addPageDataSlots();
         addTableSlots();
         regenerateGeneratedSlots();
+        if (blockEntity != null) {
+            lastInventoryVersion = blockEntity.getInventoryVersion();
+        }
         addPlayerInventory(inventory, TableMenuLayout.Conversion.PLAYER_INVENTORY_X, TableMenuLayout.Conversion.PLAYER_INVENTORY_Y);
     }
 
@@ -151,6 +155,15 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
     }
 
     @Override
+    public void broadcastChanges() {
+        super.broadcastChanges();
+        if (blockEntity != null && lastInventoryVersion != blockEntity.getInventoryVersion()) {
+            lastInventoryVersion = blockEntity.getInventoryVersion();
+            refreshGeneratedSlotsAfterInputsChanged();
+        }
+    }
+
+    @Override
     public boolean clickMenuButton(Player player, int id) {
         switch (id) {
             case PREVIOUS_PAGE_BUTTON -> previousPage();
@@ -217,6 +230,13 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
         session.regenerateGeneratedSlots();
     }
 
+    private void refreshGeneratedSlotsAfterInputsChanged() {
+        if (blockEntity != null) {
+            blockEntity.refreshCopyResult();
+        }
+        session.refreshGeneratedSlotsAfterInputsChanged();
+    }
+
     private void addTableSlots() {
         addSlot(new TableSlot(BOOK_SLOT, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y, FabricEmptySlotIcon.BOOK) {
             @Override
@@ -227,7 +247,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
             @Override
             public void setChanged() {
                 super.setChanged();
-                regenerateGeneratedSlots();
+                refreshGeneratedSlotsAfterInputsChanged();
             }
         });
         addSlot(new TableSlot(PAYMENT_SLOT, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y, FabricEmptySlotIcon.EMERALD) {
@@ -239,7 +259,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
             @Override
             public void setChanged() {
                 super.setChanged();
-                regenerateGeneratedSlots();
+                refreshGeneratedSlotsAfterInputsChanged();
             }
         });
         int generatedBookIndex = 0;

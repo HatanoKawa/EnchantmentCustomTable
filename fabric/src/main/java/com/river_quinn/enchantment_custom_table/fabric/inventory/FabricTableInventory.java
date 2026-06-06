@@ -5,14 +5,19 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.BiPredicate;
+import java.util.function.IntConsumer;
 import java.util.function.IntUnaryOperator;
 
 public class FabricTableInventory extends SimpleContainer implements LogicalInventory {
     private final IntUnaryOperator slotLimit;
     private final BiPredicate<Integer, ItemStack> validator;
-    private final Runnable changed;
+    private final IntConsumer changed;
 
     public FabricTableInventory(int size, IntUnaryOperator slotLimit, BiPredicate<Integer, ItemStack> validator, Runnable changed) {
+        this(size, slotLimit, validator, slot -> changed.run());
+    }
+
+    public FabricTableInventory(int size, IntUnaryOperator slotLimit, BiPredicate<Integer, ItemStack> validator, IntConsumer changed) {
         super(size);
         this.slotLimit = slotLimit;
         this.validator = validator;
@@ -75,7 +80,8 @@ public class FabricTableInventory extends SimpleContainer implements LogicalInve
         }
         ItemStack extracted = existing.copyWithCount(Math.min(amount, existing.getCount()));
         if (!simulate) {
-            removeItem(slot, extracted.getCount());
+            existing.shrink(extracted.getCount());
+            setStackInSlot(slot, existing);
         }
         return extracted;
     }
@@ -103,11 +109,43 @@ public class FabricTableInventory extends SimpleContainer implements LogicalInve
             limitedStack = stack.copyWithCount(limit);
         }
         super.setItem(slot, limitedStack);
+        changed.accept(slot);
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        ItemStack removed = super.removeItem(slot, amount);
+        if (!removed.isEmpty()) {
+            changed.accept(slot);
+        }
+        return removed;
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        ItemStack removed = super.removeItemNoUpdate(slot);
+        if (!removed.isEmpty()) {
+            changed.accept(slot);
+        }
+        return removed;
+    }
+
+    @Override
+    public void clearContent() {
+        boolean[] changedSlots = new boolean[getContainerSize()];
+        for (int slot = 0; slot < getContainerSize(); slot++) {
+            changedSlots[slot] = !getItem(slot).isEmpty();
+        }
+        super.clearContent();
+        for (int slot = 0; slot < changedSlots.length; slot++) {
+            if (changedSlots[slot]) {
+                changed.accept(slot);
+            }
+        }
     }
 
     @Override
     public void setChanged() {
         super.setChanged();
-        changed.run();
     }
 }

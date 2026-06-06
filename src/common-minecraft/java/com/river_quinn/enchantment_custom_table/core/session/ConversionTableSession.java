@@ -183,6 +183,38 @@ public class ConversionTableSession {
         generateGeneratedSlots();
     }
 
+    public void refreshGeneratedSlotsAfterInputsChanged() {
+        if (copyMode.getAsBoolean()) {
+            resetPage();
+            clearGeneratedSlots();
+            return;
+        }
+
+        if (!inventory.getStackInSlot(bookSlot).is(Items.BOOK) || !hasEnoughPayment()) {
+            resetPage();
+            clearGeneratedSlots();
+            return;
+        }
+
+        List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
+        int nextTotalPage = EnchantmentTableRules.calculatePageCount(enchantments.size(), generatedSlotCount, false);
+        boolean needsInitialFill = totalPage == 0 || !hasVisibleGeneratedBook();
+        if (needsInitialFill) {
+            currentPage = 0;
+            totalPage = nextTotalPage;
+            clearGeneratedSlots();
+            generateGeneratedSlots();
+            return;
+        }
+
+        totalPage = nextTotalPage;
+        if (currentPage >= totalPage) {
+            currentPage = Math.max(0, totalPage - 1);
+            clearGeneratedSlots();
+        }
+        generateGeneratedSlots();
+    }
+
     public boolean canPickGeneratedBook() {
         return !copyMode.getAsBoolean()
                 && inventory.getStackInSlot(bookSlot).is(Items.BOOK)
@@ -261,6 +293,15 @@ public class ConversionTableSession {
 
     private boolean hasEnoughPayment() {
         return EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
+    }
+
+    private boolean hasVisibleGeneratedBook() {
+        for (int i = 0; i < generatedSlotCount; i++) {
+            if (!inventory.getStackInSlot(generatedSlotStart + i).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean hasEnoughMaterialsForCopy(

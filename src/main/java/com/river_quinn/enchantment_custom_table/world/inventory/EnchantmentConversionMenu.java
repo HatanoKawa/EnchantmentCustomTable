@@ -156,11 +156,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			@Override
 			public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
 				super.setByPlayer(newStack, oldStack);
-				if (!newStack.isEmpty() && !oldStack.isEmpty()) {
-					genEnchantedBookSlot();
-				} else {
-					regenerateEnchantedBookSlot();
-				}
+				refreshEnchantedBookSlotsAfterInputsChanged();
 			}
 
 			@Override
@@ -198,11 +194,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			@Override
 			public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
 				super.setByPlayer(newStack, oldStack);
-				if (!newStack.isEmpty() && !oldStack.isEmpty()) {
-					genEnchantedBookSlot();
-				} else {
-					regenerateEnchantedBookSlot();
-				}
+				refreshEnchantedBookSlotsAfterInputsChanged();
 			}
 
 			@Override
@@ -369,7 +361,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 		super.broadcastChanges();
 		if (boundBlockEntity != null && lastInventoryVersion != boundBlockEntity.getInventoryVersion()) {
 			lastInventoryVersion = boundBlockEntity.getInventoryVersion();
-			regenerateEnchantedBookSlot();
+			refreshEnchantedBookSlotsAfterInputsChanged();
 		}
 	}
 
@@ -410,7 +402,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 		}
 
 		if (index < 2 || index == TEMPLATE_BOOK_SLOT || index == COPY_RESULT_SLOT) {
-			genEnchantedBookSlot();
+			refreshEnchantedBookSlotsAfterInputsChanged();
 		}
 
 		return itemstack;
@@ -474,6 +466,11 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
 	public void regenerateEnchantedBookSlot() {
 		session.regenerateGeneratedSlots();
+		syncPageState();
+	}
+
+	private void refreshEnchantedBookSlotsAfterInputsChanged() {
+		session.refreshGeneratedSlotsAfterInputsChanged();
 		syncPageState();
 	}
 

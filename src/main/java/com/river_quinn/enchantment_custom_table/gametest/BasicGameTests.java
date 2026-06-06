@@ -109,6 +109,7 @@ public class BasicGameTests {
             new TestRegistration("conversion_table_search_filters_results_by_client_matched_ids", 40, BasicGameTests::conversionTableSearchFiltersResultsByClientMatchedIds),
             new TestRegistration("conversion_table_can_be_limited_to_level_one_books", 40, BasicGameTests::conversionTableCanBeLimitedToLevelOneBooks),
             new TestRegistration("conversion_table_refills_taken_result_slot_after_pick", 40, BasicGameTests::conversionTableRefillsTakenResultSlotAfterPick),
+            new TestRegistration("conversion_table_preserves_current_page_when_payment_input_changes", 40, BasicGameTests::conversionTablePreservesCurrentPageWhenPaymentInputChanges),
             new TestRegistration("conversion_table_preserves_search_filter_after_pick", 40, BasicGameTests::conversionTablePreservesSearchFilterAfterPick),
             new TestRegistration("conversion_table_copy_mode_generates_result_and_disables_candidates", 40, BasicGameTests::conversionTableCopyModeGeneratesResultAndDisablesCandidates),
             new TestRegistration("conversion_table_rejects_invalid_copy_templates", 40, BasicGameTests::conversionTableRejectsInvalidCopyTemplates),
@@ -469,6 +470,55 @@ public class BasicGameTests {
             assertTrue(helper, menu.getSlot(1).getItem().getCount() == 63, "Taking a result should consume one emerald block");
             assertTrue(helper, menu.getSlot(2).getItem().is(Items.ENCHANTED_BOOK), "Taken result slot should be refilled immediately");
             assertTrue(helper, menu.getSlot(3).getItem().is(Items.ENCHANTED_BOOK), "Other visible result slots should remain filled");
+
+            helper.succeed();
+        } finally {
+            Config.minimumEmeraldCost = originalEmeraldCost;
+            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
+        }
+    }
+
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
+    public static void conversionTablePreservesCurrentPageWhenPaymentInputChanges(GameTestHelper helper) {
+        helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
+
+        int originalEmeraldCost = Config.minimumEmeraldCost;
+        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
+        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
+        Config.minimumEmeraldCost = 0;
+        Config.minimumEmeraldBlockCost = 1;
+        Config.convertOnlyLevelOneBook = false;
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantmentConversionMenu menu = conversionMenu(helper, player);
+
+            menu.getSlot(0).setByPlayer(new ItemStack(Items.BOOK, 64));
+            menu.getSlot(1).setByPlayer(new ItemStack(Items.EMERALD_BLOCK, 2));
+
+            assertTrue(helper, menu.totalPage > 1, "Conversion table should have multiple pages for page preservation coverage");
+            menu.turnPage(1);
+            ItemStack pageTwoFirstSlot = menu.getSlot(EnchantmentConversionMenu.ENCHANTED_BOOK_SLOT_START).getItem().copy();
+            int totalPageBeforeInput = menu.totalPage;
+
+            menu.boundBlockEntity.getInventory().setStackInSlot(
+                    EnchantmentConversionTableBlockEntity.PAYMENT_SLOT,
+                    new ItemStack(Items.EMERALD_BLOCK, 3)
+            );
+            menu.broadcastChanges();
+
+            assertTrue(helper, menu.currentPage == 1, "External payment input should preserve the current result page");
+            assertTrue(helper, menu.totalPage == totalPageBeforeInput, "External payment input should preserve the page count");
+            assertTrue(helper,
+                    ItemStack.isSameItemSameComponents(
+                            pageTwoFirstSlot,
+                            menu.getSlot(EnchantmentConversionMenu.ENCHANTED_BOOK_SLOT_START).getItem()
+                    ),
+                    "External payment input should not replace visible page-two results with page-one results"
+            );
 
             helper.succeed();
         } finally {
