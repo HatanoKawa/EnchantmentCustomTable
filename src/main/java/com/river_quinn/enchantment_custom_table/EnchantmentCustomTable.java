@@ -39,6 +39,7 @@ public class EnchantmentCustomTable
         *///?}
             modEventBus.addListener(ModBlockEntityRenderers::register);
             modEventBus.addListener(ModScreens::register);
+            ModConfigScreens.register(modContainer);
         }
     }
 

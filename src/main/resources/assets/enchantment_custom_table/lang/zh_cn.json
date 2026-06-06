@@ -5,5 +5,13 @@
   "gui.enchantment_custom_table.enchantment_custom.button_left_arrow": "\u003c\u003c",
   "gui.enchantment_custom_table.enchantment_custom.button_right_arrow": "\u003e\u003e",
   "gui.enchantment_custom_table.enchantment_custom.button_export": "合并导出",
-  "gui.enchantment_custom_table.enchantment_conversion.search": "搜索附魔"
+  "gui.enchantment_custom_table.enchantment_conversion.search": "搜索附魔",
+  "enchantment_custom_table.configuration.title": "%s 配置",
+  "enchantment_custom_table.configuration.section.enchantment.custom.table.common.toml": "通用",
+  "enchantment_custom_table.configuration.section.enchantment.custom.table.common.toml.title": "通用配置",
+  "enchantment_custom_table.configuration.minimumEmeraldCost": "最低绿宝石消耗",
+  "enchantment_custom_table.configuration.minimumEmeraldBlockCost": "最低绿宝石块消耗",
+  "enchantment_custom_table.configuration.enforceEnchantmentLevelLimit": "限制附魔最高等级",
+  "enchantment_custom_table.configuration.incrementalSameLevelMerge": "递增同级附魔合并",
+  "enchantment_custom_table.configuration.convertOnlyLevelOneBook": "仅转换 1 级附魔书"
 }

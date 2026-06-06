@@ -5,5 +5,13 @@
   "gui.enchantment_custom_table.enchantment_custom.button_left_arrow": "\u003c\u003c",
   "gui.enchantment_custom_table.enchantment_custom.button_right_arrow": "\u003e\u003e",
   "gui.enchantment_custom_table.enchantment_custom.button_export": "export",
-  "gui.enchantment_custom_table.enchantment_conversion.search": "Search enchantments"
+  "gui.enchantment_custom_table.enchantment_conversion.search": "Search enchantments",
+  "enchantment_custom_table.configuration.title": "%s Configuration",
+  "enchantment_custom_table.configuration.section.enchantment.custom.table.common.toml": "Common",
+  "enchantment_custom_table.configuration.section.enchantment.custom.table.common.toml.title": "Common Configuration",
+  "enchantment_custom_table.configuration.minimumEmeraldCost": "Minimum Emerald Cost",
+  "enchantment_custom_table.configuration.minimumEmeraldBlockCost": "Minimum Emerald Block Cost",
+  "enchantment_custom_table.configuration.enforceEnchantmentLevelLimit": "Enforce Enchantment Level Limit",
+  "enchantment_custom_table.configuration.incrementalSameLevelMerge": "Incremental Same-Level Merge",
+  "enchantment_custom_table.configuration.convertOnlyLevelOneBook": "Convert Only Level-One Books"
 }
