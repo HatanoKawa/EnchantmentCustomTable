@@ -140,6 +140,10 @@ public class EnchantingTableSession {
         updateGeneratedSlots();
     }
 
+    public void captureCurrentPageSlots() {
+        saveCurrentPageSlots();
+    }
+
     public void updateGeneratedSlots() {
         inventory.setStackInSlot(inputSlot, ItemStack.EMPTY.copy());
 

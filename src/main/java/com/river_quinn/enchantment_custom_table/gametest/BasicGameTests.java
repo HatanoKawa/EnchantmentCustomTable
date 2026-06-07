@@ -133,6 +133,8 @@ public class BasicGameTests {
             new TestRegistration("custom_table_removing_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableRemovingGeneratedBookSubtractsFromTool),
             new TestRegistration("custom_table_empty_generated_slot_click_does_not_restore_stale_book", 40, BasicGameTests::customTableEmptyGeneratedSlotClickDoesNotRestoreStaleBook),
             new TestRegistration("custom_table_generated_slot_holes_survive_broadcast_after_removal", 40, BasicGameTests::customTableGeneratedSlotHolesSurviveBroadcastAfterRemoval),
+            new TestRegistration("custom_table_generated_slot_click_preserves_visible_holes_with_stale_cache", 40, BasicGameTests::customTableGeneratedSlotClickPreservesVisibleHolesWithStaleCache),
+            new TestRegistration("custom_table_generated_slot_quick_move_preserves_visible_holes_with_stale_cache", 40, BasicGameTests::customTableGeneratedSlotQuickMovePreservesVisibleHolesWithStaleCache),
             new TestRegistration("custom_table_quick_move_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableQuickMoveGeneratedBookSubtractsFromTool),
             new TestRegistration("custom_table_export_all_enchantments_marks_stored_tool_changed", 40, BasicGameTests::customTableExportAllEnchantmentsMarksStoredToolChanged)
     );
@@ -1356,6 +1358,64 @@ public class BasicGameTests {
     //? if <1.21.5 {
     /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
     *///?}
+    public static void customTableGeneratedSlotClickPreservesVisibleHolesWithStaleCache(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        EnchantingCustomMenu menu = enchantingMenuWithTwoGeneratedBooks(helper, player);
+        ItemStack secondGeneratedBook = menu.getSlot(3).getItem().copy();
+
+        menu.getSlot(2).set(ItemStack.EMPTY);
+        player.containerMenu = menu;
+        player.containerMenu.setCarried(ItemStack.EMPTY);
+
+        //? if >=26.1 {
+        menu.clicked(3, 0, ContainerInput.PICKUP, player);
+        //?} else {
+        /*menu.clicked(3, 0, ClickType.PICKUP, player);
+        *///?}
+
+        assertTrue(helper, player.containerMenu.getCarried().is(Items.ENCHANTED_BOOK), "Clicking the second generated book should put that book on the cursor");
+        assertTrue(
+                helper,
+                ItemStack.isSameItemSameComponents(player.containerMenu.getCarried(), secondGeneratedBook),
+                "Clicking should take the visible generated book, not a stale cached book"
+        );
+        assertTrue(helper, menu.getSlot(2).getItem().isEmpty(), "Taking another generated book should not redraw a stale book into a visible hole");
+        assertTrue(helper, menu.getSlot(3).getItem().isEmpty(), "The taken generated book slot should be cleared");
+
+        helper.succeed();
+    }
+
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
+    public static void customTableGeneratedSlotQuickMovePreservesVisibleHolesWithStaleCache(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        EnchantingCustomMenu menu = enchantingMenuWithTwoGeneratedBooks(helper, player);
+        ItemStack secondGeneratedBook = menu.getSlot(3).getItem().copy();
+
+        menu.getSlot(2).set(ItemStack.EMPTY);
+
+        ItemStack moved = menu.quickMoveStack(player, 3);
+
+        assertTrue(helper, moved.is(Items.ENCHANTED_BOOK), "Quick-moving the second generated book should move a generated book stack");
+        assertTrue(
+                helper,
+                ItemStack.isSameItemSameComponents(moved, secondGeneratedBook),
+                "Quick-moving should take the visible generated book, not a stale cached book"
+        );
+        assertTrue(helper, menu.getSlot(2).getItem().isEmpty(), "Quick-moving another generated book should not redraw a stale book into a visible hole");
+        assertTrue(helper, menu.getSlot(3).getItem().isEmpty(), "The quick-moved generated book slot should be cleared");
+
+        helper.succeed();
+    }
+
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
     public static void customTableQuickMoveGeneratedBookSubtractsFromTool(GameTestHelper helper) {
         helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
 
@@ -1416,6 +1476,20 @@ public class BasicGameTests {
         BlockPos pos = helper.absolutePos(ENCHANTING_CUSTOM_TABLE_POS);
         movePlayerTo(player, pos);
         return new EnchantingCustomMenu(1, player.getInventory(), menuData(pos));
+    }
+
+    private static EnchantingCustomMenu enchantingMenuWithTwoGeneratedBooks(GameTestHelper helper, Player player) {
+        EnchantingCustomMenu menu = enchantingMenu(helper, player);
+        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+        Holder<Enchantment> unbreaking = enchantment(helper, Enchantments.UNBREAKING);
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.enchant(sharpness, 5);
+        sword.enchant(unbreaking, 3);
+
+        menu.getSlot(0).setByPlayer(sword);
+        assertTrue(helper, menu.getSlot(2).getItem().is(Items.ENCHANTED_BOOK), "First generated slot should contain a book");
+        assertTrue(helper, menu.getSlot(3).getItem().is(Items.ENCHANTED_BOOK), "Second generated slot should contain a book");
+        return menu;
     }
 
     private static EnchantmentConversionMenu conversionMenu(GameTestHelper helper, Player player) {

@@ -112,6 +112,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 				*///?}
 				(itemStackToPut.isEmpty() || getSlot(slotId).mayPlace(entity.containerMenu.getCarried()))
 		) {
+			session.captureCurrentPageSlots();
 			var itemStackToReplace = itemHandler.getStackInSlot(slotId);
 			if (!itemStackToPut.isEmpty() && !itemStackToReplace.isEmpty()) {
 				// 当尝试替换附魔书槽的附魔书时，存在以下两种情况：
@@ -391,6 +392,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	public ItemStack quickMoveStack(Player playerIn, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = (Slot) this.slots.get(index);
+		if (isGeneratedSlotIndex(index)) {
+			session.captureCurrentPageSlots();
+		}
 		ItemStack itemStackToOperate = slot.getItem().copy();
 		int enchantmentIndexInCache = isGeneratedSlotIndex(index) ? session.cacheIndexForGeneratedSlot(index) : -1;
 		if (isGeneratedSlotIndex(index)
