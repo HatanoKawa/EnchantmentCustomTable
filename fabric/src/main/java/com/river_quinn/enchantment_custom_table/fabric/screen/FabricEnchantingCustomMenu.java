@@ -49,6 +49,8 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final FabricTableInventory inventory;
     private final EnchantingTableSession session;
+    private final FabricEnchantingCustomTableBlockEntity blockEntity;
+    private int lastInventoryVersion = -1;
     private boolean suppressGeneratedSlotTakeRemoval;
 
     public FabricEnchantingCustomMenu(int id, Inventory inventory, BlockPos pos) {
@@ -59,11 +61,11 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         this.y = pos.getY();
         this.z = pos.getZ();
         this.access = ContainerLevelAccess.create(world, pos);
-        FabricEnchantingCustomTableBlockEntity blockEntity = world.getBlockEntity(pos) instanceof FabricEnchantingCustomTableBlockEntity table
+        this.blockEntity = world.getBlockEntity(pos) instanceof FabricEnchantingCustomTableBlockEntity table
                 ? table
                 : null;
-        this.inventory = blockEntity != null
-                ? blockEntity.getInventory()
+        this.inventory = this.blockEntity != null
+                ? this.blockEntity.getInventory()
                 : new FabricTableInventory(ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE, slot -> 1, (slot, stack) -> false, () -> {});
         this.session = new EnchantingTableSession(
                 world,
@@ -78,6 +80,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         addPageDataSlots();
         addTableSlots();
         session.refreshGeneratedSlotsFromTool();
+        acknowledgeBoundInventoryVersion();
         addPlayerInventory(inventory, TableMenuLayout.Enchanting.PLAYER_INVENTORY_X, TableMenuLayout.Enchanting.PLAYER_INVENTORY_Y);
     }
 
@@ -147,12 +150,24 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     }
 
     @Override
+    public void broadcastChanges() {
+        if (blockEntity != null && lastInventoryVersion != blockEntity.getInventoryVersion()) {
+            session.refreshGeneratedSlotsFromTool();
+            acknowledgeBoundInventoryVersion();
+        }
+        super.broadcastChanges();
+    }
+
+    @Override
     public boolean clickMenuButton(Player player, int id) {
         switch (id) {
             case PREVIOUS_PAGE_BUTTON -> session.previousPage();
             case NEXT_PAGE_BUTTON -> session.nextPage();
             case EXPORT_BUTTON -> {
                 EnchantingTableSession.ExportEnchantmentsResult result = session.exportAllEnchantments();
+                if (result.success()) {
+                    acknowledgeBoundInventoryVersion();
+                }
                 if (result.success() && !player.getInventory().add(result.exportedStack())) {
                     player.drop(result.exportedStack(), false);
                 }
@@ -213,6 +228,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                 } else {
                     session.refreshGeneratedSlotsFromTool();
                 }
+                acknowledgeBoundInventoryVersion();
             }
         });
         addSlot(new TableSlot(INPUT_SLOT, TableMenuLayout.Enchanting.INPUT_SLOT_X, TableMenuLayout.Enchanting.INPUT_SLOT_Y, FabricEmptySlotIcon.BOOK) {
@@ -318,6 +334,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     private boolean applyEnchantedBook(ItemStack stack) {
         TableOperationResult result = session.applyEnchantedBook(stack);
         if (result.success() && result.changed()) {
+            acknowledgeBoundInventoryVersion();
             playUseSound();
         }
         return result.success();
@@ -327,9 +344,16 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         int cacheIndex = session.cacheIndexForGeneratedSlot(slotIndex);
         EnchantingTableSession.GeneratedBookRemovalResult result = session.removeGeneratedBookAtCacheIndex(stack, cacheIndex);
         if (result.success()) {
+            acknowledgeBoundInventoryVersion();
             playUseSound();
         }
         return result;
+    }
+
+    private void acknowledgeBoundInventoryVersion() {
+        if (blockEntity != null) {
+            lastInventoryVersion = blockEntity.getInventoryVersion();
+        }
     }
 
     private boolean isServerSide() {

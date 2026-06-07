@@ -44,7 +44,10 @@ public class FabricEnchantingCustomTableBlockEntity extends FabricEnchantingTabl
         return automationStorage;
     }
 
-    private void markInventoryChanged() {
+    private void markInventoryChanged(int slot) {
+        if (slot != FabricEnchantingCustomMenu.TOOL_SLOT) {
+            return;
+        }
         inventoryVersion++;
         setChanged();
     }
