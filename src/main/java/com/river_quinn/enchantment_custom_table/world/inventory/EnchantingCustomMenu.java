@@ -254,6 +254,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 					clearCache();
 					clearPage();
 				}
+				acknowledgeBoundInventoryVersion();
 			}
 		});
 
@@ -373,11 +374,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 
 	@Override
 	public void broadcastChanges() {
-		super.broadcastChanges();
 		if (boundBlockEntity != null && lastInventoryVersion != boundBlockEntity.getInventoryVersion()) {
-			lastInventoryVersion = boundBlockEntity.getInventoryVersion();
 			refreshGeneratedSlotsFromTool();
+			acknowledgeBoundInventoryVersion();
 		}
+		super.broadcastChanges();
 	}
 
 	@Override
@@ -461,6 +462,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	public void exportAllEnchantments() {
 		EnchantingTableSession.ExportEnchantmentsResult result = session.exportAllEnchantments();
 		syncPageState();
+		acknowledgeBoundInventoryVersion();
 		if (result.success()) {
 			entity.getInventory().placeItemBackInInventory(result.exportedStack());
 		}
@@ -521,6 +523,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 			return false;
 		}
 		syncPageState();
+		acknowledgeBoundInventoryVersion();
 		playUseSound();
 		return true;
 	}
@@ -539,6 +542,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 				: session.removeGeneratedBook(itemStackToRemove);
 		syncPageState();
 		if (result.success()) {
+			acknowledgeBoundInventoryVersion();
 			playUseSound();
 		}
 		return result;
@@ -558,6 +562,12 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		GeneratedSlotPage page = session.page();
 		currentPage = page.currentPage();
 		totalPage = page.totalPage();
+	}
+
+	private void acknowledgeBoundInventoryVersion() {
+		if (boundBlockEntity != null) {
+			lastInventoryVersion = boundBlockEntity.getInventoryVersion();
+		}
 	}
 
 	private boolean isGeneratedSlotIndex(int slotId) {

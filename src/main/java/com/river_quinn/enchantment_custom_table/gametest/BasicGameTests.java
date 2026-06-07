@@ -132,6 +132,7 @@ public class BasicGameTests {
             new TestRegistration("custom_table_automation_rejects_invalid_book", 40, BasicGameTests::customTableAutomationRejectsInvalidBook),
             new TestRegistration("custom_table_removing_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableRemovingGeneratedBookSubtractsFromTool),
             new TestRegistration("custom_table_empty_generated_slot_click_does_not_restore_stale_book", 40, BasicGameTests::customTableEmptyGeneratedSlotClickDoesNotRestoreStaleBook),
+            new TestRegistration("custom_table_generated_slot_holes_survive_broadcast_after_removal", 40, BasicGameTests::customTableGeneratedSlotHolesSurviveBroadcastAfterRemoval),
             new TestRegistration("custom_table_quick_move_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableQuickMoveGeneratedBookSubtractsFromTool),
             new TestRegistration("custom_table_export_all_enchantments_marks_stored_tool_changed", 40, BasicGameTests::customTableExportAllEnchantmentsMarksStoredToolChanged)
     );
@@ -1310,6 +1311,44 @@ public class BasicGameTests {
         assertTrue(helper, player.containerMenu.getCarried().isEmpty(), "Clicking an empty generated slot should not pick up a stale book");
         assertTrue(helper, menu.getSlot(2).getItem().isEmpty(), "Empty generated slot should stay empty instead of redrawing a stale cached book");
         assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 5, "Empty slot click should not modify the tool");
+
+        helper.succeed();
+    }
+
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
+    public static void customTableGeneratedSlotHolesSurviveBroadcastAfterRemoval(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        EnchantingCustomMenu menu = enchantingMenu(helper, player);
+        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+        Holder<Enchantment> unbreaking = enchantment(helper, Enchantments.UNBREAKING);
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.enchant(sharpness, 5);
+        sword.enchant(unbreaking, 3);
+
+        menu.getSlot(0).setByPlayer(sword);
+        player.containerMenu = menu;
+
+        assertTrue(helper, menu.getSlot(2).getItem().is(Items.ENCHANTED_BOOK), "First generated slot should contain a book");
+        ItemStack secondGeneratedBook = menu.getSlot(3).getItem().copy();
+        assertTrue(helper, secondGeneratedBook.is(Items.ENCHANTED_BOOK), "Second generated slot should contain a book");
+
+        //? if >=26.1 {
+        menu.clicked(2, 0, ContainerInput.PICKUP, player);
+        //?} else {
+        /*menu.clicked(2, 0, ClickType.PICKUP, player);
+        *///?}
+        menu.broadcastChanges();
+
+        assertTrue(helper, menu.getSlot(2).getItem().isEmpty(), "Broadcast should not refill a generated slot hole after menu-owned removal");
+        assertTrue(
+                helper,
+                ItemStack.isSameItemSameComponents(menu.getSlot(3).getItem(), secondGeneratedBook),
+                "Broadcast should keep later generated books in their current slots instead of compacting the page"
+        );
 
         helper.succeed();
     }
