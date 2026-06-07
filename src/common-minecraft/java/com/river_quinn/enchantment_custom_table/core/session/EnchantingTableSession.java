@@ -103,8 +103,15 @@ public class EnchantingTableSession {
 
     public void setGeneratedItem(int index, ItemStack stack) {
         if (index >= 0 && index < generatedItems.size()) {
-            generatedItems.set(index, stack);
+            generatedItems.set(index, stack.copy());
         }
+    }
+
+    public boolean isGeneratedItemAt(int index, ItemStack stack) {
+        return index >= 0
+                && index < generatedItems.size()
+                && !stack.isEmpty()
+                && ItemStack.isSameItemSameComponents(generatedItems.get(index), stack);
     }
 
     public void resetPage() {
@@ -144,7 +151,7 @@ public class EnchantingTableSession {
                 inventory.setStackInSlot(
                         indexOfSlot,
                         indexOfFullList < generatedItems.size()
-                                ? generatedItems.get(indexOfFullList)
+                                ? generatedItems.get(indexOfFullList).copy()
                                 : ItemStack.EMPTY
                 );
             }
@@ -258,6 +265,17 @@ public class EnchantingTableSession {
     }
 
     public GeneratedBookRemovalResult removeGeneratedBook(ItemStack stack) {
+        return removeGeneratedBook(stack, -1);
+    }
+
+    public GeneratedBookRemovalResult removeGeneratedBookAtCacheIndex(ItemStack stack, int cacheIndex) {
+        if (!isGeneratedItemAt(cacheIndex, stack)) {
+            return GeneratedBookRemovalResult.failed();
+        }
+        return removeGeneratedBook(stack, cacheIndex);
+    }
+
+    private GeneratedBookRemovalResult removeGeneratedBook(ItemStack stack, int cacheIndex) {
         List<EnchantmentTableRules.EnchantmentLevel> enchantmentLevels = enchantments.getEnchantmentLevels(world, stack);
         if (enchantmentLevels.isEmpty()) {
             return GeneratedBookRemovalResult.failed();
@@ -269,6 +287,10 @@ public class EnchantingTableSession {
         }
 
         ItemEnchantments itemEnchantments = enchantments.getEnchantments(toolItemStack);
+        if (!canRemoveEnchantments(itemEnchantments, enchantmentLevels)) {
+            return GeneratedBookRemovalResult.failed();
+        }
+
         ItemEnchantments resultEnchantments = EnchantmentTableRules.subtractEnchantments(
                 itemEnchantments,
                 enchantmentLevels,
@@ -289,6 +311,7 @@ public class EnchantingTableSession {
         if (shouldRegenerate) {
             refreshGeneratedSlotsFromTool();
         } else {
+            setGeneratedItem(cacheIndex, ItemStack.EMPTY);
             updateGeneratedSlots();
         }
         return GeneratedBookRemovalResult.success(shouldRegenerate);
@@ -338,7 +361,7 @@ public class EnchantingTableSession {
             int indexOfFullList = i + indexOffset;
             int indexOfSlot = i + generatedSlotStart;
             if (indexOfFullList < generatedItems.size()) {
-                generatedItems.set(indexOfFullList, inventory.getStackInSlot(indexOfSlot));
+                generatedItems.set(indexOfFullList, inventory.getStackInSlot(indexOfSlot).copy());
             }
         }
     }
@@ -347,6 +370,23 @@ public class EnchantingTableSession {
         for (int i = generatedSlotStart; i < generatedSlotStart + generatedSlotCount; i++) {
             inventory.setStackInSlot(i, ItemStack.EMPTY);
         }
+    }
+
+    private boolean canRemoveEnchantments(
+            ItemEnchantments itemEnchantments,
+            List<EnchantmentTableRules.EnchantmentLevel> removalEnchantments
+    ) {
+        for (EnchantmentTableRules.EnchantmentLevel removal : removalEnchantments) {
+            int currentLevel = EnchantmentTableRules.getMatchingEnchantmentLevel(
+                    itemEnchantments,
+                    removal.key(),
+                    enchantment -> enchantments.getCoreEnchantmentKey(world, enchantment)
+            );
+            if (currentLevel <= 0 || currentLevel < removal.level()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean shouldUseIncrementalSingleBookSplitRemoval(

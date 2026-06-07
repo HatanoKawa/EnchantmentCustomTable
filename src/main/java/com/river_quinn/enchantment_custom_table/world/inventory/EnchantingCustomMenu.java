@@ -92,8 +92,19 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		// 3. 附魔书槽对应的物品可以放置在该槽位上（主要是待附魔物品槽不能为空）
 		var itemStackToPut = entity.containerMenu.getCarried();
 		if (
-				slotId >= 2 &&
-				slotId < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE &&
+				isGeneratedSlotIndex(slotId) &&
+				//? if >=26.1 {
+				clickType != ContainerInput.QUICK_MOVE &&
+				//?} else {
+				/*clickType != ClickType.QUICK_MOVE &&
+				*///?}
+				itemStackToPut.isEmpty() &&
+				getSlot(slotId).getItem().isEmpty()
+		) {
+			return;
+		}
+		if (
+				isGeneratedSlotIndex(slotId) &&
 				//? if >=26.1 {
 				clickType != ContainerInput.QUICK_MOVE &&
 				//?} else {
@@ -133,14 +144,13 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 
 			// 以下逻辑用于处理第一种情况
 			if (!itemStackToReplace.isEmpty()) {
-				entity.containerMenu.setCarried(itemStackToReplace.copy());
 				// 移除旧的槽位对应附魔书的附魔
-				var hasRegenerated = removeEnchantment(itemStackToReplace);
-				// 在缓存中删除对应的附魔书
-				// 如果移除附魔书导致了总页数变更，将会触发重新生成附魔书缓存，此时对应的附魔书槽下标可能会产生溢出，所以需要进行判断
-				if (!hasRegenerated && enchantmentIndexInCache < session.generatedItemCount()) {
-					session.setGeneratedItem(enchantmentIndexInCache, ItemStack.EMPTY);
+				var removalResult = removeGeneratedBook(itemStackToReplace, enchantmentIndexInCache);
+				if (!removalResult.success()) {
+					updateEnchantedBookSlots();
+					return;
 				}
+				entity.containerMenu.setCarried(itemStackToReplace.copy());
 			} else {
 				// 如果没有待移除的附魔书，则将指针上的物品设置为 0
 				entity.containerMenu.setCarried(ItemStack.EMPTY.copy());
@@ -312,6 +322,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 						}
 
 						@Override
+						public boolean mayPickup(Player player) {
+							return !getItem().isEmpty();
+						}
+
+						@Override
 						//? if >=1.21.11 {
 						public Identifier getNoItemIcon() {
 							return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
@@ -376,6 +391,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = (Slot) this.slots.get(index);
 		ItemStack itemStackToOperate = slot.getItem().copy();
+		int enchantmentIndexInCache = isGeneratedSlotIndex(index) ? session.cacheIndexForGeneratedSlot(index) : -1;
+		if (isGeneratedSlotIndex(index)
+				&& (itemStackToOperate.isEmpty() || !session.isGeneratedItemAt(enchantmentIndexInCache, itemStackToOperate))) {
+			return ItemStack.EMPTY;
+		}
 		if (slot != null && slot.hasItem()) {
 			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
@@ -402,13 +422,8 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 			slot.onTake(playerIn, itemstack1);
 		}
 
-		if (index > 1 && index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE) {
-			int enchantmentIndexInCache = session.cacheIndexForGeneratedSlot(index);
-			var hasRegenerated = removeEnchantment(itemStackToOperate);
-			if (!hasRegenerated && enchantmentIndexInCache < session.generatedItemCount()) {
-				session.setGeneratedItem(enchantmentIndexInCache, ItemStack.EMPTY);
-				updateEnchantedBookSlots();
-			}
+		if (isGeneratedSlotIndex(index)) {
+			removeGeneratedBook(itemStackToOperate, enchantmentIndexInCache);
 		}
 		return itemstack;
 	}
@@ -511,13 +526,22 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	}
 
 	public boolean removeEnchantment(ItemStack itemStackToRemove) {
-		EnchantingTableSession.GeneratedBookRemovalResult result = session.removeGeneratedBook(itemStackToRemove);
+		return removeGeneratedBook(itemStackToRemove).regenerated();
+	}
+
+	private EnchantingTableSession.GeneratedBookRemovalResult removeGeneratedBook(ItemStack itemStackToRemove) {
+		return removeGeneratedBook(itemStackToRemove, -1);
+	}
+
+	private EnchantingTableSession.GeneratedBookRemovalResult removeGeneratedBook(ItemStack itemStackToRemove, int cacheIndex) {
+		EnchantingTableSession.GeneratedBookRemovalResult result = cacheIndex >= 0
+				? session.removeGeneratedBookAtCacheIndex(itemStackToRemove, cacheIndex)
+				: session.removeGeneratedBook(itemStackToRemove);
 		syncPageState();
-		if (!result.success()) {
-			return false;
+		if (result.success()) {
+			playUseSound();
 		}
-		playUseSound();
-		return result.regenerated();
+		return result;
 	}
 
 	public void initMenu() {
@@ -534,6 +558,10 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		GeneratedSlotPage page = session.page();
 		currentPage = page.currentPage();
 		totalPage = page.totalPage();
+	}
+
+	private boolean isGeneratedSlotIndex(int slotId) {
+		return slotId >= 2 && slotId < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE;
 	}
 
 	//? if >=1.21.9 {

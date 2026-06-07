@@ -91,8 +91,10 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
         if (index >= GENERATED_SLOT_START && index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE) {
-            int enchantmentIndexInCache = session.cacheIndexForGeneratedSlot(index);
             ItemStack generatedBook = stack.copy();
+            if (!session.isGeneratedItemAt(session.cacheIndexForGeneratedSlot(index), generatedBook)) {
+                return ItemStack.EMPTY;
+            }
             if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
                 return ItemStack.EMPTY;
             }
@@ -107,13 +109,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             } finally {
                 suppressGeneratedSlotTakeRemoval = false;
             }
-            EnchantingTableSession.GeneratedBookRemovalResult removalResult = removeGeneratedBook(generatedBook);
-            if (removalResult.success()
-                    && !removalResult.regenerated()
-                    && enchantmentIndexInCache < session.generatedItemCount()) {
-                session.setGeneratedItem(enchantmentIndexInCache, ItemStack.EMPTY);
-                session.updateGeneratedSlots();
-            }
+            removeGeneratedBook(generatedBook, index);
             return original;
         }
 
@@ -250,7 +246,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                     public void onTake(Player player, ItemStack stack) {
                         super.onTake(player, stack);
                         if (!suppressGeneratedSlotTakeRemoval) {
-                            removeGeneratedBook(stack);
+                            removeGeneratedBook(stack, getContainerSlot());
                         }
                     }
 
@@ -272,7 +268,10 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
 
         boolean hasDuplicateEnchantment = hasDuplicateEnchantment(newStack, oldStack);
         if (!oldStack.isEmpty() && !hasDuplicateEnchantment) {
-            removeGeneratedBook(oldStack);
+            EnchantingTableSession.GeneratedBookRemovalResult removalResult = removeGeneratedBook(oldStack, slotIndex);
+            if (!removalResult.success()) {
+                return;
+            }
         }
 
         if (applyEnchantedBook(newStack.copyWithCount(1)) && hasDuplicateEnchantment) {
@@ -300,8 +299,9 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         return result.success();
     }
 
-    private EnchantingTableSession.GeneratedBookRemovalResult removeGeneratedBook(ItemStack stack) {
-        EnchantingTableSession.GeneratedBookRemovalResult result = session.removeGeneratedBook(stack);
+    private EnchantingTableSession.GeneratedBookRemovalResult removeGeneratedBook(ItemStack stack, int slotIndex) {
+        int cacheIndex = session.cacheIndexForGeneratedSlot(slotIndex);
+        EnchantingTableSession.GeneratedBookRemovalResult result = session.removeGeneratedBookAtCacheIndex(stack, cacheIndex);
         if (result.success()) {
             playUseSound();
         }

@@ -131,6 +131,7 @@ public class BasicGameTests {
             new TestRegistration("custom_table_automation_applies_accepted_book", 40, BasicGameTests::customTableAutomationAppliesAcceptedBook),
             new TestRegistration("custom_table_automation_rejects_invalid_book", 40, BasicGameTests::customTableAutomationRejectsInvalidBook),
             new TestRegistration("custom_table_removing_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableRemovingGeneratedBookSubtractsFromTool),
+            new TestRegistration("custom_table_empty_generated_slot_click_does_not_restore_stale_book", 40, BasicGameTests::customTableEmptyGeneratedSlotClickDoesNotRestoreStaleBook),
             new TestRegistration("custom_table_quick_move_generated_book_subtracts_from_tool", 40, BasicGameTests::customTableQuickMoveGeneratedBookSubtractsFromTool),
             new TestRegistration("custom_table_export_all_enchantments_marks_stored_tool_changed", 40, BasicGameTests::customTableExportAllEnchantmentsMarksStoredToolChanged)
     );
@@ -1277,6 +1278,38 @@ public class BasicGameTests {
         assertTrue(helper, player.containerMenu.getCarried().is(Items.ENCHANTED_BOOK), "Taking a generated book should put that book on the cursor");
         assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 0, "Removing a generated book should remove the matching tool enchantment");
         assertTrue(helper, menu.getSlot(2).getItem().isEmpty(), "Generated books should clear after the source enchantment is removed");
+
+        helper.succeed();
+    }
+
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
+    public static void customTableEmptyGeneratedSlotClickDoesNotRestoreStaleBook(GameTestHelper helper) {
+        helper.setBlock(ENCHANTING_CUSTOM_TABLE_POS, ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get());
+
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        EnchantingCustomMenu menu = enchantingMenu(helper, player);
+        Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.enchant(sharpness, 5);
+
+        menu.getSlot(0).setByPlayer(sword);
+        player.containerMenu = menu;
+
+        assertTrue(helper, menu.getSlot(2).getItem().is(Items.ENCHANTED_BOOK), "Generated slot should start with a book");
+        menu.getSlot(2).set(ItemStack.EMPTY);
+        player.containerMenu.setCarried(ItemStack.EMPTY);
+
+        //? if >=26.1 {
+        menu.clicked(2, 0, ContainerInput.PICKUP, player);
+        //?} else {
+        /*menu.clicked(2, 0, ClickType.PICKUP, player);
+        *///?}
+
+        assertTrue(helper, player.containerMenu.getCarried().isEmpty(), "Clicking an empty generated slot should not pick up a stale book");
+        assertTrue(helper, menu.getSlot(2).getItem().isEmpty(), "Empty generated slot should stay empty instead of redrawing a stale cached book");
+        assertEnchantmentLevel(helper, menu.getSlot(0).getItem(), sharpness, 5, "Empty slot click should not modify the tool");
 
         helper.succeed();
     }
