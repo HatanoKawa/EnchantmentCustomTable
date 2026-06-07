@@ -1,6 +1,8 @@
 package com.river_quinn.enchantment_custom_table.block;
 
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingTableLikeBlockEntity;
+import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversionTableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -8,6 +10,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 //?} else {
 /*import net.minecraft.resources.ResourceLocation;*/
+//?}
+//? if >=1.21.5 {
+import net.minecraft.server.level.ServerLevel;
 //?}
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.level.BlockGetter;
@@ -75,6 +80,33 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return null;
+    }
+
+    //? if >=1.21.5 {
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        dropTableContents(level, pos);
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+    }
+    //?} else {
+    /*@Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            dropTableContents(level, pos);
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+    *///?}
+
+    private void dropTableContents(Level level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof EnchantingCustomTableBlockEntity table) {
+            table.dropInventory();
+            level.updateNeighbourForOutputSignal(pos, this);
+        } else if (blockEntity instanceof EnchantmentConversionTableBlockEntity table) {
+            table.dropInventory();
+            level.updateNeighbourForOutputSignal(pos, this);
+        }
     }
 
     @SuppressWarnings("unchecked")

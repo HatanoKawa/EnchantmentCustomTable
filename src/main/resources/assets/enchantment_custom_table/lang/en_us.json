@@ -1,6 +1,8 @@
 {
   "block.enchantment_custom_table.enchanting_custom_table": "Enchanting Custom Table",
   "block.enchantment_custom_table.enchantment_conversion_table": "Enchantment Conversion Table",
+  "item.enchantment_custom_table.enchanting_custom_table": "Enchanting Custom Table",
+  "item.enchantment_custom_table.enchantment_conversion_table": "Enchantment Conversion Table",
   "container.enchantment_custom_table.enchanting_table_like": "Enchantment Table",
   "gui.enchantment_custom_table.enchantment_custom.button_left_arrow": "\u003c\u003c",
   "gui.enchantment_custom_table.enchantment_custom.button_right_arrow": "\u003e\u003e",
