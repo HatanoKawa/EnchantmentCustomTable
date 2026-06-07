@@ -275,6 +275,9 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
 
         session.captureCurrentPageSlots();
         if (newStack.isEmpty()) {
+            if (!oldStack.isEmpty() && removeGeneratedBook(oldStack, slotIndex).success()) {
+                return;
+            }
             inventory.setStackInSlot(slotIndex, ItemStack.EMPTY);
             return;
         }
