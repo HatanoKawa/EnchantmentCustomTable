@@ -298,7 +298,13 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
 
         @Override
         public long getCapacityAsLong(int index, ItemResource resource) {
-            return index == 0 && !resource.isEmpty() && isValid(index, resource) ? 1 : 0;
+            if (index != 0) {
+                return 0;
+            }
+            if (resource.isEmpty()) {
+                return getToolStack().isEmpty() || level == null ? 0 : 1;
+            }
+            return isValid(index, resource) ? 1 : 0;
         }
 
         @Override

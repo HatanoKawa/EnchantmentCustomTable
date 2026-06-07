@@ -68,6 +68,7 @@ import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 *///?}
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 //?}
@@ -1192,7 +1193,13 @@ public class BasicGameTests {
             *///?}
 
             assertTrue(helper, handler != null, "Custom table should expose an item handler capability");
-            assertTrue(helper, insertStack(handler, 0, enchantedBook(sharpness, 1)).isEmpty(), "Automation should consume an accepted enchanted book");
+            ItemStack acceptedBook = enchantedBook(sharpness, 1);
+            //? if >=1.21.9 {
+            assertTrue(helper, !ResourceHandlerUtil.isFull(handler), "Automation input should not look full while the tool can accept books");
+            assertTrue(helper, handler.getCapacityAsLong(0, ItemResource.EMPTY) == 1, "Automation input should expose empty-slot capacity for hoppers");
+            assertTrue(helper, handler.getCapacityAsLong(0, ItemResource.of(acceptedBook)) == 1, "Automation input should expose capacity for accepted books");
+            //?}
+            assertTrue(helper, insertStack(handler, 0, acceptedBook).isEmpty(), "Automation should consume an accepted enchanted book");
             assertTrue(helper, extractStack(handler, 0, 1).isEmpty(), "Automation should not extract the stored tool");
             assertEnchantmentLevel(
                     helper,
