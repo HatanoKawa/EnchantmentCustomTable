@@ -91,6 +91,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
         if (index >= GENERATED_SLOT_START && index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE) {
+            session.captureCurrentPageSlots();
             ItemStack generatedBook = stack.copy();
             if (!session.isGeneratedItemAt(session.cacheIndexForGeneratedSlot(index), generatedBook)) {
                 return ItemStack.EMPTY;
@@ -204,6 +205,9 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             @Override
             public void setChanged() {
                 super.setChanged();
+                if (!isServerSide()) {
+                    return;
+                }
                 if (getItem().isEmpty()) {
                     session.clearAll();
                 } else {
@@ -221,6 +225,9 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             public void setChanged() {
                 ItemStack stack = getItem();
                 super.setChanged();
+                if (!isServerSide()) {
+                    return;
+                }
                 if (!stack.isEmpty() && applyEnchantedBook(stack.copyWithCount(1))) {
                     inventory.setStackInSlot(INPUT_SLOT, ItemStack.EMPTY);
                 }
@@ -245,7 +252,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                     @Override
                     public void onTake(Player player, ItemStack stack) {
                         super.onTake(player, stack);
-                        if (!suppressGeneratedSlotTakeRemoval) {
+                        if (isServerSide() && !suppressGeneratedSlotTakeRemoval) {
                             removeGeneratedBook(stack, getContainerSlot());
                         }
                     }
@@ -261,6 +268,12 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     }
 
     private void handleGeneratedSlotSetByPlayer(int slotIndex, ItemStack newStack, ItemStack oldStack) {
+        if (!isServerSide()) {
+            inventory.setStackInSlot(slotIndex, newStack);
+            return;
+        }
+
+        session.captureCurrentPageSlots();
         if (newStack.isEmpty()) {
             inventory.setStackInSlot(slotIndex, ItemStack.EMPTY);
             return;
@@ -306,6 +319,10 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             playUseSound();
         }
         return result;
+    }
+
+    private boolean isServerSide() {
+        return !world.isClientSide();
     }
 
     private void playUseSound() {
