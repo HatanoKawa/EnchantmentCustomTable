@@ -258,6 +258,14 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                     }
 
                     @Override
+                    public ItemStack remove(int amount) {
+                        if (isServerSide()) {
+                            session.captureCurrentPageSlots();
+                        }
+                        return super.remove(amount);
+                    }
+
+                    @Override
                     public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
                         handleGeneratedSlotSetByPlayer(getContainerSlot(), newStack, oldStack);
                     }
@@ -273,7 +281,6 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             return;
         }
 
-        session.captureCurrentPageSlots();
         if (newStack.isEmpty()) {
             if (!oldStack.isEmpty() && removeGeneratedBook(oldStack, slotIndex).success()) {
                 return;
@@ -282,6 +289,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             return;
         }
 
+        session.captureCurrentPageSlots();
         boolean hasDuplicateEnchantment = hasDuplicateEnchantment(newStack, oldStack);
         if (!oldStack.isEmpty() && !hasDuplicateEnchantment) {
             EnchantingTableSession.GeneratedBookRemovalResult removalResult = removeGeneratedBook(oldStack, slotIndex);
