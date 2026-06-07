@@ -723,6 +723,13 @@ public class BasicGameTests {
                     2,
                     "Automation should expose the generated copy in its output slot"
             );
+            //? if >=1.21.9 {
+            assertTrue(helper, !ResourceHandlerUtil.isFull(handler), "Conversion automation should not look full while input slots can accept materials");
+            assertTrue(helper, handler.getCapacityAsLong(0, ItemResource.EMPTY) > 0, "Book input should expose general capacity while copy output is full");
+            assertTrue(helper, handler.getCapacityAsLong(1, ItemResource.EMPTY) > 0, "Payment input should expose general capacity while copy output is full");
+            //?}
+            assertTrue(helper, insertStack(handler, 0, new ItemStack(Items.BOOK)).isEmpty(), "Automation should keep accepting books while copy output is full");
+            assertTrue(helper, insertStack(handler, 1, new ItemStack(Items.EMERALD)).isEmpty(), "Automation should keep accepting payment items while copy output is full");
 
             ItemStack firstCopy = extractStack(handler, 2, 1);
             assertEnchantmentLevel(helper, firstCopy, sharpness, 2, "Automation should extract the generated copy");

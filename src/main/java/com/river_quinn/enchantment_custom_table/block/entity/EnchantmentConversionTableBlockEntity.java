@@ -317,10 +317,34 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         @Override
         public long getCapacityAsLong(int index, ItemResource resource) {
             return switch (index) {
-                case 0, 1 -> !resource.isEmpty() && isValid(index, resource) ? 64 : 0;
+                case 0, 1 -> getInputSlotCapacity(index, resource);
                 case 2 -> resource.isEmpty() || resource.matches(inventory.getStackInSlot(COPY_RESULT_SLOT)) ? 1 : 0;
                 default -> 0;
             };
+        }
+
+        private long getInputSlotCapacity(int index, ItemResource resource) {
+            if (resource.isEmpty()) {
+                return getInputSlotGeneralCapacity(index);
+            }
+            return isValid(index, resource) ? 64 : 0;
+        }
+
+        private long getInputSlotGeneralCapacity(int index) {
+            int internalSlot = switch (index) {
+                case 0 -> BOOK_SLOT;
+                case 1 -> PAYMENT_SLOT;
+                default -> -1;
+            };
+            if (internalSlot < 0) {
+                return 0;
+            }
+            ItemStack stack = inventory.getStackInSlot(internalSlot);
+            if (stack.isEmpty()) {
+                return 64;
+            }
+            int slotLimit = Math.min(inventory.getSlotLimit(internalSlot), stack.getMaxStackSize());
+            return stack.getCount() < slotLimit ? 64 : 0;
         }
 
         @Override
