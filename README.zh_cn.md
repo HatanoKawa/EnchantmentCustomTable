@@ -56,7 +56,7 @@ NeoForge 和 Fabric 两个加载器都有对应版本，支持 Minecraft `1.21.1
 - 附魔等级要**大于 0**。
 - 附魔等级**不能超过**这个附魔本来的最高等级。
 
-_截图占位：放入有效模板后的转换台，模板槽中有附魔书，右侧候选区显示为禁用状态，输出槽中生成一本复制的附魔书。_
+![附魔书转换台界面](./src/main/resources/doc/enchantment_conversion_table_automation_gui.jpg)
 
 ## 自动化（漏斗、管道之类）
 

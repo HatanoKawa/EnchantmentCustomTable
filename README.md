@@ -56,7 +56,7 @@ A book can only be used as a template if it meets these rules:
 - The enchantment level must be **greater than 0**.
 - The level **must not exceed** that enchantment's normal maximum.
 
-_Screenshot placeholder: conversion table with a valid template in the template slot, disabled generated slots, and one copied book in the output slot._
+![Enchantment Conversion Table Automation GUI](./src/main/resources/doc/enchantment_conversion_table_automation_gui.jpg)
 
 ## Automation (hoppers, pipes, and the like)
 
