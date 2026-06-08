@@ -9,6 +9,7 @@ import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantingCu
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Containers;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -43,7 +44,16 @@ public abstract class FabricEnchantingTableLikeBlock extends FabricTableDropBloc
     }
 
     @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        dropTableContents(level, pos);
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
     protected void dropTableContents(Level level, BlockPos pos) {
+        if (level.isClientSide()) {
+            return;
+        }
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof FabricEnchantingCustomTableBlockEntity table) {
             dropInventorySlots(level, pos, table.getInventory(), FabricEnchantingCustomMenu.TOOL_SLOT);
@@ -63,9 +73,6 @@ public abstract class FabricEnchantingTableLikeBlock extends FabricTableDropBloc
     }
 
     private void dropInventorySlots(Level level, BlockPos pos, FabricTableInventory inventory, int... slots) {
-        if (level.isClientSide()) {
-            return;
-        }
         for (int slot : slots) {
             ItemStack stack = inventory.getStackInSlot(slot);
             if (!stack.isEmpty()) {

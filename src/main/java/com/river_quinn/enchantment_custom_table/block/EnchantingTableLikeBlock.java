@@ -15,6 +15,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 //?}
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -82,6 +83,12 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
         return null;
     }
 
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        dropTableContents(level, pos);
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
     //? if >=1.21.5 {
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
@@ -99,6 +106,13 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
     *///?}
 
     private void dropTableContents(Level level, BlockPos pos) {
+        //? if >=1.21.6 {
+        if (level.isClientSide()) {
+        //?} else {
+        /*if (level.isClientSide) {
+        *///?}
+            return;
+        }
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof EnchantingCustomTableBlockEntity table) {
             table.dropInventory();

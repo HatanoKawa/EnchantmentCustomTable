@@ -6,6 +6,7 @@ import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinec
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -48,8 +49,8 @@ public class FabricEnchantingCustomScreen extends AbstractContainerScreen<Fabric
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        graphics.blit(GUI_BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
-        graphics.blit(ARROW, this.leftPos + TableMenuLayout.Enchanting.ARROW_X, this.topPos + TableMenuLayout.Enchanting.ARROW_Y, 0, 0, 12, 9, 12, 9);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, ARROW, this.leftPos + TableMenuLayout.Enchanting.ARROW_X, this.topPos + TableMenuLayout.Enchanting.ARROW_Y, 0, 0, 12, 9, 12, 9);
     }
 
     @Override
