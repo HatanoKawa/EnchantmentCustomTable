@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "tag": "enchantment_custom_table:quartz_blocks"
+    },
+    "B": {
+      "item": "minecraft:book"
+    },
+    "E": {
+      "item": "minecraft:emerald_block"
+    },
+    "L": {
+      "item": "minecraft:lapis_block"
+    }
+  },
+  "pattern": [
+    "LBL",
+    "E#E",
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "enchantment_custom_table:enchantment_conversion_table"
+  }
+}

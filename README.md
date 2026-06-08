@@ -1,55 +1,137 @@
 # Enchantment Custom Table
 
-<a href="https://www.curseforge.com/minecraft/mc-mods/enchantment-custom-table"><img src="http://cf.way2muchnoise.eu/versions/1229709.svg" alt="CF"></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/enchantment-custom-table"><img src="http://cf.way2muchnoise.eu/1229709.svg" alt="CF"></a>
-<a href="https://modrinth.com/mod/enchantment-custom-table"><img src="https://img.shields.io/modrinth/dt/enchantment-custom-table?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth"></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/enchantment-custom-table"><img src="http://cf.way2muchnoise.eu/versions/1229709.svg" alt="CurseForge versions"></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/enchantment-custom-table"><img src="http://cf.way2muchnoise.eu/1229709.svg" alt="CurseForge downloads"></a>
+<a href="https://modrinth.com/mod/enchantment-custom-table"><img src="https://img.shields.io/modrinth/dt/enchantment-custom-table?logo=modrinth&label=&suffix=%20&style=flat&color=242629&labelColor=5ca424&logoColor=1c1c1c" alt="Modrinth downloads"></a>
 
-*For the Fabric version, please refer to this link: [Enchantment Custom Table For Fabric](https://github.com/HatanoKawa/EnchantmentCustomTable).
-If you encounter any issues with the Fabric version, please submit them there.*
+[中文说明](./README.zh_cn.md)
 
-I'm not particularly interested in rolling enchantments on items, and the mod I've always used, "Disenchantment Edit Table," has been discontinued and is closed-source. So, I recreated it based on its logic to make a new mod compatible with Minecraft versions 1.21 and later. This mod allows players to freely customize the enchantments on their tools.
+Tired of grinding the vanilla enchanting table, building libraries, and hoarding XP just to land the enchantments you actually want? This mod gives you two new workstations that let you rearrange enchantments as freely as you sort your inventory.
 
-If you're also not a fan of randomly rolling enchantments, you might want to give this workstation a try!
+- **Enchanting Custom Table** lets you "mod" the enchantments on a tool or enchanted book directly — add one, remove one, split a high-level enchantment into lower ones, or merge two matching books into something stronger.
+- **Enchantment Conversion Table** turns plain books plus a few emeralds into the enchanted books you want — and can even "photocopy" an exact duplicate of a book you give it.
 
-# Usage
+> Out of the box, this mod is intentionally generous and easy to play with. If you (or a modpack you're building) want something more balanced and challenging, you can flip on a few stricter switches in the config — more on that below.
 
-## Enchantment Custom Table
+Grab a release from [CurseForge](https://www.curseforge.com/minecraft/mc-mods/enchantment-custom-table) or [Modrinth](https://modrinth.com/mod/enchantment-custom-table). Found a bug or have an idea? Let us know on [GitHub Issues](https://github.com/HatanoKawa/EnchantmentCustomTable/issues).
 
-![enchantment custom table gui](./src/main/resources/doc/enchantment_custom_table_gui.jpg)
+## Supported Versions
 
-Place a tool or an enchanted book containing multiple enchantments in the top-left slot. All enchantments on the item will be displayed as individual enchanted books in the 4×6 grid on the right.
+There are builds for both the **NeoForge** and **Fabric** loaders, covering Minecraft `1.21.1` through `1.21.11`, plus `26.1`, `26.1.1`, and `26.1.2`.
 
-- When a player removes an enchanted book, the corresponding enchantment will be removed from the tool.
+**Tip:** when you download, make sure two things line up — your loader (NeoForge or Fabric) *and* your Minecraft version. Both have to match the jar, or the game won't load it.
 
-- When a player places an enchanted book into the slot, the corresponding enchantment will be added to the tool.
+## Enchanting Custom Table: rearrange your enchantments
 
-- Enchantments of the same type will merge their levels. For example, if you place a Diamond Sword with Sharpness I and an enchanted book with Sharpness II, the result will be a Diamond Sword with Sharpness III.
+![Enchanting Custom Table GUI](./src/main/resources/doc/enchantment_custom_table_gui.jpg)
 
-### Single Input Slot
+Drop a **tool** or an **enchanted book** into the top-left slot, and the table lays out every enchantment on it as a separate enchanted book on the right. From there you can:
 
-For the single book slot to the right of the tool slot, any enchanted books placed in this slot will be immediately consumed, and their enchantments will be applied to the tool. This allows players to quickly add multiple enchantments to their tool using Shift + Left Click.
+- **Want to remove an enchantment?** Just take that book from the right side — the matching enchantment comes off the item.
+- **Want to add one?** Put an enchanted book in the input slot, or into any empty slot on the right, and it gets applied to the item.
+- **Want to strengthen an enchantment you already have?** Stack a book onto the matching one on the right and the two merge together.
+- **Want to break a high-level book apart?** Put a book that holds a *single* enchantment into the top-left slot, and it splits into a few lower-level books to choose from.
+- **Want to clear everything at once?** Hit the export button — all enchantments come off the item and are bundled into a single enchanted book for you.
 
-### Export Button
+By default, two of the same enchantment **add their levels together** when merged. So Sharpness IV + Sharpness IV becomes Sharpness VIII. (If that feels too strong, the stricter config options below can rein it in.)
 
-Clicking this button will remove all enchantments from the tool and combine them into a single enchanted book, which will be given to the player.
+## Enchantment Conversion Table: trade plain books for enchanted ones
 
-**Note**: If the player's inventory is full, the combined enchanted book will be dropped in front of them.
+![Enchantment Conversion Table GUI](./src/main/resources/doc/enchantment_conversion_table_gui.jpg)
 
-### recipe
+**Normal trade mode** is straightforward: add some plain books, then add enough emeralds or emerald blocks as the "fee." Once you've got enough, the right side lists the enchanted books you can get. Every book you take costs one plain book plus the emerald payment.
 
-![enchantment custom table recipe](./src/main/resources/doc/enchanting_custom_table_recipe.png)
+Too many books to scroll through? Use the **search box** at the top to filter by enchantment name.
 
-## Enchantment Conversion Table
+What level you get is controlled by the `convertOnlyLevelOneBook` option: by default you get the **highest available level**; flip it on and you only get **level-one** books.
 
-![enchantment conversion table gui](./src/main/resources/doc/enchantment_conversion_table_gui.jpg)
+### Copy Template Mode: photocopy a book
 
-Place a book and either emeralds or emerald blocks in the designated slots on the left. If the minimum cost is met (by default, 1 book + 36 emeralds or 4 emerald blocks), the 4×7 grid on the right will display all available enchantments at their maximum level. You can then exchange books and emeralds for the corresponding enchanted books.
+Put an enchanted book into the **template slot** and the table switches to copy mode. The right-side trade list turns off, and instead: as long as the table holds one plain book plus enough emeralds, the output slot produces an **exact copy** of your template.
 
-### recipe
+A book can only be used as a template if it meets these rules:
 
-![enchantment conversion table recipe](./src/main/resources/doc/enchantment_conversion_table_recipe.png)
+- It must be an **enchanted book** (not a tool).
+- It must hold **exactly one** enchantment, not several at once.
+- The enchantment level must be **greater than 0**.
+- The level **must not exceed** that enchantment's normal maximum.
 
-# Balance Considerations
-When creating this mod, I did not focus on balance. However, I understand that some players value gameplay challenges and balance.
+![Enchantment Conversion Table Automation GUI](./src/main/resources/doc/enchantment_conversion_table_automation_gui.jpg)
 
-If you have any suggestions regarding balance—such as adding configuration options to adjust costs or modify behavior—feel free to provide feedback at any time.
+## Automation (hoppers, pipes, and the like)
+
+Whatever you put in either table is **really stored there** — it stays put, and drops back out if the block is broken. Nothing disappears.
+
+To keep hoppers and logistics mods from sneaking around the rules you'd follow by hand, automation is **deliberately limited**:
+
+- **Enchanting Custom Table:** a hopper can feed enchanted books into the input slot, and they merge onto whatever item is already in the table — but the main tool/book inside **can't be pulled out** by automation.
+- **Enchantment Conversion Table:** you can auto-feed plain books and emerald payment, but you can **only pull items out of the copy output slot**.
+- The **template slot** must be set by a player by hand — automation can't insert or swap it.
+- The trade books on the right are just on-screen choices for players, not real items, so automation can't touch them.
+- **To auto-produce the same book over and over, use Copy Template Mode** rather than the right-side trade list.
+
+The one rule worth memorizing: **a template book must hold a single enchantment whose level doesn't go above that enchantment's normal maximum.**
+
+## Configuration: tune it to be more balanced
+
+- **On NeoForge:** edit it right in-game through the Mod config screen, or in the loader-managed common config file.
+- **On Fabric:** the config file lives in your Fabric `config` folder, named `enchantment_custom_table.json`.
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `minimumEmeraldCost` | `36` | How many emeralds the conversion table charges. Set it to `0` to drop the emerald cost entirely. |
+| `minimumEmeraldBlockCost` | `4` | How many emerald blocks it charges. Set it to `0` to drop the emerald-block cost. |
+| `enforceEnchantmentLevelLimit` | `false` | When on, merging duplicate enchantments **can't go above that enchantment's normal max level**. Note: adding a brand-new enchantment isn't limited by this, so over-level books made by other mods still work. |
+| `incrementalSameLevelMerge` | `false` | A more balanced merge rule. When on, two same-name books only merge if their levels **match exactly**, and a merge bumps the level by just **+1**. So Sharpness V + Sharpness V becomes Sharpness VI instead of Sharpness X. |
+| `convertOnlyLevelOneBook` | `false` | When on, the conversion table only produces **level-one** books instead of max-level ones. |
+
+A couple of things to know:
+
+- `enforceEnchantmentLevelLimit` and `incrementalSameLevelMerge` are independent — turn on either or both. With both on, same-level merges still won't exceed the normal max.
+- Turning on `incrementalSameLevelMerge` also **changes how books split**: a Sharpness V book splits into two Sharpness IV books, instead of the default "split in half" options.
+
+### Retired (deprecated) options
+
+These are old option names that **no longer do anything**. If your old config file still has them, regenerate the file or rename them by hand:
+
+- `ignoreEnchantmentLevelLimit` → now `enforceEnchantmentLevelLimit` (the meaning is reversed).
+- `convert_max_level_book` → now `convertOnlyLevelOneBook` (the meaning is reversed).
+- `enableXpRequirement` → removed, with no replacement.
+
+## How to craft the two tables
+
+In both recipes, the starred (\*) slots accept **any kind of quartz block** — specifically these (the `enchantment_custom_table:quartz_blocks` item tag):
+
+- Quartz Block
+- Chiseled Quartz Block
+- Smooth Quartz Block
+- Quartz Pillar
+- Quartz Bricks
+
+### Enchanting Custom Table recipe
+
+![Enchanting Custom Table Recipe](./src/main/resources/doc/enchanting_custom_table_recipe.png)
+
+Lay it out on the 3×3 crafting grid like this:
+
+| Left | Middle | Right |
+| :---: | :---: | :---: |
+| Lapis Block | Book | Lapis Block |
+| Diamond Block | Quartz Block* | Diamond Block |
+| Quartz Block* | Quartz Block* | Quartz Block* |
+
+\* Starred slots take **any of the quartz blocks** listed above.
+
+### Enchantment Conversion Table recipe
+
+![Enchantment Conversion Table Recipe](./src/main/resources/doc/enchantment_conversion_table_recipe.png)
+
+Lay it out on the 3×3 crafting grid like this:
+
+| Left | Middle | Right |
+| :---: | :---: | :---: |
+| Lapis Block | Book | Lapis Block |
+| Emerald Block | Quartz Block* | Emerald Block |
+| Quartz Block* | Quartz Block* | Quartz Block* |
+
+\* Starred slots take **any of the quartz blocks** listed above.

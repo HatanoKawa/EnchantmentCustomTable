@@ -10,23 +10,8 @@ public class EnchantingCustomTableServerPayloadHandler {
             return;
         }
 
-        EnchantingCustomTableNetData.OperateType operateType;
-        try {
-            operateType = EnchantingCustomTableNetData.OperateType.valueOf(data.operateType());
-        } catch (IllegalArgumentException | NullPointerException ignored) {
+        if (!data.intent().dispatchTo(menu)) {
             return;
-        }
-
-        switch (operateType) {
-            case EXPORT_ALL_ENCHANTMENTS -> {
-                menu.exportAllEnchantments();
-            }
-            case NEXT_PAGE -> {
-                menu.nextPage();
-            }
-            case PREVIOUS_PAGE -> {
-                menu.previousPage();
-            }
         }
         menu.broadcastChanges();
     }

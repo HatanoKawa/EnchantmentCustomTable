@@ -7,6 +7,11 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+//? if >=1.21.11 {
+import net.minecraft.resources.Identifier;
+//?} else {
+/*import net.minecraft.resources.ResourceLocation;*/
+//?}
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -15,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -35,9 +41,21 @@ public class EnchantmentConversionTableBlock extends EnchantingTableLikeBlock {
         super(properties);
     }
 
-    public EnchantmentConversionTableBlock() {
+    //? if <1.21.2 {
+    /*public EnchantmentConversionTableBlock() {
         super();
     }
+    *///?}
+
+    //? if >=1.21.2 {
+    //? if >=1.21.11 {
+    public EnchantmentConversionTableBlock(Identifier registryName) {
+    //?} else {
+    /*public EnchantmentConversionTableBlock(ResourceLocation registryName) {
+    *///?}
+        super(registryName);
+    }
+    //?}
 
     @Override
     protected MapCodec<? extends EnchantmentConversionTableBlock> codec() {
@@ -71,16 +89,15 @@ public class EnchantmentConversionTableBlock extends EnchantingTableLikeBlock {
     }
 
     @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (state.getBlock() != newState.getBlock()) {
+    public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+        if (level instanceof Level world) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof EnchantmentConversionTableBlockEntity be) {
-//                be.dropBookAndEmerald();
+            if (blockEntity instanceof EnchantmentConversionTableBlockEntity blockEntityWithInventory) {
+                blockEntityWithInventory.dropInventory();
                 world.updateNeighbourForOutputSignal(pos, this);
             }
-            super.onRemove(state, world, pos, newState, isMoving);
         }
+        super.destroy(level, pos, state);
     }
-
 
 }

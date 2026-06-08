@@ -10,23 +10,8 @@ public class EnchantmentConversionTableServerPayloadHandler {
             return;
         }
 
-        EnchantmentConversionTableNetData.OperateType operateType;
-        try {
-            operateType = EnchantmentConversionTableNetData.OperateType.valueOf(data.operateType());
-        } catch (IllegalArgumentException | NullPointerException ignored) {
+        if (!data.intent().dispatchTo(menu, data.searchQuery(), data.clientLanguage(), data.matchedEnchantments())) {
             return;
-        }
-
-        switch (operateType) {
-            case NEXT_PAGE -> {
-                menu.nextPage();
-            }
-            case PREVIOUS_PAGE -> {
-                menu.previousPage();
-            }
-            case SEARCH -> {
-                menu.setSearchQuery(data.searchQuery(), data.clientLanguage(), data.matchedEnchantments());
-            }
         }
         menu.broadcastChanges();
     }

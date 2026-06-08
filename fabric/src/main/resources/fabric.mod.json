@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_authors}"
+  ],
+  "license": "${mod_license}",
+  "contact": {
+    "homepage": "https://modrinth.com/mod/enchantment-custom-table",
+    "issues": "https://github.com/HatanoKawa/EnchantmentCustomTable/issues",
+    "sources": "https://github.com/HatanoKawa/EnchantmentCustomTable"
+  },
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.river_quinn.enchantment_custom_table.fabric.EnchantmentCustomTableFabric"
+    ],
+    "client": [
+      "com.river_quinn.enchantment_custom_table.fabric.client.EnchantmentCustomTableFabricClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "minecraft": "${fabric_minecraft_version}",
+    "java": ">=${fabric_java_version}",
+    "fabric-api": "*"
+  }
+}

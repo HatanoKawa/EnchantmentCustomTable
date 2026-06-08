@@ -1,0 +1,20 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:entity/enchanting_custom_table_book"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:entity/enchantment_conversion_table_book"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:entity/enchantment/enchanting_custom_table_book"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:entity/enchantment/enchantment_conversion_table_book"
+    }
+  ]
+}

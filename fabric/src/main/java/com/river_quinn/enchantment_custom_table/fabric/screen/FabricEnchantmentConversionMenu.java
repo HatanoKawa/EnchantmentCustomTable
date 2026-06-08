@@ -1,0 +1,359 @@
+package com.river_quinn.enchantment_custom_table.fabric.screen;
+
+import com.river_quinn.enchantment_custom_table.fabric.block.entity.FabricEnchantmentConversionTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig;
+import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlocks;
+import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
+import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
+import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
+import com.river_quinn.enchantment_custom_table.core.net.ConversionTableActions;
+import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSession;
+import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
+import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+
+import java.util.List;
+import java.util.function.Supplier;
+
+public class FabricEnchantmentConversionMenu extends AbstractContainerMenu implements ConversionTableActions {
+    public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
+    public static final int ENCHANTED_BOOK_SLOT_COLUMN_COUNT = 7;
+    public static final int ENCHANTED_BOOK_SLOT_SIZE = ENCHANTED_BOOK_SLOT_ROW_COUNT * ENCHANTED_BOOK_SLOT_COLUMN_COUNT;
+    public static final int BOOK_SLOT = 0;
+    public static final int PAYMENT_SLOT = 1;
+    public static final int ENCHANTED_BOOK_SLOT_START = 2;
+    public static final int TEMPLATE_BOOK_SLOT = ENCHANTED_BOOK_SLOT_START + ENCHANTED_BOOK_SLOT_SIZE;
+    public static final int COPY_RESULT_SLOT = TEMPLATE_BOOK_SLOT + 1;
+    public static final int ENCHANTMENT_CONVERSION_SLOT_SIZE = COPY_RESULT_SLOT + 1;
+    private static final int PLAYER_MAIN_INVENTORY_SIZE = 27;
+    private static final int PLAYER_INVENTORY_START = ENCHANTMENT_CONVERSION_SLOT_SIZE;
+    private static final int PLAYER_HOTBAR_START = PLAYER_INVENTORY_START + PLAYER_MAIN_INVENTORY_SIZE;
+    private static final int PLAYER_INVENTORY_END = PLAYER_HOTBAR_START + 9;
+    private static final int PREVIOUS_PAGE_BUTTON = 0;
+    private static final int NEXT_PAGE_BUTTON = 1;
+
+    public final Level world;
+    public final Player entity;
+    public final int x;
+    public final int y;
+    public final int z;
+    private final ContainerLevelAccess access;
+    private final FabricTableInventory inventory;
+    private final ConversionTableSession session;
+    private final FabricEnchantmentConversionTableBlockEntity blockEntity;
+    private int lastInventoryVersion = -1;
+
+    public FabricEnchantmentConversionMenu(int id, Inventory inventory, BlockPos pos) {
+        super(FabricModMenus.ENCHANTMENT_CONVERSION, id);
+        this.entity = inventory.player;
+        this.world = inventory.player.level();
+        this.x = pos.getX();
+        this.y = pos.getY();
+        this.z = pos.getZ();
+        this.access = ContainerLevelAccess.create(world, pos);
+        this.blockEntity = world.getBlockEntity(pos) instanceof FabricEnchantmentConversionTableBlockEntity table ? table : null;
+        this.inventory = blockEntity != null
+                ? blockEntity.getInventory()
+                : new FabricTableInventory(ENCHANTMENT_CONVERSION_SLOT_SIZE, slot -> 1, (slot, stack) -> false, () -> {});
+        this.session = new ConversionTableSession(
+                world,
+                this.inventory,
+                FabricEnchantmentUtils.service(),
+                () -> blockEntity != null && blockEntity.isCopyMode(),
+                FabricTableConfig::snapshot,
+                BOOK_SLOT,
+                PAYMENT_SLOT,
+                ENCHANTED_BOOK_SLOT_START,
+                ENCHANTED_BOOK_SLOT_SIZE
+        );
+        addPageDataSlots();
+        addTableSlots();
+        regenerateGeneratedSlots();
+        if (blockEntity != null) {
+            lastInventoryVersion = blockEntity.getInventoryVersion();
+        }
+        addPlayerInventory(inventory, TableMenuLayout.Conversion.PLAYER_INVENTORY_X, TableMenuLayout.Conversion.PLAYER_INVENTORY_Y);
+    }
+
+    @Override
+    public ItemStack quickMoveStack(Player player, int index) {
+        Slot slot = slots.get(index);
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack stack = slot.getItem();
+        ItemStack original = stack.copy();
+        if (index >= ENCHANTED_BOOK_SLOT_START && index < ENCHANTED_BOOK_SLOT_START + ENCHANTED_BOOK_SLOT_SIZE) {
+            ItemStack generatedBook = stack.copy();
+            if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
+                return ItemStack.EMPTY;
+            }
+            if (stack.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            }
+            slot.onTake(player, generatedBook);
+            return original;
+        }
+
+        if (index == COPY_RESULT_SLOT) {
+            ItemStack copiedBook = stack.copy();
+            if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
+                return ItemStack.EMPTY;
+            }
+            if (stack.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            }
+            slot.onTake(player, copiedBook);
+            return original;
+        }
+
+        if (index < ENCHANTMENT_CONVERSION_SLOT_SIZE) {
+            if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (stack.is(Items.BOOK)) {
+            if (!moveItemStackTo(stack, BOOK_SLOT, BOOK_SLOT + 1, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (EnchantmentTableRules.paymentCostFor(stack.getItem(), FabricTableConfig.snapshot()) > 0) {
+            if (!moveItemStackTo(stack, PAYMENT_SLOT, PAYMENT_SLOT + 1, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (blockEntity != null && blockEntity.isValidCopyTemplate(stack)) {
+            if (!moveItemStackTo(stack, TEMPLATE_BOOK_SLOT, TEMPLATE_BOOK_SLOT + 1, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (index < PLAYER_HOTBAR_START) {
+            if (!moveItemStackTo(stack, PLAYER_HOTBAR_START, PLAYER_INVENTORY_END, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_HOTBAR_START, false)) {
+            return ItemStack.EMPTY;
+        }
+
+        if (stack.isEmpty()) {
+            slot.set(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
+        }
+        slot.onTake(player, stack);
+        return original;
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return stillValid(access, player, FabricModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK);
+    }
+
+    @Override
+    public void broadcastChanges() {
+        super.broadcastChanges();
+        if (blockEntity != null && lastInventoryVersion != blockEntity.getInventoryVersion()) {
+            lastInventoryVersion = blockEntity.getInventoryVersion();
+            refreshGeneratedSlotsAfterInputsChanged();
+        }
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        switch (id) {
+            case PREVIOUS_PAGE_BUTTON -> previousPage();
+            case NEXT_PAGE_BUTTON -> nextPage();
+            default -> {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int currentPage() {
+        return session.currentPage();
+    }
+
+    public int totalPage() {
+        return session.totalPage();
+    }
+
+    @Override
+    public void nextPage() {
+        session.nextPage();
+    }
+
+    @Override
+    public void previousPage() {
+        session.previousPage();
+    }
+
+    @Override
+    public void setSearchQuery(String query, String clientLanguage, List<String> matchedEnchantments) {
+        session.setSearchQuery(query, clientLanguage, matchedEnchantments);
+    }
+
+    private void addPageDataSlots() {
+        addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return session.currentPage();
+            }
+
+            @Override
+            public void set(int value) {
+                session.setCurrentPage(value);
+            }
+        });
+        addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return session.totalPage();
+            }
+
+            @Override
+            public void set(int value) {
+                session.setTotalPage(value);
+            }
+        });
+    }
+
+    private void regenerateGeneratedSlots() {
+        if (blockEntity != null) {
+            blockEntity.refreshCopyResult();
+        }
+        session.regenerateGeneratedSlots();
+    }
+
+    private void refreshGeneratedSlotsAfterInputsChanged() {
+        if (blockEntity != null) {
+            blockEntity.refreshCopyResult();
+        }
+        session.refreshGeneratedSlotsAfterInputsChanged();
+    }
+
+    private void addTableSlots() {
+        addSlot(new TableSlot(BOOK_SLOT, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y, FabricEmptySlotIcon.BOOK) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return stack.is(Items.BOOK);
+            }
+
+            @Override
+            public void setChanged() {
+                super.setChanged();
+                refreshGeneratedSlotsAfterInputsChanged();
+            }
+        });
+        addSlot(new TableSlot(PAYMENT_SLOT, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y, FabricEmptySlotIcon.EMERALD) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return EnchantmentTableRules.paymentCostFor(stack.getItem(), FabricTableConfig.snapshot()) > 0;
+            }
+
+            @Override
+            public void setChanged() {
+                super.setChanged();
+                refreshGeneratedSlotsAfterInputsChanged();
+            }
+        });
+        int generatedBookIndex = 0;
+        for (int row = 0; row < ENCHANTED_BOOK_SLOT_ROW_COUNT; row++) {
+            int yPos = TableMenuLayout.Conversion.generatedSlotY(row);
+            for (int column = 0; column < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; column++) {
+                int xPos = TableMenuLayout.Conversion.generatedSlotX(column);
+                addSlot(new TableSlot(ENCHANTED_BOOK_SLOT_START + generatedBookIndex, xPos, yPos, this::generatedBookSlotIcon) {
+                    @Override
+                    public boolean mayPlace(ItemStack stack) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean mayPickup(Player player) {
+                        return session.canPickGeneratedBook();
+                    }
+
+                    @Override
+                    public void onTake(Player player, ItemStack stack) {
+                        super.onTake(player, stack);
+                        session.pickGeneratedBook();
+                    }
+                });
+                generatedBookIndex++;
+            }
+        }
+        addSlot(new TableSlot(TEMPLATE_BOOK_SLOT, TableMenuLayout.Conversion.TEMPLATE_SLOT_X, TableMenuLayout.Conversion.TEMPLATE_SLOT_Y, FabricEmptySlotIcon.COPY_TEMPLATE) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return blockEntity != null && blockEntity.isValidCopyTemplate(stack);
+            }
+
+            @Override
+            public void setChanged() {
+                super.setChanged();
+                regenerateGeneratedSlots();
+            }
+        });
+        addSlot(new TableSlot(COPY_RESULT_SLOT, TableMenuLayout.Conversion.COPY_RESULT_SLOT_X, TableMenuLayout.Conversion.COPY_RESULT_SLOT_Y, FabricEmptySlotIcon.OUTPUT) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return false;
+            }
+
+            @Override
+            public void onTake(Player player, ItemStack stack) {
+                super.onTake(player, stack);
+                if (blockEntity != null) {
+                    blockEntity.refreshCopyResult();
+                }
+            }
+        });
+    }
+
+    private void addPlayerInventory(Inventory inventory, int xOffset, int yOffset) {
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 9; column++) {
+                addSlot(new Slot(inventory, column + (row + 1) * 9, xOffset + column * TableMenuLayout.SLOT_SIZE, yOffset + row * TableMenuLayout.SLOT_SIZE));
+            }
+        }
+        for (int column = 0; column < 9; column++) {
+            addSlot(new Slot(inventory, column, xOffset + column * TableMenuLayout.SLOT_SIZE, yOffset + 58));
+        }
+    }
+
+    private FabricEmptySlotIcon generatedBookSlotIcon() {
+        return blockEntity != null && blockEntity.isCopyMode()
+                ? FabricEmptySlotIcon.DISABLED
+                : FabricEmptySlotIcon.BOOK;
+    }
+
+    private class TableSlot extends FabricTableSlot {
+        TableSlot(int index, int x, int y) {
+            this(index, x, y, FabricEmptySlotIcon.NONE);
+        }
+
+        TableSlot(int index, int x, int y, FabricEmptySlotIcon emptyIcon) {
+            super(inventory, index, x, y, emptyIcon);
+        }
+
+        TableSlot(int index, int x, int y, Supplier<FabricEmptySlotIcon> emptyIcon) {
+            super(inventory, index, x, y, emptyIcon);
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack stack) {
+            return inventory.isItemValid(getContainerSlot(), stack);
+        }
+
+        @Override
+        public int getMaxStackSize(ItemStack stack) {
+            return inventory.getSlotLimit(getContainerSlot());
+        }
+    }
+}

@@ -1,0 +1,97 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.17.0-alpha.14'
+    id 'maven-publish'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://maven.fabricmc.net/'
+        metadataSources {
+            mavenPom()
+            artifact()
+            ignoreGradleMetadataRedirection()
+        }
+    }
+    maven { url = 'https://libraries.minecraft.net/' }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of((findProperty('java_version') ?: '25') as Integer)
+}
+
+def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '26.1.2'
+tasks.withType(AbstractArchiveTask).configureEach {
+    archiveVersion = "${project.mod_version}-fabric-mc${fabricMinecraftVersionValue}"
+}
+
+def recipeResourceDir = rootProject.file(fabricMinecraftVersionValue == '1.21.1'
+        ? 'src/versioned/resources/recipe_1_21_1'
+        : 'src/versioned/resources/recipe_1_21_2_plus')
+
+sourceSets {
+    main {
+        java.setSrcDirs([
+                rootProject.file('fabric/src/main/java'),
+                rootProject.file('fabric/src/versioned/official26/java'),
+                rootProject.file('src/common/java'),
+                rootProject.file('src/common-minecraft/java')
+        ])
+        resources.setSrcDirs([
+                rootProject.file('fabric/src/main/resources'),
+                rootProject.file('src/main/resources'),
+                recipeResourceDir
+        ])
+        resources.exclude 'META-INF/**'
+    }
+    test {
+        java.setSrcDirs([
+                rootProject.file('src/test/java')
+        ])
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${fabric_minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+
+    testImplementation platform('org.junit:junit-bom:5.10.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'com.google.code.gson:gson:2.11.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+def fabricResourceProperties = [
+        version                 : version,
+        mod_id                  : mod_id,
+        mod_name                : mod_name,
+        mod_description         : mod_description,
+        mod_authors             : mod_authors,
+        mod_license             : mod_license,
+        fabric_minecraft_version: fabric_minecraft_version,
+        fabric_loader_version   : fabric_loader_version,
+        fabric_java_version     : findProperty('fabric_java_version') ?: findProperty('java_version') ?: '25'
+]
+
+processResources {
+    inputs.properties fabricResourceProperties
+    filesMatching('fabric.mod.json') {
+        expand(fabricResourceProperties)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
