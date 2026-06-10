@@ -9,12 +9,15 @@ pluginManagement {
                 ignoreGradleMetadataRedirection()
             }
         }
+        maven { url = 'https://maven.minecraftforge.net/' }
         gradlePluginPortal()
-        maven { url = 'https://maven.neoforged.net/releases' }
+        mavenCentral()
     }
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id == 'net.fabricmc.fabric-loom-remap' || requested.id.id == 'fabric-loom' || requested.id.id == 'net.fabricmc.fabric-loom') {
+            if (requested.id.id == 'fabric-loom'
+                    || requested.id.id == 'net.fabricmc.fabric-loom'
+                    || requested.id.id == 'net.fabricmc.fabric-loom-remap') {
                 useModule("net.fabricmc:fabric-loom:${requested.version}")
             }
         }
@@ -23,206 +26,10 @@ pluginManagement {
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
-    id 'dev.kikugie.stonecutter' version '0.9.4'
 }
 
-include 'fabric'
+rootProject.name = 'EnchantmentCustomTable'
+
 include 'common'
-include 'neoforge'
-include 'fabric_1_21_1'
-include 'fabric_1_21_2'
-include 'fabric_1_21_3'
-include 'fabric_1_21_4'
-include 'fabric_1_21_5'
-include 'fabric_1_21_6'
-include 'fabric_1_21_7'
-include 'fabric_1_21_8'
-include 'fabric_1_21_9'
-include 'fabric_1_21_10'
-include 'fabric_1_21_11'
-include 'fabric_26_1'
-include 'fabric_26_1_1'
-include 'fabric_26_1_2'
-
-project(':fabric_1_21_1').projectDir = file('fabric_versions/1.21.1')
-project(':fabric_1_21_2').projectDir = file('fabric_versions/1.21.2')
-project(':fabric_1_21_3').projectDir = file('fabric_versions/1.21.3')
-project(':fabric_1_21_4').projectDir = file('fabric_versions/1.21.4')
-project(':fabric_1_21_5').projectDir = file('fabric_versions/1.21.5')
-project(':fabric_1_21_6').projectDir = file('fabric_versions/1.21.6')
-project(':fabric_1_21_7').projectDir = file('fabric_versions/1.21.7')
-project(':fabric_1_21_8').projectDir = file('fabric_versions/1.21.8')
-project(':fabric_1_21_9').projectDir = file('fabric_versions/1.21.9')
-project(':fabric_1_21_10').projectDir = file('fabric_versions/1.21.10')
-project(':fabric_1_21_11').projectDir = file('fabric_versions/1.21.11')
-project(':fabric_26_1').projectDir = file('fabric_versions/26.1')
-project(':fabric_26_1_1').projectDir = file('fabric_versions/26.1.1')
-project(':fabric_26_1_2').projectDir = file('fabric_versions/26.1.2')
-project(':fabric_1_21_1').buildFileName = '../../fabric/build.gradle'
-project(':fabric_1_21_2').buildFileName = '../../fabric/build.gradle'
-project(':fabric_1_21_3').buildFileName = '../../fabric/build.gradle'
-project(':fabric_1_21_4').buildFileName = '../../fabric/build.gradle'
-project(':fabric_1_21_5').buildFileName = '../../fabric/build.gradle'
-project(':fabric_1_21_6').buildFileName = '../../fabric/build.gradle'
-project(':fabric_1_21_7').buildFileName = '../../fabric/build.gradle'
-project(':fabric_1_21_8').buildFileName = '../../fabric/build.gradle'
-project(':fabric_1_21_9').buildFileName = '../../fabric/build.gradle'
-project(':fabric_1_21_10').buildFileName = '../../fabric/build.gradle'
-project(':fabric_1_21_11').buildFileName = '../../fabric/build.gradle'
-project(':fabric_26_1').buildFileName = '../../fabric/build-26.gradle'
-project(':fabric_26_1_1').buildFileName = '../../fabric/build-26.gradle'
-project(':fabric_26_1_2').buildFileName = '../../fabric/build-26.gradle'
-
-stonecutter {
-    kotlinController = false
-    centralScript = 'build.gradle'
-    create(getRootProject()) {
-        versions '1.21.1', '1.21.2', '1.21.3', '1.21.4', '1.21.5', '1.21.6', '1.21.7', '1.21.8', '1.21.9', '1.21.10', '1.21.11', '26.1', '26.1.1', '26.1.2'
-        vcsVersion = '26.1.2'
-    }
-}
-
-def neoForgeVersionProjects = [
-        '1.21.1',
-        '1.21.2',
-        '1.21.3',
-        '1.21.4',
-        '1.21.5',
-        '1.21.6',
-        '1.21.7',
-        '1.21.8',
-        '1.21.9',
-        '1.21.10',
-        '1.21.11',
-        '26.1',
-        '26.1.1',
-        '26.1.2'
-]
-def fabricVersionProjects = [
-        'fabric_1_21_1',
-        'fabric_1_21_2',
-        'fabric_1_21_3',
-        'fabric_1_21_4',
-        'fabric_1_21_5',
-        'fabric_1_21_6',
-        'fabric_1_21_7',
-        'fabric_1_21_8',
-        'fabric_1_21_9',
-        'fabric_1_21_10',
-        'fabric_1_21_11',
-        'fabric_26_1',
-        'fabric_26_1_1',
-        'fabric_26_1_2'
-]
-
-gradle.rootProject {
-    def releaseModId = providers.gradleProperty('mod_id').get()
-    def releaseModVersion = providers.gradleProperty('mod_version').get()
-    def releaseArtifactsDir = layout.buildDirectory.dir('release-artifacts')
-
-    tasks.register('verifyCommon') {
-        group = 'verification'
-        description = 'Runs fast shared JVM tests.'
-        dependsOn ':common:test'
-    }
-
-    tasks.register('verifyNeoForgeVersions') {
-        group = 'verification'
-        description = 'Builds all Stonecutter NeoForge version projects.'
-        dependsOn neoForgeVersionProjects.collect { ":${it}:build" }
-    }
-
-    tasks.register('verifyNeoForgeAll') {
-        group = 'verification'
-        description = 'Builds all NeoForge version projects plus the latest NeoForge platform project.'
-        dependsOn ':verifyNeoForgeVersions', ':neoforge:build'
-    }
-
-    tasks.register('verifyFabricVersions') {
-        group = 'verification'
-        description = 'Builds all Fabric version projects.'
-        dependsOn fabricVersionProjects.collect { ":${it}:build" }
-    }
-
-    tasks.register('verifyFabricAll') {
-        group = 'verification'
-        description = 'Builds all Fabric version projects plus the default Fabric platform project.'
-        dependsOn ':verifyFabricVersions', ':fabric:build'
-    }
-
-    tasks.register('verifyRepresentative') {
-        group = 'verification'
-        description = 'Runs common tests and representative first/latest/26.x platform builds.'
-        dependsOn ':verifyCommon',
-                ':1.21.1:build',
-                ':26.1.2:build',
-                ':neoforge:build',
-                ':fabric_1_21_1:build',
-                ':fabric_1_21_11:build',
-                ':fabric_26_1:build',
-                ':fabric_26_1_1:build',
-                ':fabric_26_1_2:build',
-                ':fabric:build'
-    }
-
-    tasks.register('verifyAll') {
-        group = 'verification'
-        description = 'Runs common tests and every NeoForge/Fabric build target.'
-        dependsOn ':verifyCommon', ':verifyNeoForgeAll', ':verifyFabricAll'
-    }
-
-    tasks.register('verifyCi') {
-        group = 'verification'
-        description = 'Runs the full verification set expected by CI.'
-        dependsOn ':verifyAll'
-    }
-
-    tasks.register('cleanReleaseArtifacts', Delete) {
-        group = 'build'
-        description = 'Deletes collected release artifacts.'
-        delete releaseArtifactsDir
-    }
-
-    tasks.register('buildReleaseArtifacts', Copy) {
-        group = 'build'
-        description = 'Builds all publishable NeoForge/Fabric version projects and collects release jars.'
-        dependsOn ':cleanReleaseArtifacts'
-        dependsOn ':common:build'
-        dependsOn neoForgeVersionProjects.collect { ":${it}:build" }
-        dependsOn fabricVersionProjects.collect { ":${it}:build" }
-        duplicatesStrategy = DuplicatesStrategy.FAIL
-        into releaseArtifactsDir
-
-        def expectedJarNames = []
-        neoForgeVersionProjects.each { minecraftVersion ->
-            def jarName = "${releaseModId}-${releaseModVersion}-neoforge-mc${minecraftVersion}.jar"
-            expectedJarNames.add(jarName)
-            from(project(":${minecraftVersion}").layout.buildDirectory.dir('libs')) {
-                include jarName
-            }
-        }
-
-        fabricVersionProjects.each { projectName ->
-            def minecraftVersion = projectName.substring('fabric_'.length()).replace('_', '.')
-            def jarName = "${releaseModId}-${releaseModVersion}-fabric-mc${minecraftVersion}.jar"
-            expectedJarNames.add(jarName)
-            from(project(":${projectName}").layout.buildDirectory.dir('libs')) {
-                include jarName
-            }
-        }
-
-        doLast {
-            def outputDir = releaseArtifactsDir.get().asFile
-            def actualJarNames = outputDir.exists()
-                    ? outputDir.listFiles().findAll { it.name.endsWith('.jar') }.collect { it.name }.sort()
-                    : []
-            def expectedSortedJarNames = expectedJarNames.sort()
-            def missingJarNames = expectedSortedJarNames - actualJarNames
-            def unexpectedJarNames = actualJarNames - expectedSortedJarNames
-
-            if (!missingJarNames.empty || !unexpectedJarNames.empty) {
-                throw new GradleException("Release artifact collection mismatch. Missing: ${missingJarNames}; unexpected: ${unexpectedJarNames}")
-            }
-        }
-    }
-}
+include 'forge'
+include 'fabric'

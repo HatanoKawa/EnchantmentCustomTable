@@ -6,8 +6,8 @@ env:
   GRADLE_ARGS: --no-daemon --no-configuration-cache --max-workers=1 -Dorg.gradle.jvmargs=-Xmx4g
 
 jobs:
-  common:
-    name: Common
+  build:
+    name: 1.20.1 Forge/Fabric
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -16,12 +16,12 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Setup JDKs
+      - name: Setup JDK
         uses: actions/setup-java@v4
         with:
           java-version: |
+            17
             21
-            25
           distribution: temurin
 
       - name: Setup Gradle
@@ -30,118 +30,8 @@ jobs:
       - name: Verify common logic
         run: ./gradlew $GRADLE_ARGS :verifyCommon
 
-  neoforge:
-    name: NeoForge ${{ matrix.version }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - version: "1.21.1"
-            project: "1.21.1"
-          - version: "1.21.2"
-            project: "1.21.2"
-          - version: "1.21.3"
-            project: "1.21.3"
-          - version: "1.21.4"
-            project: "1.21.4"
-          - version: "1.21.5"
-            project: "1.21.5"
-          - version: "1.21.6"
-            project: "1.21.6"
-          - version: "1.21.7"
-            project: "1.21.7"
-          - version: "1.21.8"
-            project: "1.21.8"
-          - version: "1.21.9"
-            project: "1.21.9"
-          - version: "1.21.10"
-            project: "1.21.10"
-          - version: "1.21.11"
-            project: "1.21.11"
-          - version: "26.1"
-            project: "26.1"
-          - version: "26.1.1"
-            project: "26.1.1"
-          - version: "26.1.2"
-            project: "26.1.2"
-          - version: "latest"
-            project: "neoforge"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
+      - name: Build Forge
+        run: ./gradlew $GRADLE_ARGS :forge:build
 
-      - name: Setup JDKs
-        uses: actions/setup-java@v4
-        with:
-          java-version: |
-            21
-            25
-          distribution: temurin
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Build NeoForge ${{ matrix.version }}
-        run: ./gradlew $GRADLE_ARGS :${{ matrix.project }}:build
-
-  fabric:
-    name: Fabric ${{ matrix.version }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - version: "1.21.1"
-            project: "fabric_1_21_1"
-          - version: "1.21.2"
-            project: "fabric_1_21_2"
-          - version: "1.21.3"
-            project: "fabric_1_21_3"
-          - version: "1.21.4"
-            project: "fabric_1_21_4"
-          - version: "1.21.5"
-            project: "fabric_1_21_5"
-          - version: "1.21.6"
-            project: "fabric_1_21_6"
-          - version: "1.21.7"
-            project: "fabric_1_21_7"
-          - version: "1.21.8"
-            project: "fabric_1_21_8"
-          - version: "1.21.9"
-            project: "fabric_1_21_9"
-          - version: "1.21.10"
-            project: "fabric_1_21_10"
-          - version: "1.21.11"
-            project: "fabric_1_21_11"
-          - version: "26.1"
-            project: "fabric_26_1"
-          - version: "26.1.1"
-            project: "fabric_26_1_1"
-          - version: "26.1.2"
-            project: "fabric_26_1_2"
-          - version: "default"
-            project: "fabric"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - name: Setup JDKs
-        uses: actions/setup-java@v4
-        with:
-          java-version: |
-            21
-            25
-          distribution: temurin
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Build Fabric ${{ matrix.version }}
-        run: ./gradlew $GRADLE_ARGS :${{ matrix.project }}:build
+      - name: Build Fabric
+        run: ./gradlew $GRADLE_ARGS :fabric:build

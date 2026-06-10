@@ -3,7 +3,7 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of((findProperty('java_version') ?: '17') as Integer)
 }
 
 repositories {

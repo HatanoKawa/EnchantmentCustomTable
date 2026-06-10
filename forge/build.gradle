@@ -1,62 +1,56 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.minecraftforge.gradle' version '6.0.54'
     id 'idea'
 }
 
 version = mod_version
 group = mod_group_id
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
 base {
     archivesName = mod_id
 }
 
-tasks.named('jar', Jar).configure {
-    archiveVersion = "${project.mod_version}-neoforge-mc${project.minecraft_version}"
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of((findProperty('java_version') ?: '17') as Integer)
 }
 
-def targetJavaVersion = (findProperty('java_version')
-        ?: (minecraft_version.toString().startsWith('26.') ? '25' : '21')) as Integer
-java.toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-def recipeResourceDir = rootProject.file(minecraft_version.toString() == '1.21.1'
-        ? 'src/versioned/resources/recipe_1_21_1'
-        : 'src/versioned/resources/recipe_1_21_2_plus')
+tasks.named('jar', Jar).configure {
+    archiveVersion = "${project.mod_version}-forge-mc${project.minecraft_version}"
+}
 
-neoForge {
-    version = project.neo_version
+minecraft {
+    mappings channel: 'official', version: project.minecraft_version
+    copyIdeResources = true
 
     runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
         client {
-            client()
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            property 'forge.enabledGameTestNamespaces', project.mod_id
         }
 
         server {
-            server()
-            programArgument '--nogui'
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            property 'forge.enabledGameTestNamespaces', project.mod_id
+            args '--nogui'
         }
 
-        gameTestServer {
-            type = "gameTestServer"
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        configureEach {
-            systemProperty 'forge.logging.markers', 'REGISTRIES'
-            logLevel = org.slf4j.event.Level.DEBUG
-        }
-    }
-
-    mods {
-        "${mod_id}" {
-            sourceSet(sourceSets.main)
+        data {
+            workingDirectory project.file('run-data')
+            args '--mod', project.mod_id, '--all',
+                    '--output', rootProject.file('src/generated/resources/'),
+                    '--existing', rootProject.file('src/main/resources/')
         }
     }
 }
@@ -70,7 +64,6 @@ sourceSets {
         ])
         resources.setSrcDirs([
                 rootProject.file('src/main/resources'),
-                recipeResourceDir,
                 rootProject.file('src/generated/resources')
         ])
     }
@@ -81,11 +74,9 @@ sourceSets {
     }
 }
 
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
-}
-
 dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
     testImplementation platform('org.junit:junit-bom:5.10.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'com.google.code.gson:gson:2.11.0'
@@ -96,8 +87,8 @@ def generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     def replaceProperties = [
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
-            neo_version            : neo_version,
-            neo_version_range      : neo_version_range,
+            forge_version          : forge_version,
+            forge_version_range    : forge_version_range,
             loader_version_range   : loader_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
@@ -113,12 +104,15 @@ def generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 }
 
 sourceSets.main.resources.srcDir generateModMetadata
-neoForge.ideSyncTask generateModMetadata
+
+tasks.named('jar', Jar).configure {
+    finalizedBy 'reobfJar'
+}
 
 publishing {
     publications {
         register('mavenJava', MavenPublication) {
-            from components.java
+            artifact jar
         }
     }
     repositories {
