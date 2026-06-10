@@ -1,7 +1,7 @@
 package com.river_quinn.enchantment_custom_table.init;
 
 import com.river_quinn.enchantment_custom_table.renderer.EnchantingCustomTableRenderer;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 
 public class ModBlockEntityRenderers {
     public static void register(EntityRenderersEvent.RegisterRenderers event) {

@@ -10,23 +10,20 @@ import com.river_quinn.enchantment_custom_table.core.rules.MergeRules;
 import com.river_quinn.enchantment_custom_table.core.rules.PaginationRules;
 import com.river_quinn.enchantment_custom_table.core.rules.PaymentRules;
 import com.river_quinn.enchantment_custom_table.core.rules.SplitRules;
-import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.function.Function;
 
 public final class EnchantmentTableRules {
     private EnchantmentTableRules() {
     }
 
-    public record EnchantmentLevel(Holder<Enchantment> enchantment, EnchantmentKey key, int level, int maxLevel) {
+    public record EnchantmentLevel(Enchantment enchantment, EnchantmentKey key, int level, int maxLevel) {
         public EnchantmentEntry toEntry() {
             return new EnchantmentEntry(key, level, maxLevel);
         }
@@ -41,7 +38,7 @@ public final class EnchantmentTableRules {
         }
     }
 
-    public record MergeResult(boolean allowed, ItemEnchantments enchantments) {
+    public record MergeResult(boolean allowed, EnchantmentList enchantments) {
     }
 
     public enum PaymentKind {
@@ -135,17 +132,8 @@ public final class EnchantmentTableRules {
         return SplitRules.splitSingleEnchantmentLevels(sourceLevel, incrementalSameLevelMerge);
     }
 
-    public static Optional<Holder<Enchantment>> findMatchingEnchantment(
-            ItemEnchantments enchantments,
-            EnchantmentKey target,
-            Function<Holder<Enchantment>, EnchantmentKey> keyResolver
-    ) {
-        for (var entry : enchantments.entrySet()) {
-            if (keyResolver.apply(entry.getKey()).equals(target)) {
-                return Optional.of(entry.getKey());
-            }
-        }
-        return Optional.empty();
+    public static Optional<EnchantmentEntry> findMatchingEnchantment(EnchantmentList enchantments, EnchantmentKey target) {
+        return enchantments.find(target);
     }
 
     public static boolean containsMatchingEnchantment(
@@ -155,25 +143,17 @@ public final class EnchantmentTableRules {
         return enchantments.stream().anyMatch(enchantment -> enchantment.key().equals(target));
     }
 
-    public static int getMatchingEnchantmentLevel(
-            ItemEnchantments enchantments,
-            EnchantmentKey target,
-            Function<Holder<Enchantment>, EnchantmentKey> keyResolver
-    ) {
-        return findMatchingEnchantment(enchantments, target, keyResolver)
-                .map(enchantments::getLevel)
-                .orElse(0);
+    public static int getMatchingEnchantmentLevel(EnchantmentList enchantments, EnchantmentKey target) {
+        return enchantments.levelOf(target);
     }
 
     public static boolean canAddWithinMaxLevels(
-            ItemEnchantments currentEnchantments,
-            List<EnchantmentLevel> additions,
-            Function<Holder<Enchantment>, EnchantmentKey> keyResolver
+            EnchantmentList currentEnchantments,
+            List<EnchantmentLevel> additions
     ) {
         return tryMergeEnchantments(
                 currentEnchantments,
                 additions,
-                keyResolver,
                 new MergeOptions(true, false)
         ).allowed();
     }
@@ -194,13 +174,12 @@ public final class EnchantmentTableRules {
     }
 
     public static MergeResult tryMergeEnchantments(
-            ItemEnchantments baseEnchantments,
+            EnchantmentList baseEnchantments,
             List<EnchantmentLevel> additions,
-            Function<Holder<Enchantment>, EnchantmentKey> keyResolver,
             MergeOptions options
     ) {
         EnchantmentMergeRules.MergeResult result = EnchantmentMergeRules.tryMerge(
-                toCoreList(baseEnchantments, keyResolver),
+                baseEnchantments,
                 additions.stream().map(EnchantmentLevel::toEntry).toList(),
                 toCoreOptions(options)
         );
@@ -210,29 +189,26 @@ public final class EnchantmentTableRules {
 
         return new MergeResult(
                 true,
-                toItemEnchantments(baseEnchantments, result.enchantments(), additions, keyResolver)
+                result.enchantments()
         );
     }
 
-    public static ItemEnchantments mergeEnchantments(
-            ItemEnchantments baseEnchantments,
-            List<EnchantmentLevel> additions,
-            Function<Holder<Enchantment>, EnchantmentKey> keyResolver
+    public static EnchantmentList mergeEnchantments(
+            EnchantmentList baseEnchantments,
+            List<EnchantmentLevel> additions
     ) {
         return tryMergeEnchantments(
                 baseEnchantments,
                 additions,
-                keyResolver,
                 new MergeOptions(false, false)
         ).enchantments();
     }
 
-    public static ItemEnchantments subtractEnchantments(
-            ItemEnchantments baseEnchantments,
-            List<EnchantmentLevel> removals,
-            Function<Holder<Enchantment>, EnchantmentKey> keyResolver
+    public static EnchantmentList subtractEnchantments(
+            EnchantmentList baseEnchantments,
+            List<EnchantmentLevel> removals
     ) {
-        return subtractEnchantments(baseEnchantments, removals, keyResolver, false);
+        return subtractEnchantments(baseEnchantments, removals, false);
     }
 
     public static OptionalInt calculateRemainingEnchantmentLevel(
@@ -243,18 +219,16 @@ public final class EnchantmentTableRules {
         return MergeRules.calculateRemainingEnchantmentLevel(currentLevel, removedLevel, incrementalSingleBookSplit);
     }
 
-    public static ItemEnchantments subtractEnchantments(
-            ItemEnchantments baseEnchantments,
+    public static EnchantmentList subtractEnchantments(
+            EnchantmentList baseEnchantments,
             List<EnchantmentLevel> removals,
-            Function<Holder<Enchantment>, EnchantmentKey> keyResolver,
             boolean incrementalSingleBookSplit
     ) {
-        EnchantmentList result = EnchantmentMergeRules.subtract(
-                toCoreList(baseEnchantments, keyResolver),
+        return EnchantmentMergeRules.subtract(
+                baseEnchantments,
                 removals.stream().map(EnchantmentLevel::toEntry).toList(),
                 incrementalSingleBookSplit
         );
-        return toItemEnchantments(baseEnchantments, result, removals, keyResolver);
     }
 
     private static EnchantmentMergeRules.MergeOptions toCoreOptions(MergeOptions options) {
@@ -264,47 +238,4 @@ public final class EnchantmentTableRules {
         );
     }
 
-    private static EnchantmentList toCoreList(
-            ItemEnchantments enchantments,
-            Function<Holder<Enchantment>, EnchantmentKey> keyResolver
-    ) {
-        return EnchantmentList.of(enchantments.entrySet().stream()
-                .map(entry -> new EnchantmentEntry(
-                        keyResolver.apply(entry.getKey()),
-                        entry.getIntValue(),
-                        entry.getKey().value().getMaxLevel()
-                ))
-                .toList());
-    }
-
-    private static ItemEnchantments toItemEnchantments(
-            ItemEnchantments baseEnchantments,
-            EnchantmentList result,
-            List<EnchantmentLevel> changes,
-            Function<Holder<Enchantment>, EnchantmentKey> keyResolver
-    ) {
-        ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(baseEnchantments);
-        for (var entry : baseEnchantments.entrySet()) {
-            int resultLevel = result.levelOf(keyResolver.apply(entry.getKey()));
-            mutable.set(entry.getKey(), resultLevel);
-        }
-
-        for (EnchantmentEntry entry : result.entries()) {
-            Optional<Holder<Enchantment>> existing = findMatchingEnchantment(mutable.toImmutable(), entry.key(), keyResolver);
-            Holder<Enchantment> holder = existing
-                    .or(() -> findChangeHolder(changes, entry.key()))
-                    .orElse(null);
-            if (holder != null) {
-                mutable.set(holder, entry.level());
-            }
-        }
-        return mutable.toImmutable();
-    }
-
-    private static Optional<Holder<Enchantment>> findChangeHolder(List<EnchantmentLevel> changes, EnchantmentKey key) {
-        return changes.stream()
-                .filter(change -> change.key().equals(key))
-                .map(EnchantmentLevel::enchantment)
-                .findFirst();
-    }
 }

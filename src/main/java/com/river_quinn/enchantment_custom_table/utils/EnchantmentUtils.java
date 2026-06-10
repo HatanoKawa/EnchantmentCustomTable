@@ -1,156 +1,119 @@
 package com.river_quinn.enchantment_custom_table.utils;
 
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentEntry;
 import com.river_quinn.enchantment_custom_table.core.access.EnchantmentKey;
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentList;
 import com.river_quinn.enchantment_custom_table.core.platform.EnchantmentAccessService;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-public class EnchantmentUtils {
+public final class EnchantmentUtils {
     private static final EnchantmentAccessService SERVICE = new EnchantmentAccessService() {
         @Override
-        public List<Holder<Enchantment>> allEnchantments(Level level) {
-            List<Holder<Enchantment>> enchantments = new ArrayList<>();
-            //? if >=1.21.2 {
-            Registry<Enchantment> registry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-            //?} else {
-            /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-            *///?}
-            registry.asHolderIdMap().forEach(enchantments::add);
-            return enchantments;
+        public List<Enchantment> allEnchantments(Level level) {
+            return EnchantmentUtils.allEnchantments();
         }
 
         @Override
-        public Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, Holder<Enchantment> enchantment) {
-            return EnchantmentUtils.resolveEnchantmentHolder(level, enchantment);
+        public Optional<Enchantment> resolveEnchantment(Level level, EnchantmentKey key) {
+            return EnchantmentUtils.resolveEnchantment(key);
         }
 
         @Override
-        public ItemEnchantments getEnchantments(ItemStack itemStack) {
+        public EnchantmentList getEnchantments(Level level, ItemStack itemStack) {
             return EnchantmentUtils.getEnchantments(itemStack);
         }
 
         @Override
-        public EnchantmentKey getCoreEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
-            return EnchantmentUtils.getCoreEnchantmentKey(level, enchantment);
+        public EnchantmentKey getCoreEnchantmentKey(Level level, Enchantment enchantment) {
+            return EnchantmentUtils.getCoreEnchantmentKey(enchantment);
         }
 
         @Override
-        public void setEnchantments(ItemStack itemStack, ItemEnchantments enchantments) {
-            itemStack.set(EnchantmentHelper.getComponentType(itemStack), enchantments);
+        public void setEnchantments(Level level, ItemStack itemStack, EnchantmentList enchantments) {
+            EnchantmentUtils.setEnchantments(itemStack, enchantments);
         }
     };
+
+    private EnchantmentUtils() {
+    }
 
     public static EnchantmentAccessService service() {
         return SERVICE;
     }
 
-    public static Holder.Reference<Enchantment> translateEnchantment(Level level, Enchantment enchantment) {
-        if (level == null || enchantment == null)
-            return null;
-        //? if >=1.21.2 {
-        Registry<Enchantment> fullEnchantmentRegistry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-        Optional<ResourceKey<Enchantment>> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantment);
-        return resourceKey.flatMap(fullEnchantmentRegistry::get).orElse(null);
-        //?} else {
-        /*Registry<Enchantment> fullEnchantmentRegistry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-        Optional<ResourceKey<Enchantment>> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantment);
-        return resourceKey.flatMap(fullEnchantmentRegistry::getHolder).orElse(null);
-        *///?}
+    public static List<Enchantment> allEnchantments() {
+        List<Enchantment> enchantments = new ArrayList<>();
+        for (Enchantment enchantment : BuiltInRegistries.ENCHANTMENT) {
+            enchantments.add(enchantment);
+        }
+        return enchantments;
     }
 
-    public static Optional<ResourceKey<Enchantment>> getEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
-        if (level == null || enchantment == null) {
+    public static Optional<Enchantment> resolveEnchantment(EnchantmentKey key) {
+        if (key == null) {
             return Optional.empty();
         }
-
-        Optional<ResourceKey<Enchantment>> holderKey = enchantment.unwrapKey();
-        if (holderKey.isPresent()) {
-            return holderKey;
-        }
-
-        //? if >=1.21.2 {
-        Registry<Enchantment> registry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-        //?} else {
-        /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-        *///?}
-        return registry.getResourceKey(enchantment.value());
+        return Optional.ofNullable(BuiltInRegistries.ENCHANTMENT.get(new ResourceLocation(key.namespace(), key.path())));
     }
 
-    public static Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, Holder<Enchantment> enchantment) {
-        if (level == null || enchantment == null) {
-            return Optional.empty();
+    public static EnchantmentList getEnchantments(ItemStack itemStack) {
+        List<EnchantmentEntry> entries = new ArrayList<>();
+        for (Map.Entry<Enchantment, Integer> entry : EnchantmentHelper.getEnchantments(itemStack).entrySet()) {
+            entries.add(new EnchantmentEntry(
+                    getCoreEnchantmentKey(entry.getKey()),
+                    entry.getValue(),
+                    entry.getKey().getMaxLevel()
+            ));
         }
-
-        //? if >=1.21.2 {
-        Registry<Enchantment> registry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-        return getEnchantmentKey(level, enchantment)
-                .flatMap(registry::get)
-                .map(holder -> holder);
-        //?} else {
-        /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-        return getEnchantmentKey(level, enchantment)
-                .flatMap(registry::getHolder)
-                .map(holder -> holder);
-        *///?}
-    }
-
-    public static ItemEnchantments getEnchantments(ItemStack itemStack) {
-        return itemStack.getOrDefault(EnchantmentHelper.getComponentType(itemStack), ItemEnchantments.EMPTY);
+        return EnchantmentList.of(entries);
     }
 
     public static List<EnchantmentTableRules.EnchantmentLevel> getEnchantmentLevels(Level level, ItemStack enchantedBookItemStack) {
         List<EnchantmentTableRules.EnchantmentLevel> enchantments = new ArrayList<>();
-        for (Object2IntMap.Entry<Holder<Enchantment>> entry : getEnchantments(enchantedBookItemStack).entrySet()) {
-            Holder<Enchantment> enchantment = resolveEnchantmentHolder(level, entry.getKey()).orElse(entry.getKey());
+        for (Map.Entry<Enchantment, Integer> entry : EnchantmentHelper.getEnchantments(enchantedBookItemStack).entrySet()) {
+            Enchantment enchantment = entry.getKey();
             enchantments.add(new EnchantmentTableRules.EnchantmentLevel(
                     enchantment,
-                    getCoreEnchantmentKey(level, enchantment),
-                    entry.getIntValue(),
-                    enchantment.value().getMaxLevel()
+                    getCoreEnchantmentKey(enchantment),
+                    entry.getValue(),
+                    enchantment.getMaxLevel()
             ));
         }
         return enchantments;
     }
 
-    public static boolean isSameEnchantment(Level level, Holder<Enchantment> first, Holder<Enchantment> second) {
-        return getCoreEnchantmentKey(level, first).equals(getCoreEnchantmentKey(level, second));
+    public static void setEnchantments(ItemStack itemStack, EnchantmentList enchantments) {
+        Map<Enchantment, Integer> minecraftEnchantments = new LinkedHashMap<>();
+        for (EnchantmentEntry entry : enchantments.entries()) {
+            resolveEnchantment(entry.key()).ifPresent(enchantment -> minecraftEnchantments.put(enchantment, entry.level()));
+        }
+        EnchantmentHelper.setEnchantments(minecraftEnchantments, itemStack);
     }
 
-    public static ItemStack createEnchantedBook(Holder<Enchantment> enchantment, int level) {
-        ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
-        enchantedBook.enchant(enchantment, level);
-        return enchantedBook;
+    public static boolean isSameEnchantment(Enchantment first, Enchantment second) {
+        return getCoreEnchantmentKey(first).equals(getCoreEnchantmentKey(second));
     }
 
-    public static EnchantmentKey getCoreEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
-        Optional<ResourceKey<Enchantment>> key = getEnchantmentKey(level, enchantment);
-        if (key.isPresent()) {
-            return fromResourceKey(key.get());
+    public static EnchantmentKey getCoreEnchantmentKey(Enchantment enchantment) {
+        ResourceLocation key = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+        if (key != null) {
+            return EnchantmentKey.of(key.getNamespace(), key.getPath());
         }
         return EnchantmentKey.of(
                 "unregistered",
-                enchantment.value().getClass().getName() + "_" + Integer.toHexString(System.identityHashCode(enchantment.value()))
+                enchantment.getClass().getName() + "_" + Integer.toHexString(System.identityHashCode(enchantment))
         );
-    }
-
-    private static EnchantmentKey fromResourceKey(ResourceKey<Enchantment> key) {
-        //? if >=1.21.11 {
-        return EnchantmentKey.of(key.identifier().getNamespace(), key.identifier().getPath());
-        //?} else {
-        /*return EnchantmentKey.of(key.location().getNamespace(), key.location().getPath());
-        *///?}
     }
 }

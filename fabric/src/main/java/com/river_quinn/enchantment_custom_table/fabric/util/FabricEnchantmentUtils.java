@@ -1,49 +1,48 @@
 package com.river_quinn.enchantment_custom_table.fabric.util;
 
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentEntry;
 import com.river_quinn.enchantment_custom_table.core.access.EnchantmentKey;
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentList;
 import com.river_quinn.enchantment_custom_table.core.platform.EnchantmentAccessService;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public final class FabricEnchantmentUtils {
     private static final EnchantmentAccessService SERVICE = new EnchantmentAccessService() {
         @Override
-        public List<Holder<Enchantment>> allEnchantments(Level level) {
-            List<Holder<Enchantment>> enchantments = new ArrayList<>();
-            FabricVersionedMinecraft.enchantmentRegistry(level).asHolderIdMap().forEach(enchantments::add);
-            return enchantments;
+        public List<Enchantment> allEnchantments(Level level) {
+            return FabricEnchantmentUtils.allEnchantments();
         }
 
         @Override
-        public Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, Holder<Enchantment> enchantment) {
-            return FabricEnchantmentUtils.resolveEnchantmentHolder(level, enchantment);
+        public Optional<Enchantment> resolveEnchantment(Level level, EnchantmentKey key) {
+            return FabricEnchantmentUtils.resolveEnchantment(key);
         }
 
         @Override
-        public ItemEnchantments getEnchantments(ItemStack itemStack) {
+        public EnchantmentList getEnchantments(Level level, ItemStack itemStack) {
             return FabricEnchantmentUtils.getEnchantments(itemStack);
         }
 
         @Override
-        public EnchantmentKey getCoreEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
-            return FabricEnchantmentUtils.getCoreEnchantmentKey(level, enchantment);
+        public EnchantmentKey getCoreEnchantmentKey(Level level, Enchantment enchantment) {
+            return FabricEnchantmentUtils.getCoreEnchantmentKey(enchantment);
         }
 
         @Override
-        public void setEnchantments(ItemStack itemStack, ItemEnchantments enchantments) {
-            EnchantmentHelper.setEnchantments(itemStack, enchantments);
+        public void setEnchantments(Level level, ItemStack itemStack, EnchantmentList enchantments) {
+            FabricEnchantmentUtils.setEnchantments(itemStack, enchantments);
         }
     };
 
@@ -54,62 +53,63 @@ public final class FabricEnchantmentUtils {
         return SERVICE;
     }
 
-    public static Optional<ResourceKey<Enchantment>> getEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
-        if (level == null || enchantment == null) {
-            return Optional.empty();
+    public static List<Enchantment> allEnchantments() {
+        List<Enchantment> enchantments = new ArrayList<>();
+        for (Enchantment enchantment : BuiltInRegistries.ENCHANTMENT) {
+            enchantments.add(enchantment);
         }
-        Optional<ResourceKey<Enchantment>> holderKey = enchantment.unwrapKey();
-        if (holderKey.isPresent()) {
-            return holderKey;
-        }
-        var registry = FabricVersionedMinecraft.enchantmentRegistry(level);
-        return registry.getResourceKey(enchantment.value());
+        return enchantments;
     }
 
-    public static Optional<Holder<Enchantment>> resolveEnchantmentHolder(Level level, Holder<Enchantment> enchantment) {
-        if (level == null || enchantment == null) {
+    public static Optional<Enchantment> resolveEnchantment(EnchantmentKey key) {
+        if (key == null) {
             return Optional.empty();
         }
-        return getEnchantmentKey(level, enchantment)
-                .flatMap(key -> FabricVersionedMinecraft.resolveEnchantmentHolder(level, key))
-                .map(holder -> holder);
+        return Optional.ofNullable(BuiltInRegistries.ENCHANTMENT.get(new ResourceLocation(key.namespace(), key.path())));
     }
 
-    public static ItemEnchantments getEnchantments(ItemStack itemStack) {
-        return EnchantmentHelper.getEnchantmentsForCrafting(itemStack);
+    public static EnchantmentList getEnchantments(ItemStack itemStack) {
+        List<EnchantmentEntry> entries = new ArrayList<>();
+        for (Map.Entry<Enchantment, Integer> entry : EnchantmentHelper.getEnchantments(itemStack).entrySet()) {
+            entries.add(new EnchantmentEntry(
+                    getCoreEnchantmentKey(entry.getKey()),
+                    entry.getValue(),
+                    entry.getKey().getMaxLevel()
+            ));
+        }
+        return EnchantmentList.of(entries);
     }
 
     public static List<EnchantmentTableRules.EnchantmentLevel> getEnchantmentLevels(Level level, ItemStack enchantedBookItemStack) {
         List<EnchantmentTableRules.EnchantmentLevel> enchantments = new ArrayList<>();
-        for (Object2IntMap.Entry<Holder<Enchantment>> entry : getEnchantments(enchantedBookItemStack).entrySet()) {
-            Holder<Enchantment> enchantment = resolveEnchantmentHolder(level, entry.getKey()).orElse(entry.getKey());
+        for (Map.Entry<Enchantment, Integer> entry : EnchantmentHelper.getEnchantments(enchantedBookItemStack).entrySet()) {
+            Enchantment enchantment = entry.getKey();
             enchantments.add(new EnchantmentTableRules.EnchantmentLevel(
                     enchantment,
-                    getCoreEnchantmentKey(level, enchantment),
-                    entry.getIntValue(),
-                    enchantment.value().getMaxLevel()
+                    getCoreEnchantmentKey(enchantment),
+                    entry.getValue(),
+                    enchantment.getMaxLevel()
             ));
         }
         return enchantments;
     }
 
-    public static ItemStack createEnchantedBook(Holder<Enchantment> enchantment, int level) {
-        ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
-        enchantedBook.enchant(enchantment, level);
-        return enchantedBook;
+    public static void setEnchantments(ItemStack itemStack, EnchantmentList enchantments) {
+        Map<Enchantment, Integer> minecraftEnchantments = new LinkedHashMap<>();
+        for (EnchantmentEntry entry : enchantments.entries()) {
+            resolveEnchantment(entry.key()).ifPresent(enchantment -> minecraftEnchantments.put(enchantment, entry.level()));
+        }
+        EnchantmentHelper.setEnchantments(minecraftEnchantments, itemStack);
     }
 
-    public static EnchantmentKey getCoreEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
-        Optional<ResourceKey<Enchantment>> key = getEnchantmentKey(level, enchantment);
-        if (key.isPresent()) {
-            return EnchantmentKey.of(
-                    FabricVersionedMinecraft.keyNamespace(key.get()),
-                    FabricVersionedMinecraft.keyPath(key.get())
-            );
+    public static EnchantmentKey getCoreEnchantmentKey(Enchantment enchantment) {
+        ResourceLocation key = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+        if (key != null) {
+            return EnchantmentKey.of(key.getNamespace(), key.getPath());
         }
         return EnchantmentKey.of(
                 "unregistered",
-                enchantment.value().getClass().getName() + "_" + Integer.toHexString(System.identityHashCode(enchantment.value()))
+                enchantment.getClass().getName() + "_" + Integer.toHexString(System.identityHashCode(enchantment))
         );
     }
 }

@@ -6,7 +6,6 @@ import com.river_quinn.enchantment_custom_table.core.platform.EnchantmentAccessS
 import com.river_quinn.enchantment_custom_table.core.platform.TableConfigService;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
-import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -145,7 +144,7 @@ public class ConversionTableSession {
             return;
         }
 
-        List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
+        List<Enchantment> enchantments = getFilteredEnchantments();
         boolean hasBook = inventory.getStackInSlot(bookSlot).is(Items.BOOK);
         boolean hasEnoughPayment = hasEnoughPayment();
 
@@ -161,7 +160,7 @@ public class ConversionTableSession {
 
             if (enchantmentIndex < enchantments.size()) {
                 if (inventory.getStackInSlot(slotIndex).isEmpty()) {
-                    Holder<Enchantment> enchantment = enchantments.get(enchantmentIndex);
+                    Enchantment enchantment = enchantments.get(enchantmentIndex);
                     inventory.setStackInSlot(slotIndex, createEnchantedBook(enchantment));
                 }
             } else {
@@ -176,7 +175,7 @@ public class ConversionTableSession {
             clearGeneratedSlots();
             return;
         }
-        List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
+        List<Enchantment> enchantments = getFilteredEnchantments();
         currentPage = 0;
         totalPage = EnchantmentTableRules.calculatePageCount(enchantments.size(), generatedSlotCount, false);
         clearGeneratedSlots();
@@ -196,7 +195,7 @@ public class ConversionTableSession {
             return;
         }
 
-        List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
+        List<Enchantment> enchantments = getFilteredEnchantments();
         int nextTotalPage = EnchantmentTableRules.calculatePageCount(enchantments.size(), generatedSlotCount, false);
         boolean needsInitialFill = totalPage == 0 || !hasVisibleGeneratedBook();
         if (needsInitialFill) {
@@ -254,18 +253,18 @@ public class ConversionTableSession {
         EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
         inventory.setStackInSlot(
                 copyResultSlot,
-                inventory.getStackInSlot(templateSlot).copyWithCount(1)
+                copyWithCount(inventory.getStackInSlot(templateSlot), 1)
         );
         return TableOperationResult.success(true);
     }
 
-    private ItemStack createEnchantedBook(Holder<Enchantment> enchantment) {
-        int enchantmentLevel = config.snapshot().convertOnlyLevelOneBook() ? 1 : enchantment.value().getMaxLevel();
+    private ItemStack createEnchantedBook(Enchantment enchantment) {
+        int enchantmentLevel = config.snapshot().convertOnlyLevelOneBook() ? 1 : enchantment.getMaxLevel();
         return enchantments.createEnchantedBook(enchantment, enchantmentLevel);
     }
 
-    private List<Holder<Enchantment>> getFilteredEnchantments() {
-        List<Holder<Enchantment>> availableEnchantments = enchantments.allEnchantments(world);
+    private List<Enchantment> getFilteredEnchantments() {
+        List<Enchantment> availableEnchantments = enchantments.allEnchantments(world);
         if (EnchantmentSearchRules.isBlankSearch(searchQuery)) {
             return availableEnchantments;
         }
@@ -275,7 +274,7 @@ public class ConversionTableSession {
                 .toList();
     }
 
-    private boolean matchesSearch(Holder<Enchantment> enchantment) {
+    private boolean matchesSearch(Enchantment enchantment) {
         var enchantmentId = enchantments.getCoreEnchantmentKey(world, enchantment);
         if (usingClientSearchMatches && clientMatchedEnchantments.contains(enchantmentId.asString())) {
             return true;
@@ -287,7 +286,7 @@ public class ConversionTableSession {
         serverCandidates.add(enchantmentId.path());
         serverCandidates.add(enchantmentId.path().replace('_', ' '));
         serverCandidates.add("enchantment." + enchantmentId.namespace() + "." + enchantmentId.path());
-        serverCandidates.add(enchantment.value().description().getString());
+        serverCandidates.add(enchantment.getFullname(1).getString());
         return EnchantmentSearchRules.matchesAnyCandidate(searchQuery, serverCandidates);
     }
 
@@ -312,5 +311,11 @@ public class ConversionTableSession {
     ) {
         return inventory.getStackInSlot(bookSlot).is(Items.BOOK)
                 && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config);
+    }
+
+    private static ItemStack copyWithCount(ItemStack stack, int count) {
+        ItemStack copy = stack.copy();
+        copy.setCount(count);
+        return copy;
     }
 }

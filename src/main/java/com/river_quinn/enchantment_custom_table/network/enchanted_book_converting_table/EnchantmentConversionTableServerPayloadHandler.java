@@ -1,12 +1,14 @@
 package com.river_quinn.enchantment_custom_table.network.enchanted_book_converting_table;
 
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraft.server.level.ServerPlayer;
 
-public class EnchantmentConversionTableServerPayloadHandler {
+public final class EnchantmentConversionTableServerPayloadHandler {
+    private EnchantmentConversionTableServerPayloadHandler() {
+    }
 
-    public static void handleDataOnMain(final EnchantmentConversionTableNetData data, final IPayloadContext context) {
-        if (!(context.player().containerMenu instanceof EnchantmentConversionMenu menu) || !menu.stillValid(context.player())) {
+    public static void handleDataOnMain(final EnchantmentConversionTableNetData data, final ServerPlayer player) {
+        if (player == null || !(player.containerMenu instanceof EnchantmentConversionMenu menu) || !menu.stillValid(player)) {
             return;
         }
 

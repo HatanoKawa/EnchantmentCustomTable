@@ -1,12 +1,14 @@
 package com.river_quinn.enchantment_custom_table.network.enchanting_custom_table;
 
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraft.server.level.ServerPlayer;
 
-public class EnchantingCustomTableServerPayloadHandler {
+public final class EnchantingCustomTableServerPayloadHandler {
+    private EnchantingCustomTableServerPayloadHandler() {
+    }
 
-    public static void handleDataOnMain(final EnchantingCustomTableNetData data, final IPayloadContext context) {
-        if (!(context.player().containerMenu instanceof EnchantingCustomMenu menu) || !menu.stillValid(context.player())) {
+    public static void handleDataOnMain(final EnchantingCustomTableNetData data, final ServerPlayer player) {
+        if (player == null || !(player.containerMenu instanceof EnchantingCustomMenu menu) || !menu.stillValid(player)) {
             return;
         }
 

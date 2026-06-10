@@ -1,9 +1,9 @@
 package com.river_quinn.enchantment_custom_table.network.enchanting_custom_table;
 
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+public final class EnchantingCustomTableClientPayloadHandler {
+    private EnchantingCustomTableClientPayloadHandler() {
+    }
 
-public class EnchantingCustomTableClientPayloadHandler {
-
-    public static void handleDataOnMain(final EnchantingCustomTableNetData data, final IPayloadContext context) {
+    public static void handleDataOnMain(final EnchantingCustomTableNetData data) {
     }
 }

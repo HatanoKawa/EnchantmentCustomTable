@@ -17,7 +17,7 @@ final class MenuStackMover {
             while (!stack.isEmpty() && inRange(index, startIndex, endIndex, reverse)) {
                 Slot slot = slots.get(index);
                 ItemStack existingStack = slot.getItem();
-                if (slot.mayPlace(stack) && !existingStack.isEmpty() && ItemStack.isSameItemSameComponents(stack, existingStack)) {
+                if (slot.mayPlace(stack) && !existingStack.isEmpty() && ItemStack.isSameItemSameTags(stack, existingStack)) {
                     int combinedCount = existingStack.getCount() + stack.getCount();
                     int maxStackSize = slot.getMaxStackSize(existingStack);
                     if (combinedCount <= maxStackSize) {

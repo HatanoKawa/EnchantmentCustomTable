@@ -2,27 +2,18 @@ package com.river_quinn.enchantment_custom_table.network.enchanted_book_converti
 
 import com.river_quinn.enchantment_custom_table.core.net.ConversionTableIntent;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-//? if >=1.21.11 {
-import net.minecraft.resources.Identifier;
-//?} else {
-/*import net.minecraft.resources.ResourceLocation;*/
-//?}
+import net.minecraft.network.FriendlyByteBuf;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static com.river_quinn.enchantment_custom_table.EnchantmentCustomTable.MODID;
 
 public record EnchantmentConversionTableNetData(
         ConversionTableIntent intent,
         String searchQuery,
         String clientLanguage,
         List<String> matchedEnchantments
-) implements CustomPacketPayload {
+) {
     public EnchantmentConversionTableNetData {
         intent = intent == null ? ConversionTableIntent.UNKNOWN : intent;
         searchQuery = EnchantmentSearchRules.sanitizeSearchQuery(searchQuery);
@@ -52,32 +43,28 @@ public record EnchantmentConversionTableNetData(
         this(ConversionTableIntent.fromNetworkId(operateType), searchQuery, clientLanguage, matchedEnchantments);
     }
 
-    public static final Type<EnchantmentConversionTableNetData> TYPE =
-            //? if >=1.21.11 {
-            new Type<>(Identifier.fromNamespaceAndPath(MODID, "enchantment_conversion"));
-            //?} else {
-            /*new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "enchantment_conversion"));
-            *///?}
+    public static EnchantmentConversionTableNetData decode(FriendlyByteBuf buffer) {
+        ConversionTableIntent intent = ConversionTableIntent.fromNetworkId(buffer.readUtf(64));
+        String searchQuery = buffer.readUtf(EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH);
+        String clientLanguage = buffer.readUtf(EnchantmentSearchRules.MAX_CLIENT_LANGUAGE_LENGTH);
+        int count = buffer.readVarInt();
+        List<String> matchedEnchantments = new ArrayList<>(Math.min(count, EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));
+        for (int i = 0; i < count; i++) {
+            String matchedEnchantment = buffer.readUtf(256);
+            if (matchedEnchantments.size() < EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS) {
+                matchedEnchantments.add(matchedEnchantment);
+            }
+        }
+        return new EnchantmentConversionTableNetData(intent, searchQuery, clientLanguage, matchedEnchantments);
+    }
 
-    private static final StreamCodec<ByteBuf, List<String>> MATCHED_ENCHANTMENTS_CODEC =
-            ByteBufCodecs.stringUtf8(256).apply(ByteBufCodecs.list(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));
-    private static final StreamCodec<ByteBuf, ConversionTableIntent> INTENT_CODEC =
-            ByteBufCodecs.stringUtf8(64).map(ConversionTableIntent::fromNetworkId, ConversionTableIntent::networkId);
-
-    public static final StreamCodec<ByteBuf, EnchantmentConversionTableNetData> STREAM_CODEC = StreamCodec.composite(
-            INTENT_CODEC,
-            EnchantmentConversionTableNetData::intent,
-            ByteBufCodecs.stringUtf8(EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH),
-            EnchantmentConversionTableNetData::searchQuery,
-            ByteBufCodecs.stringUtf8(EnchantmentSearchRules.MAX_CLIENT_LANGUAGE_LENGTH),
-            EnchantmentConversionTableNetData::clientLanguage,
-            MATCHED_ENCHANTMENTS_CODEC,
-            EnchantmentConversionTableNetData::matchedEnchantments,
-            EnchantmentConversionTableNetData::new
-    );
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+    public static void encode(EnchantmentConversionTableNetData data, FriendlyByteBuf buffer) {
+        buffer.writeUtf(data.intent().networkId(), 64);
+        buffer.writeUtf(data.searchQuery(), EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH);
+        buffer.writeUtf(data.clientLanguage(), EnchantmentSearchRules.MAX_CLIENT_LANGUAGE_LENGTH);
+        buffer.writeVarInt(data.matchedEnchantments().size());
+        for (String matchedEnchantment : data.matchedEnchantments()) {
+            buffer.writeUtf(matchedEnchantment, 256);
+        }
     }
 }

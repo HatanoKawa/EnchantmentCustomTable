@@ -2,17 +2,17 @@ package com.river_quinn.enchantment_custom_table.core.session;
 
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import com.river_quinn.enchantment_custom_table.core.platform.EnchantmentAccessService;
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentEntry;
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentList;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class EnchantingTableSession {
@@ -111,7 +111,7 @@ public class EnchantingTableSession {
         return index >= 0
                 && index < generatedItems.size()
                 && !stack.isEmpty()
-                && ItemStack.isSameItemSameComponents(generatedItems.get(index), stack);
+                && ItemStack.isSameItemSameTags(generatedItems.get(index), stack);
     }
 
     public void resetPage() {
@@ -185,23 +185,21 @@ public class EnchantingTableSession {
         generatedItems.clear();
 
         if (!toolItemStack.isEmpty()) {
-            ItemEnchantments itemEnchantments = enchantments.getEnchantments(toolItemStack);
-            currentTotalPage = EnchantmentTableRules.calculatePageCount(itemEnchantments.entrySet().size(), generatedSlotCount, true);
+            EnchantmentList itemEnchantments = enchantments.getEnchantments(world, toolItemStack);
+            currentTotalPage = EnchantmentTableRules.calculatePageCount(itemEnchantments.size(), generatedSlotCount, true);
 
-            if (toolItemStack.is(Items.ENCHANTED_BOOK) && itemEnchantments.entrySet().size() == 1) {
-                Object2IntMap.Entry<Holder<Enchantment>> enchantmentObj = itemEnchantments.entrySet().iterator().next();
-                Holder<Enchantment> enchantment = enchantments.resolveEnchantmentHolder(world, enchantmentObj.getKey()).orElse(enchantmentObj.getKey());
-                int enchantmentLevel = enchantmentObj.getIntValue();
-                if (enchantmentLevel > 1) {
-                    for (Integer level : EnchantmentTableRules.splitSingleEnchantmentLevels(enchantmentLevel, mergeOptions.get())) {
-                        generatedItems.add(enchantments.createEnchantedBook(enchantment, level));
+            if (toolItemStack.is(Items.ENCHANTED_BOOK) && itemEnchantments.size() == 1) {
+                EnchantmentEntry enchantmentEntry = itemEnchantments.entries().get(0);
+                Optional<Enchantment> enchantment = enchantments.resolveEnchantment(world, enchantmentEntry.key());
+                if (enchantment.isPresent() && enchantmentEntry.level() > 1) {
+                    for (Integer level : EnchantmentTableRules.splitSingleEnchantmentLevels(enchantmentEntry.level(), mergeOptions.get())) {
+                        generatedItems.add(enchantments.createEnchantedBook(enchantment.get(), level));
                     }
                 }
-            } else if (!toolItemStack.is(Items.ENCHANTED_BOOK) || itemEnchantments.entrySet().size() > 1) {
-                for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
-                    Holder<Enchantment> enchantment = enchantments.resolveEnchantmentHolder(world, entry.getKey()).orElse(entry.getKey());
-                    int enchantmentLevel = entry.getIntValue();
-                    generatedItems.add(enchantments.createEnchantedBook(enchantment, enchantmentLevel));
+            } else if (!toolItemStack.is(Items.ENCHANTED_BOOK) || itemEnchantments.size() > 1) {
+                for (EnchantmentEntry entry : itemEnchantments.entries()) {
+                    enchantments.resolveEnchantment(world, entry.key())
+                            .ifPresent(enchantment -> generatedItems.add(enchantments.createEnchantedBook(enchantment, entry.level())));
                 }
             }
         } else {
@@ -232,9 +230,8 @@ public class EnchantingTableSession {
             return false;
         }
         return EnchantmentTableRules.tryMergeEnchantments(
-                enchantments.getEnchantments(toolItemStack),
+                enchantments.getEnchantments(world, toolItemStack),
                 enchantments.getEnchantmentLevels(world, stack),
-                enchantment -> enchantments.getCoreEnchantmentKey(world, enchantment),
                 mergeOptions.get()
         ).allowed();
     }
@@ -254,9 +251,8 @@ public class EnchantingTableSession {
         }
 
         EnchantmentTableRules.MergeResult result = EnchantmentTableRules.tryMergeEnchantments(
-                enchantments.getEnchantments(toolItemStack),
+                enchantments.getEnchantments(world, toolItemStack),
                 enchantmentLevels,
-                enchantment -> enchantments.getCoreEnchantmentKey(world, enchantment),
                 mergeOptions.get()
         );
         if (!result.allowed() || !replaceToolEnchantments(result.enchantments())) {
@@ -290,15 +286,14 @@ public class EnchantingTableSession {
             return GeneratedBookRemovalResult.failed();
         }
 
-        ItemEnchantments itemEnchantments = enchantments.getEnchantments(toolItemStack);
+        EnchantmentList itemEnchantments = enchantments.getEnchantments(world, toolItemStack);
         if (!canRemoveEnchantments(itemEnchantments, enchantmentLevels)) {
             return GeneratedBookRemovalResult.failed();
         }
 
-        ItemEnchantments resultEnchantments = EnchantmentTableRules.subtractEnchantments(
+        EnchantmentList resultEnchantments = EnchantmentTableRules.subtractEnchantments(
                 itemEnchantments,
                 enchantmentLevels,
-                enchantment -> enchantments.getCoreEnchantmentKey(world, enchantment),
                 shouldUseIncrementalSingleBookSplitRemoval(toolItemStack, itemEnchantments, enchantmentLevels)
         );
         if (!replaceToolEnchantments(resultEnchantments)) {
@@ -327,7 +322,7 @@ public class EnchantingTableSession {
         }
 
         ItemStack toolItemStack = inventory.getStackInSlot(toolSlot);
-        ItemEnchantments itemEnchantments = enchantments.getEnchantments(toolItemStack);
+        EnchantmentList itemEnchantments = enchantments.getEnchantments(world, toolItemStack);
         if (toolItemStack.is(Items.ENCHANTED_BOOK)) {
             inventory.setStackInSlot(toolSlot, ItemStack.EMPTY);
             clearCache();
@@ -335,18 +330,14 @@ public class EnchantingTableSession {
             return ExportEnchantmentsResult.success(toolItemStack.copy());
         }
         if (!toolItemStack.isEmpty() && !itemEnchantments.isEmpty()) {
-            ItemEnchantments.Mutable mutable = new ItemEnchantments.Mutable(itemEnchantments);
             ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
 
-            for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemEnchantments.entrySet()) {
-                Holder<Enchantment> enchantment = enchantments.resolveEnchantmentHolder(world, entry.getKey()).orElse(entry.getKey());
-                int enchantmentLevel = entry.getIntValue();
-
-                mutable.set(enchantment, 0);
-                enchantedBook.enchant(enchantment, enchantmentLevel);
+            for (EnchantmentEntry entry : itemEnchantments.entries()) {
+                enchantments.resolveEnchantment(world, entry.key())
+                        .ifPresent(enchantment -> enchantments.addEnchantmentToBook(enchantedBook, enchantment, entry.level()));
             }
 
-            if (!replaceToolEnchantments(mutable.toImmutable())) {
+            if (!replaceToolEnchantments(EnchantmentList.empty())) {
                 return ExportEnchantmentsResult.failed();
             }
             clearCache();
@@ -377,15 +368,11 @@ public class EnchantingTableSession {
     }
 
     private boolean canRemoveEnchantments(
-            ItemEnchantments itemEnchantments,
+            EnchantmentList itemEnchantments,
             List<EnchantmentTableRules.EnchantmentLevel> removalEnchantments
     ) {
         for (EnchantmentTableRules.EnchantmentLevel removal : removalEnchantments) {
-            int currentLevel = EnchantmentTableRules.getMatchingEnchantmentLevel(
-                    itemEnchantments,
-                    removal.key(),
-                    enchantment -> enchantments.getCoreEnchantmentKey(world, enchantment)
-            );
+            int currentLevel = EnchantmentTableRules.getMatchingEnchantmentLevel(itemEnchantments, removal.key());
             if (currentLevel <= 0 || currentLevel < removal.level()) {
                 return false;
             }
@@ -395,7 +382,7 @@ public class EnchantingTableSession {
 
     private boolean shouldUseIncrementalSingleBookSplitRemoval(
             ItemStack toolItemStack,
-            ItemEnchantments itemEnchantments,
+            EnchantmentList itemEnchantments,
             List<EnchantmentTableRules.EnchantmentLevel> removalEnchantments
     ) {
         return mergeOptions.get().incrementalSameLevelMerge()
@@ -404,12 +391,12 @@ public class EnchantingTableSession {
                 && removalEnchantments.size() == 1;
     }
 
-    private boolean replaceToolEnchantments(ItemEnchantments enchantments) {
+    private boolean replaceToolEnchantments(EnchantmentList enchantments) {
         ItemStack toolItemStack = inventory.getStackInSlot(toolSlot);
         if (toolItemStack.isEmpty()) {
             return false;
         }
-        this.enchantments.setEnchantments(toolItemStack, enchantments);
+        this.enchantments.setEnchantments(world, toolItemStack, enchantments);
         inventory.setStackInSlot(toolSlot, toolItemStack);
         return true;
     }

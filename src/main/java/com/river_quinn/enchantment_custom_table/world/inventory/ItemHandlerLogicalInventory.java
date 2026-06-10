@@ -1,9 +1,8 @@
 package com.river_quinn.enchantment_custom_table.world.inventory;
 
-//? if <1.21.9 {
-/*import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
+import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class ItemHandlerLogicalInventory implements LogicalInventory {
     private final IItemHandlerModifiable itemHandler;
@@ -47,4 +46,3 @@ public class ItemHandlerLogicalInventory implements LogicalInventory {
         return itemHandler.isItemValid(slot, stack);
     }
 }
-*///?}
