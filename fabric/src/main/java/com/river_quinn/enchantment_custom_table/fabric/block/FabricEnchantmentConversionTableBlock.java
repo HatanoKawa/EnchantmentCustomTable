@@ -1,12 +1,12 @@
 package com.river_quinn.enchantment_custom_table.fabric.block;
 
-import com.mojang.serialization.MapCodec;
 import com.river_quinn.enchantment_custom_table.fabric.block.entity.FabricEnchantmentConversionTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantmentConversionMenu;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -16,15 +16,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class FabricEnchantmentConversionTableBlock extends FabricEnchantingTableLikeBlock {
-    public static final MapCodec<FabricEnchantmentConversionTableBlock> CODEC = simpleCodec(properties -> new FabricEnchantmentConversionTableBlock());
-
     public FabricEnchantmentConversionTableBlock() {
         super(FabricVersionedMinecraft.blockProperties("enchantment_conversion_table"));
-    }
-
-    @Override
-    protected MapCodec<? extends FabricEnchantmentConversionTableBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -33,8 +26,8 @@ public class FabricEnchantmentConversionTableBlock extends FabricEnchantingTable
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             FabricVersionedMinecraft.openBlockPosMenu(
                     serverPlayer,
                     Component.translatable("block.enchantment_custom_table.enchantment_conversion_table"),

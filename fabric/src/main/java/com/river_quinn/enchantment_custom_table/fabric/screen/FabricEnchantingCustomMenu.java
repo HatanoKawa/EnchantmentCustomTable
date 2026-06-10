@@ -52,6 +52,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     private final FabricEnchantingCustomTableBlockEntity blockEntity;
     private int lastInventoryVersion = -1;
     private boolean suppressGeneratedSlotTakeRemoval;
+    private boolean suppressGeneratedSlotSetHandling;
 
     public FabricEnchantingCustomMenu(int id, Inventory inventory, BlockPos pos) {
         super(FabricModMenus.ENCHANTING_CUSTOM, id);
@@ -102,10 +103,15 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
                 return ItemStack.EMPTY;
             }
-            if (stack.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
+            suppressGeneratedSlotSetHandling = true;
+            try {
+                if (stack.isEmpty()) {
+                    slot.set(ItemStack.EMPTY);
+                } else {
+                    slot.setChanged();
+                }
+            } finally {
+                suppressGeneratedSlotSetHandling = false;
             }
             suppressGeneratedSlotTakeRemoval = true;
             try {
@@ -244,7 +250,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                 if (!isServerSide()) {
                     return;
                 }
-                if (!stack.isEmpty() && applyEnchantedBook(stack.copyWithCount(1))) {
+                if (!stack.isEmpty() && applyEnchantedBook(copyWithCount(stack, 1))) {
                     inventory.setStackInSlot(INPUT_SLOT, ItemStack.EMPTY);
                 }
             }
@@ -282,8 +288,12 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                     }
 
                     @Override
-                    public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
-                        handleGeneratedSlotSetByPlayer(getContainerSlot(), newStack, oldStack);
+                    public void set(ItemStack newStack) {
+                        if (suppressGeneratedSlotSetHandling) {
+                            super.set(newStack);
+                            return;
+                        }
+                        handleGeneratedSlotSetByPlayer(getContainerSlot(), newStack, getItem().copy());
                     }
                 });
                 generatedBookIndex++;
@@ -314,8 +324,8 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
             }
         }
 
-        if (applyEnchantedBook(newStack.copyWithCount(1)) && hasDuplicateEnchantment) {
-            entity.containerMenu.setCarried(ItemStack.EMPTY.copy());
+        if (applyEnchantedBook(copyWithCount(newStack, 1)) && hasDuplicateEnchantment) {
+            entity.containerMenu.setCarried(ItemStack.EMPTY);
         }
     }
 
@@ -357,13 +367,19 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     }
 
     private boolean isServerSide() {
-        return !world.isClientSide();
+        return !world.isClientSide;
     }
 
     private void playUseSound() {
-        if (!world.isClientSide()) {
+        if (!world.isClientSide) {
             world.playSound(null, new BlockPos(x, y, z), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
+    }
+
+    private static ItemStack copyWithCount(ItemStack stack, int count) {
+        ItemStack copy = stack.copy();
+        copy.setCount(count);
+        return copy;
     }
 
     private void addPlayerInventory(Inventory inventory, int xOffset, int yOffset) {

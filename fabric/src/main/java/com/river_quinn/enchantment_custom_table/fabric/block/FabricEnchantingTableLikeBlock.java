@@ -34,7 +34,7 @@ public abstract class FabricEnchantingTableLikeBlock extends FabricTableDropBloc
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState blockState) {
+    public RenderShape getRenderShape(BlockState blockState) {
         return RenderShape.MODEL;
     }
 
@@ -44,14 +44,14 @@ public abstract class FabricEnchantingTableLikeBlock extends FabricTableDropBloc
     }
 
     @Override
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         dropTableContents(level, pos);
-        return super.playerWillDestroy(level, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
     protected void dropTableContents(Level level, BlockPos pos) {
-        if (level.isClientSide()) {
+        if (level.isClientSide) {
             return;
         }
         BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -85,7 +85,7 @@ public abstract class FabricEnchantingTableLikeBlock extends FabricTableDropBloc
     @SuppressWarnings("unchecked")
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide() ? (lvl, pos, blockState, blockEntity) -> {
+        return level.isClientSide ? (lvl, pos, blockState, blockEntity) -> {
             if (blockEntity instanceof FabricEnchantingTableLikeBlockEntity enchantingTable) {
                 FabricEnchantingTableLikeBlockEntity.bookAnimationTick(lvl, pos, blockState, enchantingTable);
             }

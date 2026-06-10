@@ -1,5 +1,7 @@
 package com.river_quinn.enchantment_custom_table.fabric.block.entity;
 
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentEntry;
+import com.river_quinn.enchantment_custom_table.core.access.EnchantmentList;
 import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
 import com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
@@ -9,18 +11,14 @@ import com.river_quinn.enchantment_custom_table.core.session.ConversionTableSess
 import com.river_quinn.enchantment_custom_table.fabric.transfer.FabricConversionAutomationStorage;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantingTableLikeBlockEntity {
@@ -67,16 +65,15 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
         if (level == null || !stack.is(Items.ENCHANTED_BOOK)) {
             return false;
         }
-        var enchantments = FabricEnchantmentUtils.getEnchantments(stack);
+        EnchantmentList enchantments = FabricEnchantmentUtils.getEnchantments(stack);
         if (enchantments.size() != 1) {
             return false;
         }
-        Object2IntMap.Entry<Holder<Enchantment>> entry = enchantments.entrySet().iterator().next();
-        Holder<Enchantment> enchantment = FabricEnchantmentUtils.resolveEnchantmentHolder(level, entry.getKey()).orElse(entry.getKey());
+        EnchantmentEntry entry = enchantments.entries().get(0);
         return EnchantmentTableRules.isValidSingleEnchantmentTemplate(
                 enchantments.size(),
-                entry.getIntValue(),
-                enchantment.value().getMaxLevel()
+                entry.level(),
+                entry.maxLevel()
         );
     }
 
@@ -138,21 +135,21 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         NonNullList<ItemStack> persistentItems = NonNullList.withSize(4, ItemStack.EMPTY);
         persistentItems.set(0, inventory.getStackInSlot(FabricEnchantmentConversionMenu.BOOK_SLOT));
         persistentItems.set(1, inventory.getStackInSlot(FabricEnchantmentConversionMenu.PAYMENT_SLOT));
         persistentItems.set(2, inventory.getStackInSlot(FabricEnchantmentConversionMenu.TEMPLATE_BOOK_SLOT));
         persistentItems.set(3, inventory.getStackInSlot(FabricEnchantmentConversionMenu.COPY_RESULT_SLOT));
-        tag.put("Inventory", ContainerHelper.saveAllItems(new CompoundTag(), persistentItems, registries));
+        tag.put("Inventory", ContainerHelper.saveAllItems(new CompoundTag(), persistentItems));
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    public void load(CompoundTag tag) {
+        super.load(tag);
         NonNullList<ItemStack> persistentItems = NonNullList.withSize(4, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(tag.getCompound("Inventory"), persistentItems, registries);
+        ContainerHelper.loadAllItems(tag.getCompound("Inventory"), persistentItems);
         loadingInventory = true;
         try {
             inventory.setStackInSlot(FabricEnchantmentConversionMenu.BOOK_SLOT, persistentItems.get(0));

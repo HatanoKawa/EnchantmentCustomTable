@@ -7,13 +7,14 @@ import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUti
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -137,7 +138,10 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
         String clientLanguage = getClientLanguage();
         List<String> matchedEnchantments = findClientLocalizedMatches(pendingSearchQuery);
         menu.setSearchQuery(pendingSearchQuery, clientLanguage, matchedEnchantments);
-        ClientPlayNetworking.send(new FabricConversionSearchPayload(pendingSearchQuery, clientLanguage, matchedEnchantments));
+        FabricConversionSearchPayload payload = new FabricConversionSearchPayload(pendingSearchQuery, clientLanguage, matchedEnchantments);
+        FriendlyByteBuf buffer = PacketByteBufs.create();
+        payload.write(buffer);
+        ClientPlayNetworking.send(FabricConversionSearchPayload.ID, buffer);
     }
 
     private String getClientLanguage() {
@@ -152,22 +156,20 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
         if (EnchantmentSearchRules.isBlankSearch(query)) {
             return List.of();
         }
-        Registry<Enchantment> enchantmentRegistry = FabricVersionedMinecraft.enchantmentRegistry(menu.world);
         List<String> matchedEnchantments = new ArrayList<>();
-        enchantmentRegistry.asHolderIdMap().forEach(enchantment -> {
-            FabricEnchantmentUtils.getEnchantmentKey(menu.world, enchantment).ifPresent(key -> {
-                List<String> candidates = List.of(
-                        FabricVersionedMinecraft.keyId(key),
-                        FabricVersionedMinecraft.keyNamespace(key),
-                        FabricVersionedMinecraft.keyPath(key),
-                        FabricVersionedMinecraft.keyPath(key).replace('_', ' '),
-                        enchantment.value().description().getString()
-                );
-                if (EnchantmentSearchRules.matchesAnyCandidate(query, candidates)) {
-                    matchedEnchantments.add(FabricVersionedMinecraft.keyId(key));
-                }
-            });
-        });
+        for (Enchantment enchantment : FabricEnchantmentUtils.allEnchantments()) {
+            var key = FabricEnchantmentUtils.getCoreEnchantmentKey(enchantment);
+            List<String> candidates = List.of(
+                    key.asString(),
+                    key.namespace(),
+                    key.path(),
+                    key.path().replace('_', ' '),
+                    enchantment.getFullname(1).getString()
+            );
+            if (EnchantmentSearchRules.matchesAnyCandidate(query, candidates)) {
+                matchedEnchantments.add(key.asString());
+            }
+        }
         return matchedEnchantments.stream()
                 .limit(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS)
                 .toList();

@@ -2,9 +2,8 @@ package com.river_quinn.enchantment_custom_table.fabric.network;
 
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +12,8 @@ public record FabricConversionSearchPayload(
         String query,
         String clientLanguage,
         List<String> matchedEnchantments
-) implements CustomPacketPayload {
-    public static final Type<FabricConversionSearchPayload> TYPE = FabricVersionedMinecraft.payloadType("conversion_search");
-    public static final StreamCodec<RegistryFriendlyByteBuf, FabricConversionSearchPayload> CODEC =
-            CustomPacketPayload.codec(FabricConversionSearchPayload::write, FabricConversionSearchPayload::read);
+) {
+    public static final ResourceLocation ID = FabricVersionedMinecraft.id("conversion_search");
 
     public FabricConversionSearchPayload {
         query = EnchantmentSearchRules.sanitizeSearchQuery(query);
@@ -24,27 +21,22 @@ public record FabricConversionSearchPayload(
         matchedEnchantments = matchedEnchantments == null
                 ? List.of()
                 : matchedEnchantments.stream()
-                .limit(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS)
-                .toList();
+                        .limit(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS)
+                        .toList();
     }
 
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
-
-    private void write(RegistryFriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeUtf(query, EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH);
-        buffer.writeUtf(clientLanguage, 64);
+        buffer.writeUtf(clientLanguage, EnchantmentSearchRules.MAX_CLIENT_LANGUAGE_LENGTH);
         buffer.writeVarInt(matchedEnchantments.size());
         for (String matchedEnchantment : matchedEnchantments) {
             buffer.writeUtf(matchedEnchantment, 256);
         }
     }
 
-    private static FabricConversionSearchPayload read(RegistryFriendlyByteBuf buffer) {
+    public static FabricConversionSearchPayload read(FriendlyByteBuf buffer) {
         String query = buffer.readUtf(EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH);
-        String clientLanguage = buffer.readUtf(64);
+        String clientLanguage = buffer.readUtf(EnchantmentSearchRules.MAX_CLIENT_LANGUAGE_LENGTH);
         int matchedCount = Math.min(buffer.readVarInt(), EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS);
         List<String> matchedEnchantments = new ArrayList<>(matchedCount);
         for (int i = 0; i < matchedCount; i++) {

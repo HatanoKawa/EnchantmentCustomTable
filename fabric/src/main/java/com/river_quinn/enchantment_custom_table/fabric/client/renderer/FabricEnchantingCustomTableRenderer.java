@@ -37,7 +37,7 @@ public class FabricEnchantingCustomTableRenderer<T extends FabricEnchantingTable
     }
 
     private static Material bookLocation(String path) {
-        return new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.fromNamespaceAndPath(MOD_ID, path));
+        return new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(MOD_ID, path));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class FabricEnchantingCustomTableRenderer<T extends FabricEnchantingTable
         float open = Mth.lerp(partialTick, blockEntity.oOpen, blockEntity.open);
         this.bookModel.setupAnim(time, Mth.clamp(leftPageFlip, 0.0F, 1.0F), Mth.clamp(rightPageFlip, 0.0F, 1.0F), open);
         VertexConsumer vertexConsumer = this.bookLocation.buffer(bufferSource, RenderType::entitySolid);
-        this.bookModel.render(poseStack, vertexConsumer, packedLight, packedOverlay, -1);
+        this.bookModel.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, 1.0F);
         poseStack.popPose();
     }
 

@@ -16,7 +16,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 
 public class FabricEnchantingAutomationStorage extends SnapshotParticipant<ItemStack> implements InsertionOnlyStorage<ItemVariant>, AutomationPort {
@@ -41,7 +40,7 @@ public class FabricEnchantingAutomationStorage extends SnapshotParticipant<ItemS
 
         updateSnapshots(transaction);
         ItemStack toolStack = toolStack();
-        EnchantmentHelper.setEnchantments(toolStack, result.enchantments());
+        FabricEnchantmentUtils.setEnchantments(toolStack, result.enchantments());
         blockEntity.getInventory().setStackInSlot(FabricEnchantingCustomMenu.TOOL_SLOT, toolStack);
         playUseSound();
         return 1;
@@ -86,7 +85,6 @@ public class FabricEnchantingAutomationStorage extends SnapshotParticipant<ItemS
         return EnchantmentTableRules.tryMergeEnchantments(
                 FabricEnchantmentUtils.getEnchantments(toolStack),
                 FabricEnchantmentUtils.getEnchantmentLevels(level, enchantedBook),
-                enchantment -> FabricEnchantmentUtils.getCoreEnchantmentKey(level, enchantment),
                 EnchantmentTableRules.MergeOptions.from(FabricTableConfig.snapshot())
         );
     }
@@ -103,7 +101,7 @@ public class FabricEnchantingAutomationStorage extends SnapshotParticipant<ItemS
 
     private void playUseSound() {
         Level level = blockEntity.getLevel();
-        if (level != null && !level.isClientSide()) {
+        if (level != null && !level.isClientSide) {
             level.playSound(null, blockEntity.getBlockPos(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }

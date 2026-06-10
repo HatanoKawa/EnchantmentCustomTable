@@ -7,7 +7,6 @@ import com.river_quinn.enchantment_custom_table.fabric.transfer.FabricEnchanting
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
@@ -53,18 +52,18 @@ public class FabricEnchantingCustomTableBlockEntity extends FabricEnchantingTabl
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         NonNullList<ItemStack> persistentItems = NonNullList.withSize(1, ItemStack.EMPTY);
         persistentItems.set(0, inventory.getStackInSlot(FabricEnchantingCustomMenu.TOOL_SLOT));
-        tag.put("Inventory", ContainerHelper.saveAllItems(new CompoundTag(), persistentItems, registries));
+        tag.put("Inventory", ContainerHelper.saveAllItems(new CompoundTag(), persistentItems));
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    public void load(CompoundTag tag) {
+        super.load(tag);
         NonNullList<ItemStack> persistentItems = NonNullList.withSize(1, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(tag.getCompound("Inventory"), persistentItems, registries);
+        ContainerHelper.loadAllItems(tag.getCompound("Inventory"), persistentItems);
         inventory.setStackInSlot(FabricEnchantingCustomMenu.TOOL_SLOT, persistentItems.get(0));
     }
 }

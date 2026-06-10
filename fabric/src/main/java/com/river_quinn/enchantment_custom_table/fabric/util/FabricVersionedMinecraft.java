@@ -2,17 +2,13 @@ package com.river_quinn.enchantment_custom_table.fabric.util;
 
 import com.river_quinn.enchantment_custom_table.fabric.EnchantmentCustomTableFabric;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -40,19 +36,15 @@ public final class FabricVersionedMinecraft {
     }
 
     public static InteractionResult sidedSuccess(Level level) {
-        return InteractionResult.sidedSuccess(level.isClientSide());
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(EnchantmentCustomTableFabric.MODID, path);
+        return new ResourceLocation(EnchantmentCustomTableFabric.MODID, path);
     }
 
     public static <V, T extends V> T register(Registry<V> registry, String path, T value) {
         return Registry.register(registry, id(path), value);
-    }
-
-    public static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> payloadType(String path) {
-        return new CustomPacketPayload.Type<>(id(path));
     }
 
     public static BlockBehaviour.Properties blockProperties(String path) {
@@ -64,14 +56,14 @@ public final class FabricVersionedMinecraft {
     }
 
     public static <T extends AbstractContainerMenu> MenuType<T> blockPosMenuType(BlockPosMenuFactory<T> factory) {
-        return new ExtendedScreenHandlerType<>(factory::create, BlockPos.STREAM_CODEC);
+        return new ExtendedScreenHandlerType<>((id, inventory, buffer) -> factory.create(id, inventory, buffer.readBlockPos()));
     }
 
     public static void openBlockPosMenu(ServerPlayer serverPlayer, Component title, BlockPos pos, BlockPosMenuFactory<?> factory) {
-        serverPlayer.openMenu(new ExtendedScreenHandlerFactory<BlockPos>() {
+        serverPlayer.openMenu(new ExtendedScreenHandlerFactory() {
             @Override
-            public BlockPos getScreenOpeningData(ServerPlayer player) {
-                return pos;
+            public void writeScreenOpeningData(ServerPlayer player, net.minecraft.network.FriendlyByteBuf buffer) {
+                buffer.writeBlockPos(pos);
             }
 
             @Override
@@ -92,13 +84,6 @@ public final class FabricVersionedMinecraft {
                 entries.accept(item);
             }
         });
-    }
-
-    public static <T extends CustomPacketPayload> void registerServerboundPlayPayload(
-            CustomPacketPayload.Type<T> type,
-            StreamCodec<? super RegistryFriendlyByteBuf, T> codec
-    ) {
-        PayloadTypeRegistry.playC2S().register(type, codec);
     }
 
     public static Registry<Enchantment> enchantmentRegistry(Level level) {

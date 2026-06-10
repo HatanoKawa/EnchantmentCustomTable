@@ -48,7 +48,7 @@ public class FabricTableInventory extends SimpleContainer implements LogicalInve
         ItemStack existing = getStackInSlot(slot);
         int limit = Math.min(getSlotLimit(slot), stack.getMaxStackSize());
         if (!existing.isEmpty()) {
-            if (!ItemStack.isSameItemSameComponents(existing, stack)) {
+            if (!ItemStack.isSameItemSameTags(existing, stack)) {
                 return stack;
             }
             limit -= existing.getCount();
@@ -60,13 +60,13 @@ public class FabricTableInventory extends SimpleContainer implements LogicalInve
         int moved = Math.min(limit, stack.getCount());
         if (!simulate) {
             if (existing.isEmpty()) {
-                setStackInSlot(slot, stack.copyWithCount(moved));
+                setStackInSlot(slot, copyWithCount(stack, moved));
             } else {
                 existing.grow(moved);
                 setStackInSlot(slot, existing);
             }
         }
-        return stack.getCount() == moved ? ItemStack.EMPTY : stack.copyWithCount(stack.getCount() - moved);
+        return stack.getCount() == moved ? ItemStack.EMPTY : copyWithCount(stack, stack.getCount() - moved);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class FabricTableInventory extends SimpleContainer implements LogicalInve
         if (existing.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        ItemStack extracted = existing.copyWithCount(Math.min(amount, existing.getCount()));
+        ItemStack extracted = copyWithCount(existing, Math.min(amount, existing.getCount()));
         if (!simulate) {
             existing.shrink(extracted.getCount());
             setStackInSlot(slot, existing);
@@ -106,7 +106,7 @@ public class FabricTableInventory extends SimpleContainer implements LogicalInve
         ItemStack limitedStack = stack;
         int limit = getSlotLimit(slot);
         if (!stack.isEmpty() && stack.getCount() > limit) {
-            limitedStack = stack.copyWithCount(limit);
+            limitedStack = copyWithCount(stack, limit);
         }
         super.setItem(slot, limitedStack);
         changed.accept(slot);
@@ -147,5 +147,11 @@ public class FabricTableInventory extends SimpleContainer implements LogicalInve
     @Override
     public void setChanged() {
         super.setChanged();
+    }
+
+    private static ItemStack copyWithCount(ItemStack stack, int count) {
+        ItemStack copy = stack.copy();
+        copy.setCount(count);
+        return copy;
     }
 }
