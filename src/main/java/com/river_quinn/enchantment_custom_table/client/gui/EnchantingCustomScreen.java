@@ -17,9 +17,9 @@ import net.minecraft.world.level.Level;
 
 public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCustomMenu> {
     private static final ResourceLocation GUI_BACKGROUND =
-            new ResourceLocation("enchantment_custom_table", "textures/screens/enchanting_custom.png");
+            new ResourceLocation("enchantment_custom_table", "textures/gui/container/enchanting_custom.png");
     private static final ResourceLocation ARROW_TEXTURE =
-            new ResourceLocation("enchantment_custom_table", "textures/screens/left_arrow.png");
+            new ResourceLocation("enchantment_custom_table", "textures/gui/container/left_arrow.png");
 
     private final EnchantingCustomMenu menuContainer;
     private final Level world;

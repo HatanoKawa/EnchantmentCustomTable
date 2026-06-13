@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<FabricEnchantmentConversionMenu> {
-    private static final ResourceLocation GUI_BACKGROUND = FabricVersionedMinecraft.id("textures/screens/enchantment_conversion.png");
+    private static final ResourceLocation GUI_BACKGROUND = FabricVersionedMinecraft.id("textures/gui/container/enchantment_conversion.png");
     private EditBox searchBox;
     private String pendingSearchQuery = "";
     private String lastSentSearchQuery = "";

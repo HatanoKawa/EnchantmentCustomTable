@@ -27,7 +27,7 @@ import java.util.Objects;
 
 public class EnchantmentConversionScreen extends AbstractContainerScreen<EnchantmentConversionMenu> {
     private static final ResourceLocation GUI_BACKGROUND =
-            new ResourceLocation("enchantment_custom_table", "textures/screens/enchantment_conversion.png");
+            new ResourceLocation("enchantment_custom_table", "textures/gui/container/enchantment_conversion.png");
 
     private final EnchantmentConversionMenu menuContainer;
     private final Level world;

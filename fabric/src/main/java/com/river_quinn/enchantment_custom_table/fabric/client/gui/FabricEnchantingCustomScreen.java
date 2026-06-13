@@ -11,8 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
 public class FabricEnchantingCustomScreen extends AbstractContainerScreen<FabricEnchantingCustomMenu> {
-    private static final ResourceLocation GUI_BACKGROUND = FabricVersionedMinecraft.id("textures/screens/enchanting_custom.png");
-    private static final ResourceLocation ARROW = FabricVersionedMinecraft.id("textures/screens/left_arrow.png");
+    private static final ResourceLocation GUI_BACKGROUND = FabricVersionedMinecraft.id("textures/gui/container/enchanting_custom.png");
+    private static final ResourceLocation ARROW = FabricVersionedMinecraft.id("textures/gui/container/left_arrow.png");
 
     public FabricEnchantingCustomScreen(FabricEnchantingCustomMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
