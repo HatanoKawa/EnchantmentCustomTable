@@ -28,6 +28,42 @@
       "resource": "entity/enchanting_table_book"
     },
     {
+      "type": "single",
+      "resource": "enchantment_custom_table:block/enchanting_custom_table_bottom"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:block/enchanting_custom_table_top"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:block/enchanting_custom_table_side"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:block/enchantment_conversion_table_top"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:block/enchantment_conversion_table_side"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:item/empty_slot_book"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:item/empty_slot_book_disabled"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:item/copy_template_slot"
+    },
+    {
+      "type": "single",
+      "resource": "enchantment_custom_table:item/output_slot"
+    },
+    {
       "type": "paletted_permutations",
       "textures": [
         "trims/items/leggings_trim",
