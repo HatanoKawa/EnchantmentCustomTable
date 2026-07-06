@@ -3,7 +3,9 @@ package com.river_quinn.enchantment_custom_table.fabric.transfer;
 import com.river_quinn.enchantment_custom_table.core.inventory.AutomationPort;
 import com.river_quinn.enchantment_custom_table.core.inventory.SlotRole;
 import com.river_quinn.enchantment_custom_table.fabric.block.entity.FabricEnchantmentConversionTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantmentConversionMenu;
+import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
@@ -83,7 +85,7 @@ public class FabricConversionAutomationStorage extends SnapshotParticipant<ItemS
     @Override
     public boolean canInsert(int slot, ItemStack stack) {
         return switch (slot) {
-            case AUTOMATION_BOOK_SLOT -> stack.is(Items.BOOK);
+            case AUTOMATION_BOOK_SLOT -> EnchantmentTableRules.acceptsConversionBookInput(FabricTableConfig.snapshot()) && stack.is(Items.BOOK);
             case AUTOMATION_PAYMENT_SLOT -> blockEntity.isPaymentItem(stack);
             default -> false;
         };
@@ -103,7 +105,7 @@ public class FabricConversionAutomationStorage extends SnapshotParticipant<ItemS
         if (resource.isBlank()) {
             return -1;
         }
-        if (resource.isOf(Items.BOOK)) {
+        if (EnchantmentTableRules.acceptsConversionBookInput(FabricTableConfig.snapshot()) && resource.isOf(Items.BOOK)) {
             return AUTOMATION_BOOK_SLOT;
         }
         if (blockEntity.isPaymentItem(resource.toStack())) {

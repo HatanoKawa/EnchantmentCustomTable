@@ -151,7 +151,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
         this.addSlot(new SlotItemHandler(itemHandler, 0, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.is(Items.BOOK);
+                return EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
             }
 
             @Override
@@ -174,7 +174,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
             public boolean mayPlace(ItemStack stack) {
                 return boundBlockEntity != null
                         ? boundBlockEntity.isPaymentItem(stack)
-                        : EnchantmentTableRules.paymentCostFor(stack.getItem(), config()) > 0;
+                        : EnchantmentTableRules.isConversionPaymentItem(stack, config());
             }
 
             @Override

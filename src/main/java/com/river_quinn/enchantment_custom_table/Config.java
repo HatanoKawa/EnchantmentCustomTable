@@ -33,6 +33,11 @@ public class Config
             .comment("When enabled, the enchantment conversion table exchanges only level-one enchanted books.")
             .define("convertOnlyLevelOneBook", false);
 
+    private static final ForgeConfigSpec.BooleanValue FREE_CONVERSION_TABLE_COSTS = BUILDER
+            .comment("When enabled, the enchantment conversion table does not require or consume normal books, emeralds, or emerald blocks.")
+            .comment("The book and payment slots stop accepting input while this mode is enabled.")
+            .define("freeConversionTableCosts", false);
+
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static int minimumEmeraldCost = 36;
@@ -40,6 +45,7 @@ public class Config
     public static boolean enforceEnchantmentLevelLimit = false;
     public static boolean incrementalSameLevelMerge = false;
     public static boolean convertOnlyLevelOneBook = false;
+    public static boolean freeConversionTableCosts = false;
 
     public static TableConfigSnapshot snapshot() {
         return new TableConfigSnapshot(
@@ -47,7 +53,8 @@ public class Config
                 minimumEmeraldBlockCost,
                 enforceEnchantmentLevelLimit,
                 incrementalSameLevelMerge,
-                convertOnlyLevelOneBook
+                convertOnlyLevelOneBook,
+                freeConversionTableCosts
         );
     }
 
@@ -59,5 +66,6 @@ public class Config
         enforceEnchantmentLevelLimit = ENFORCE_ENCHANTMENT_LEVEL_LIMIT.get();
         incrementalSameLevelMerge = INCREMENTAL_SAME_LEVEL_MERGE.get();
         convertOnlyLevelOneBook = CONVERT_ONLY_LEVEL_ONE_BOOK.get();
+        freeConversionTableCosts = FREE_CONVERSION_TABLE_COSTS.get();
     }
 }

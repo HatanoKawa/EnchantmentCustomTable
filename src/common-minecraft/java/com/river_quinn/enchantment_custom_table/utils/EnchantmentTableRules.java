@@ -112,6 +112,30 @@ public final class EnchantmentTableRules {
         return consumePayment(paymentStack, config.minimumEmeraldCost(), config.minimumEmeraldBlockCost());
     }
 
+    public static boolean acceptsConversionBookInput(TableConfigView config) {
+        return !config.freeConversionTableCosts();
+    }
+
+    public static boolean isConversionPaymentItem(ItemStack stack, TableConfigView config) {
+        return !stack.isEmpty()
+                && !config.freeConversionTableCosts()
+                && paymentCostFor(stack.getItem(), config) > 0;
+    }
+
+    public static boolean hasRequiredConversionMaterials(ItemStack bookStack, ItemStack paymentStack, TableConfigView config) {
+        return config.freeConversionTableCosts()
+                || (bookStack.is(Items.BOOK) && hasEnoughPayment(paymentStack, config));
+    }
+
+    public static void consumeRequiredConversionMaterials(ItemStack bookStack, ItemStack paymentStack, TableConfigView config) {
+        if (config.freeConversionTableCosts()) {
+            return;
+        }
+
+        bookStack.shrink(1);
+        consumePayment(paymentStack, config);
+    }
+
     public static boolean isValidSingleEnchantmentTemplate(int enchantmentCount, int level, int maxLevel) {
         return CopyRules.isValidSingleEnchantmentTemplate(enchantmentCount, level, maxLevel);
     }

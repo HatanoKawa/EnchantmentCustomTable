@@ -121,11 +121,11 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
             if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
                 return ItemStack.EMPTY;
             }
-        } else if (stack.is(Items.BOOK)) {
+        } else if (EnchantmentTableRules.acceptsConversionBookInput(FabricTableConfig.snapshot()) && stack.is(Items.BOOK)) {
             if (!moveItemStackTo(stack, BOOK_SLOT, BOOK_SLOT + 1, false)) {
                 return ItemStack.EMPTY;
             }
-        } else if (EnchantmentTableRules.paymentCostFor(stack.getItem(), FabricTableConfig.snapshot()) > 0) {
+        } else if (EnchantmentTableRules.isConversionPaymentItem(stack, FabricTableConfig.snapshot())) {
             if (!moveItemStackTo(stack, PAYMENT_SLOT, PAYMENT_SLOT + 1, false)) {
                 return ItemStack.EMPTY;
             }
@@ -242,7 +242,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
         addSlot(new TableSlot(BOOK_SLOT, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y, FabricEmptySlotIcon.BOOK) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.is(Items.BOOK);
+                return EnchantmentTableRules.acceptsConversionBookInput(FabricTableConfig.snapshot()) && stack.is(Items.BOOK);
             }
 
             @Override
@@ -254,7 +254,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
         addSlot(new TableSlot(PAYMENT_SLOT, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y, FabricEmptySlotIcon.EMERALD) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return EnchantmentTableRules.paymentCostFor(stack.getItem(), FabricTableConfig.snapshot()) > 0;
+                return EnchantmentTableRules.isConversionPaymentItem(stack, FabricTableConfig.snapshot());
             }
 
             @Override

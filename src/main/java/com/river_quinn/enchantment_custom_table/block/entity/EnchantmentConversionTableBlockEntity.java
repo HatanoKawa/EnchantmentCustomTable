@@ -46,7 +46,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return switch (slot) {
-                case BOOK_SLOT -> stack.is(Items.BOOK);
+                case BOOK_SLOT -> EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
                 case PAYMENT_SLOT -> isPaymentItem(stack);
                 case TEMPLATE_SLOT -> isValidCopyTemplate(stack);
                 default -> false;
@@ -97,7 +97,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     }
 
     public boolean isPaymentItem(ItemStack stack) {
-        return EnchantmentTableRules.paymentCostFor(stack.getItem(), config()) > 0;
+        return EnchantmentTableRules.isConversionPaymentItem(stack, config());
     }
 
     public boolean isValidCopyTemplate(ItemStack stack) {
@@ -259,7 +259,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return switch (slot) {
-                case 0 -> stack.is(Items.BOOK);
+                case 0 -> EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
                 case 1 -> isPaymentItem(stack);
                 default -> false;
             };
