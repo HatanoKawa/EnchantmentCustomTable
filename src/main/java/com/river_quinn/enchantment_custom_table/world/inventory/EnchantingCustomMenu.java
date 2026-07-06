@@ -22,7 +22,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -35,8 +34,7 @@ import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class EnchantingCustomMenu extends AbstractContainerMenu implements EnchantingTableActions {
     public static final int ENCHANTED_BOOK_SLOT_ROW_COUNT = 4;
@@ -61,62 +59,10 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
     public int x, y, z;
     private ContainerLevelAccess access = ContainerLevelAccess.NULL;
     private boolean hasValidPosition = false;
-    private final Map<Integer, Slot> enchantedBookSlots = new HashMap<>();
     public EnchantingCustomTableBlockEntity boundBlockEntity = null;
     private int lastInventoryVersion = -1;
-
-    @Override
-    public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        ItemStack itemStackToPut = entity.containerMenu.getCarried();
-        if (isGeneratedSlotIndex(slotId)
-                && clickType != ClickType.QUICK_MOVE
-                && itemStackToPut.isEmpty()
-                && getSlot(slotId).getItem().isEmpty()) {
-            return;
-        }
-        if (isGeneratedSlotIndex(slotId)
-                && clickType != ClickType.QUICK_MOVE
-                && (itemStackToPut.isEmpty() || getSlot(slotId).mayPlace(entity.containerMenu.getCarried()))) {
-            session.captureCurrentPageSlots();
-            ItemStack itemStackToReplace = itemHandler.getStackInSlot(slotId);
-            if (!itemStackToPut.isEmpty() && !itemStackToReplace.isEmpty()) {
-                var enchantmentsOnNewStack = EnchantmentUtils.getEnchantmentLevels(world, itemStackToPut);
-                var enchantmentsOnOldStack = EnchantmentUtils.getEnchantmentLevels(world, itemStackToReplace);
-                if (enchantmentsOnOldStack.isEmpty()) {
-                    super.clicked(slotId, button, clickType, player);
-                    return;
-                }
-                var enchantmentOnOldStack = enchantmentsOnOldStack.get(0);
-                boolean hasDuplicateEnchantment = EnchantmentTableRules.containsMatchingEnchantment(
-                        enchantmentsOnNewStack,
-                        enchantmentOnOldStack.key()
-                );
-                if (hasDuplicateEnchantment) {
-                    addEnchantment(itemStackToPut, slotId, true);
-                    entity.containerMenu.setCarried(ItemStack.EMPTY.copy());
-                    return;
-                }
-            }
-
-            int enchantmentIndexInCache = session.cacheIndexForGeneratedSlot(slotId);
-            if (!itemStackToReplace.isEmpty()) {
-                var removalResult = removeGeneratedBook(itemStackToReplace, enchantmentIndexInCache);
-                if (!removalResult.success()) {
-                    updateEnchantedBookSlots();
-                    return;
-                }
-                entity.containerMenu.setCarried(itemStackToReplace.copy());
-            } else {
-                entity.containerMenu.setCarried(ItemStack.EMPTY.copy());
-            }
-            if (!itemStackToPut.isEmpty()) {
-                addEnchantment(itemStackToPut, slotId);
-            }
-            updateEnchantedBookSlots();
-        } else {
-            super.clicked(slotId, button, clickType, player);
-        }
-    }
+    private boolean suppressGeneratedSlotTakeRemoval;
+    private boolean suppressGeneratedSlotSetHandling;
 
     public EnchantingCustomMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
         super(ModMenus.ENCHANTING_CUSTOM.get(), id);
@@ -246,7 +192,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
             for (int col = 0; col < ENCHANTED_BOOK_SLOT_COLUMN_COUNT; col++) {
                 int xPos = TableMenuLayout.Enchanting.generatedSlotX(col);
                 int finalIndex = enchantedBookIndex;
-                this.enchantedBookSlots.put(finalIndex, this.addSlot(new SlotItemHandler(itemHandler, finalIndex + 2, xPos, yPos) {
+                this.addSlot(new SlotItemHandler(itemHandler, finalIndex + 2, xPos, yPos) {
                     @Override
                     public boolean mayPlace(ItemStack stack) {
                         return stack.is(Items.ENCHANTED_BOOK)
@@ -265,17 +211,73 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
                     }
 
                     @Override
-                    public void set(ItemStack stack) {
-                        super.set(stack);
-                        if (!stack.isEmpty()) {
-                            addEnchantment(stack, finalIndex + 2);
-                            getItem();
+                    public void onTake(Player player, ItemStack stack) {
+                        super.onTake(player, stack);
+                        if (!world.isClientSide && !suppressGeneratedSlotTakeRemoval) {
+                            removeGeneratedBookFromGeneratedSlot(stack, getContainerSlot());
                         }
                     }
-                }));
+
+                    @Override
+                    public ItemStack remove(int amount) {
+                        if (!world.isClientSide) {
+                            session.captureCurrentPageSlots();
+                        }
+                        return super.remove(amount);
+                    }
+
+                    @Override
+                    public void set(ItemStack newStack) {
+                        if (suppressGeneratedSlotSetHandling) {
+                            super.set(newStack);
+                            return;
+                        }
+                        handleGeneratedSlotSetByPlayer(getContainerSlot(), newStack, getItem().copy());
+                    }
+                });
                 enchantedBookIndex++;
             }
         }
+    }
+
+    private void handleGeneratedSlotSetByPlayer(int slotIndex, ItemStack newStack, ItemStack oldStack) {
+        if (world.isClientSide) {
+            itemHandler.setStackInSlot(slotIndex, newStack);
+            return;
+        }
+
+        if (newStack.isEmpty()) {
+            if (!oldStack.isEmpty() && removeGeneratedBookFromGeneratedSlot(oldStack, slotIndex).success()) {
+                return;
+            }
+            itemHandler.setStackInSlot(slotIndex, ItemStack.EMPTY);
+            return;
+        }
+
+        session.captureCurrentPageSlots();
+        boolean hasDuplicateEnchantment = hasDuplicateEnchantment(newStack, oldStack);
+        if (!oldStack.isEmpty() && !hasDuplicateEnchantment) {
+            EnchantingTableSession.GeneratedBookRemovalResult removalResult = removeGeneratedBookFromGeneratedSlot(oldStack, slotIndex);
+            if (!removalResult.success()) {
+                return;
+            }
+        }
+
+        if (addEnchantment(copyWithCount(newStack, 1), slotIndex)) {
+            entity.containerMenu.setCarried(ItemStack.EMPTY);
+        }
+    }
+
+    private boolean hasDuplicateEnchantment(ItemStack newStack, ItemStack oldStack) {
+        if (newStack.isEmpty() || oldStack.isEmpty()) {
+            return false;
+        }
+        List<EnchantmentTableRules.EnchantmentLevel> newEnchantments = EnchantmentUtils.getEnchantmentLevels(world, newStack);
+        List<EnchantmentTableRules.EnchantmentLevel> oldEnchantments = EnchantmentUtils.getEnchantmentLevels(world, oldStack);
+        if (oldEnchantments.isEmpty()) {
+            return false;
+        }
+        return EnchantmentTableRules.containsMatchingEnchantment(newEnchantments, oldEnchantments.get(0).key());
     }
 
     private void addPlayerSlots(Inventory inv) {
@@ -310,50 +312,69 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 
     @Override
     public ItemStack quickMoveStack(Player playerIn, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if (isGeneratedSlotIndex(index)) {
-            session.captureCurrentPageSlots();
-        }
-        ItemStack itemStackToOperate = slot.getItem().copy();
-        int enchantmentIndexInCache = isGeneratedSlotIndex(index) ? session.cacheIndexForGeneratedSlot(index) : -1;
-        if (isGeneratedSlotIndex(index)
-                && (itemStackToOperate.isEmpty() || !session.isGeneratedItemAt(enchantmentIndexInCache, itemStackToOperate))) {
+        if (!slot.hasItem()) {
             return ItemStack.EMPTY;
         }
-        if (slot.hasItem()) {
-            ItemStack itemstack1 = slot.getItem();
-            itemstack = itemstack1.copy();
-            if (index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE) {
-                if (!this.moveItemStackTo(itemstack1, PLAYER_INVENTORY_START, this.slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-                slot.onQuickCraft(itemstack1, itemstack);
-            } else if (!this.moveItemStackTo(itemstack1, 0, ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE, false)) {
-                if (index < PLAYER_HOTBAR_START) {
-                    if (!this.moveItemStackTo(itemstack1, PLAYER_HOTBAR_START, this.slots.size(), true)) {
-                        return ItemStack.EMPTY;
-                    }
-                } else if (!this.moveItemStackTo(itemstack1, PLAYER_INVENTORY_START, PLAYER_HOTBAR_START, false)) {
-                    return ItemStack.EMPTY;
-                }
+
+        ItemStack stack = slot.getItem();
+        ItemStack original = stack.copy();
+        if (isGeneratedSlotIndex(index)) {
+            session.captureCurrentPageSlots();
+            ItemStack generatedBook = stack.copy();
+            int cacheIndex = session.cacheIndexForGeneratedSlot(index);
+            if (!session.isGeneratedItemAt(cacheIndex, generatedBook)) {
                 return ItemStack.EMPTY;
             }
-            if (itemstack1.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-            if (itemstack1.getCount() == itemstack.getCount()) {
+            if (!this.moveItemStackTo(stack, PLAYER_INVENTORY_START, this.slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
-            slot.onTake(playerIn, itemstack1);
+            suppressGeneratedSlotSetHandling = true;
+            try {
+                if (stack.isEmpty()) {
+                    slot.set(ItemStack.EMPTY);
+                } else {
+                    slot.setChanged();
+                }
+            } finally {
+                suppressGeneratedSlotSetHandling = false;
+            }
+            suppressGeneratedSlotTakeRemoval = true;
+            try {
+                slot.onTake(playerIn, generatedBook);
+            } finally {
+                suppressGeneratedSlotTakeRemoval = false;
+            }
+            removeGeneratedBook(generatedBook, cacheIndex);
+            return original;
         }
 
-        if (isGeneratedSlotIndex(index)) {
-            removeGeneratedBook(itemStackToOperate, enchantmentIndexInCache);
+        if (index < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE) {
+            if (!this.moveItemStackTo(stack, PLAYER_INVENTORY_START, this.slots.size(), true)) {
+                return ItemStack.EMPTY;
+            }
+            slot.onQuickCraft(stack, original);
+        } else if (!this.moveItemStackTo(stack, 0, ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE, false)) {
+            if (index < PLAYER_HOTBAR_START) {
+                if (!this.moveItemStackTo(stack, PLAYER_HOTBAR_START, this.slots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_HOTBAR_START, false)) {
+                return ItemStack.EMPTY;
+            }
+            return ItemStack.EMPTY;
         }
-        return itemstack;
+
+        if (stack.isEmpty()) {
+            slot.set(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
+        }
+        if (stack.getCount() == original.getCount()) {
+            return ItemStack.EMPTY;
+        }
+        slot.onTake(playerIn, stack);
+        return original;
     }
 
     @Override
@@ -453,12 +474,22 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
         return true;
     }
 
+    private static ItemStack copyWithCount(ItemStack stack, int count) {
+        ItemStack copy = stack.copy();
+        copy.setCount(count);
+        return copy;
+    }
+
     public boolean removeEnchantment(ItemStack itemStackToRemove) {
         return removeGeneratedBook(itemStackToRemove).regenerated();
     }
 
     private EnchantingTableSession.GeneratedBookRemovalResult removeGeneratedBook(ItemStack itemStackToRemove) {
         return removeGeneratedBook(itemStackToRemove, -1);
+    }
+
+    private EnchantingTableSession.GeneratedBookRemovalResult removeGeneratedBookFromGeneratedSlot(ItemStack itemStackToRemove, int slotIndex) {
+        return removeGeneratedBook(itemStackToRemove, session.cacheIndexForGeneratedSlot(slotIndex));
     }
 
     private EnchantingTableSession.GeneratedBookRemovalResult removeGeneratedBook(ItemStack itemStackToRemove, int cacheIndex) {
