@@ -15,5 +15,6 @@
   "enchantment_custom_table.configuration.minimumEmeraldBlockCost": "Minimum Emerald Block Cost",
   "enchantment_custom_table.configuration.enforceEnchantmentLevelLimit": "Enforce Enchantment Level Limit",
   "enchantment_custom_table.configuration.incrementalSameLevelMerge": "Incremental Same-Level Merge",
-  "enchantment_custom_table.configuration.convertOnlyLevelOneBook": "Convert Only Level-One Books"
+  "enchantment_custom_table.configuration.convertOnlyLevelOneBook": "Convert Only Level-One Books",
+  "enchantment_custom_table.configuration.freeConversionTableCosts": "Free Conversion Table Costs"
 }

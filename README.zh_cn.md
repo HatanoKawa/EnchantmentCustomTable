@@ -84,11 +84,13 @@ NeoForge 和 Fabric 两个加载器都有对应版本，支持 Minecraft `1.21.1
 | `enforceEnchantmentLevelLimit` | `false` | 打开后，合并重复附魔时**不能超过该附魔本来的最高等级**。注意：新加一个附魔不受这条限制，所以别的 Mod 造出来的「超标」附魔书依然能用。 |
 | `incrementalSameLevelMerge` | `false` | 一个更平衡的合并规则。打开后，**只有等级完全相同**的两本同名书才能合并，而且合并一次只 **+1 级**。比如锋利 V ＋ 锋利 V ＝ 锋利 VI，而不是直接变锋利 X。 |
 | `convertOnlyLevelOneBook` | `false` | 打开后，转换台只产出 **1 级**附魔书，而不是最高等级。 |
+| `freeConversionTableCosts` | `false` | 打开后，转换台可以免费生成和复制附魔书。书本槽和付款槽不再接受输入，但模板复制输出依然可以被自动化抽出。 |
 
 几点需要注意：
 
 - `enforceEnchantmentLevelLimit` 和 `incrementalSameLevelMerge` 互不影响，可以单独开。两个都开的话，同等级合并依然不会超过正常上限。
 - 打开 `incrementalSameLevelMerge` 后，**拆书的方式也会跟着变**：比如一本锋利 V 会被拆成两本锋利 IV，而不是默认那种「对半分」的拆法。
+- `freeConversionTableCosts` 和把绿宝石消耗填成 `0` 不一样：消耗为 `0` 是禁用对应付款物品，免费模式则会同时移除书本和付款需求。
 
 ### 已经不用的旧配置项
 

@@ -8,7 +8,6 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
@@ -146,10 +145,8 @@ public class ConversionTableSession {
         }
 
         List<Holder<Enchantment>> enchantments = getFilteredEnchantments();
-        boolean hasBook = inventory.getStackInSlot(bookSlot).is(Items.BOOK);
-        boolean hasEnoughPayment = hasEnoughPayment();
 
-        if (!hasBook || !hasEnoughPayment) {
+        if (!hasRequiredMaterials()) {
             resetPage();
             clearGeneratedSlots();
             return;
@@ -190,7 +187,7 @@ public class ConversionTableSession {
             return;
         }
 
-        if (!inventory.getStackInSlot(bookSlot).is(Items.BOOK) || !hasEnoughPayment()) {
+        if (!hasRequiredMaterials()) {
             resetPage();
             clearGeneratedSlots();
             return;
@@ -217,8 +214,7 @@ public class ConversionTableSession {
 
     public boolean canPickGeneratedBook() {
         return !copyMode.getAsBoolean()
-                && inventory.getStackInSlot(bookSlot).is(Items.BOOK)
-                && hasEnoughPayment();
+                && hasRequiredMaterials();
     }
 
     public TableOperationResult pickGeneratedBook() {
@@ -227,8 +223,11 @@ public class ConversionTableSession {
             return TableOperationResult.failed(true);
         }
 
-        inventory.getStackInSlot(bookSlot).shrink(1);
-        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
+        EnchantmentTableRules.consumeRequiredConversionMaterials(
+                inventory.getStackInSlot(bookSlot),
+                inventory.getStackInSlot(paymentSlot),
+                config.snapshot()
+        );
         generateGeneratedSlots();
         return TableOperationResult.success(true);
     }
@@ -250,8 +249,11 @@ public class ConversionTableSession {
             return TableOperationResult.failed(false);
         }
 
-        inventory.getStackInSlot(bookSlot).shrink(1);
-        EnchantmentTableRules.consumePayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
+        EnchantmentTableRules.consumeRequiredConversionMaterials(
+                inventory.getStackInSlot(bookSlot),
+                inventory.getStackInSlot(paymentSlot),
+                config.snapshot()
+        );
         inventory.setStackInSlot(
                 copyResultSlot,
                 inventory.getStackInSlot(templateSlot).copyWithCount(1)
@@ -291,8 +293,12 @@ public class ConversionTableSession {
         return EnchantmentSearchRules.matchesAnyCandidate(searchQuery, serverCandidates);
     }
 
-    private boolean hasEnoughPayment() {
-        return EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config.snapshot());
+    private boolean hasRequiredMaterials() {
+        return EnchantmentTableRules.hasRequiredConversionMaterials(
+                inventory.getStackInSlot(bookSlot),
+                inventory.getStackInSlot(paymentSlot),
+                config.snapshot()
+        );
     }
 
     private boolean hasVisibleGeneratedBook() {
@@ -310,7 +316,10 @@ public class ConversionTableSession {
             int bookSlot,
             int paymentSlot
     ) {
-        return inventory.getStackInSlot(bookSlot).is(Items.BOOK)
-                && EnchantmentTableRules.hasEnoughPayment(inventory.getStackInSlot(paymentSlot), config);
+        return EnchantmentTableRules.hasRequiredConversionMaterials(
+                inventory.getStackInSlot(bookSlot),
+                inventory.getStackInSlot(paymentSlot),
+                config
+        );
     }
 }

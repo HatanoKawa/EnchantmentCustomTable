@@ -150,7 +150,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return Items.BOOK == stack.getItem();
+				return EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
 			}
 
 			@Override
@@ -188,7 +188,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			public boolean mayPlace(ItemStack stack) {
 				return boundBlockEntity != null
 						? boundBlockEntity.isPaymentItem(stack)
-						: EnchantmentTableRules.paymentCostFor(stack.getItem(), config()) > 0;
+						: EnchantmentTableRules.isConversionPaymentItem(stack, config());
 			}
 
 			@Override

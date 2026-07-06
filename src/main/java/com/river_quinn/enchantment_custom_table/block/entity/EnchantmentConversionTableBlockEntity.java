@@ -68,7 +68,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
             }
             ItemStack stack = resource.toStack();
             return switch (slot) {
-                case BOOK_SLOT -> stack.is(Items.BOOK);
+                case BOOK_SLOT -> EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
                 case PAYMENT_SLOT -> isPaymentItem(stack);
                 case TEMPLATE_SLOT -> isValidCopyTemplate(stack);
                 default -> false;
@@ -89,7 +89,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return switch (slot) {
-                case BOOK_SLOT -> stack.is(Items.BOOK);
+                case BOOK_SLOT -> EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
                 case PAYMENT_SLOT -> isPaymentItem(stack);
                 case TEMPLATE_SLOT -> isValidCopyTemplate(stack);
                 default -> false;
@@ -156,7 +156,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     }
 
     public boolean isPaymentItem(ItemStack stack) {
-        return EnchantmentTableRules.paymentCostFor(stack.getItem(), config()) > 0;
+        return EnchantmentTableRules.isConversionPaymentItem(stack, config());
     }
 
     public boolean isValidCopyTemplate(ItemStack stack) {
@@ -331,6 +331,9 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         }
 
         private long getInputSlotGeneralCapacity(int index) {
+            if (Config.freeConversionTableCosts) {
+                return 0;
+            }
             int internalSlot = switch (index) {
                 case 0 -> BOOK_SLOT;
                 case 1 -> PAYMENT_SLOT;
@@ -360,7 +363,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         @Override
         public boolean canInsert(int slot, ItemStack stack) {
             return switch (slot) {
-                case 0 -> stack.is(Items.BOOK);
+                case 0 -> EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
                 case 1 -> isPaymentItem(stack);
                 default -> false;
             };
@@ -377,7 +380,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
                 return false;
             }
             return switch (index) {
-                case 0 -> resource.is(Items.BOOK);
+                case 0 -> EnchantmentTableRules.acceptsConversionBookInput(config()) && resource.is(Items.BOOK);
                 case 1 -> isPaymentItem(resource.toStack());
                 default -> false;
             };
@@ -483,7 +486,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return switch (slot) {
-                case 0 -> stack.is(Items.BOOK);
+                case 0 -> EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
                 case 1 -> isPaymentItem(stack);
                 default -> false;
             };
