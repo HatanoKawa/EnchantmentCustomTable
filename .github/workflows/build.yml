@@ -7,7 +7,7 @@ env:
 
 jobs:
   build:
-    name: 1.20.1 Forge/Fabric
+    name: 1.19.2 Forge/Fabric
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
