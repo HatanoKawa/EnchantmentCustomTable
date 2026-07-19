@@ -11,6 +11,7 @@ public final class ModSpriteAtlases {
     private static final List<ResourceLocation> BLOCK_ATLAS_SPRITES = List.of(
             sprite("item/empty_slot_book"),
             sprite("item/empty_slot_book_disabled"),
+            sprite("item/empty_slot_emerald"),
             sprite("item/copy_template_slot"),
             sprite("item/output_slot"),
             sprite("entity/enchanting_custom_table_book"),
