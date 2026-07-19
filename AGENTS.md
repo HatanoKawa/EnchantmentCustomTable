@@ -2,10 +2,10 @@
 
 ## Project Structure & Module Organization
 
-This branch is a Java 17 Minecraft `1.20.1` port branch. It targets two loaders:
+This branch is a Java 17 Minecraft `1.19.2` port branch. It targets two loaders:
 
-- Forge `1.20.1`
-- Fabric `1.20.1`
+- Forge `1.19.2`
+- Fabric `1.19.2`
 
 The branch intentionally does not retain the mainline `1.21.1` through `26.1.2` version matrix. Do not reintroduce Stonecutter, NeoForge, `versions/`, or `fabric_versions/` unless a future backward-port matrix is explicitly planned.
 
@@ -20,18 +20,18 @@ Shared code is still split by dependency level:
 Gradle subprojects:
 
 - `common/`: pure JVM Gradle subproject for fast shared tests.
-- `forge/`: Forge `1.20.1` build and run configuration.
-- `fabric/`: Fabric `1.20.1` build and run configuration.
+- `forge/`: Forge `1.19.2` build and run configuration.
+- `fabric/`: Fabric `1.19.2` build and run configuration.
 
-Resources live in `src/main/resources`, including assets under `assets/enchantment_custom_table` and data files under `data/enchantment_custom_table`. For Minecraft `1.20.1`, use legacy data-pack directory names such as `recipes/`, `loot_tables/`, and `tags/items/`.
+Resources live in `src/main/resources`, including assets under `assets/enchantment_custom_table` and data files under `data/enchantment_custom_table`. For Minecraft `1.19.2`, use resource pack format 9 and legacy data-pack directory names such as `recipes/`, `loot_tables/`, and `tags/items/`. Custom generated-slot and floating-book sprites must be explicitly registered with the loader's pre-atlas-definition stitching API.
 
 ## Build, Test, and Development Commands
 
 Use the Gradle wrapper from the repository root. This branch targets Java 17 bytecode; the local Gradle runtime may run on Java 21 while Gradle toolchains compile with Java 17.
 
 - `./gradlew :common:test` runs fast shared JVM tests.
-- `./gradlew :forge:build` builds the Forge `1.20.1` jar.
-- `./gradlew :fabric:build` builds the Fabric `1.20.1` jar.
+- `./gradlew :forge:build` builds the Forge `1.19.2` jar.
+- `./gradlew :fabric:build` builds the Fabric `1.19.2` jar.
 - `./gradlew :forge:runClient` launches a Forge client.
 - `./gradlew :fabric:runClient` launches a Fabric client.
 - `./gradlew :forge:runServer` launches a Forge dedicated server.
@@ -45,8 +45,8 @@ Use the Gradle wrapper from the repository root. This branch targets Java 17 byt
 
 Expected release jar names:
 
-- `enchantment_custom_table-<mod_version>-forge-mc1.20.1.jar`
-- `enchantment_custom_table-<mod_version>-fabric-mc1.20.1.jar`
+- `enchantment_custom_table-<mod_version>-forge-mc1.19.2.jar`
+- `enchantment_custom_table-<mod_version>-fabric-mc1.19.2.jar`
 
 ## Coding Style & Naming Conventions
 

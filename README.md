@@ -17,9 +17,9 @@ Grab a release from [CurseForge](https://www.curseforge.com/minecraft/mc-mods/en
 
 ## Supported Versions
 
-There are builds for both the **NeoForge** and **Fabric** loaders, covering Minecraft `1.21.1` through `1.21.11`, plus `26.1`, `26.1.1`, and `26.1.2`.
+This legacy branch provides builds for both the **Forge** and **Fabric** loaders on Minecraft `1.19.2`.
 
-**Tip:** when you download, make sure two things line up — your loader (NeoForge or Fabric) *and* your Minecraft version. Both have to match the jar, or the game won't load it.
+**Tip:** when you download, make sure two things line up — your loader (Forge or Fabric) *and* your Minecraft version. Both have to match the jar, or the game won't load it.
 
 ## Enchanting Custom Table: rearrange your enchantments
 
@@ -74,7 +74,7 @@ The one rule worth memorizing: **a template book must hold a single enchantment 
 
 ## Configuration: tune it to be more balanced
 
-- **On NeoForge:** edit it right in-game through the Mod config screen, or in the loader-managed common config file.
+- **On Forge:** edit it right in-game through the Mod config screen, or in the loader-managed common config file.
 - **On Fabric:** the config file lives in your Fabric `config` folder, named `enchantment_custom_table.json`.
 
 | Option | Default | What it does |
