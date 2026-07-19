@@ -4,6 +4,7 @@ import com.river_quinn.enchantment_custom_table.core.access.EnchantmentEntry;
 import com.river_quinn.enchantment_custom_table.core.access.EnchantmentKey;
 import com.river_quinn.enchantment_custom_table.core.access.EnchantmentList;
 import com.river_quinn.enchantment_custom_table.core.platform.EnchantmentAccessService;
+import com.river_quinn.enchantment_custom_table.core.platform.LegacyEnchantmentStorage;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -99,7 +100,7 @@ public final class EnchantmentUtils {
         for (EnchantmentEntry entry : enchantments.entries()) {
             resolveEnchantment(entry.key()).ifPresent(enchantment -> minecraftEnchantments.put(enchantment, entry.level()));
         }
-        EnchantmentHelper.setEnchantments(minecraftEnchantments, itemStack);
+        LegacyEnchantmentStorage.replaceEnchantments(itemStack, minecraftEnchantments);
     }
 
     public static boolean isSameEnchantment(Enchantment first, Enchantment second) {
