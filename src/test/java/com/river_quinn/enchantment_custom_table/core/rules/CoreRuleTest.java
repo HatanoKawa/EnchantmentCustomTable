@@ -85,6 +85,20 @@ class CoreRuleTest {
     }
 
     @Test
+    void generatedSlotExchangePreservesOnlyTheReplacedBook() {
+        GeneratedSlotExchangeRules.Decision insert = GeneratedSlotExchangeRules.decide(false, false);
+        GeneratedSlotExchangeRules.Decision merge = GeneratedSlotExchangeRules.decide(true, true);
+        GeneratedSlotExchangeRules.Decision swap = GeneratedSlotExchangeRules.decide(true, false);
+
+        assertFalse(insert.removesExistingBook());
+        assertTrue(insert.consumesCarriedBook());
+        assertFalse(merge.removesExistingBook());
+        assertTrue(merge.consumesCarriedBook());
+        assertTrue(swap.removesExistingBook());
+        assertFalse(swap.consumesCarriedBook());
+    }
+
+    @Test
     void removalRulesRespectDirectAndIncrementalSplitModes() {
         assertEquals(OptionalInt.of(1), MergeRules.calculateRemainingEnchantmentLevel(5, 4, false));
         assertEquals(OptionalInt.of(0), MergeRules.calculateRemainingEnchantmentLevel(5, 5, false));
