@@ -17,7 +17,7 @@ Grab a release from [CurseForge](https://www.curseforge.com/minecraft/mc-mods/en
 
 ## Supported Versions
 
-This legacy branch provides builds for both the **Forge** and **Fabric** loaders on Minecraft `1.19.2`.
+This legacy branch provides builds for both the **Forge** and **Fabric** loaders on Minecraft `1.18.2`.
 
 **Tip:** when you download, make sure two things line up — your loader (Forge or Fabric) *and* your Minecraft version. Both have to match the jar, or the game won't load it.
 
