@@ -1,14 +1,15 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.core.net.EnchantingTableIntent;
 import com.river_quinn.enchantment_custom_table.init.ModPayloads;
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustomMenu;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -42,20 +43,23 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(poseStack, mouseX, mouseY, partialTicks);
+        this.renderTooltip(poseStack, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        guiGraphics.blit(GUI_BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        RenderSystem.setShaderTexture(0, GUI_BACKGROUND);
+        blit(poseStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         RenderSystem.disableBlend();
 
-        guiGraphics.blit(ARROW_TEXTURE, this.leftPos + TableMenuLayout.Enchanting.ARROW_X, this.topPos + TableMenuLayout.Enchanting.ARROW_Y, 0, 0, 12, 9, 12, 9);
+        RenderSystem.setShaderTexture(0, ARROW_TEXTURE);
+        blit(poseStack, this.leftPos + TableMenuLayout.Enchanting.ARROW_X, this.topPos + TableMenuLayout.Enchanting.ARROW_Y, 0, 0, 12, 9, 12, 9);
     }
 
     @Override
@@ -77,8 +81,9 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawCenteredString(
+    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+        drawCenteredString(
+                poseStack,
                 this.font,
                 generatePageText(),
                 TableMenuLayout.Enchanting.PAGE_LABEL_X,
@@ -90,22 +95,34 @@ public class EnchantingCustomScreen extends AbstractContainerScreen<EnchantingCu
     @Override
     public void init() {
         super.init();
-        button_left_arrow_button = Button.builder(
+        button_left_arrow_button = new Button(
+                this.leftPos + TableMenuLayout.Enchanting.PREVIOUS_PAGE_BUTTON_X,
+                this.topPos + TableMenuLayout.Enchanting.PAGE_BUTTON_Y,
+                TableMenuLayout.Enchanting.PAGE_BUTTON_WIDTH,
+                TableMenuLayout.Enchanting.PAGE_BUTTON_HEIGHT,
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> sendToServer(new EnchantingCustomTableNetData(EnchantingTableIntent.PREVIOUS_PAGE))
-        ).bounds(this.leftPos + TableMenuLayout.Enchanting.PREVIOUS_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Enchanting.PAGE_BUTTON_Y, TableMenuLayout.Enchanting.PAGE_BUTTON_WIDTH, TableMenuLayout.Enchanting.PAGE_BUTTON_HEIGHT).build();
+        );
         this.addRenderableWidget(button_left_arrow_button);
 
-        button_right_arrow_button = Button.builder(
+        button_right_arrow_button = new Button(
+                this.leftPos + TableMenuLayout.Enchanting.NEXT_PAGE_BUTTON_X,
+                this.topPos + TableMenuLayout.Enchanting.PAGE_BUTTON_Y,
+                TableMenuLayout.Enchanting.PAGE_BUTTON_WIDTH,
+                TableMenuLayout.Enchanting.PAGE_BUTTON_HEIGHT,
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> sendToServer(new EnchantingCustomTableNetData(EnchantingTableIntent.NEXT_PAGE))
-        ).bounds(this.leftPos + TableMenuLayout.Enchanting.NEXT_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Enchanting.PAGE_BUTTON_Y, TableMenuLayout.Enchanting.PAGE_BUTTON_WIDTH, TableMenuLayout.Enchanting.PAGE_BUTTON_HEIGHT).build();
+        );
         this.addRenderableWidget(button_right_arrow_button);
 
-        export_button = Button.builder(
+        export_button = new Button(
+                this.leftPos + TableMenuLayout.Enchanting.EXPORT_BUTTON_X,
+                this.topPos + TableMenuLayout.Enchanting.EXPORT_BUTTON_Y,
+                TableMenuLayout.Enchanting.EXPORT_BUTTON_WIDTH,
+                TableMenuLayout.Enchanting.EXPORT_BUTTON_HEIGHT,
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_export"),
                 e -> sendToServer(new EnchantingCustomTableNetData(EnchantingTableIntent.EXPORT_ALL_ENCHANTMENTS))
-        ).bounds(this.leftPos + TableMenuLayout.Enchanting.EXPORT_BUTTON_X, this.topPos + TableMenuLayout.Enchanting.EXPORT_BUTTON_Y, TableMenuLayout.Enchanting.EXPORT_BUTTON_WIDTH, TableMenuLayout.Enchanting.EXPORT_BUTTON_HEIGHT).build();
+        );
         this.addRenderableWidget(export_button);
     }
 

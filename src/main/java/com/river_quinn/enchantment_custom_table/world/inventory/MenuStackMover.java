@@ -43,7 +43,7 @@ final class MenuStackMover {
                 ItemStack existingStack = slot.getItem();
                 if (existingStack.isEmpty() && slot.mayPlace(stack)) {
                     int maxStackSize = slot.getMaxStackSize(stack);
-                    slot.setByPlayer(stack.split(Math.min(stack.getCount(), maxStackSize)));
+                    slot.set(stack.split(Math.min(stack.getCount(), maxStackSize)));
                     slot.setChanged();
                     moved = true;
                     break;

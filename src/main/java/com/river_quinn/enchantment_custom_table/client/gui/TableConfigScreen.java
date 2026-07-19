@@ -1,16 +1,18 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
@@ -19,6 +21,7 @@ public class TableConfigScreen extends Screen {
     private static final int MAX_COST = 64;
 
     private final Screen parent;
+    private final Map<AbstractWidget, Component> optionTooltips = new LinkedHashMap<>();
     private int minimumEmeraldCost;
     private int minimumEmeraldBlockCost;
     private boolean enforceEnchantmentLevelLimit;
@@ -37,6 +40,7 @@ public class TableConfigScreen extends Screen {
 
     @Override
     protected void init() {
+        optionTooltips.clear();
         int controlWidth = Math.min(150, Math.max(100, (width - 30) / 2));
         int left = (width - controlWidth * 2 - 10) / 2;
         int right = left + controlWidth + 10;
@@ -103,22 +107,25 @@ public class TableConfigScreen extends Screen {
         int buttonRowWidth = buttonWidth * 3 + buttonGap * 2;
         int buttonX = (width - buttonRowWidth) / 2;
         int buttonY = height - 28;
-        addRenderableWidget(Button.builder(Component.translatable("controls.reset"), button -> resetToDefaults())
-                .bounds(buttonX, buttonY, buttonWidth, 20)
-                .build());
-        addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose())
-                .bounds(buttonX + buttonWidth + buttonGap, buttonY, buttonWidth, 20)
-                .build());
-        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> saveAndClose())
-                .bounds(buttonX + (buttonWidth + buttonGap) * 2, buttonY, buttonWidth, 20)
-                .build());
+        addRenderableWidget(new Button(buttonX, buttonY, buttonWidth, 20,
+                Component.translatable("controls.reset"), button -> resetToDefaults()));
+        addRenderableWidget(new Button(buttonX + buttonWidth + buttonGap, buttonY, buttonWidth, 20,
+                CommonComponents.GUI_CANCEL, button -> onClose()));
+        addRenderableWidget(new Button(buttonX + (buttonWidth + buttonGap) * 2, buttonY, buttonWidth, 20,
+                CommonComponents.GUI_DONE, button -> saveAndClose()));
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawCenteredString(font, title, width / 2, 18, 0xFFFFFF);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+        renderBackground(poseStack);
+        super.render(poseStack, mouseX, mouseY, partialTick);
+        drawCenteredString(poseStack, font, title, width / 2, 18, 0xFFFFFF);
+        for (Map.Entry<AbstractWidget, Component> entry : optionTooltips.entrySet()) {
+            if (entry.getKey().isMouseOver(mouseX, mouseY)) {
+                renderTooltip(poseStack, entry.getValue(), mouseX, mouseY);
+                break;
+            }
+        }
     }
 
     @Override
@@ -145,7 +152,7 @@ public class TableConfigScreen extends Screen {
                 initialValue,
                 onChange
         );
-        slider.setTooltip(Tooltip.create(Component.translatable(descriptionKey)));
+        optionTooltips.put(slider, Component.translatable(descriptionKey));
         addRenderableWidget(slider);
     }
 
@@ -166,7 +173,7 @@ public class TableConfigScreen extends Screen {
                 Component.translatable(labelKey),
                 (cycleButton, value) -> onChange.accept(value)
         );
-        button.setTooltip(Tooltip.create(Component.translatable(descriptionKey)));
+        optionTooltips.put(button, Component.translatable(descriptionKey));
         addRenderableWidget(button);
     }
 

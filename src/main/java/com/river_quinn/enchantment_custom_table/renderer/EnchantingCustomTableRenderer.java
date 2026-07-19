@@ -2,7 +2,7 @@ package com.river_quinn.enchantment_custom_table.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
+import com.mojang.math.Vector3f;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingTableLikeBlockEntity;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -65,8 +65,8 @@ public class EnchantingCustomTableRenderer implements BlockEntityRenderer<Enchan
         }
 
         float rotation = blockEntity.oRot + rotationDelta * partialTick;
-        poseStack.mulPose(Axis.YP.rotation(-rotation));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(80.0F));
+        poseStack.mulPose(Vector3f.YP.rotation(-rotation));
+        poseStack.mulPose(Vector3f.ZP.rotationDegrees(80.0F));
         float flip = Mth.lerp(partialTick, blockEntity.oFlip, blockEntity.flip);
         float leftPageFlip = Mth.frac(flip + 0.25F) * 1.6F - 0.3F;
         float rightPageFlip = Mth.frac(flip + 0.75F) * 1.6F - 0.3F;

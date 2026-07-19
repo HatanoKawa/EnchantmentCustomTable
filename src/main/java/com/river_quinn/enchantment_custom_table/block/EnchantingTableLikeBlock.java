@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +25,7 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 12, 16);
 
     public EnchantingTableLikeBlock() {
-        super(BlockBehaviour.Properties.of()
+        super(BlockBehaviour.Properties.of(Material.STONE)
                 .lightLevel(blockState -> 15)
                 .destroyTime(1)
                 .explosionResistance(3600));

@@ -1,6 +1,7 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.core.net.ConversionTableIntent;
 import com.river_quinn.enchantment_custom_table.init.ModPayloads;
@@ -9,11 +10,11 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentSearchRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -53,17 +54,19 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(poseStack, mouseX, mouseY, partialTicks);
+        this.renderTooltip(poseStack, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack poseStack, float partialTicks, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1, 1, 1, 1);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        guiGraphics.blit(GUI_BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        RenderSystem.setShaderTexture(0, GUI_BACKGROUND);
+        blit(poseStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         RenderSystem.disableBlend();
     }
 
@@ -111,8 +114,9 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawCenteredString(
+    protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+        drawCenteredString(
+                poseStack,
                 this.font,
                 generatePageText(),
                 TableMenuLayout.Conversion.PAGE_LABEL_X,
@@ -133,21 +137,29 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search")
         );
         searchBox.setMaxLength(EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH);
-        searchBox.setHint(Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search"));
+        searchBox.setSuggestion(Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search").getString());
         searchBox.setValue(pendingSearchQuery);
         searchBox.setResponder(this::queueSearchRequest);
         this.addRenderableWidget(searchBox);
 
-        button_left_arrow_button = Button.builder(
+        button_left_arrow_button = new Button(
+                this.leftPos + TableMenuLayout.Conversion.PREVIOUS_PAGE_BUTTON_X,
+                this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y,
+                TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH,
+                TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT,
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> sendToServer(new EnchantmentConversionTableNetData(ConversionTableIntent.PREVIOUS_PAGE))
-        ).bounds(this.leftPos + TableMenuLayout.Conversion.PREVIOUS_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y, TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH, TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT).build();
+        );
         this.addRenderableWidget(button_left_arrow_button);
 
-        button_right_arrow_button = Button.builder(
+        button_right_arrow_button = new Button(
+                this.leftPos + TableMenuLayout.Conversion.NEXT_PAGE_BUTTON_X,
+                this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y,
+                TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH,
+                TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT,
                 Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> sendToServer(new EnchantmentConversionTableNetData(ConversionTableIntent.NEXT_PAGE))
-        ).bounds(this.leftPos + TableMenuLayout.Conversion.NEXT_PAGE_BUTTON_X, this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y, TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH, TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT).build();
+        );
         this.addRenderableWidget(button_right_arrow_button);
     }
 
@@ -178,7 +190,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         if (minecraft == null) {
             return "";
         }
-        return EnchantmentSearchRules.sanitizeClientLanguage(minecraft.getLanguageManager().getSelected());
+        return EnchantmentSearchRules.sanitizeClientLanguage(minecraft.getLanguageManager().getSelected().getCode());
     }
 
     private List<String> findClientLocalizedMatches(String query) {
@@ -187,8 +199,8 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
         }
 
         List<String> matchedEnchantments = new ArrayList<>();
-        for (Enchantment enchantment : BuiltInRegistries.ENCHANTMENT) {
-            ResourceLocation enchantmentId = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+        for (Enchantment enchantment : Registry.ENCHANTMENT) {
+            ResourceLocation enchantmentId = Registry.ENCHANTMENT.getKey(enchantment);
             if (enchantmentId == null) {
                 continue;
             }

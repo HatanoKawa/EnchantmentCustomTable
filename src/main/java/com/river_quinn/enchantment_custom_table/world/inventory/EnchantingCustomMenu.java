@@ -67,7 +67,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
     public EnchantingCustomMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
         super(ModMenus.ENCHANTING_CUSTOM.get(), id);
         this.entity = inv.player;
-        this.world = inv.player.level();
+        this.world = inv.player.level;
 
         BlockPos pos = null;
         if (extraData != null) {

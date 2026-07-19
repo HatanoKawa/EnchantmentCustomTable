@@ -81,7 +81,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
     public EnchantmentConversionMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
         super(ModMenus.ENCHANTMENT_CONVERSION.get(), id);
         this.entity = inv.player;
-        this.world = inv.player.level();
+        this.world = inv.player.level;
 
         BlockPos pos = null;
         if (extraData != null) {
