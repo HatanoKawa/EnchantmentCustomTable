@@ -7,7 +7,6 @@ import com.river_quinn.enchantment_custom_table.fabric.init.FabricModItems;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import com.river_quinn.enchantment_custom_table.fabric.network.FabricModPayloads;
 import com.river_quinn.enchantment_custom_table.fabric.transfer.FabricItemStorageAdapters;
-import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +24,6 @@ public class EnchantmentCustomTableFabric implements ModInitializer {
         FabricModMenus.register();
         FabricModPayloads.register();
         FabricItemStorageAdapters.register();
-        FabricVersionedMinecraft.registerFunctionalBlockItems(
-                FabricModItems.ENCHANTING_CUSTOM_TABLE_ITEM,
-                FabricModItems.ENCHANTMENT_CONVERSION_TABLE_ITEM
-        );
         LOGGER.info("Initialized EnchantmentCustomTable Fabric");
     }
 

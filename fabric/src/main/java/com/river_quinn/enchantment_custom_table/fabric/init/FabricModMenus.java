@@ -3,7 +3,7 @@ package com.river_quinn.enchantment_custom_table.fabric.init;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantingCustomMenu;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantmentConversionMenu;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.world.inventory.MenuType;
 
 public final class FabricModMenus {
@@ -17,7 +17,7 @@ public final class FabricModMenus {
     }
 
     public static void register() {
-        FabricVersionedMinecraft.register(BuiltInRegistries.MENU, "enchanting_custom", ENCHANTING_CUSTOM);
-        FabricVersionedMinecraft.register(BuiltInRegistries.MENU, "enchantment_conversion", ENCHANTMENT_CONVERSION);
+        FabricVersionedMinecraft.register(Registry.MENU, "enchanting_custom", ENCHANTING_CUSTOM);
+        FabricVersionedMinecraft.register(Registry.MENU, "enchantment_conversion", ENCHANTMENT_CONVERSION);
     }
 }

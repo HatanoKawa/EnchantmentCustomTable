@@ -3,7 +3,7 @@ package com.river_quinn.enchantment_custom_table.fabric.init;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import com.river_quinn.enchantment_custom_table.fabric.block.FabricEnchantingCustomTableBlock;
 import com.river_quinn.enchantment_custom_table.fabric.block.FabricEnchantmentConversionTableBlock;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.Block;
 
 public final class FabricModBlocks {
@@ -14,7 +14,7 @@ public final class FabricModBlocks {
     }
 
     public static void register() {
-        FabricVersionedMinecraft.register(BuiltInRegistries.BLOCK, "enchanting_custom_table", ENCHANTING_CUSTOM_TABLE_BLOCK);
-        FabricVersionedMinecraft.register(BuiltInRegistries.BLOCK, "enchantment_conversion_table", ENCHANTMENT_CONVERSION_TABLE_BLOCK);
+        FabricVersionedMinecraft.register(Registry.BLOCK, "enchanting_custom_table", ENCHANTING_CUSTOM_TABLE_BLOCK);
+        FabricVersionedMinecraft.register(Registry.BLOCK, "enchantment_conversion_table", ENCHANTMENT_CONVERSION_TABLE_BLOCK);
     }
 }

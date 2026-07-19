@@ -4,7 +4,7 @@ import com.river_quinn.enchantment_custom_table.fabric.block.entity.FabricEnchan
 import com.river_quinn.enchantment_custom_table.fabric.block.entity.FabricEnchantmentConversionTableBlockEntity;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public final class FabricModBlockEntities {
@@ -18,7 +18,7 @@ public final class FabricModBlockEntities {
     }
 
     public static void register() {
-        FabricVersionedMinecraft.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, "enchanting_custom_table", ENCHANTING_CUSTOM_TABLE);
-        FabricVersionedMinecraft.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, "enchantment_conversion_table", ENCHANTMENT_CONVERSION_TABLE);
+        FabricVersionedMinecraft.register(Registry.BLOCK_ENTITY_TYPE, "enchanting_custom_table", ENCHANTING_CUSTOM_TABLE);
+        FabricVersionedMinecraft.register(Registry.BLOCK_ENTITY_TYPE, "enchantment_conversion_table", ENCHANTMENT_CONVERSION_TABLE);
     }
 }

@@ -6,7 +6,7 @@ import com.river_quinn.enchantment_custom_table.core.access.EnchantmentList;
 import com.river_quinn.enchantment_custom_table.core.platform.EnchantmentAccessService;
 import com.river_quinn.enchantment_custom_table.core.platform.LegacyEnchantmentStorage;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -56,7 +56,7 @@ public final class FabricEnchantmentUtils {
 
     public static List<Enchantment> allEnchantments() {
         List<Enchantment> enchantments = new ArrayList<>();
-        for (Enchantment enchantment : BuiltInRegistries.ENCHANTMENT) {
+        for (Enchantment enchantment : Registry.ENCHANTMENT) {
             enchantments.add(enchantment);
         }
         return enchantments;
@@ -66,7 +66,7 @@ public final class FabricEnchantmentUtils {
         if (key == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(BuiltInRegistries.ENCHANTMENT.get(new ResourceLocation(key.namespace(), key.path())));
+        return Optional.ofNullable(Registry.ENCHANTMENT.get(new ResourceLocation(key.namespace(), key.path())));
     }
 
     public static EnchantmentList getEnchantments(ItemStack itemStack) {
@@ -104,7 +104,7 @@ public final class FabricEnchantmentUtils {
     }
 
     public static EnchantmentKey getCoreEnchantmentKey(Enchantment enchantment) {
-        ResourceLocation key = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+        ResourceLocation key = Registry.ENCHANTMENT.getKey(enchantment);
         if (key != null) {
             return EnchantmentKey.of(key.getNamespace(), key.getPath());
         }

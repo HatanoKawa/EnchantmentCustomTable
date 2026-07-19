@@ -57,7 +57,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
     public FabricEnchantingCustomMenu(int id, Inventory inventory, BlockPos pos) {
         super(FabricModMenus.ENCHANTING_CUSTOM, id);
         this.entity = inventory.player;
-        this.world = inventory.player.level();
+        this.world = inventory.player.level;
         this.x = pos.getX();
         this.y = pos.getY();
         this.z = pos.getZ();

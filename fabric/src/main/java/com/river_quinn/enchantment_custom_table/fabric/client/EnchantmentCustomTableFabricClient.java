@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 public class EnchantmentCustomTableFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        FabricSpriteAtlases.register();
         MenuScreens.register(FabricModMenus.ENCHANTING_CUSTOM, FabricEnchantingCustomScreen::new);
         MenuScreens.register(FabricModMenus.ENCHANTMENT_CONVERSION, FabricEnchantmentConversionScreen::new);
         BlockEntityRendererRegistry.register(FabricModBlockEntities.ENCHANTING_CUSTOM_TABLE, FabricEnchantingCustomTableRenderer::enchantingCustom);
