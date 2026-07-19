@@ -21,6 +21,8 @@ NeoForge 和 Fabric 两个加载器都有对应版本，支持 Minecraft `1.21.1
 
 **小提示**：下载时记得对上两件事——你用的加载器（NeoForge 还是 Fabric）和你的游戏版本，两者都要和 jar 文件匹配，不然进不去游戏。
 
+> **已知问题（NeoForge 1.21.9）**：由于 NeoForge `21.9.16-beta` 自身的界面问题，打开游戏内的 Mod 列表时可能会崩溃。如果遇到此问题，请直接编辑本 Mod 的 common 配置文件，不要使用游戏内配置界面。
+
 ## 自定义附魔台：随意摆弄你的附魔
 
 ![自定义附魔台界面](./src/main/resources/doc/enchantment_custom_table_gui.jpg)
