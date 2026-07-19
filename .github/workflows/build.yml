@@ -7,7 +7,7 @@ env:
 
 jobs:
   build:
-    name: 1.18.2 Forge/Fabric
+    name: 1.18.2 Forge/Fabric (Linux)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -35,3 +35,26 @@ jobs:
 
       - name: Build Fabric
         run: ./gradlew $GRADLE_ARGS :fabric:build
+
+  forge-windows:
+    name: 1.18.2 Forge (Windows)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Forge and prepare client classes
+        shell: bash
+        run: ./gradlew $GRADLE_ARGS :forge:build :forge:prepareRunClient :forge:prepareRunClientCompile

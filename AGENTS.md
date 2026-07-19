@@ -27,7 +27,7 @@ Resources live in `src/main/resources`, including assets under `assets/enchantme
 
 ## Build, Test, and Development Commands
 
-Use the Gradle wrapper from the repository root. This branch targets Java 17 bytecode; the local Gradle runtime may run on Java 21 while Gradle toolchains compile with Java 17.
+Use the Gradle wrapper from the repository root. This branch targets Java 17 bytecode; the local Gradle runtime may run on Java 21 while Gradle toolchains compile with Java 17. The wrapper is intentionally pinned to Gradle 8.8 to match the Forge `1.18.2-40.3.12` MDK. Before upgrading it, verify `:forge:build`, `:forge:prepareRunClient`, and `:forge:prepareRunClientCompile` on Windows as well as the Fabric build.
 
 - `./gradlew :common:test` runs fast shared JVM tests.
 - `./gradlew :forge:build` builds the Forge `1.18.2` jar.
