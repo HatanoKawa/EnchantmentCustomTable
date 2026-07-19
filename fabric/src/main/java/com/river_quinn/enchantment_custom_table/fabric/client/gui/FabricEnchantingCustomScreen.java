@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -36,7 +37,7 @@ public class FabricEnchantingCustomScreen extends AbstractContainerScreen<Fabric
                 this.topPos + TableMenuLayout.Enchanting.PAGE_BUTTON_Y,
                 TableMenuLayout.Enchanting.PAGE_BUTTON_WIDTH,
                 TableMenuLayout.Enchanting.PAGE_BUTTON_HEIGHT,
-                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
+                new TranslatableComponent("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 button -> clickMenuButton(0)
         ));
         addRenderableWidget(new Button(
@@ -44,7 +45,7 @@ public class FabricEnchantingCustomScreen extends AbstractContainerScreen<Fabric
                 this.topPos + TableMenuLayout.Enchanting.PAGE_BUTTON_Y,
                 TableMenuLayout.Enchanting.PAGE_BUTTON_WIDTH,
                 TableMenuLayout.Enchanting.PAGE_BUTTON_HEIGHT,
-                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
+                new TranslatableComponent("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 button -> clickMenuButton(1)
         ));
         addRenderableWidget(new Button(
@@ -52,7 +53,7 @@ public class FabricEnchantingCustomScreen extends AbstractContainerScreen<Fabric
                 this.topPos + TableMenuLayout.Enchanting.EXPORT_BUTTON_Y,
                 TableMenuLayout.Enchanting.EXPORT_BUTTON_WIDTH,
                 TableMenuLayout.Enchanting.EXPORT_BUTTON_HEIGHT,
-                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_export"),
+                new TranslatableComponent("gui.enchantment_custom_table.enchantment_custom.button_export"),
                 button -> clickMenuButton(2)
         ));
     }

@@ -16,6 +16,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -53,10 +54,10 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
                 this.topPos + 4,
                 126,
                 14,
-                Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search")
+                new TranslatableComponent("gui.enchantment_custom_table.enchantment_conversion.search")
         );
         searchBox.setMaxLength(EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH);
-        searchBox.setSuggestion(Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search").getString());
+        searchBox.setSuggestion(new TranslatableComponent("gui.enchantment_custom_table.enchantment_conversion.search").getString());
         searchBox.setValue(pendingSearchQuery);
         searchBox.setResponder(this::queueSearchRequest);
         addRenderableWidget(searchBox);
@@ -66,7 +67,7 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
                 this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y,
                 TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH,
                 TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT,
-                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
+                new TranslatableComponent("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 button -> clickMenuButton(0)
         ));
         addRenderableWidget(new Button(
@@ -74,7 +75,7 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
                 this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y,
                 TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH,
                 TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT,
-                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
+                new TranslatableComponent("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 button -> clickMenuButton(1)
         ));
     }

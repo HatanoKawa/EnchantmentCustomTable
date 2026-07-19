@@ -9,6 +9,7 @@ import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUti
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.InsertionOnlyStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
@@ -17,6 +18,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+
+import java.util.Collections;
+import java.util.Iterator;
 
 public class FabricEnchantingAutomationStorage extends SnapshotParticipant<ItemStack> implements InsertionOnlyStorage<ItemVariant>, AutomationPort {
     private final FabricEnchantingCustomTableBlockEntity blockEntity;
@@ -44,6 +48,11 @@ public class FabricEnchantingAutomationStorage extends SnapshotParticipant<ItemS
         blockEntity.getInventory().setStackInSlot(FabricEnchantingCustomMenu.TOOL_SLOT, toolStack);
         playUseSound();
         return 1;
+    }
+
+    @Override
+    public Iterator<? extends StorageView<ItemVariant>> iterator(TransactionContext transaction) {
+        return Collections.emptyIterator();
     }
 
     @Override

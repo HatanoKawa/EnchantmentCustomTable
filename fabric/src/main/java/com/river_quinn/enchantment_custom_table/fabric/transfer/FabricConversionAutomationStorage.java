@@ -63,7 +63,7 @@ public class FabricConversionAutomationStorage extends SnapshotParticipant<ItemS
     }
 
     @Override
-    public Iterator<StorageView<ItemVariant>> iterator() {
+    public Iterator<? extends StorageView<ItemVariant>> iterator(TransactionContext transaction) {
         return copyResultStack().isEmpty() ? Collections.emptyIterator() : Collections.singleton(copyResultView).iterator();
     }
 

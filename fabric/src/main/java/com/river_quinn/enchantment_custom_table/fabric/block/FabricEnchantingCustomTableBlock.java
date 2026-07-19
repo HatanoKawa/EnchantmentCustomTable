@@ -5,6 +5,7 @@ import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantingCu
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -30,7 +31,7 @@ public class FabricEnchantingCustomTableBlock extends FabricEnchantingTableLikeB
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             FabricVersionedMinecraft.openBlockPosMenu(
                     serverPlayer,
-                    Component.translatable("block.enchantment_custom_table.enchanting_custom_table"),
+                    new TranslatableComponent("block.enchantment_custom_table.enchanting_custom_table"),
                     pos,
                     FabricEnchantingCustomMenu::new
             );
