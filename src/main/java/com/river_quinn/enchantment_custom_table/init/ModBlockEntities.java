@@ -12,7 +12,7 @@ import static com.river_quinn.enchantment_custom_table.EnchantmentCustomTable.MO
 
 public final class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES =
-            DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MODID);
+            DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, MODID);
 
     public static final RegistryObject<BlockEntityType<EnchantingCustomTableBlockEntity>> ENCHANTING_CUSTOM_TABLE =
             BLOCK_ENTITY_TYPES.register(

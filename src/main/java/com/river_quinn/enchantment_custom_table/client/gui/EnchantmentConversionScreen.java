@@ -16,6 +16,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -134,10 +135,10 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 this.topPos + 4,
                 126,
                 14,
-                Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search")
+                new TranslatableComponent("gui.enchantment_custom_table.enchantment_conversion.search")
         );
         searchBox.setMaxLength(EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH);
-        searchBox.setSuggestion(Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search").getString());
+        searchBox.setSuggestion(new TranslatableComponent("gui.enchantment_custom_table.enchantment_conversion.search").getString());
         searchBox.setValue(pendingSearchQuery);
         searchBox.setResponder(this::queueSearchRequest);
         this.addRenderableWidget(searchBox);
@@ -147,7 +148,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y,
                 TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH,
                 TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT,
-                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
+                new TranslatableComponent("gui.enchantment_custom_table.enchantment_custom.button_left_arrow"),
                 e -> sendToServer(new EnchantmentConversionTableNetData(ConversionTableIntent.PREVIOUS_PAGE))
         );
         this.addRenderableWidget(button_left_arrow_button);
@@ -157,7 +158,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 this.topPos + TableMenuLayout.Conversion.PAGE_BUTTON_Y,
                 TableMenuLayout.Conversion.PAGE_BUTTON_WIDTH,
                 TableMenuLayout.Conversion.PAGE_BUTTON_HEIGHT,
-                Component.translatable("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
+                new TranslatableComponent("gui.enchantment_custom_table.enchantment_custom.button_right_arrow"),
                 e -> sendToServer(new EnchantmentConversionTableNetData(ConversionTableIntent.NEXT_PAGE))
         );
         this.addRenderableWidget(button_right_arrow_button);

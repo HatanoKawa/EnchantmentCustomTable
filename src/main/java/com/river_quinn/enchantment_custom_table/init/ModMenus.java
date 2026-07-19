@@ -12,7 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
 import static com.river_quinn.enchantment_custom_table.EnchantmentCustomTable.MODID;
 
 public final class ModMenus {
-    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, MODID);
+    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.CONTAINERS, MODID);
 
     public static final RegistryObject<MenuType<EnchantingCustomMenu>> ENCHANTING_CUSTOM =
             MENUS.register("enchanting_custom", () -> IForgeMenuType.create(EnchantingCustomMenu::new));

@@ -2,8 +2,8 @@ package com.river_quinn.enchantment_custom_table.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +13,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Random;
 
 public abstract class EnchantingTableLikeBlockEntity extends BlockEntity implements MenuProvider {
 
@@ -26,7 +28,7 @@ public abstract class EnchantingTableLikeBlockEntity extends BlockEntity impleme
     public float rot;
     public float oRot;
     public float tRot;
-    private static final RandomSource RANDOM = RandomSource.create();
+    private static final Random RANDOM = new Random();
 
     public EnchantingTableLikeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -95,7 +97,7 @@ public abstract class EnchantingTableLikeBlockEntity extends BlockEntity impleme
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("container.enchantment_custom_table.enchanting_table_like");
+        return new TranslatableComponent("container.enchantment_custom_table.enchanting_table_like");
     }
 
 }

@@ -10,6 +10,8 @@ import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,9 +32,9 @@ public class TableConfigScreen extends Screen {
     private boolean freeConversionTableCosts;
 
     public TableConfigScreen(Screen parent) {
-        super(Component.translatable(
+        super(new TranslatableComponent(
                 "enchantment_custom_table.configuration.title",
-                Component.literal("Enchantment Custom Table")
+                new TextComponent("Enchantment Custom Table")
         ));
         this.parent = parent;
         load(Config.snapshot());
@@ -108,7 +110,7 @@ public class TableConfigScreen extends Screen {
         int buttonX = (width - buttonRowWidth) / 2;
         int buttonY = height - 28;
         addRenderableWidget(new Button(buttonX, buttonY, buttonWidth, 20,
-                Component.translatable("controls.reset"), button -> resetToDefaults()));
+                new TranslatableComponent("controls.reset"), button -> resetToDefaults()));
         addRenderableWidget(new Button(buttonX + buttonWidth + buttonGap, buttonY, buttonWidth, 20,
                 CommonComponents.GUI_CANCEL, button -> onClose()));
         addRenderableWidget(new Button(buttonX + (buttonWidth + buttonGap) * 2, buttonY, buttonWidth, 20,
@@ -148,11 +150,11 @@ public class TableConfigScreen extends Screen {
                 x,
                 y,
                 controlWidth,
-                Component.translatable(labelKey),
+                new TranslatableComponent(labelKey),
                 initialValue,
                 onChange
         );
-        optionTooltips.put(slider, Component.translatable(descriptionKey));
+        optionTooltips.put(slider, new TranslatableComponent(descriptionKey));
         addRenderableWidget(slider);
     }
 
@@ -170,16 +172,17 @@ public class TableConfigScreen extends Screen {
                 y,
                 controlWidth,
                 20,
-                Component.translatable(labelKey),
+                new TranslatableComponent(labelKey),
                 (cycleButton, value) -> onChange.accept(value)
         );
-        optionTooltips.put(button, Component.translatable(descriptionKey));
+        optionTooltips.put(button, new TranslatableComponent(descriptionKey));
         addRenderableWidget(button);
     }
 
     private void resetToDefaults() {
         load(Config.defaultSnapshot());
-        rebuildWidgets();
+        clearWidgets();
+        init();
     }
 
     private void saveAndClose() {
@@ -215,7 +218,7 @@ public class TableConfigScreen extends Screen {
                 int initialValue,
                 IntConsumer onChange
         ) {
-            super(x, y, width, 20, CommonComponents.EMPTY, normalize(initialValue));
+            super(x, y, width, 20, TextComponent.EMPTY, normalize(initialValue));
             this.label = label;
             this.onChange = onChange;
             updateMessage();
