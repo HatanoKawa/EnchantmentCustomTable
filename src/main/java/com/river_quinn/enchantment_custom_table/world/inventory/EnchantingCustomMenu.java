@@ -7,6 +7,7 @@ import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTab
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.core.net.EnchantingTableActions;
+import com.river_quinn.enchantment_custom_table.core.rules.GeneratedSlotExchangeRules;
 import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
 import com.river_quinn.enchantment_custom_table.core.session.GeneratedSlotPage;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
@@ -256,14 +257,18 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 
         session.captureCurrentPageSlots();
         boolean hasDuplicateEnchantment = hasDuplicateEnchantment(newStack, oldStack);
-        if (!oldStack.isEmpty() && !hasDuplicateEnchantment) {
+        GeneratedSlotExchangeRules.Decision exchange = GeneratedSlotExchangeRules.decide(
+                !oldStack.isEmpty(),
+                hasDuplicateEnchantment
+        );
+        if (exchange.removesExistingBook()) {
             EnchantingTableSession.GeneratedBookRemovalResult removalResult = removeGeneratedBookFromGeneratedSlot(oldStack, slotIndex);
             if (!removalResult.success()) {
                 return;
             }
         }
 
-        if (addEnchantment(copyWithCount(newStack, 1), slotIndex)) {
+        if (addEnchantment(copyWithCount(newStack, 1), slotIndex) && exchange.consumesCarriedBook()) {
             entity.containerMenu.setCarried(ItemStack.EMPTY);
         }
     }
