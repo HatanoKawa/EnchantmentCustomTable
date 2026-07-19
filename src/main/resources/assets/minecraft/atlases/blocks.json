@@ -57,6 +57,10 @@
     },
     {
       "type": "single",
+      "resource": "enchantment_custom_table:item/empty_slot_emerald"
+    },
+    {
+      "type": "single",
       "resource": "enchantment_custom_table:item/copy_template_slot"
     },
     {

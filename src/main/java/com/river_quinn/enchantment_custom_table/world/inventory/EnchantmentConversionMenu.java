@@ -54,7 +54,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
     );
     private static final Pair<ResourceLocation, ResourceLocation> EMERALD_SLOT_ICON = Pair.of(
             InventoryMenu.BLOCK_ATLAS,
-            new ResourceLocation("minecraft", "item/empty_slot_emerald")
+            new ResourceLocation("enchantment_custom_table", "item/empty_slot_emerald")
     );
     private static final Pair<ResourceLocation, ResourceLocation> TEMPLATE_SLOT_ICON = Pair.of(
             InventoryMenu.BLOCK_ATLAS,

@@ -29,7 +29,7 @@ public class FabricTableSlot extends Slot {
             );
             case EMERALD -> Pair.of(
                     InventoryMenu.BLOCK_ATLAS,
-                    ResourceLocation.tryParse("minecraft:item/empty_slot_emerald")
+                    ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_emerald")
             );
             case COPY_TEMPLATE -> Pair.of(
                     InventoryMenu.BLOCK_ATLAS,
