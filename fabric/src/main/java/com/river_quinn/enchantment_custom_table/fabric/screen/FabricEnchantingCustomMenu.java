@@ -6,6 +6,7 @@ import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlocks;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
 import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
+import com.river_quinn.enchantment_custom_table.core.rules.GeneratedSlotExchangeRules;
 import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
 import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
@@ -317,14 +318,18 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
 
         session.captureCurrentPageSlots();
         boolean hasDuplicateEnchantment = hasDuplicateEnchantment(newStack, oldStack);
-        if (!oldStack.isEmpty() && !hasDuplicateEnchantment) {
+        GeneratedSlotExchangeRules.Decision exchange = GeneratedSlotExchangeRules.decide(
+                !oldStack.isEmpty(),
+                hasDuplicateEnchantment
+        );
+        if (exchange.removesExistingBook()) {
             EnchantingTableSession.GeneratedBookRemovalResult removalResult = removeGeneratedBook(oldStack, slotIndex);
             if (!removalResult.success()) {
                 return;
             }
         }
 
-        if (applyEnchantedBook(copyWithCount(newStack, 1)) && hasDuplicateEnchantment) {
+        if (applyEnchantedBook(copyWithCount(newStack, 1)) && exchange.consumesCarriedBook()) {
             entity.containerMenu.setCarried(ItemStack.EMPTY);
         }
     }
