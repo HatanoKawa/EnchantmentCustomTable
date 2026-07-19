@@ -27,7 +27,7 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of((findProperty('java_version') ?: '25') as Integer)
 }
 
-def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '26.1.2'
+def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '26.2'
 tasks.withType(AbstractArchiveTask).configureEach {
     archiveVersion = "${project.mod_version}-fabric-mc${fabricMinecraftVersionValue}"
 }

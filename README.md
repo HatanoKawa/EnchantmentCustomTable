@@ -17,7 +17,7 @@ Grab a release from [CurseForge](https://www.curseforge.com/minecraft/mc-mods/en
 
 ## Supported Versions
 
-There are builds for both the **NeoForge** and **Fabric** loaders, covering Minecraft `1.21.1` through `1.21.11`, plus `26.1`, `26.1.1`, and `26.1.2`.
+There are builds for both the **NeoForge** and **Fabric** loaders, covering Minecraft `1.21.1` through `1.21.11`, plus `26.1`, `26.1.1`, `26.1.2`, and `26.2`.
 
 **Tip:** when you download, make sure two things line up — your loader (NeoForge or Fabric) *and* your Minecraft version. Both have to match the jar, or the game won't load it.
 
