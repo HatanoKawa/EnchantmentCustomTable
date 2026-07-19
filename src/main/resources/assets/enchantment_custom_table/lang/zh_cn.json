@@ -15,5 +15,6 @@
   "enchantment_custom_table.configuration.minimumEmeraldBlockCost": "最低绿宝石块消耗",
   "enchantment_custom_table.configuration.enforceEnchantmentLevelLimit": "限制附魔最高等级",
   "enchantment_custom_table.configuration.incrementalSameLevelMerge": "递增同级附魔合并",
-  "enchantment_custom_table.configuration.convertOnlyLevelOneBook": "仅转换 1 级附魔书"
+  "enchantment_custom_table.configuration.convertOnlyLevelOneBook": "仅转换 1 级附魔书",
+  "enchantment_custom_table.configuration.freeConversionTableCosts": "转换台免费消耗"
 }

@@ -10,4 +10,6 @@ public interface TableConfigView {
     boolean incrementalSameLevelMerge();
 
     boolean convertOnlyLevelOneBook();
+
+    boolean freeConversionTableCosts();
 }

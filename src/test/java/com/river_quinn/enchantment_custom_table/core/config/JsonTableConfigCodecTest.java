@@ -30,6 +30,7 @@ class JsonTableConfigCodecTest {
         root.addProperty(JsonTableConfigCodec.ENFORCE_ENCHANTMENT_LEVEL_LIMIT, true);
         root.addProperty(JsonTableConfigCodec.INCREMENTAL_SAME_LEVEL_MERGE, true);
         root.addProperty(JsonTableConfigCodec.CONVERT_ONLY_LEVEL_ONE_BOOK, true);
+        root.addProperty(JsonTableConfigCodec.FREE_CONVERSION_TABLE_COSTS, true);
 
         TableConfigSnapshot snapshot = JsonTableConfigCodec.parse(root);
 
@@ -38,6 +39,7 @@ class JsonTableConfigCodecTest {
         assertTrue(snapshot.enforceEnchantmentLevelLimit());
         assertTrue(snapshot.incrementalSameLevelMerge());
         assertTrue(snapshot.convertOnlyLevelOneBook());
+        assertTrue(snapshot.freeConversionTableCosts());
     }
 
     @Test
@@ -49,6 +51,7 @@ class JsonTableConfigCodecTest {
         assertTrue(root.has(JsonTableConfigCodec.ENFORCE_ENCHANTMENT_LEVEL_LIMIT));
         assertTrue(root.has(JsonTableConfigCodec.INCREMENTAL_SAME_LEVEL_MERGE));
         assertTrue(root.has(JsonTableConfigCodec.CONVERT_ONLY_LEVEL_ONE_BOOK));
+        assertTrue(root.has(JsonTableConfigCodec.FREE_CONVERSION_TABLE_COSTS));
         assertFalse(root.has("ignoreEnchantmentLevelLimit"));
         assertFalse(root.has("convert_max_level_book"));
     }

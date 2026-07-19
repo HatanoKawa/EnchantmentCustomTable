@@ -17,9 +17,11 @@ Grab a release from [CurseForge](https://www.curseforge.com/minecraft/mc-mods/en
 
 ## Supported Versions
 
-There are builds for both the **NeoForge** and **Fabric** loaders, covering Minecraft `1.21.1` through `1.21.11`, plus `26.1`, `26.1.1`, and `26.1.2`.
+There are builds for both the **NeoForge** and **Fabric** loaders, covering Minecraft `1.21.1` through `1.21.11`, plus `26.1`, `26.1.1`, `26.1.2`, and `26.2`.
 
 **Tip:** when you download, make sure two things line up — your loader (NeoForge or Fabric) *and* your Minecraft version. Both have to match the jar, or the game won't load it.
+
+> **Known issue (NeoForge 1.21.9):** opening NeoForge's in-game Mods list may crash because of an issue in NeoForge `21.9.16-beta`. If this happens, edit this mod's common config file directly instead of using the in-game config screen.
 
 ## Enchanting Custom Table: rearrange your enchantments
 
@@ -84,11 +86,13 @@ The one rule worth memorizing: **a template book must hold a single enchantment 
 | `enforceEnchantmentLevelLimit` | `false` | When on, merging duplicate enchantments **can't go above that enchantment's normal max level**. Note: adding a brand-new enchantment isn't limited by this, so over-level books made by other mods still work. |
 | `incrementalSameLevelMerge` | `false` | A more balanced merge rule. When on, two same-name books only merge if their levels **match exactly**, and a merge bumps the level by just **+1**. So Sharpness V + Sharpness V becomes Sharpness VI instead of Sharpness X. |
 | `convertOnlyLevelOneBook` | `false` | When on, the conversion table only produces **level-one** books instead of max-level ones. |
+| `freeConversionTableCosts` | `false` | When on, the conversion table produces and copies enchanted books for free. The book and payment slots stop accepting input, while template-copy output can still be extracted by automation. |
 
 A couple of things to know:
 
 - `enforceEnchantmentLevelLimit` and `incrementalSameLevelMerge` are independent — turn on either or both. With both on, same-level merges still won't exceed the normal max.
 - Turning on `incrementalSameLevelMerge` also **changes how books split**: a Sharpness V book splits into two Sharpness IV books, instead of the default "split in half" options.
+- `freeConversionTableCosts` is different from setting an emerald cost to `0`: cost `0` disables that payment item, while free mode removes both the book and payment requirements.
 
 ### Retired (deprecated) options
 

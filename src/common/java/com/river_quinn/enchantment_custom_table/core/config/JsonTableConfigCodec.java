@@ -8,12 +8,14 @@ public final class JsonTableConfigCodec {
     public static final boolean DEFAULT_ENFORCE_ENCHANTMENT_LEVEL_LIMIT = false;
     public static final boolean DEFAULT_INCREMENTAL_SAME_LEVEL_MERGE = false;
     public static final boolean DEFAULT_CONVERT_ONLY_LEVEL_ONE_BOOK = false;
+    public static final boolean DEFAULT_FREE_CONVERSION_TABLE_COSTS = false;
 
     public static final String MINIMUM_EMERALD_COST = "minimumEmeraldCost";
     public static final String MINIMUM_EMERALD_BLOCK_COST = "minimumEmeraldBlockCost";
     public static final String ENFORCE_ENCHANTMENT_LEVEL_LIMIT = "enforceEnchantmentLevelLimit";
     public static final String INCREMENTAL_SAME_LEVEL_MERGE = "incrementalSameLevelMerge";
     public static final String CONVERT_ONLY_LEVEL_ONE_BOOK = "convertOnlyLevelOneBook";
+    public static final String FREE_CONVERSION_TABLE_COSTS = "freeConversionTableCosts";
 
     private JsonTableConfigCodec() {
     }
@@ -24,7 +26,8 @@ public final class JsonTableConfigCodec {
                 DEFAULT_MINIMUM_EMERALD_BLOCK_COST,
                 DEFAULT_ENFORCE_ENCHANTMENT_LEVEL_LIMIT,
                 DEFAULT_INCREMENTAL_SAME_LEVEL_MERGE,
-                DEFAULT_CONVERT_ONLY_LEVEL_ONE_BOOK
+                DEFAULT_CONVERT_ONLY_LEVEL_ONE_BOOK,
+                DEFAULT_FREE_CONVERSION_TABLE_COSTS
         );
     }
 
@@ -35,6 +38,7 @@ public final class JsonTableConfigCodec {
         root.addProperty(ENFORCE_ENCHANTMENT_LEVEL_LIMIT, DEFAULT_ENFORCE_ENCHANTMENT_LEVEL_LIMIT);
         root.addProperty(INCREMENTAL_SAME_LEVEL_MERGE, DEFAULT_INCREMENTAL_SAME_LEVEL_MERGE);
         root.addProperty(CONVERT_ONLY_LEVEL_ONE_BOOK, DEFAULT_CONVERT_ONLY_LEVEL_ONE_BOOK);
+        root.addProperty(FREE_CONVERSION_TABLE_COSTS, DEFAULT_FREE_CONVERSION_TABLE_COSTS);
         return root;
     }
 
@@ -48,7 +52,8 @@ public final class JsonTableConfigCodec {
                 intValue(root, MINIMUM_EMERALD_BLOCK_COST, DEFAULT_MINIMUM_EMERALD_BLOCK_COST),
                 booleanValue(root, ENFORCE_ENCHANTMENT_LEVEL_LIMIT, DEFAULT_ENFORCE_ENCHANTMENT_LEVEL_LIMIT),
                 booleanValue(root, INCREMENTAL_SAME_LEVEL_MERGE, DEFAULT_INCREMENTAL_SAME_LEVEL_MERGE),
-                booleanValue(root, CONVERT_ONLY_LEVEL_ONE_BOOK, DEFAULT_CONVERT_ONLY_LEVEL_ONE_BOOK)
+                booleanValue(root, CONVERT_ONLY_LEVEL_ONE_BOOK, DEFAULT_CONVERT_ONLY_LEVEL_ONE_BOOK),
+                booleanValue(root, FREE_CONVERSION_TABLE_COSTS, DEFAULT_FREE_CONVERSION_TABLE_COSTS)
         );
     }
 

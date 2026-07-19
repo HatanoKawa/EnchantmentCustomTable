@@ -115,6 +115,7 @@ public class BasicGameTests {
             new TestRegistration("conversion_table_copy_mode_generates_result_and_disables_candidates", 40, BasicGameTests::conversionTableCopyModeGeneratesResultAndDisablesCandidates),
             new TestRegistration("conversion_table_rejects_invalid_copy_templates", 40, BasicGameTests::conversionTableRejectsInvalidCopyTemplates),
             new TestRegistration("conversion_table_automation_inputs_materials_and_extracts_copies_only", 40, BasicGameTests::conversionTableAutomationInputsMaterialsAndExtractsCopiesOnly),
+            new TestRegistration("conversion_table_free_cost_mode_uses_no_material_inputs", 40, BasicGameTests::conversionTableFreeCostModeUsesNoMaterialInputs),
             new TestRegistration("custom_table_splits_single_high_level_book_by_design", 40, BasicGameTests::customTableSplitsSingleHighLevelBookByDesign),
             new TestRegistration("custom_table_merges_duplicate_book_levels_without_vanilla_cap", 40, BasicGameTests::customTableMergesDuplicateBookLevelsWithoutVanillaCap),
             new TestRegistration("custom_table_rejects_overcap_merge_when_level_limit_is_enforced", 40, BasicGameTests::customTableRejectsOvercapMergeWhenLevelLimitIsEnforced),
@@ -743,6 +744,91 @@ public class BasicGameTests {
 
             helper.succeed();
         } finally {
+            Config.minimumEmeraldCost = originalEmeraldCost;
+            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+        }
+    }
+
+    //? if <1.21.5 {
+    /*@GameTest(template = "gametest/empty", timeoutTicks = 40)
+    *///?}
+    public static void conversionTableFreeCostModeUsesNoMaterialInputs(GameTestHelper helper) {
+        helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
+
+        boolean originalFreeConversionTableCosts = Config.freeConversionTableCosts;
+        int originalEmeraldCost = Config.minimumEmeraldCost;
+        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
+        Config.freeConversionTableCosts = true;
+        Config.minimumEmeraldCost = 36;
+        Config.minimumEmeraldBlockCost = 4;
+
+        try {
+            Player player = helper.makeMockPlayer(GameType.CREATIVE);
+            EnchantmentConversionMenu menu = conversionMenu(helper, player);
+            Holder<Enchantment> sharpness = enchantment(helper, Enchantments.SHARPNESS);
+
+            assertTrue(helper, menu.totalPage > 0, "Free conversion mode should generate candidates without materials");
+            assertTrue(helper, menu.getSlot(2).getItem().is(Items.ENCHANTED_BOOK), "Free conversion mode should show generated books");
+            assertTrue(helper, !menu.getSlot(0).mayPlace(new ItemStack(Items.BOOK)), "Free conversion mode should reject book slot input");
+            assertTrue(helper, !menu.getSlot(1).mayPlace(new ItemStack(Items.EMERALD)), "Free conversion mode should reject emerald slot input");
+            assertTrue(helper, !menu.getSlot(1).mayPlace(new ItemStack(Items.EMERALD_BLOCK)), "Free conversion mode should reject emerald block slot input");
+
+            menu.boundBlockEntity.getInventory().setStackInSlot(
+                    EnchantmentConversionTableBlockEntity.BOOK_SLOT,
+                    new ItemStack(Items.BOOK, 2)
+            );
+            menu.boundBlockEntity.getInventory().setStackInSlot(
+                    EnchantmentConversionTableBlockEntity.PAYMENT_SLOT,
+                    new ItemStack(Items.EMERALD, 2)
+            );
+            assertTrue(helper, menu.pickEnchantedBook(), "Free conversion mode should allow taking generated books");
+            assertTrue(helper, menu.getSlot(0).getItem().getCount() == 2, "Free conversion mode should not consume stored normal books");
+            assertTrue(helper, menu.getSlot(1).getItem().getCount() == 2, "Free conversion mode should not consume stored payment items");
+
+            menu.boundBlockEntity.getInventory().setStackInSlot(EnchantmentConversionTableBlockEntity.BOOK_SLOT, ItemStack.EMPTY);
+            menu.boundBlockEntity.getInventory().setStackInSlot(EnchantmentConversionTableBlockEntity.PAYMENT_SLOT, ItemStack.EMPTY);
+            menu.getSlot(EnchantmentConversionMenu.TEMPLATE_BOOK_SLOT).setByPlayer(enchantedBook(sharpness, 2));
+            assertEnchantmentLevel(
+                    helper,
+                    menu.getSlot(EnchantmentConversionMenu.COPY_RESULT_SLOT).getItem(),
+                    sharpness,
+                    2,
+                    "Free conversion mode should generate copy results without materials"
+            );
+
+            //? if >=1.21.9 {
+            ResourceHandler<ItemResource> handler = helper.getLevel().getCapability(
+                    Capabilities.Item.BLOCK,
+                    helper.absolutePos(ENCHANTMENT_CONVERSION_TABLE_POS),
+                    Direction.UP
+            );
+            //?} else {
+            /*IItemHandler handler = helper.getLevel().getCapability(
+                    Capabilities.ItemHandler.BLOCK,
+                    helper.absolutePos(ENCHANTMENT_CONVERSION_TABLE_POS),
+                    Direction.UP
+            );
+            *///?}
+            assertTrue(helper, handler != null, "Conversion table should expose automation in free mode");
+            assertTrue(helper, insertStack(handler, 0, new ItemStack(Items.BOOK)).getCount() == 1, "Free conversion automation should reject book input");
+            assertTrue(helper, insertStack(handler, 1, new ItemStack(Items.EMERALD)).getCount() == 1, "Free conversion automation should reject payment input");
+            //? if >=1.21.9 {
+            assertTrue(helper, handler.getCapacityAsLong(0, ItemResource.EMPTY) == 0, "Free conversion automation should expose no book input capacity");
+            assertTrue(helper, handler.getCapacityAsLong(1, ItemResource.EMPTY) == 0, "Free conversion automation should expose no payment input capacity");
+            //?}
+            ItemStack copy = extractStack(handler, 2, 1);
+            assertEnchantmentLevel(helper, copy, sharpness, 2, "Free conversion automation should still extract copy results");
+            assertEnchantmentLevel(
+                    helper,
+                    stackInSlot(handler, 2),
+                    sharpness,
+                    2,
+                    "Free conversion automation should regenerate copy output after extraction"
+            );
+
+            helper.succeed();
+        } finally {
+            Config.freeConversionTableCosts = originalFreeConversionTableCosts;
             Config.minimumEmeraldCost = originalEmeraldCost;
             Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
         }
