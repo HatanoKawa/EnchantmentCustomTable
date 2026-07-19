@@ -14,9 +14,15 @@
   "enchantment_custom_table.configuration.section.enchantment.custom.table.common.toml": "通用",
   "enchantment_custom_table.configuration.section.enchantment.custom.table.common.toml.title": "通用配置",
   "enchantment_custom_table.configuration.minimumEmeraldCost": "最低绿宝石消耗",
+  "enchantment_custom_table.configuration.minimumEmeraldCost.description": "附魔书转换台需要消耗的绿宝石数量；设为 0 时不接受绿宝石。",
   "enchantment_custom_table.configuration.minimumEmeraldBlockCost": "最低绿宝石块消耗",
+  "enchantment_custom_table.configuration.minimumEmeraldBlockCost.description": "附魔书转换台需要消耗的绿宝石块数量；设为 0 时不接受绿宝石块。",
   "enchantment_custom_table.configuration.enforceEnchantmentLevelLimit": "限制附魔最高等级",
+  "enchantment_custom_table.configuration.enforceEnchantmentLevelLimit.description": "阻止合并同类附魔时超过原版规定的最高等级。",
   "enchantment_custom_table.configuration.incrementalSameLevelMerge": "递增同级附魔合并",
+  "enchantment_custom_table.configuration.incrementalSameLevelMerge.description": "同类附魔仅允许相同等级合并，并让合并结果提升一级。",
   "enchantment_custom_table.configuration.convertOnlyLevelOneBook": "仅转换 1 级附魔书",
-  "enchantment_custom_table.configuration.freeConversionTableCosts": "转换台免费消耗"
+  "enchantment_custom_table.configuration.convertOnlyLevelOneBook.description": "附魔书转换台仅提供 1 级附魔书。",
+  "enchantment_custom_table.configuration.freeConversionTableCosts": "转换台免费消耗",
+  "enchantment_custom_table.configuration.freeConversionTableCosts.description": "附魔书转换台不再需要或消耗普通书、绿宝石和绿宝石块。"
 }

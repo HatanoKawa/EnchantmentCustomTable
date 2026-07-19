@@ -14,9 +14,15 @@
   "enchantment_custom_table.configuration.section.enchantment.custom.table.common.toml": "Common",
   "enchantment_custom_table.configuration.section.enchantment.custom.table.common.toml.title": "Common Configuration",
   "enchantment_custom_table.configuration.minimumEmeraldCost": "Minimum Emerald Cost",
+  "enchantment_custom_table.configuration.minimumEmeraldCost.description": "Number of emeralds required by the conversion table. Set to 0 to reject emeralds.",
   "enchantment_custom_table.configuration.minimumEmeraldBlockCost": "Minimum Emerald Block Cost",
+  "enchantment_custom_table.configuration.minimumEmeraldBlockCost.description": "Number of emerald blocks required by the conversion table. Set to 0 to reject emerald blocks.",
   "enchantment_custom_table.configuration.enforceEnchantmentLevelLimit": "Enforce Enchantment Level Limit",
+  "enchantment_custom_table.configuration.enforceEnchantmentLevelLimit.description": "Prevent duplicate enchantment merges from exceeding the vanilla maximum level.",
   "enchantment_custom_table.configuration.incrementalSameLevelMerge": "Incremental Same-Level Merge",
+  "enchantment_custom_table.configuration.incrementalSameLevelMerge.description": "Require equal levels when merging duplicate enchantments and increase the result by one level.",
   "enchantment_custom_table.configuration.convertOnlyLevelOneBook": "Convert Only Level-One Books",
-  "enchantment_custom_table.configuration.freeConversionTableCosts": "Free Conversion Table Costs"
+  "enchantment_custom_table.configuration.convertOnlyLevelOneBook.description": "Make the conversion table offer only level-one enchanted books.",
+  "enchantment_custom_table.configuration.freeConversionTableCosts": "Free Conversion Table Costs",
+  "enchantment_custom_table.configuration.freeConversionTableCosts.description": "Disable book, emerald, and emerald-block costs for the conversion table."
 }

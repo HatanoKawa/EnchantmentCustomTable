@@ -3,6 +3,7 @@ package com.river_quinn.enchantment_custom_table;
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
 import com.river_quinn.enchantment_custom_table.init.ModBlockEntityRenderers;
 import com.river_quinn.enchantment_custom_table.init.ModBlocks;
+import com.river_quinn.enchantment_custom_table.init.ModConfigScreens;
 import com.river_quinn.enchantment_custom_table.init.ModItems;
 import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.init.ModPayloads;
@@ -35,6 +36,7 @@ public class EnchantmentCustomTable {
         if (FMLEnvironment.dist.isClient()) {
             modEventBus.addListener(ModBlockEntityRenderers::register);
             modEventBus.addListener(ModScreens::register);
+            ModConfigScreens.register();
         }
     }
 
