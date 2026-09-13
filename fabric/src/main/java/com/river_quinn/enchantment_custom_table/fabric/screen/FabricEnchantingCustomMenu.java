@@ -6,6 +6,7 @@ import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlocks;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
 import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
+import com.river_quinn.enchantment_custom_table.core.inventory.GeneratedBookInsertion;
 import com.river_quinn.enchantment_custom_table.core.rules.GeneratedSlotExchangeRules;
 import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
 import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
@@ -286,6 +287,15 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                             session.captureCurrentPageSlots();
                         }
                         return super.remove(amount);
+                    }
+
+                    @Override
+                    public ItemStack safeInsert(ItemStack stack, int amount) {
+                        if (!isServerSide()) {
+                            return stack;
+                        }
+                        return GeneratedBookInsertion.insert(this, stack, amount,
+                                FabricEnchantingCustomMenu.this::applyEnchantedBook);
                     }
 
                     @Override
