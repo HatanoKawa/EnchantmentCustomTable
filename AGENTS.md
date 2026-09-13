@@ -16,6 +16,8 @@ Shared code is still split by dependency level:
 - `src/main/java`: Forge platform implementation.
 - `fabric/src/main/java`: Fabric platform implementation.
 - `src/test/java`: shared JVM tests for common rules, config, and intent behavior.
+- `src/minecraft-test/java`: shared tests using real Minecraft slots, stacks, and table sessions.
+- `src/forge-test/java` and `fabric/src/test/java`: platform test adapters; never included in release jars.
 
 Gradle subprojects:
 
@@ -30,6 +32,7 @@ Resources live in `src/main/resources`, including assets under `assets/enchantme
 Use the Gradle wrapper from the repository root. This branch targets Java 17 bytecode; the local Gradle runtime may run on Java 21 while Gradle toolchains compile with Java 17.
 
 - `./gradlew :common:test` runs fast shared JVM tests.
+- `./gradlew :forge:test :fabric:test` also runs Minecraft-dependent slot/session regression tests on both platforms without launching a game client.
 - `./gradlew :forge:build` builds the Forge `1.19.2` jar.
 - `./gradlew :fabric:build` builds the Fabric `1.19.2` jar.
 - `./gradlew :forge:runClient` launches a Forge client.

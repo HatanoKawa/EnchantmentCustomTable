@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import com.river_quinn.enchantment_custom_table.Config;
 import com.river_quinn.enchantment_custom_table.block.entity.EnchantingCustomTableBlockEntity;
+import com.river_quinn.enchantment_custom_table.core.inventory.GeneratedBookInsertion;
 import com.river_quinn.enchantment_custom_table.core.inventory.LogicalInventory;
 import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.core.net.EnchantingTableActions;
@@ -225,6 +226,15 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
                             session.captureCurrentPageSlots();
                         }
                         return super.remove(amount);
+                    }
+
+                    @Override
+                    public ItemStack safeInsert(ItemStack stack, int amount) {
+                        if (world.isClientSide) {
+                            return stack;
+                        }
+                        return GeneratedBookInsertion.insert(this, stack, amount,
+                                book -> addEnchantment(book, getContainerSlot()));
                     }
 
                     @Override
