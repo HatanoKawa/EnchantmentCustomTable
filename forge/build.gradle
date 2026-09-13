@@ -69,7 +69,9 @@ sourceSets {
     }
     test {
         java.setSrcDirs([
-                rootProject.file('src/test/java')
+                rootProject.file('src/test/java'),
+                rootProject.file('src/minecraft-test/java'),
+                rootProject.file('src/forge-test/java')
         ])
     }
 }
@@ -128,6 +130,10 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+    workingDir layout.buildDirectory.dir('test-run').get().asFile
+    doFirst {
+        workingDir.mkdirs()
+    }
 }
 
 idea {
