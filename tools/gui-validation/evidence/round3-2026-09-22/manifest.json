@@ -2,6 +2,50 @@
   "notes": "Screenshots copied without editing. Observation logs retain original matching lines. Full sources stay under build/reports/gui-validation/round3. New GUI passes never inferred from builds. NeoForge 26.1 strict-free-incomplete log contains K01-K04 before the first lock; strict-free log contains K05-K06 after user unlock. Fabric 26.2 strict-free-incomplete log contains K01-K04 before the second lock; strict-free log contains K05-K06 after the second user unlock.",
   "files": [
     {
+      "file": "fabric-1.21.2-default-observations.txt",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.2/default.log",
+      "sha256": "bcd37c24bdda416bc92aaad8b321a2d311685984f5a2786e5639335f3042cb56",
+      "selection": [
+        "GUIFIXTURE",
+        "GUIEVIDENCE",
+        "GUIBLOCK",
+        "GUIPLAYER",
+        "GUIRELOAD",
+        "Saved screenshot",
+        "Serialization errors",
+        "Failed to decode value",
+        "@BlockPos"
+      ]
+    },
+    {
+      "file": "fabric-1.21.2-strict-free-observations.txt",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.2/strict-free.log",
+      "sha256": "991e0eade12a8141424d305965c6f09e00255fa8d94d3aa4a8c9f859fcd3e34b",
+      "selection": [
+        "GUIFIXTURE",
+        "GUIEVIDENCE",
+        "GUIBLOCK",
+        "GUIPLAYER",
+        "GUIRELOAD",
+        "Saved screenshot",
+        "Serialization errors",
+        "Failed to decode value",
+        "@BlockPos"
+      ]
+    },
+    {
+      "file": "fabric-1.21.2-config-default.json",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.2/config-default",
+      "sha256": "15198c8a3b4b820ef04491675ea1038c12b8844dd1fef69682b87d80c2880268",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.2-config-strict-free.json",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.2/config-strict-free",
+      "sha256": "46fbc10d50900c35d38d73fea9f716b61e9ad845b3b2584c7480c4d12c6120a2",
+      "selection": "byte copy"
+    },
+    {
       "file": "fabric-1.21.9-default-observations.txt",
       "source": "build/reports/gui-validation/round3/fabric/1.21.9/default.log",
       "sha256": "e8cbcea67baa44b843ffa03145ade48d01c6c6d15af28b705814bc3e463b41a3",
@@ -524,9 +568,57 @@
       "selection": "byte copy"
     },
     {
+      "file": "neoforge-1.21.11-migration-initial.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.11/screenshots/2026-09-22_23.34.48.png",
+      "sha256": "102b54525b1116253fc0529c6ff97eba66afd480adaef12ed2e5d8f412db032a",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.11-copy-reload.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.11/screenshots/2026-09-22_23.37.46.png",
+      "sha256": "0ed647667aa416a5d795e96301d4d78939dae5156b0c8fb09a7128799cf94a9a",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.11-export-reload.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.11/screenshots/2026-09-22_23.43.53.png",
+      "sha256": "72d6f417ef5d868b4e3307b2158feadb35fb433c4d3b1e52cb322a8b38c5424e",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.11-free-copy.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.11/screenshots/2026-09-22_23.48.11.png",
+      "sha256": "6774db5e9e80f9d27a2e78ad2ced59f75d69e8cc34d6058a34458f5fc6e76520",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.2-migration-initial.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.2/screenshots/2026-09-22_23.52.40.png",
+      "sha256": "d3560b16ea3e27300c4ebd77d082b9a14c5925fe59d69ad1289aa48fca0af8e2",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.2-copy-reload.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.2/screenshots/2026-09-22_23.55.55.png",
+      "sha256": "059c9b3acd3d9049011c9e572f08b0fe7d748e60597abce615ac7937abf3c181",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.2-export-reload.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.2/screenshots/2026-09-23_00.01.42.png",
+      "sha256": "9b85c7922ce1676413e41fa6abc86d0643703b74ebd87fe096d26959e5d98f58",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.2-free-copy.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.2/screenshots/2026-09-23_00.06.41.png",
+      "sha256": "90731f8baf7c27057f2d0a66623ac96293f620dcb69866dad986b8ec3cda384c",
+      "selection": "byte copy"
+    },
+    {
       "file": "matrix-results.json",
       "source": "per-target state.json plus version gradle.properties; manually observed GUI outcomes",
-      "sha256": "581fc4a9027fe72b83c53e3f6bc5517ef2043b78001990c6fac357088c91d893",
+      "sha256": "5d052ac42c4930aaca762d7cdfca30a9f6370570dba664770853b28c3ddbf609",
       "selection": "PENDING filled for cases not executed; round2 reuse explicitly labeled"
     }
   ]
