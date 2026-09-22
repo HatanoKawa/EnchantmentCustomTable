@@ -1,0 +1,10 @@
+   pid 71885(caffeinate): [0x00034c5e00019fe0] 00:03:07 PreventUserIdleSystemSleep named: "caffeinate command-line tool"  
+	Details: caffeinate asserting on behalf of Process ID 71877 for 3600 secs
+	Created for PID: 71877. 
+   pid 71885(caffeinate): [0x00034c5e00059fe1] 00:03:07 PreventUserIdleDisplaySleep named: "caffeinate command-line tool"  
+	Details: caffeinate asserting on behalf of Process ID 71877 for 3600 secs
+	Created for PID: 71877. 
+   pid 71885(caffeinate): [0x00034c5e00099fe2] 00:03:07 UserIsActive named: "caffeinate command-line tool"  
+	Details: caffeinate asserting on behalf of Process ID 71877 for 3600 secs
+	Created for PID: 71877. 
+	Created for PID: 71877. 

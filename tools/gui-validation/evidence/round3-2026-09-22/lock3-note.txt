@@ -1,0 +1,1 @@
+2026-09-23 01:38-01:39 Asia/Shanghai: Computer Use reported Mac locked before strict-free world entry. Game PID 71877; caffeinate PID 71885 was active, bound to game PID, with 3466 seconds remaining. All strict-free K cases remain pending. Only owned client is terminated for cleanup. This is not a successful GUI exit. Lock source unknown.
