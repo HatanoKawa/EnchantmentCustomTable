@@ -1,5 +1,5 @@
 {
-  "checkpoint": "2026-09-23; resumed after third unlock; both 1.21.6 targets complete; continuing matrix with per-client temporary wake assertions",
+  "checkpoint": "2026-09-23; resumed after third unlock; both 1.21.6 full and 1.21.3 quick targets complete; continuing matrix with per-client temporary wake assertions",
   "production_commit": "862106e",
   "tools_commit": "e0aa94e",
   "targets": [
@@ -201,20 +201,22 @@
       "loader": "fabric",
       "minecraft": "1.21.3",
       "tier": "quick",
-      "status": "prepared",
+      "status": "complete: 8 PASS; config NOT_SCHEDULED",
       "cases": {
-        "Q01": "PENDING",
-        "Q02": "PENDING",
-        "Q03": "PENDING",
-        "Q04": "PENDING",
-        "Q05": "PENDING",
-        "Q06": "PENDING",
-        "Q07": "PENDING",
-        "Q08": "PENDING"
+        "Q01": "PASS",
+        "Q02": "PASS",
+        "Q03": "PASS",
+        "Q04": "PASS",
+        "Q05": "PASS",
+        "Q06": "PASS",
+        "Q07": "PASS",
+        "Q08": "PASS"
       },
-      "restored": false,
-      "findings": [],
-      "basis": "862106e production code; prepared but not executed",
+      "restored": true,
+      "findings": [
+        "Initial 1.21.1 migration sample retained two Sharpness V table books at 02:29:01. Limited sample only."
+      ],
+      "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
       "dependencies": {
@@ -227,20 +229,22 @@
       "loader": "neoforge",
       "minecraft": "1.21.3",
       "tier": "quick",
-      "status": "prepared",
+      "status": "complete: 8 PASS; config NOT_SCHEDULED",
       "cases": {
-        "Q01": "PENDING",
-        "Q02": "PENDING",
-        "Q03": "PENDING",
-        "Q04": "PENDING",
-        "Q05": "PENDING",
-        "Q06": "PENDING",
-        "Q07": "PENDING",
-        "Q08": "PENDING"
+        "Q01": "PASS",
+        "Q02": "PASS",
+        "Q03": "PASS",
+        "Q04": "PASS",
+        "Q05": "PASS",
+        "Q06": "PASS",
+        "Q07": "PASS",
+        "Q08": "PASS"
       },
       "restored": true,
-      "findings": [],
-      "basis": "862106e production code; prepared but not executed",
+      "findings": [
+        "Initial 1.21.1 migration sample retained two Sharpness V table books at 02:38:26. Limited sample only."
+      ],
+      "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
       "dependencies": {
@@ -562,7 +566,7 @@
         "Q07": "PENDING",
         "Q08": "PENDING"
       },
-      "restored": true,
+      "restored": false,
       "findings": [],
       "basis": "862106e production code; prepared but not executed",
       "build": "PASS: verifyAll",

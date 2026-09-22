@@ -90,6 +90,86 @@
       "selection": "byte copy"
     },
     {
+      "file": "fabric-1.21.3-migration-tooltip.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.3/screenshots/2026-09-23_02.29.02.png",
+      "sha256": "5239b4dad2937f7a720d0ac00ba07f994ba05bc4ed55d7157d8c5e09574a1edf",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.3-copy-reload.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.3/screenshots/2026-09-23_02.31.07.png",
+      "sha256": "d5d22ed3e8ee46512a7bdbc3a918a9e2cee45cdb71d4860a69bc979a3edec595",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.3-export-reload.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.3/screenshots/2026-09-23_02.35.46.png",
+      "sha256": "a0fed7673c7227ee087a8390a5f60e3a57c8b675bf944c935c7da631bc817821",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.3-default-observations.txt",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.3/default.log",
+      "sha256": "613724badf4ccd0abec084b29f8b904d9c0ed406d65bd33d213cb5c212e80bf4",
+      "selection": [
+        "GUIFIXTURE",
+        "GUIEVIDENCE",
+        "GUIBLOCK",
+        "GUIPLAYER",
+        "GUIRELOAD",
+        "Saved screenshot",
+        "Serialization errors",
+        "Failed to decode value",
+        "@BlockPos"
+      ]
+    },
+    {
+      "file": "fabric-1.21.3-config-default.json",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.3/config-default",
+      "sha256": "15198c8a3b4b820ef04491675ea1038c12b8844dd1fef69682b87d80c2880268",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.3-migration-tooltip.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.3/screenshots/2026-09-23_02.38.28.png",
+      "sha256": "3394aaa1b21d2e54c8e70278999023870f93b50b4a2092edf15ff5aa508c6596",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.3-copy-reload.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.3/screenshots/2026-09-23_02.40.49.png",
+      "sha256": "6d706870561b12c99a93c9f08c3510ebbd88a64a19b3856dc60128f45d0b209c",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.3-export-reload.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.3/screenshots/2026-09-23_02.45.48.png",
+      "sha256": "4eb8faf6862c9126c2256a97bf3e2c5d4ffd79ec1a516599b7863cc482830cc3",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.3-default-observations.txt",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.3/default.log",
+      "sha256": "963bab8fb4ce1d62c43af8c46f21d0d8d6f2e50ff4d39e470f0ef66adb6b758a",
+      "selection": [
+        "GUIFIXTURE",
+        "GUIEVIDENCE",
+        "GUIBLOCK",
+        "GUIPLAYER",
+        "GUIRELOAD",
+        "Saved screenshot",
+        "Serialization errors",
+        "Failed to decode value",
+        "@BlockPos"
+      ]
+    },
+    {
+      "file": "neoforge-1.21.3-config-default.toml",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.3/config-default",
+      "sha256": "b6e7b44d79f657215751d4af124f31ee98f4c9ca40a5cf43c1d5442dae3491f9",
+      "selection": "byte copy"
+    },
+    {
       "file": "fabric-1.21.4-default-observations.txt",
       "source": "build/reports/gui-validation/round3/fabric/1.21.4/default.log",
       "sha256": "9b0ccac359da18a5f98b73eea23e8d456519011b1ab8e40d22e84fe70b5345a2",
@@ -1134,7 +1214,7 @@
     {
       "file": "matrix-results.json",
       "source": "per-target state.json plus version gradle.properties; manually observed GUI outcomes",
-      "sha256": "5f4769eb245d114b46e857209f27eeb617a193b272533ec9bf3943bc7d1c9e7d",
+      "sha256": "4b9a7f3ab4d26cc82c1b8855cfb5e67f0534f089c462b3120c545e20bd19cf51",
       "selection": "PENDING filled for cases not executed; round2 reuse explicitly labeled"
     }
   ]
