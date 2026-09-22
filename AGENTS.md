@@ -10,6 +10,8 @@ Main shared code is split by dependency level:
 - `src/common-minecraft/java`: Minecraft-dependent common logic with no NeoForge/Fabric imports.
 - `src/main/java`: NeoForge platform implementation used by the root Stonecutter NeoForge matrix and the `:neoforge` project.
 - `src/test/java`: shared JVM tests for common table rules and session behavior.
+- `fabric/src/test/java`: Minecraft-dependent Fabric regression tests using real slots, item components, and table sessions; run for every Fabric version project.
+- `fabric/src/test-versioned/{legacy,official26}/java`: test-only vanilla registry bootstrap; `26.x` also binds default item components before creating stacks.
 
 Platform and version projects live in separate directories:
 
@@ -29,6 +31,7 @@ Use the Gradle wrapper from the repository root. Prefer explicit project paths n
 
 - The default Gradle heap is `-Xmx4G`, and `org.gradle.workers.max=1` is set to keep full matrix builds stable on local machines. Override `--max-workers` only for smaller targeted builds when you need speed.
 - `./gradlew :common:test` runs fast shared JVM tests.
+- `./gradlew :fabric_1_21_1:test :fabric_1_21_2:test :fabric_26_2:test` checks generated-slot insertion across the vanilla API change and the latest version, without starting a GUI. Fabric `build` tasks also run these tests; their Minecraft logs stay under each project's `build/test-run/`.
 - `./gradlew :1.21.1:build`, `./gradlew :1.21.11:build`, or `./gradlew :26.2:build` builds a NeoForge Stonecutter version project.
 - `./gradlew :neoforge:build` builds the latest NeoForge platform subproject.
 - `./gradlew :fabric_1_21_1:build` through `./gradlew :fabric_1_21_11:build` build supported remapped Fabric `1.21.x` version projects.

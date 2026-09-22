@@ -5,6 +5,7 @@ import com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModBlocks;
 import com.river_quinn.enchantment_custom_table.fabric.init.FabricModMenus;
 import com.river_quinn.enchantment_custom_table.fabric.inventory.FabricTableInventory;
+import com.river_quinn.enchantment_custom_table.core.inventory.GeneratedBookInsertion;
 import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
 import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
@@ -263,6 +264,15 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                     @Override
                     public boolean mayPickup(Player player) {
                         return !getItem().isEmpty();
+                    }
+
+                    @Override
+                    public ItemStack safeInsert(ItemStack stack, int amount) {
+                        if (!isServerSide()) {
+                            return stack;
+                        }
+                        return GeneratedBookInsertion.insert(this, stack, amount,
+                                FabricEnchantingCustomMenu.this::applyEnchantedBook);
                     }
 
                     @Override
