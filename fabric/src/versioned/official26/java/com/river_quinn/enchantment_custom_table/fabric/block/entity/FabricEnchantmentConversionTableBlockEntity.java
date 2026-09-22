@@ -81,7 +81,8 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
     }
 
     public void refreshCopyResult() {
-        if (updatingCopyResult) {
+        // Slot synchronization can arrive before the copy-output slot. Never spend client materials.
+        if (updatingCopyResult || level == null || level.isClientSide()) {
             return;
         }
         updatingCopyResult = true;
