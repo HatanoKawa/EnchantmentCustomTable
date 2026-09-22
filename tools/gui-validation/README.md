@@ -37,6 +37,9 @@ python3 tools/gui-validation/macos_client.py --loader fabric --minecraft 1.21.9 
 
 `-PguiLoader=both -PguiVersion=all` 会在所有版本项目注册导出任务；仍需显式列出需要执行的任务。
 每个版本读取对应 `runClient` 的 Java toolchain，26.x 自动使用 Java 25。
+用户允许临时保持唤醒时，可在启动命令追加 `--keep-awake`。该选项通过 macOS
+`caffeinate` 绑定实际游戏进程，游戏退出即解除，最长持续一小时；不修改系统电源设置。
+它不能解锁已锁定的 Mac，也不能阻止用户主动锁屏。
 26.x Loom 的目录属性与旧版字符串属性均已适配。1.21.1 的应用身份保持不变，
 其他目标使用含加载器和版本的独立 bundle identifier，并在应用名后追加版本号。
 

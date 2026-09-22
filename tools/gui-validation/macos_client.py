@@ -16,9 +16,13 @@ def main():
     parser.add_argument('--loader', choices=['neoforge', 'fabric'], default='neoforge')
     parser.add_argument('--minecraft', default='1.21.1', help='Minecraft version project to launch')
     parser.add_argument('--launch', action='store_true', help='Run the prepared client in this process')
+    parser.add_argument('--keep-awake', action='store_true',
+                        help='Keep display/system awake for this client, at most one hour')
     args = parser.parse_args()
     if sys.platform != 'darwin':
         parser.error('This experiment requires macOS.')
+    if args.keep_awake and not args.launch:
+        parser.error('--keep-awake requires --launch.')
 
     root = Path(__file__).resolve().parents[2]
     matrix = root / ('fabric_versions' if args.loader == 'fabric' else 'versions')
@@ -83,6 +87,10 @@ def main():
         os.chdir(working_directory)
         environment = os.environ.copy()
         environment.update({key: str(value) for key, value in launch['environment'].items()})
+        if args.keep_awake:
+            # execve retains this PID; assertions end when the game exits or the timeout expires.
+            subprocess.Popen(['/usr/bin/caffeinate', '-d', '-i', '-u', '-t', '3600',
+                              '-w', str(os.getpid())])
         os.execve(executable, [str(executable), *launch['command'][1:]], environment)
 
 
