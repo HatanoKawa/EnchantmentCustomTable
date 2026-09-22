@@ -98,6 +98,7 @@ def configure(loader, version, report, mode):
                 path.unlink(missing_ok=True)
         state['restored'] = True
     else:
+        state['restored'] = False
         text = (target / 'config-default').read_text()
         if mode == 'strict-free':
             if loader == 'fabric':

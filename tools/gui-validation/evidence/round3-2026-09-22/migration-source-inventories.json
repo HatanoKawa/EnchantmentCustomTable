@@ -1,0 +1,172 @@
+[
+  {
+    "world": "fabric_versions/1.21.1/run/saves/ECT-fabric-GUI-R2",
+    "region": "fabric_versions/1.21.1/run/saves/ECT-fabric-GUI-R2/region/r.0.0.mca",
+    "data_version": 3955,
+    "tables": [
+      {
+        "keepPacked": 0,
+        "x": 0,
+        "y": -60,
+        "z": 2,
+        "id": "enchantment_custom_table:enchantment_conversion_table",
+        "Inventory": {
+          "Items": [
+            {
+              "count": 1,
+              "Slot": 2,
+              "components": {
+                "minecraft:stored_enchantments": {
+                  "levels": {
+                    "minecraft:sharpness": 5
+                  }
+                }
+              },
+              "id": "minecraft:enchanted_book"
+            },
+            {
+              "count": 1,
+              "Slot": 3,
+              "components": {
+                "minecraft:stored_enchantments": {
+                  "levels": {
+                    "minecraft:sharpness": 5
+                  }
+                }
+              },
+              "id": "minecraft:enchanted_book"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "world": "fabric_versions/26.2/run/saves/ECT-GUI-R3-fabric-26.2",
+    "region": "fabric_versions/26.2/run/saves/ECT-GUI-R3-fabric-26.2/region/r.0.0.mca",
+    "data_version": 3955,
+    "tables": [
+      {
+        "keepPacked": 0,
+        "x": 0,
+        "y": -60,
+        "z": 2,
+        "id": "enchantment_custom_table:enchantment_conversion_table",
+        "Inventory": {
+          "Items": [
+            {
+              "count": 1,
+              "Slot": 2,
+              "components": {
+                "minecraft:stored_enchantments": {
+                  "levels": {
+                    "minecraft:sharpness": 5
+                  }
+                }
+              },
+              "id": "minecraft:enchanted_book"
+            },
+            {
+              "count": 1,
+              "Slot": 3,
+              "components": {
+                "minecraft:stored_enchantments": {
+                  "levels": {
+                    "minecraft:sharpness": 5
+                  }
+                }
+              },
+              "id": "minecraft:enchanted_book"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "world": "versions/1.21.1/run/saves/ECT-neoforge-GUI-R2",
+    "region": "versions/1.21.1/run/saves/ECT-neoforge-GUI-R2/region/r.0.0.mca",
+    "data_version": 3955,
+    "tables": [
+      {
+        "keepPacked": 0,
+        "x": 0,
+        "y": -60,
+        "z": 2,
+        "id": "enchantment_custom_table:enchantment_conversion_table",
+        "Inventory": {
+          "Size": 4,
+          "Items": [
+            {
+              "count": 1,
+              "Slot": 2,
+              "components": {
+                "minecraft:stored_enchantments": {
+                  "levels": {
+                    "minecraft:sharpness": 5
+                  }
+                }
+              },
+              "id": "minecraft:enchanted_book"
+            },
+            {
+              "count": 1,
+              "Slot": 3,
+              "components": {
+                "minecraft:stored_enchantments": {
+                  "levels": {
+                    "minecraft:sharpness": 5
+                  }
+                }
+              },
+              "id": "minecraft:enchanted_book"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "world": "versions/26.2/run/saves/ECT-GUI-R3-neoforge-26.2",
+    "region": "versions/26.2/run/saves/ECT-GUI-R3-neoforge-26.2/region/r.0.0.mca",
+    "data_version": 3955,
+    "tables": [
+      {
+        "keepPacked": 0,
+        "x": 0,
+        "y": -60,
+        "z": 2,
+        "id": "enchantment_custom_table:enchantment_conversion_table",
+        "Inventory": {
+          "Size": 4,
+          "Items": [
+            {
+              "count": 1,
+              "Slot": 2,
+              "components": {
+                "minecraft:stored_enchantments": {
+                  "levels": {
+                    "minecraft:sharpness": 5
+                  }
+                }
+              },
+              "id": "minecraft:enchanted_book"
+            },
+            {
+              "count": 1,
+              "Slot": 3,
+              "components": {
+                "minecraft:stored_enchantments": {
+                  "levels": {
+                    "minecraft:sharpness": 5
+                  }
+                }
+              },
+              "id": "minecraft:enchanted_book"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

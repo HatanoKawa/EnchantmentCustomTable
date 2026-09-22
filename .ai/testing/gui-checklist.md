@@ -1,5 +1,22 @@
 # Manual GUI Checklist
 
+## Version coverage and open migration checks
+
+Use the [tiered 30-target matrix](../../tools/gui-validation/tiered-matrix.md) for release coverage.
+See the [third-round checkpoint](../../tools/gui-validation/round3-2026-09-22.md) for exact executed,
+reused, blocked and pending results. Do not infer GUI passes from the all-version build result.
+
+Open migration regressions observed during that round:
+
+1. Copy a 1.21.1 world with a Sharpness V template and output retained in the conversion table.
+2. Upgrade the copy on the same loader; do not reset fixtures before the first inspection.
+3. Verify all table items/components survived, compare player items, then save and re-enter.
+4. Extend the check to both tables and ordinary/material/multi-component items before closing migration coverage.
+
+Fabric 1.21.9/26.1 logged old enchantment-component decode failures; NeoForge 26.1's first
+inspection showed empty table inventory despite preserved player books. These findings are
+unfixed. Existing same-version save/reload passes do not close them.
+
 ## Executed 1.21.1 baseline
 
 The 2026-09-22 round covers both Fabric and NeoForge with real GUI input.
