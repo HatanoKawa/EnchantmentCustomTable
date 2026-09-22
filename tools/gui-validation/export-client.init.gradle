@@ -2,30 +2,50 @@ import groovy.json.JsonOutput
 
 // Opt-in only: no change to normal runClient or release builds.
 gradle.projectsEvaluated {
-    def target = gradle.rootProject.findProject(':1.21.1')
+    def loader = gradle.rootProject.findProperty('guiLoader') ?: 'neoforge'
+    if (!(loader in ['neoforge', 'fabric'])) {
+        throw new GradleException('guiLoader must be neoforge or fabric')
+    }
+    def target = gradle.rootProject.project(loader == 'fabric' ? ':fabric_1_21_1' : ':1.21.1')
     def client = target.tasks.named('runClient').get()
     target.tasks.register('exportGuiClientLaunch') {
         group = 'verification'
-        description = 'Exports the prepared NeoForge 1.21.1 development client launch.'
+        description = "Exports the prepared ${loader} 1.21.1 development client launch."
         dependsOn client.taskDependencies.getDependencies(client)
         doLast {
-            // ModDev normally resolves this extra classpath inside RunGameTask.exec().
-            client.classpath(client.classpathProvider)
+            def runtimeClasspath
+            def gameDirectory
+            def environmentOverrides
+            if (loader == 'fabric') {
+                // Loom normally performs this setup inside AbstractRunTask.exec().
+                // Use an explicit classpath so the exported command has no deferred arg-file write.
+                client.useArgFile.set(false)
+                runtimeClasspath = client.internalClasspath.asPath
+                gameDirectory = new File(target.projectDir, client.internalRunDir.get())
+                environmentOverrides = client.internalEnvironmentVars.get()
+            } else {
+                // ModDev normally resolves this extra classpath inside RunGameTask.exec().
+                client.classpath(client.classpathProvider)
+                runtimeClasspath = client.classpath.asPath
+                gameDirectory = client.gameDirectory.get().asFile
+                environmentOverrides = client.environmentProperty.get()
+            }
             def javaLauncher = client.javaLauncher.get()
             def command = [javaLauncher.executablePath.asFile.absolutePath]
             // allJvmArgs already includes the ModDev JVM argument providers (modFolders).
             command.addAll(client.allJvmArgs)
-            command.addAll(['-cp', client.classpath.asPath, client.mainClass.get()])
+            command.addAll(['-cp', runtimeClasspath, client.mainClass.get()])
             command.addAll(client.args)
             client.argumentProviders.each { command.addAll(it.asArguments()) }
             def output = target.layout.buildDirectory.file('gui-validation/launch.json').get().asFile
             output.parentFile.mkdirs()
             output.text = JsonOutput.prettyPrint(JsonOutput.toJson([
+                    loader: loader,
                     command: command,
                     javaHome: javaLauncher.metadata.installationPath.asFile.absolutePath,
-                    workingDirectory: client.gameDirectory.get().asFile.absolutePath,
-                    // Export only ModDev's explicit overrides, never the inherited shell environment.
-                    environment: client.environmentProperty.get()
+                    workingDirectory: gameDirectory.absolutePath,
+                    // Export only loader overrides, never the inherited shell environment.
+                    environment: environmentOverrides
             ])) + '\n'
             logger.lifecycle('GUI client launch: {}', output)
         }

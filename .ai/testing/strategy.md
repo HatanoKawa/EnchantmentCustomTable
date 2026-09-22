@@ -49,8 +49,9 @@ Notes:
 Purpose: manually or semi-automatically validate client GUI behavior before releases.
 
 Current status:
-- Paused by request. No direct UI automation is tracked as part of the current test implementation.
-- Previous availability check showed `runClient` can start the Minecraft window, but Computer Use could not attach to the LWJGL Java window in the current environment.
+- Resumed by user request on 2026-09-22 for Fabric and NeoForge 1.21.1.
+- An opt-in macOS application wrapper exports the existing `runClient` launch and lets Computer Use attach to the actual game window.
+- The first round executed 28 cases per loader: 49 passed, 3 failed, 4 blocked. The failures represent three distinct defects; see [the report](../../tools/gui-validation/round1-2026-09-22.md).
 
 Planned scope:
 - Launch `runClient`.
@@ -60,5 +61,6 @@ Planned scope:
 - Confirm no client crash, no ghost item, and expected visual state.
 
 Verification approach:
-- Keep this as a manual release checklist area until a more reliable UI-driver option is chosen.
-- Treat Computer Use as an optional smoke-test helper rather than CI-grade automation.
+- Use the [launcher and fixture guide](../../tools/gui-validation/README.md), real GUI operations, screenshots, and server-side item observations together.
+- Keep Shift-click and other unsupported input paths on the manual release checklist. Ordinary clicks do not cover quick-move.
+- Treat the supervised Computer Use workflow as a regression aid; it is not yet an unattended CI runner.

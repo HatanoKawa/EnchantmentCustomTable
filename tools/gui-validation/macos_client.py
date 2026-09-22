@@ -13,16 +13,18 @@ import sys
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--loader', choices=['neoforge', 'fabric'], default='neoforge')
     parser.add_argument('--launch', action='store_true', help='Run the prepared client in this process')
     args = parser.parse_args()
     if sys.platform != 'darwin':
         parser.error('This experiment requires macOS.')
 
     root = Path(__file__).resolve().parents[2]
-    build = root / 'versions/1.21.1/build/gui-validation'
+    project = 'fabric_versions/1.21.1' if args.loader == 'fabric' else 'versions/1.21.1'
+    build = root / project / 'build/gui-validation'
     manifest = build / 'launch.json'
     if not manifest.is_file():
-        parser.error('Run Gradle with export-client.init.gradle and :1.21.1:exportGuiClientLaunch first.')
+        parser.error('Export this loader with export-client.init.gradle and exportGuiClientLaunch first.')
     launch = json.loads(manifest.read_text())
     java_home = Path(launch['javaHome'])
     java = Path(launch['command'][0])
@@ -30,7 +32,8 @@ def main():
     if not java.is_file() or not libjli.is_file():
         parser.error('The exported Java toolchain is no longer available; export again.')
 
-    app = build / 'ECT GUI Dev.app'
+    app_name = 'ECT GUI Fabric' if args.loader == 'fabric' else 'ECT GUI Dev'
+    app = build / f'{app_name}.app'
     contents = app / 'Contents'
     macos = contents / 'MacOS'
     macos.mkdir(parents=True, exist_ok=True)
@@ -46,9 +49,11 @@ def main():
     with (contents / 'Info.plist').open('wb') as stream:
         plistlib.dump({
             'CFBundleExecutable': 'ECTGuiDev',
-            'CFBundleIdentifier': 'com.river-quinn.ect.gui-dev.mc1211',
-            'CFBundleName': 'ECT GUI Dev',
-            'CFBundleDisplayName': 'ECT GUI Dev',
+            # Keep the original NeoForge identity stable for macOS/automation app caches.
+            'CFBundleIdentifier': ('com.river-quinn.ect.gui-dev.fabric.mc1211'
+                                   if args.loader == 'fabric' else 'com.river-quinn.ect.gui-dev.mc1211'),
+            'CFBundleName': app_name,
+            'CFBundleDisplayName': app_name,
             'CFBundlePackageType': 'APPL',
             'CFBundleShortVersionString': '1.0',
             'CFBundleVersion': '1',

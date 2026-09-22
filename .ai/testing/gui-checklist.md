@@ -1,5 +1,13 @@
 # Manual GUI Checklist
 
+## Executed 1.21.1 baseline
+
+The 2026-09-22 round covers both Fabric and NeoForge with real GUI input.
+See [repeatable cases](../../tools/gui-validation/cases-1.21.1.md) and
+[results and defects](../../tools/gui-validation/round1-2026-09-22.md).
+Shift-click scenarios remain blocked by the current input tool; the ordinary-click
+successes do not close the historical Shift-click regression below.
+
 ## Fabric Enchanting Custom Table Generated Slot Sync
 
 Scope: Fabric 1.21.1, Fabric 1.21.11, and Fabric 26.1.2 representative clients.

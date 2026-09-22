@@ -1,0 +1,52 @@
+{
+  "fabric-after-exchange.png": {
+    "loader": "fabric",
+    "original": "2026-09-22_16.34.50.png",
+    "sha256": "66632d3373a88c88802c993c832da625cb45fb72c8400fb5b55051ce8f81da7e"
+  },
+  "fabric-after-world-reload.png": {
+    "loader": "fabric",
+    "original": "2026-09-22_16.37.04.png",
+    "sha256": "c83361021a6cfd543d7514d6d04589222181081f680ab26843f2a337baf7e949"
+  },
+  "fabric-copy-empty-inputs.png": {
+    "loader": "fabric",
+    "original": "2026-09-22_17.00.01.png",
+    "sha256": "db4be717dabafc695eca7a54940aff7dd47308957692ae7da8057eeac10cff12"
+  },
+  "neoforge-after-exchange.png": {
+    "loader": "neoforge",
+    "original": "2026-09-22_17.19.41.png",
+    "sha256": "57e406d723edfbffeeb5682fd94a8174ae8428f071f0e6a46f0e4c02adc76899"
+  },
+  "neoforge-after-world-reload.png": {
+    "loader": "neoforge",
+    "original": "2026-09-22_17.20.56.png",
+    "sha256": "c20f68d4c825980756defa3d84b4b5a960a0cf65a78ff0743fa55f4a0ef199b2"
+  },
+  "neoforge-copy-empty-inputs.png": {
+    "loader": "neoforge",
+    "original": "2026-09-22_17.28.17.png",
+    "sha256": "4e6e5fc1bc562d4d624b80955484c9b2fe44913f4e17f968230860fe6545a1a5"
+  },
+  "fabric-default-observations.txt": {
+    "source": "build/reports/gui-validation/round1/fabric/default.log",
+    "sourceSha256": "ef490caa27c8567a5dd59cc6cf2e0f83c23981c9f6c1fa646b3244a466320880",
+    "selection": "Lines containing GUIBLOCK, GUIPLAYER, GUIFIXTURE, GUIRELOAD, block data:, or Saved screenshot; line contents unchanged."
+  },
+  "fabric-strict-free-observations.txt": {
+    "source": "build/reports/gui-validation/round1/fabric/strict-free.log",
+    "sourceSha256": "41bc352567695a215816577e49ba92274619a550098e5c42bc71a64423d80812",
+    "selection": "Lines containing GUIBLOCK, GUIPLAYER, GUIFIXTURE, GUIRELOAD, block data:, or Saved screenshot; line contents unchanged."
+  },
+  "neoforge-default-observations.txt": {
+    "source": "build/reports/gui-validation/round1/neoforge/default.log",
+    "sourceSha256": "f585cbabc6723196b0a237883911c8058e75478a1177237f6bd84993d3c381d0",
+    "selection": "Lines containing GUIBLOCK, GUIPLAYER, GUIFIXTURE, GUIRELOAD, block data:, or Saved screenshot; line contents unchanged."
+  },
+  "neoforge-strict-free-observations.txt": {
+    "source": "build/reports/gui-validation/round1/neoforge/strict-free.log",
+    "sourceSha256": "d2297b2d198e94d6400789a9bf8f96d9341ff639bd6465206fe756cdcf735d76",
+    "selection": "Lines containing GUIBLOCK, GUIPLAYER, GUIFIXTURE, GUIRELOAD, block data:, or Saved screenshot; line contents unchanged."
+  }
+}
