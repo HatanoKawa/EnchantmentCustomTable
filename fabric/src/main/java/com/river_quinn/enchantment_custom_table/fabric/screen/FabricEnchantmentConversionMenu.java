@@ -282,7 +282,9 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                     @Override
                     public void onTake(Player player, ItemStack stack) {
                         super.onTake(player, stack);
-                        session.pickGeneratedBook();
+                        if (!world.isClientSide()) {
+                            session.pickGeneratedBook();
+                        }
                     }
                 });
                 generatedBookIndex++;

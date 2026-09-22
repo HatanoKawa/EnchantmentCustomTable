@@ -223,11 +223,15 @@ public class ConversionTableSession {
             return TableOperationResult.failed(true);
         }
 
-        EnchantmentTableRules.consumeRequiredConversionMaterials(
-                inventory.getStackInSlot(bookSlot),
-                inventory.getStackInSlot(paymentSlot),
-                config.snapshot()
-        );
+        TableConfigView currentConfig = config.snapshot();
+        if (!currentConfig.freeConversionTableCosts()) {
+            ItemStack books = inventory.getStackInSlot(bookSlot).copy();
+            ItemStack payment = inventory.getStackInSlot(paymentSlot).copy();
+            EnchantmentTableRules.consumeRequiredConversionMaterials(books, payment, currentConfig);
+            // Persistent handlers must observe the writes to dirty the chunk for its next save.
+            inventory.setStackInSlot(bookSlot, books);
+            inventory.setStackInSlot(paymentSlot, payment);
+        }
         generateGeneratedSlots();
         return TableOperationResult.success(true);
     }

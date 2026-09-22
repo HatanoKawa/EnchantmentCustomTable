@@ -308,9 +308,8 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
         }
 
         if (newStack.isEmpty()) {
-            if (!oldStack.isEmpty() && removeGeneratedBook(oldStack, slotIndex).success()) {
-                return;
-            }
+            // Vanilla tryRemove clears the slot here, then calls onTake for the actual removal.
+            // Removing here as well spends a newly regenerated split preview twice.
             inventory.setStackInSlot(slotIndex, ItemStack.EMPTY);
             return;
         }

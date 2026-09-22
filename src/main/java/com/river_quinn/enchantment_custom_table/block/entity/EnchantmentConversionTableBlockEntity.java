@@ -180,6 +180,15 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     }
 
     public void refreshCopyResult() {
+        if (updatingCopyResult || level == null
+                //? if >=1.21.6 {
+                || level.isClientSide()
+                //?} else {
+                /*|| level.isClientSide
+                *///?}
+        ) {
+            return;
+        }
         updatingCopyResult = true;
         TableOperationResult result;
         try {
