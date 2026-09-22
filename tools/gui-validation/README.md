@@ -1,6 +1,6 @@
 # macOS 开发客户端 GUI 验证
 
-这个实验为 NeoForge 和 Fabric `1.21.1` 的开发客户端提供可识别的 macOS 应用身份，
+这个工具为 NeoForge 和 Fabric `1.21.1～26.2` 的开发客户端提供可识别的 macOS 应用身份，
 用于让桌面自动化工具定位真实的 Minecraft 窗口、截图及发送键鼠输入。
 启动工具本身不修改模组逻辑、常规 `runClient` 配置或发布产物。
 
@@ -23,6 +23,19 @@ Fabric 使用独立导出目标和应用身份：
   :fabric_1_21_1:exportGuiClientLaunch
 python3 tools/gui-validation/macos_client.py --loader fabric --launch
 ```
+
+切换版本时同时指定导出目标和启动参数，例如：
+
+```sh
+./gradlew --no-configuration-cache -I tools/gui-validation/export-client.init.gradle \
+  -PguiLoader=fabric -PguiVersion=1.21.9 :fabric_1_21_9:exportGuiClientLaunch
+python3 tools/gui-validation/macos_client.py --loader fabric --minecraft 1.21.9 --launch
+```
+
+`-PguiLoader=both -PguiVersion=all` 会在所有版本项目注册导出任务；仍需显式列出需要执行的任务。
+每个版本读取对应 `runClient` 的 Java toolchain，26.x 自动使用 Java 25。
+26.x Loom 的目录属性与旧版字符串属性均已适配。1.21.1 的应用身份保持不变，
+其他目标使用含加载器和版本的独立 bundle identifier，并在应用名后追加版本号。
 
 当前机器在独立 worktree 中使用以下 Gradle Java 路径验证成功：
 
@@ -64,7 +77,7 @@ fabric_versions/1.21.1/build/gui-validation/ECT GUI Fabric.app
 这不是可分发的应用包，也不支持直接在 Finder 双击启动；它引用本机 JDK 和 Gradle
 缓存，并依赖 Python 启动时传入的参数。导出逻辑使用当前 ModDevGradle 的
 `RunGameTask` 和 Loom 的 `AbstractRunTask` API；插件升级后需要重新验证。
-尚未扩展到其他 Minecraft 版本或其他系统。
+导出已覆盖仓库所有版本；实际 GUI 通过范围以分层矩阵的逐目标记录为准，不支持其他系统。
 
 普通 `codesign --verify` 已通过。由于 `libjli.dylib` 符号链接指向包外的原 JDK，
 `codesign --verify --strict` 会拒绝其链接目标；这也是本工具只作为本机开发启动入口、
@@ -86,6 +99,7 @@ fabric_versions/1.21.1/build/gui-validation/ECT GUI Fabric.app
 
 ## 验证记录
 
+- [全版本全量/快速分层矩阵](tiered-matrix.md)：重点版本依据、30 项全量检查和 8 项快速场景。
 - [首轮双加载器用例](cases-1.21.1.md)：28 个用例，每个加载器分别执行。
 - [2026-09-22 首轮结果与缺陷](round1-2026-09-22.md)：逐项结果、复现步骤、证据。
 - [2026-09-22 第二轮修复与回归](round2-2026-09-22.md)：合入 `dev` 后修复三个缺陷；双端各 26 项通过、2 项 Shift 输入阻塞。
@@ -107,3 +121,17 @@ fabric_versions/1.21.1/build/gui-validation/ECT GUI Fabric.app
 `/function ectguireloadlater` 会在 5 秒后执行 `/reload`，可立即重新打开菜单以测试重载边界。
 所有函数都有纯字母别名；详细准备及预期结果见用例文档。截图可用 F2 保存至对应 `run/screenshots/`。
 切换配置用例前退出客户端、备份配置，测试后恢复；保留配置副本与日志。
+
+全版本回归的 `prepare_matrix.py` 可从第二轮专用世界复制独立测试世界，按对应游戏 JAR
+生成 pack 元数据及附魔组件命令，并备份已有配置和 options。它拒绝覆盖已准备的世界和备份。
+这只准备前置条件，不操作游戏业务菜单。当前脚本依赖本机 Loom 缓存及第二轮种子世界。
+
+```sh
+python3 tools/gui-validation/prepare_matrix.py --loader fabric --minecraft 1.21.9
+# 客户端退出后切换配置组
+python3 tools/gui-validation/prepare_matrix.py --loader fabric --minecraft 1.21.9 --config strict-free
+# 客户端退出后恢复原配置和 options（原来不存在的文件会恢复为不存在）
+python3 tools/gui-validation/prepare_matrix.py --loader fabric --minecraft 1.21.9 --config restore
+```
+
+操作记录和原文件备份默认放在 `build/reports/gui-validation/round3/<loader>/<version>/`。

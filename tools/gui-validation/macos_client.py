@@ -14,18 +14,24 @@ import sys
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--loader', choices=['neoforge', 'fabric'], default='neoforge')
+    parser.add_argument('--minecraft', default='1.21.1', help='Minecraft version project to launch')
     parser.add_argument('--launch', action='store_true', help='Run the prepared client in this process')
     args = parser.parse_args()
     if sys.platform != 'darwin':
         parser.error('This experiment requires macOS.')
 
     root = Path(__file__).resolve().parents[2]
-    project = 'fabric_versions/1.21.1' if args.loader == 'fabric' else 'versions/1.21.1'
+    matrix = root / ('fabric_versions' if args.loader == 'fabric' else 'versions')
+    if args.minecraft not in {p.name for p in matrix.iterdir() if (p / 'gradle.properties').is_file()}:
+        parser.error('Minecraft version is not present in this loader matrix.')
+    project = matrix / args.minecraft
     build = root / project / 'build/gui-validation'
     manifest = build / 'launch.json'
     if not manifest.is_file():
         parser.error('Export this loader with export-client.init.gradle and exportGuiClientLaunch first.')
     launch = json.loads(manifest.read_text())
+    if launch['loader'] != args.loader or launch.get('minecraftVersion', '1.21.1') != args.minecraft:
+        parser.error('Launch manifest does not match the requested loader/version; export again.')
     java_home = Path(launch['javaHome'])
     java = Path(launch['command'][0])
     libjli = java_home / 'lib/libjli.dylib'
@@ -33,6 +39,11 @@ def main():
         parser.error('The exported Java toolchain is no longer available; export again.')
 
     app_name = 'ECT GUI Fabric' if args.loader == 'fabric' else 'ECT GUI Dev'
+    bundle_id = ('com.river-quinn.ect.gui-dev.fabric.mc1211'
+                 if args.loader == 'fabric' else 'com.river-quinn.ect.gui-dev.mc1211')
+    if args.minecraft != '1.21.1':
+        app_name += ' ' + args.minecraft
+        bundle_id = 'com.river-quinn.ect.gui-dev.' + args.loader + '.mc' + args.minecraft.replace('.', '-')
     app = build / f'{app_name}.app'
     contents = app / 'Contents'
     macos = contents / 'MacOS'
@@ -50,8 +61,7 @@ def main():
         plistlib.dump({
             'CFBundleExecutable': 'ECTGuiDev',
             # Keep the original NeoForge identity stable for macOS/automation app caches.
-            'CFBundleIdentifier': ('com.river-quinn.ect.gui-dev.fabric.mc1211'
-                                   if args.loader == 'fabric' else 'com.river-quinn.ect.gui-dev.mc1211'),
+            'CFBundleIdentifier': bundle_id,
             'CFBundleName': app_name,
             'CFBundleDisplayName': app_name,
             'CFBundlePackageType': 'APPL',
