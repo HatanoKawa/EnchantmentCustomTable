@@ -1,0 +1,7 @@
+> Task :fabric_1_21_1:test FAILED
+ConversionPaymentSessionTest > blockPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:59
+ConversionPaymentSessionTest > emeraldPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:59
+2 tests completed, 2 failed
+BUILD FAILED in 4s

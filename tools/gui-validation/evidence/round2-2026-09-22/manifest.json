@@ -1,0 +1,222 @@
+{
+  "date": "2026-09-22",
+  "timezone": "Asia/Shanghai",
+  "baseline_commit": "fb823b9",
+  "fix_commit": "81bb88492dc479f0970bd3048ef79ad046d64535",
+  "minecraft": "1.21.1",
+  "method": "Real native GUI actions; vanilla datapack setup and server-side item observations. F2 screenshots copied byte-for-byte.",
+  "sources": [
+    {
+      "source": "build/reports/gui-validation/round2/fabric/default.log",
+      "sha256": "b3a1ece7785b786a1479ce7c02144c9a957da391266aa4098a2fb53afe1d05cb",
+      "excerpt": "fabric-default-observations.txt",
+      "filter_any": [
+        "GUIFIXTURE",
+        "GUIEVIDENCE",
+        "GUIBLOCK",
+        "GUIPLAYER",
+        "GUIRELOAD",
+        "Saved screenshot",
+        "Saving and pausing",
+        "Stopping server",
+        "All chunks are saved"
+      ]
+    },
+    {
+      "source": "build/reports/gui-validation/round2/fabric/strict-free.log",
+      "sha256": "22042135103f521895a6082c359039cd2ee97bc1c9a130faba415e98d6284a6f",
+      "excerpt": "fabric-strict-free-observations.txt",
+      "filter_any": [
+        "GUIFIXTURE",
+        "GUIEVIDENCE",
+        "GUIBLOCK",
+        "GUIPLAYER",
+        "GUIRELOAD",
+        "Saved screenshot",
+        "Saving and pausing",
+        "Stopping server",
+        "All chunks are saved"
+      ]
+    },
+    {
+      "source": "build/reports/gui-validation/round2/neoforge/default.log",
+      "sha256": "1b2dd2867b159d292ad9e13d0e829cc860265b4b213749fe14c35e09bb755d9c",
+      "excerpt": "neoforge-default-observations.txt",
+      "filter_any": [
+        "GUIFIXTURE",
+        "GUIEVIDENCE",
+        "GUIBLOCK",
+        "GUIPLAYER",
+        "GUIRELOAD",
+        "Saved screenshot",
+        "Saving and pausing",
+        "Stopping server",
+        "All chunks are saved"
+      ]
+    },
+    {
+      "source": "build/reports/gui-validation/round2/neoforge/strict-free.log",
+      "sha256": "9407cbd7852b0b5da00c59323472941387314766170a82b363dc7322674d31db",
+      "excerpt": "neoforge-strict-free-observations.txt",
+      "filter_any": [
+        "GUIFIXTURE",
+        "GUIEVIDENCE",
+        "GUIBLOCK",
+        "GUIPLAYER",
+        "GUIRELOAD",
+        "Saved screenshot",
+        "Saving and pausing",
+        "Stopping server",
+        "All chunks are saved"
+      ]
+    },
+    {
+      "source": "build/reports/gui-validation/round2/fabric/screenshots/2026-09-22_19.31.33.png",
+      "sha256": "d9d30db954bc39a4fddb1da58a3e1e56138018b790650e67d6134b4fdb928e8d",
+      "artifact": "fabric-after-world-reload.png"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/fabric/screenshots/2026-09-22_19.32.50.png",
+      "sha256": "e0b982da0a268d5c17f0223c9631a52782ee8cfe7295c730416e06487ca8d914",
+      "artifact": "fabric-copy-after-world-reload.png"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/fabric/screenshots/2026-09-22_19.33.26.png",
+      "sha256": "5aaeb96b9b7d072152a68bf426c7684fb91e4175fb5503a622dd8359748fff5e",
+      "artifact": "fabric-split-taken.png"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/fabric/screenshots/2026-09-22_19.33.30.png",
+      "sha256": "5880c05770baa818600af1d27f6c160e411ed1e6dcfc10ad794f753a7624e7af",
+      "artifact": "fabric-split-returned.png"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/neoforge/screenshots/2026-09-22_19.54.42.png",
+      "sha256": "62096f2b0da827574084386a1f3819f68df8401d75d1eeaf76e640ff363af0a7",
+      "artifact": "neoforge-after-world-reload.png"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/neoforge/screenshots/2026-09-22_19.56.16.png",
+      "sha256": "2382e5722851d24bc36a22e77fee511c098e8d9a32d39246f6a52f69aee2833b",
+      "artifact": "neoforge-copy-after-world-reload.png"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/fabric/screenshots/2026-09-22_19.50.00.png",
+      "sha256": "98bfc51cd4b7a6f992ef721d4f6f4008b29d612e70a3d4414ea2e01938f43c37",
+      "artifact": "fabric-free-copy.png"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/neoforge/screenshots/2026-09-22_20.07.02.png",
+      "sha256": "8afe32229b851542c01ed6dc5e7cd85014be9d711d22fae30af287dfacf73714",
+      "artifact": "neoforge-free-copy.png"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/build.log",
+      "sha256": "2b79b5fe5d3f172fbc7964cab6f5c0008cfb8730766e02249e02e281874064c0"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/regression-before.log",
+      "sha256": "fd909370ae66bc0b85654a537b52695d7f8bd77a15f802a278fbebb599c6fa18"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/fabric-export.log",
+      "sha256": "7d6275f6b3753be7610c192601fd2ed49111a85f4e0074054a053e63432ae1a3"
+    },
+    {
+      "source": "build/reports/gui-validation/round2/neoforge-export.log",
+      "sha256": "6c4987eaafe6d5fe278006cbd4c29d1504be6ddf7bd7d16c1140e91f45a1a196"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "automated-checks.json",
+      "bytes": 1074,
+      "sha256": "a6b4f69c01d310988e241d2db5ab053a3c3f4c931992fe36c170d96d0170a7ae"
+    },
+    {
+      "file": "fabric-after-world-reload.png",
+      "bytes": 303701,
+      "sha256": "d9d30db954bc39a4fddb1da58a3e1e56138018b790650e67d6134b4fdb928e8d"
+    },
+    {
+      "file": "fabric-config-default.json",
+      "bytes": 214,
+      "sha256": "15198c8a3b4b820ef04491675ea1038c12b8844dd1fef69682b87d80c2880268"
+    },
+    {
+      "file": "fabric-config-strict-free.json",
+      "bytes": 211,
+      "sha256": "46fbc10d50900c35d38d73fea9f716b61e9ad845b3b2584c7480c4d12c6120a2"
+    },
+    {
+      "file": "fabric-copy-after-world-reload.png",
+      "bytes": 291573,
+      "sha256": "e0b982da0a268d5c17f0223c9631a52782ee8cfe7295c730416e06487ca8d914"
+    },
+    {
+      "file": "fabric-default-observations.txt",
+      "bytes": 17934,
+      "sha256": "2edf51503d471d1e247716fc73a90263a201ae78fee40f6c699f40206e9febe0"
+    },
+    {
+      "file": "fabric-free-copy.png",
+      "bytes": 275859,
+      "sha256": "98bfc51cd4b7a6f992ef721d4f6f4008b29d612e70a3d4414ea2e01938f43c37"
+    },
+    {
+      "file": "fabric-split-returned.png",
+      "bytes": 282469,
+      "sha256": "5880c05770baa818600af1d27f6c160e411ed1e6dcfc10ad794f753a7624e7af"
+    },
+    {
+      "file": "fabric-split-taken.png",
+      "bytes": 285671,
+      "sha256": "5aaeb96b9b7d072152a68bf426c7684fb91e4175fb5503a622dd8359748fff5e"
+    },
+    {
+      "file": "fabric-strict-free-observations.txt",
+      "bytes": 5453,
+      "sha256": "840c71a9d60de8869a7d90621bca492f3c7f39db1da1a5d0ea6ea4672e351a6a"
+    },
+    {
+      "file": "neoforge-after-world-reload.png",
+      "bytes": 304347,
+      "sha256": "62096f2b0da827574084386a1f3819f68df8401d75d1eeaf76e640ff363af0a7"
+    },
+    {
+      "file": "neoforge-config-default.toml",
+      "bytes": 1234,
+      "sha256": "b6e7b44d79f657215751d4af124f31ee98f4c9ca40a5cf43c1d5442dae3491f9"
+    },
+    {
+      "file": "neoforge-config-strict-free.toml",
+      "bytes": 1230,
+      "sha256": "5b9e90bf368d2bd5a5a13abb168735daeea98e426eea45b56090b7c78d6889ba"
+    },
+    {
+      "file": "neoforge-copy-after-world-reload.png",
+      "bytes": 291236,
+      "sha256": "2382e5722851d24bc36a22e77fee511c098e8d9a32d39246f6a52f69aee2833b"
+    },
+    {
+      "file": "neoforge-default-observations.txt",
+      "bytes": 24046,
+      "sha256": "13b5157ff59870210442b05c383096694cfbf8e10190395f0b72a07f5ce07fd2"
+    },
+    {
+      "file": "neoforge-free-copy.png",
+      "bytes": 272411,
+      "sha256": "8afe32229b851542c01ed6dc5e7cd85014be9d711d22fae30af287dfacf73714"
+    },
+    {
+      "file": "neoforge-strict-free-observations.txt",
+      "bytes": 7149,
+      "sha256": "fb2d7e6ca0f5a2de4d3aa6ded60226cba944f738f65eef4a57024822391c8d24"
+    },
+    {
+      "file": "regression-before-excerpt.txt",
+      "bytes": 441,
+      "sha256": "ab0c609268ffae81f2b21dcf03b666dc016aed40402e21a3ad534ba17a8cc409"
+    }
+  ]
+}

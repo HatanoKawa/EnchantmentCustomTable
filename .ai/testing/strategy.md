@@ -52,6 +52,8 @@ Current status:
 - Resumed by user request on 2026-09-22 for Fabric and NeoForge 1.21.1.
 - An opt-in macOS application wrapper exports the existing `runClient` launch and lets Computer Use attach to the actual game window.
 - The first round executed 28 cases per loader: 49 passed, 3 failed, 4 blocked. The failures represent three distinct defects; see [the report](../../tools/gui-validation/round1-2026-09-22.md).
+- After merging the validation branch into `dev`, the [second round](../../tools/gui-validation/round2-2026-09-22.md) fixed those defects and retested both 1.21.1 clients: 52 passed, 0 failed, 4 blocked. This does not close Shift-click coverage or validate other game versions.
+- `ConversionPaymentSessionTest` additionally exercises the actual Minecraft-dependent conversion session and persistent-inventory notification on emerald and block payments; both new cases failed before the fix and pass after it. These are Fabric JVM tests, separate from the GUI counts.
 
 Planned scope:
 - Launch `runClient`.

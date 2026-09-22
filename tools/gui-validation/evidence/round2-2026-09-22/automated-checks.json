@@ -1,0 +1,45 @@
+{
+  "command": "JAVA_HOME=/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home ./gradlew --no-configuration-cache :common:test :fabric_1_21_1:build :fabric_1_21_2:build :fabric_26_2:build :1.21.1:build",
+  "result": "BUILD SUCCESSFUL",
+  "projects": {
+    "common": {
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "fabric_1_21_1": {
+      "tests": 40,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "fabric_1_21_2": {
+      "tests": 40,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "fabric_26_2": {
+      "tests": 40,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "1.21.1": {
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "regression_before_fix": {
+    "class": "ConversionPaymentSessionTest",
+    "failed": 2,
+    "source": "build/reports/gui-validation/round2/regression-before.log"
+  },
+  "configuration_restore": {
+    "fabric_default_bytes_equal": true,
+    "neoforge_original_bytes_equal": true
+  }
+}
