@@ -78,7 +78,8 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
     }
 
     public void refreshCopyResult() {
-        if (updatingCopyResult) {
+        // Client slot packets must not trigger payment or result generation.
+        if (updatingCopyResult || level == null || level.isClientSide) {
             return;
         }
         updatingCopyResult = true;
