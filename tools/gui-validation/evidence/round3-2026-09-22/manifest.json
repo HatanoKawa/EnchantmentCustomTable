@@ -2,6 +2,110 @@
   "notes": "Screenshots copied without editing. Observation logs retain original matching lines. Full sources stay under build/reports/gui-validation/round3. New GUI passes never inferred from builds. NeoForge 26.1 strict-free-incomplete log contains K01-K04 before the first lock; strict-free log contains K05-K06 after user unlock. Fabric 26.2 strict-free-incomplete log contains K01-K04 before the second lock; strict-free log contains K05-K06 after the second user unlock.",
   "files": [
     {
+      "file": "fabric-1.21.1-conversion-world.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.1/screenshots/2026-09-23_21.18.51.png",
+      "sha256": "a6d91f2ab0d3d1215bc179ea62e5e21558cf5f4257d67d963a3d779a2e803eef",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.1-search-input.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.1/screenshots/2026-09-23_21.18.58.png",
+      "sha256": "80e3b48ea665152008f1acdc4457c4ecd2a5fd1d647b2d8d35604660866dc4de",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.1-enchantment-world.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.1/screenshots/2026-09-23_21.19.02.png",
+      "sha256": "dc632bb401d68004ae17569a0d3cc120e51bb61aa9b28a414b8a6c5a129a0fe9",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.1-enchantment-tooltip.png",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.1/screenshots/2026-09-23_21.19.05.png",
+      "sha256": "faad5db6c365b3fbba380e3bd195cf21b86073d5b9c92a3173a097034c5ba4d1",
+      "selection": "byte copy"
+    },
+    {
+      "file": "fabric-1.21.1-default-observations.txt",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.1/default.log",
+      "sha256": "e1b250829850f03597de214b2e7ac1e79eb1bdda5eed814b2732990fd01b6238",
+      "selection": [
+        "GUIFIXTURE",
+        "GUIEVIDENCE",
+        "GUIBLOCK",
+        "GUIPLAYER",
+        "GUIRELOAD",
+        "Saved screenshot",
+        "Serialization errors",
+        "Failed to decode value",
+        "@BlockPos"
+      ]
+    },
+    {
+      "file": "fabric-1.21.1-config-default.json",
+      "source": "build/reports/gui-validation/round3/fabric/1.21.1/config-default",
+      "sha256": "15198c8a3b4b820ef04491675ea1038c12b8844dd1fef69682b87d80c2880268",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.1-conversion-world.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.1/screenshots/2026-09-23_21.27.22.png",
+      "sha256": "53149bb805d68e368e0e8349e78d2a0bf026582e615f944b977995615aadef85",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.1-conversion-tooltip.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.1/screenshots/2026-09-23_21.27.27.png",
+      "sha256": "de2ca834d6f54c919765b74f6fc6790f528f40fcb39e694a7e93e5670137252c",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.1-search-input.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.1/screenshots/2026-09-23_21.27.29.png",
+      "sha256": "d8265941e1a71f3d6f1c3e84df6e67f9618b5e73927185b1eb545585ea63b9a9",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.1-search-clear.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.1/screenshots/2026-09-23_21.27.30.png",
+      "sha256": "ea5f15f240b1d12724593bba95996e2d463b9063ee810aa1e659914e90a8717a",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.1-enchantment-world.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.1/screenshots/2026-09-23_21.27.33.png",
+      "sha256": "0cf2c90847eb5f131e654444b6f194883f65a277d0f247495613ccc24838d0ea",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.1-enchantment-tooltip.png",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.1/screenshots/2026-09-23_21.27.36.png",
+      "sha256": "ac3a9aa202b2f03b57f10311f0d862f456b4a94d9cb2fd37b6f443c31b1d0215",
+      "selection": "byte copy"
+    },
+    {
+      "file": "neoforge-1.21.1-default-observations.txt",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.1/default.log",
+      "sha256": "48d7d7d8146656a8d81d8fa1388ac7f97196da44de1041d42e553753f8d0931a",
+      "selection": [
+        "GUIFIXTURE",
+        "GUIEVIDENCE",
+        "GUIBLOCK",
+        "GUIPLAYER",
+        "GUIRELOAD",
+        "Saved screenshot",
+        "Serialization errors",
+        "Failed to decode value",
+        "@BlockPos"
+      ]
+    },
+    {
+      "file": "neoforge-1.21.1-config-default.toml",
+      "source": "build/reports/gui-validation/round3/neoforge/1.21.1/config-default",
+      "sha256": "b6e7b44d79f657215751d4af124f31ee98f4c9ca40a5cf43c1d5442dae3491f9",
+      "selection": "byte copy"
+    },
+    {
       "file": "fabric-1.21.2-default-observations.txt",
       "source": "build/reports/gui-validation/round3/fabric/1.21.2/default.log",
       "sha256": "bcd37c24bdda416bc92aaad8b321a2d311685984f5a2786e5639335f3042cb56",
@@ -1224,6 +1328,12 @@
       "selection": "byte copy"
     },
     {
+      "file": "final-audit.json",
+      "source": "build/reports/gui-validation/round3/final-audit.json",
+      "sha256": "41b3e77706e8bb1dde6aef2c5b25537dc6d8f0dbcce00388ba9d9720e485981f",
+      "selection": "byte copy"
+    },
+    {
       "file": "migration-source-inventories.json",
       "source": "build/reports/gui-validation/round3/migration-source-inventories.json",
       "sha256": "53a2cada7b14cbea2b1dd82171d8bcb5e4e30550e90fc0db3f8facfc569c275c",
@@ -1614,7 +1724,7 @@
     {
       "file": "matrix-results.json",
       "source": "per-target state.json plus version gradle.properties; manually observed GUI outcomes",
-      "sha256": "91ac1113954b23ee5f92d194bbce9206441cbf63304cdda546f72220608c568c",
+      "sha256": "afa8be130fe3216f5f2c5776f67ef344be41d54ef11f023e59aa1dcccc608561",
       "selection": "PENDING filled for cases not executed; round2 reuse explicitly labeled"
     }
   ]

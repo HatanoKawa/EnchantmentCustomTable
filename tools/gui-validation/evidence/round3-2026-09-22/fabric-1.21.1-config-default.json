@@ -1,0 +1,8 @@
+{
+  "minimumEmeraldCost": 36,
+  "minimumEmeraldBlockCost": 4,
+  "enforceEnchantmentLevelLimit": false,
+  "incrementalSameLevelMerge": false,
+  "convertOnlyLevelOneBook": false,
+  "freeConversionTableCosts": false
+}

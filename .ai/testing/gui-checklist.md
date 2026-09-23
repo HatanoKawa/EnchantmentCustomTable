@@ -3,8 +3,9 @@
 ## Version coverage and open migration checks
 
 Use the [tiered 30-target matrix](../../tools/gui-validation/tiered-matrix.md) for release coverage.
-See the [third-round checkpoint](../../tools/gui-validation/round3-2026-09-22.md) for exact executed,
-reused, blocked and pending results. Do not infer GUI passes from the all-version build result.
+See the [third-round results](../../tools/gui-validation/round3-2026-09-22.md) for exact executed,
+reused and blocked results. All executable cases are complete; 36 Shift-click cases remain blocked.
+Do not infer GUI passes from the all-version build result.
 
 Open migration regressions observed during that round:
 
@@ -13,9 +14,10 @@ Open migration regressions observed during that round:
 3. Verify all table items/components survived, compare player items, then save and re-enter.
 4. Extend the check to both tables and ordinary/material/multi-component items before closing migration coverage.
 
-Fabric 1.21.9/26.1 logged old enchantment-component decode failures; NeoForge 26.1's first
-inspection showed empty table inventory despite preserved player books. These findings are
-unfixed. Existing same-version save/reload passes do not close them.
+The first failing tested component boundary is 1.21.5 on both loaders; the 1.21.4 sample retained
+the table enchantments. Higher NeoForge targets (observed on 1.21.10, 1.21.11 and all supported 26.x)
+also lose the old inventory when loading the new stacks format. Player books survived in these
+samples. Both findings remain unfixed; same-version save/reload passes do not close them.
 
 ## Executed 1.21.1 baseline
 

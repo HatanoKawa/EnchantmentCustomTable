@@ -1,0 +1,555 @@
+{
+  "completed_at": "2026-09-23T21:29:38.998442+08:00",
+  "targets": 30,
+  "planned_checks": 636,
+  "case_counts": {
+    "REUSED_PASS": 52,
+    "BLOCKED": 36,
+    "PASS": 548
+  },
+  "pending": 0,
+  "restored_file_checks": [
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.1",
+      "kind": "config",
+      "path": "fabric_versions/1.21.1/run/config/enchantment_custom_table.json",
+      "originally_existed": true,
+      "restored": true,
+      "sha256": "15198c8a3b4b820ef04491675ea1038c12b8844dd1fef69682b87d80c2880268"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.1",
+      "kind": "options",
+      "path": "fabric_versions/1.21.1/run/options.txt",
+      "originally_existed": true,
+      "restored": true,
+      "sha256": "033e7e3e2248c93dca3fa425bf1fa4325a793fe2663a3cade244634c59379754"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.10",
+      "kind": "config",
+      "path": "fabric_versions/1.21.10/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.10",
+      "kind": "options",
+      "path": "fabric_versions/1.21.10/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.11",
+      "kind": "config",
+      "path": "fabric_versions/1.21.11/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.11",
+      "kind": "options",
+      "path": "fabric_versions/1.21.11/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.2",
+      "kind": "config",
+      "path": "fabric_versions/1.21.2/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.2",
+      "kind": "options",
+      "path": "fabric_versions/1.21.2/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.3",
+      "kind": "config",
+      "path": "fabric_versions/1.21.3/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.3",
+      "kind": "options",
+      "path": "fabric_versions/1.21.3/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.4",
+      "kind": "config",
+      "path": "fabric_versions/1.21.4/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.4",
+      "kind": "options",
+      "path": "fabric_versions/1.21.4/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.5",
+      "kind": "config",
+      "path": "fabric_versions/1.21.5/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.5",
+      "kind": "options",
+      "path": "fabric_versions/1.21.5/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.6",
+      "kind": "config",
+      "path": "fabric_versions/1.21.6/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.6",
+      "kind": "options",
+      "path": "fabric_versions/1.21.6/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.7",
+      "kind": "config",
+      "path": "fabric_versions/1.21.7/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.7",
+      "kind": "options",
+      "path": "fabric_versions/1.21.7/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.8",
+      "kind": "config",
+      "path": "fabric_versions/1.21.8/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.8",
+      "kind": "options",
+      "path": "fabric_versions/1.21.8/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.9",
+      "kind": "config",
+      "path": "fabric_versions/1.21.9/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.9",
+      "kind": "options",
+      "path": "fabric_versions/1.21.9/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.1",
+      "kind": "config",
+      "path": "fabric_versions/26.1/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.1",
+      "kind": "options",
+      "path": "fabric_versions/26.1/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.1.1",
+      "kind": "config",
+      "path": "fabric_versions/26.1.1/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.1.1",
+      "kind": "options",
+      "path": "fabric_versions/26.1.1/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.1.2",
+      "kind": "config",
+      "path": "fabric_versions/26.1.2/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.1.2",
+      "kind": "options",
+      "path": "fabric_versions/26.1.2/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.2",
+      "kind": "config",
+      "path": "fabric_versions/26.2/run/config/enchantment_custom_table.json",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.2",
+      "kind": "options",
+      "path": "fabric_versions/26.2/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.1",
+      "kind": "config",
+      "path": "versions/1.21.1/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": true,
+      "restored": true,
+      "sha256": "b6e7b44d79f657215751d4af124f31ee98f4c9ca40a5cf43c1d5442dae3491f9"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.1",
+      "kind": "options",
+      "path": "versions/1.21.1/run/options.txt",
+      "originally_existed": true,
+      "restored": true,
+      "sha256": "18c33e71e0bb5fccd230fddb3dfa7cc79e2167667fd36464b778ce8db344bbbc"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.10",
+      "kind": "config",
+      "path": "versions/1.21.10/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.10",
+      "kind": "options",
+      "path": "versions/1.21.10/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.11",
+      "kind": "config",
+      "path": "versions/1.21.11/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.11",
+      "kind": "options",
+      "path": "versions/1.21.11/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.2",
+      "kind": "config",
+      "path": "versions/1.21.2/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.2",
+      "kind": "options",
+      "path": "versions/1.21.2/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.3",
+      "kind": "config",
+      "path": "versions/1.21.3/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.3",
+      "kind": "options",
+      "path": "versions/1.21.3/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.4",
+      "kind": "config",
+      "path": "versions/1.21.4/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.4",
+      "kind": "options",
+      "path": "versions/1.21.4/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.5",
+      "kind": "config",
+      "path": "versions/1.21.5/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.5",
+      "kind": "options",
+      "path": "versions/1.21.5/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.6",
+      "kind": "config",
+      "path": "versions/1.21.6/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.6",
+      "kind": "options",
+      "path": "versions/1.21.6/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.7",
+      "kind": "config",
+      "path": "versions/1.21.7/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.7",
+      "kind": "options",
+      "path": "versions/1.21.7/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.8",
+      "kind": "config",
+      "path": "versions/1.21.8/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.8",
+      "kind": "options",
+      "path": "versions/1.21.8/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.9",
+      "kind": "config",
+      "path": "versions/1.21.9/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": true,
+      "restored": true,
+      "sha256": "b6e7b44d79f657215751d4af124f31ee98f4c9ca40a5cf43c1d5442dae3491f9"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.9",
+      "kind": "options",
+      "path": "versions/1.21.9/run/options.txt",
+      "originally_existed": true,
+      "restored": true,
+      "sha256": "c9144601615fc316f9766f91e286a6180597ec43f9fa05b1a2dbc7a18ccad930"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.1",
+      "kind": "config",
+      "path": "versions/26.1/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.1",
+      "kind": "options",
+      "path": "versions/26.1/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.1.1",
+      "kind": "config",
+      "path": "versions/26.1.1/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.1.1",
+      "kind": "options",
+      "path": "versions/26.1.1/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.1.2",
+      "kind": "config",
+      "path": "versions/26.1.2/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.1.2",
+      "kind": "options",
+      "path": "versions/26.1.2/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.2",
+      "kind": "config",
+      "path": "versions/26.2/run/config/enchantment_custom_table-common.toml",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.2",
+      "kind": "options",
+      "path": "versions/26.2/run/options.txt",
+      "originally_existed": false,
+      "restored": true,
+      "sha256": null
+    }
+  ],
+  "remaining_gui_or_caffeinate_processes": [],
+  "scope_note": "Audit checks files and final case records, not a replacement for GUI observations. Migration failures are additional open findings outside the 636 same-version checks."
+}

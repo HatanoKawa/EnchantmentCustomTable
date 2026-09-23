@@ -1,5 +1,5 @@
 {
-  "checkpoint": "2026-09-23; resumed after third unlock; both 1.21.6 full and all quick targets complete; continuing matrix with per-client temporary wake assertions",
+  "checkpoint": "2026-09-23; all 30 targets completed their executable GUI cases; 548 fresh passes, 52 round2 reused passes, 36 unsupported Shift-click cases blocked, 0 pending; migration findings remain open",
   "production_commit": "862106e",
   "tools_commit": "e0aa94e",
   "targets": [
@@ -7,7 +7,7 @@
       "loader": "fabric",
       "minecraft": "1.21.1",
       "tier": "full",
-      "status": "baseline reused; V01/V02 pending",
+      "status": "complete: 2 new PASS; 26 REUSED_PASS; 2 BLOCKED",
       "cases": {
         "C01": "REUSED_PASS: round2 / 81bb884",
         "C02": "REUSED_PASS: round2 / 81bb884",
@@ -37,14 +37,15 @@
         "K04": "REUSED_PASS: round2 / 81bb884",
         "K05": "REUSED_PASS: round2 / 81bb884",
         "K06": "REUSED_PASS: round2 / 81bb884",
-        "V01": "PENDING: new version-adaptation checks",
-        "V02": "PENDING: new version-adaptation checks"
+        "V01": "PASS",
+        "V02": "PASS"
       },
-      "restored": false,
+      "restored": true,
       "findings": [],
-      "basis": "81bb884 / round2; 862106e does not change this target production code",
+      "basis": "C/E/K reused from round2 / 81bb884; 862106e does not change 1.21.1 production code. V01/V02 freshly executed 2026-09-23 on 862106e production code.",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "fabric_loader_version": "0.19.3",
@@ -55,7 +56,7 @@
       "loader": "neoforge",
       "minecraft": "1.21.1",
       "tier": "full",
-      "status": "baseline reused; V01/V02 pending",
+      "status": "complete: 2 new PASS; 26 REUSED_PASS; 2 BLOCKED",
       "cases": {
         "C01": "REUSED_PASS: round2 / 81bb884",
         "C02": "REUSED_PASS: round2 / 81bb884",
@@ -85,14 +86,15 @@
         "K04": "REUSED_PASS: round2 / 81bb884",
         "K05": "REUSED_PASS: round2 / 81bb884",
         "K06": "REUSED_PASS: round2 / 81bb884",
-        "V01": "PENDING: new version-adaptation checks",
-        "V02": "PENDING: new version-adaptation checks"
+        "V01": "PASS",
+        "V02": "PASS"
       },
       "restored": true,
       "findings": [],
-      "basis": "81bb884 / round2; 862106e does not change this target production code",
+      "basis": "C/E/K reused from round2 / 81bb884; 862106e does not change 1.21.1 production code. V01/V02 freshly executed 2026-09-23 on 862106e production code.",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "neo_version": "21.1.136"
@@ -142,6 +144,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "normal GUI exit 0 for both configurations",
       "dependencies": {
         "java_version": "21",
         "fabric_loader_version": "0.19.3",
@@ -192,6 +195,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "normal GUI exit 0 for both configurations",
       "dependencies": {
         "java_version": "21",
         "neo_version": "21.2.1-beta"
@@ -219,6 +223,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "fabric_loader_version": "0.19.3",
@@ -247,6 +252,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "neo_version": "21.3.66"
@@ -296,6 +302,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "normal GUI exit 0 for both configurations",
       "dependencies": {
         "java_version": "21",
         "fabric_loader_version": "0.19.3",
@@ -346,6 +353,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "normal GUI exit 0 for both configurations",
       "dependencies": {
         "java_version": "21",
         "neo_version": "21.4.124"
@@ -395,6 +403,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "normal GUI exit 0 for both configurations",
       "dependencies": {
         "java_version": "21",
         "fabric_loader_version": "0.19.3",
@@ -447,6 +456,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "default: normal GUI exit 0; first strict-free startup interrupted by third Mac lock, SIGTERM exit 143 before world entry; resumed strict-free K01-K06 passed and normal GUI exit 0",
       "dependencies": {
         "java_version": "21",
         "neo_version": "21.5.40-beta"
@@ -496,6 +506,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "default and strict-free GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "fabric_loader_version": "0.19.3",
@@ -546,6 +557,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "default and strict-free GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "neo_version": "21.6.20-beta"
@@ -573,6 +585,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "fabric_loader_version": "0.19.3",
@@ -601,6 +614,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI Save and Quit then Quit Game; log confirms all dimensions saved and Stopping at 03:12:42; process absent. Exec session expired before exit-code retrieval.",
       "dependencies": {
         "java_version": "21",
         "neo_version": "21.7.4-beta"
@@ -628,6 +642,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "fabric_loader_version": "0.19.3",
@@ -656,6 +671,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "neo_version": "21.8.23"
@@ -780,6 +796,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "fabric_loader_version": "0.19.3",
@@ -808,6 +825,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "21",
         "neo_version": "21.10.64"
@@ -857,6 +875,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "normal GUI exit 0 for both configurations",
       "dependencies": {
         "java_version": "21",
         "fabric_loader_version": "0.19.3",
@@ -907,6 +926,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "normal GUI exit 0 for both configurations",
       "dependencies": {
         "java_version": "21",
         "neo_version": "21.11.42"
@@ -1006,6 +1026,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "SIGTERM / exit 143, after Mac lock; not a successful GUI quit",
       "dependencies": {
         "java_version": "25",
         "neo_version": "26.1.0.19-beta"
@@ -1033,6 +1054,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "25",
         "fabric_loader_version": "0.19.3",
@@ -1061,6 +1083,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "25",
         "neo_version": "26.1.1.15-beta"
@@ -1088,6 +1111,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "25",
         "fabric_loader_version": "0.19.3",
@@ -1116,6 +1140,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
+      "termination": "GUI normal exit 0",
       "dependencies": {
         "java_version": "25",
         "neo_version": "26.1.2.83"
@@ -1165,6 +1190,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "final resumed client normal exit 0; temporary caffeinate exited with client",
       "dependencies": {
         "java_version": "25",
         "fabric_loader_version": "0.19.3",
@@ -1215,6 +1241,7 @@
       "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "included",
+      "termination": "normal GUI exit 0 for both configurations",
       "dependencies": {
         "java_version": "25",
         "neo_version": "26.2.0.25-beta"
