@@ -57,7 +57,7 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
                 new TranslatableComponent("gui.enchantment_custom_table.enchantment_conversion.search")
         );
         searchBox.setMaxLength(EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH);
-        searchBox.setSuggestion(new TranslatableComponent("gui.enchantment_custom_table.enchantment_conversion.search").getString());
+        searchBox.setSuggestion(pendingSearchQuery.isEmpty() ? new TranslatableComponent("gui.enchantment_custom_table.enchantment_conversion.search").getString() : null);
         searchBox.setValue(pendingSearchQuery);
         searchBox.setResponder(this::queueSearchRequest);
         addRenderableWidget(searchBox);
@@ -141,6 +141,7 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
     }
 
     private void queueSearchRequest(String query) {
+        searchBox.setSuggestion(query.isEmpty() ? new TranslatableComponent("gui.enchantment_custom_table.enchantment_conversion.search").getString() : null);
         pendingSearchQuery = EnchantmentSearchRules.sanitizeSearchQuery(query);
         searchUpdateDelayTicks = 6;
     }

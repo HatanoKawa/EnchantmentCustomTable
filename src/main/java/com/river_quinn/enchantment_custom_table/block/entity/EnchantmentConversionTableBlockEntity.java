@@ -119,6 +119,10 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     }
 
     public void refreshCopyResult() {
+        // Client slot packets must not trigger payment or result generation.
+        if (updatingCopyResult || level == null || level.isClientSide) {
+            return;
+        }
         updatingCopyResult = true;
         TableOperationResult result;
         try {
