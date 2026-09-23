@@ -1,0 +1,102 @@
+[19:23:04] [Server thread/WARN] (Minecraft) [net.minecraft.world.level.block.entity.BlockEntity] Serialization errors:
+enchantment_custom_table:enchantment_conversion_table // com.river_quinn.enchantment_custom_table.fabric.block.entity.FabricEnchantmentConversionTableBlockEntity@BlockPos{x=0, y=-60, z=2}.Inventory:
+  Failed to decode value '{Slot:2b,components:{"minecraft:stored_enchantments":{levels:{"minecraft:sharpness":5}}},count:1,id:"minecraft:enchanted_book"}' from field 'Items' at index 0': Not a number; Failed to get element minecraft:levels missed input: {levels:{"minecraft:sharpness":5}} missed input: {"minecraft:stored_enchantments":{levels:{"minecraft:sharpness":5}}}
+  Failed to decode value '{Slot:3b,components:{"minecraft:stored_enchantments":{levels:{"minecraft:sharpness":5}}},count:1,id:"minecraft:enchanted_book"}' from field 'Items' at index 1': Not a number; Failed to get element minecraft:levels missed input: {levels:{"minecraft:sharpness":5}} missed input: {"minecraft:stored_enchantments":{levels:{"minecraft:sharpness":5}}}
+[19:24:27] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:24:27] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:24:27] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:2b,count:1,id:"minecraft:enchanted_book"},{Slot:3b,count:1,id:"minecraft:enchanted_book"}]}
+[19:24:27] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,count:3,id:"minecraft:book"},{Slot:1b,count:64,id:"minecraft:emerald"},{Slot:3b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":1}},count:1,id:"minecraft:enchanted_book"},{Slot:4b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"},{Slot:5b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"}]
+[19:24:27] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_19.24.27.png
+[19:24:28] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_19.24.28.png
+[19:24:30] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIFIXTURE cboundary
+[19:24:30] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIFIXTURE cboundary
+[19:24:37] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_19.24.37.png
+[19:24:39] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:24:39] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:24:39] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,count:1,id:"minecraft:book"}]}
+[19:24:39] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"},{Slot:3b,count:1,id:"minecraft:dirt"}]
+[19:26:31] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:26:31] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:26:31] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,count:1,id:"minecraft:book"}]}
+[19:26:31] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"},{Slot:3b,count:1,id:"minecraft:dirt"}]
+[19:26:32] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_19.26.32.png
+[19:26:33] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIFIXTURE ccopy
+[19:26:33] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIFIXTURE ccopy
+[19:26:39] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:26:39] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:26:39] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,count:1,id:"minecraft:book"},{Slot:1b,count:4,id:"minecraft:emerald_block"},{Slot:2b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"},{Slot:3b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"}]}
+[19:26:39] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"},{Slot:3b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":3,"minecraft:unbreaking":3}},count:1,id:"minecraft:enchanted_book"},{Slot:4b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":6}},count:1,id:"minecraft:enchanted_book"},{Slot:5b,count:1,id:"minecraft:diamond_sword"}]
+[19:28:50] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:28:50] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:28:50] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,count:1,id:"minecraft:book"},{Slot:1b,count:4,id:"minecraft:emerald_block"},{Slot:2b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"},{Slot:3b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"}]}
+[19:28:50] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"},{Slot:3b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":3,"minecraft:unbreaking":3}},count:1,id:"minecraft:enchanted_book"},{Slot:4b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":6}},count:1,id:"minecraft:enchanted_book"},{Slot:5b,count:1,id:"minecraft:diamond_sword"}]
+[19:28:51] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_19.28.51.png
+[19:28:52] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIFIXTURE ccopy
+[19:28:52] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIFIXTURE ccopy
+[19:29:04] [Server thread/INFO] (Minecraft) [Not Secure] [Server] GUIRELOAD
+[19:29:04] [Render thread/INFO] (Minecraft) [System] [CHAT] [Server] GUIRELOAD
+[19:30:44] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:30:44] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:30:44] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,count:2,id:"minecraft:book"},{Slot:1b,count:8,id:"minecraft:emerald_block"}]}
+[19:30:44] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"},{Slot:2b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":5}},count:1,id:"minecraft:enchanted_book"},{Slot:3b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":3,"minecraft:unbreaking":3}},count:1,id:"minecraft:enchanted_book"},{Slot:4b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":6}},count:1,id:"minecraft:enchanted_book"},{Slot:5b,count:1,id:"minecraft:diamond_sword"}]
+[19:30:46] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIFIXTURE esplit
+[19:30:46] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIFIXTURE esplit
+[19:30:46] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_19.30.46.png
+[19:30:49] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:30:49] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:30:49] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":3}},count:1,id:"minecraft:enchanted_book"}]}
+[19:30:49] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER []
+[19:30:52] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:30:52] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:30:52] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":2}},count:1,id:"minecraft:enchanted_book"}]}
+[19:30:52] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":1}},count:1,id:"minecraft:enchanted_book"}]
+[19:30:55] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:30:55] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:30:55] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":3}},count:1,id:"minecraft:enchanted_book"}]}
+[19:30:55] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER []
+[19:30:58] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:30:58] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:30:58] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":2}},count:1,id:"minecraft:enchanted_book"}]}
+[19:30:58] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":1}},count:1,id:"minecraft:enchanted_book"}]
+[19:31:01] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:31:01] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:31:01] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":3}},count:1,id:"minecraft:enchanted_book"}]}
+[19:31:01] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER []
+[19:31:03] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:31:03] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:31:03] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":2}},count:1,id:"minecraft:enchanted_book"}]}
+[19:31:03] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":1}},count:1,id:"minecraft:enchanted_book"}]
+[19:31:06] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:31:06] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:31:06] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":3}},count:1,id:"minecraft:enchanted_book"}]}
+[19:31:06] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER []
+[19:31:08] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_19.31.08.png
+[19:31:09] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIFIXTURE esync
+[19:31:09] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIFIXTURE esync
+[19:31:16] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:31:16] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:31:16] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,count:1,id:"minecraft:diamond_sword"}]}
+[19:31:16] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":3}},count:1,id:"minecraft:enchanted_book"},{Slot:1b,components:{"minecraft:stored_enchantments":{"minecraft:unbreaking":3}},count:1,id:"minecraft:enchanted_book"},{Slot:2b,components:{"minecraft:stored_enchantments":{"minecraft:sharpness":3}},count:1,id:"minecraft:enchanted_book"},{Slot:3b,components:{"minecraft:stored_enchantments":{"minecraft:mending":1}},count:1,id:"minecraft:enchanted_book"}]
+[19:31:17] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIFIXTURE einsert
+[19:31:17] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIFIXTURE einsert
+[19:32:59] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:32:59] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:32:59] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,components:{"minecraft:enchantments":{"minecraft:looting":1,"minecraft:sharpness":2,"minecraft:unbreaking":2}},count:1,id:"minecraft:diamond_sword"}]}
+[19:32:59] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:5b,count:1,id:"minecraft:book"},{Slot:6b,count:1,id:"minecraft:dirt"}]
+[19:33:00] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_19.33.00.png
+[19:34:35] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:34:35] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:34:35] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,components:{"minecraft:enchantments":{"minecraft:looting":1,"minecraft:sharpness":2,"minecraft:unbreaking":2}},count:1,id:"minecraft:diamond_sword"}]}
+[19:34:35] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:5b,count:1,id:"minecraft:book"},{Slot:6b,count:1,id:"minecraft:dirt"}]
+[19:34:36] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_19.34.36.png
+[19:34:37] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIFIXTURE esync
+[19:34:37] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIFIXTURE esync
+[19:34:41] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:34:41] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:34:41] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,count:1,id:"minecraft:diamond_sword"}]}
+[19:34:41] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":3,"minecraft:mending":1,"minecraft:sharpness":3,"minecraft:unbreaking":3}},count:1,id:"minecraft:enchanted_book"}]
+[19:36:23] [Server thread/INFO] (Minecraft) [Not Secure] [Player228] GUIEVIDENCE
+[19:36:23] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player228] GUIEVIDENCE
+[19:36:23] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items:[{Slot:0b,count:1,id:"minecraft:diamond_sword"}]}
+[19:36:23] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{Slot:0b,components:{"minecraft:stored_enchantments":{"minecraft:looting":3,"minecraft:mending":1,"minecraft:sharpness":3,"minecraft:unbreaking":3}},count:1,id:"minecraft:enchanted_book"}]
+[19:36:24] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_19.36.24.png

@@ -1,5 +1,5 @@
 {
-  "checkpoint": "2026-09-23; resumed after third unlock; both 1.21.6 full and 1.21.3/1.21.7 quick targets complete; continuing matrix with per-client temporary wake assertions",
+  "checkpoint": "2026-09-23; resumed after third unlock; both 1.21.6 full and 1.21.3/1.21.7/1.21.8 quick targets complete; continuing matrix with per-client temporary wake assertions",
   "production_commit": "862106e",
   "tools_commit": "e0aa94e",
   "targets": [
@@ -610,20 +610,22 @@
       "loader": "fabric",
       "minecraft": "1.21.8",
       "tier": "quick",
-      "status": "prepared",
+      "status": "complete: 8 PASS; config NOT_SCHEDULED",
       "cases": {
-        "Q01": "PENDING",
-        "Q02": "PENDING",
-        "Q03": "PENDING",
-        "Q04": "PENDING",
-        "Q05": "PENDING",
-        "Q06": "PENDING",
-        "Q07": "PENDING",
-        "Q08": "PENDING"
+        "Q01": "PASS",
+        "Q02": "PASS",
+        "Q03": "PASS",
+        "Q04": "PASS",
+        "Q05": "PASS",
+        "Q06": "PASS",
+        "Q07": "PASS",
+        "Q08": "PASS"
       },
-      "restored": false,
-      "findings": [],
-      "basis": "862106e production code; prepared but not executed",
+      "restored": true,
+      "findings": [
+        "MIG-01: initial 1.21.1 upgrade at 19:24:27 retained two table books but lost stored enchantments; player books migrated. Recorded before fixture reset."
+      ],
+      "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
       "dependencies": {
@@ -636,20 +638,22 @@
       "loader": "neoforge",
       "minecraft": "1.21.8",
       "tier": "quick",
-      "status": "prepared",
+      "status": "complete: 8 PASS; config NOT_SCHEDULED",
       "cases": {
-        "Q01": "PENDING",
-        "Q02": "PENDING",
-        "Q03": "PENDING",
-        "Q04": "PENDING",
-        "Q05": "PENDING",
-        "Q06": "PENDING",
-        "Q07": "PENDING",
-        "Q08": "PENDING"
+        "Q01": "PASS",
+        "Q02": "PASS",
+        "Q03": "PASS",
+        "Q04": "PASS",
+        "Q05": "PASS",
+        "Q06": "PASS",
+        "Q07": "PASS",
+        "Q08": "PASS"
       },
       "restored": true,
-      "findings": [],
-      "basis": "862106e production code; prepared but not executed",
+      "findings": [
+        "MIG-01: initial 19:41:17 before fixtures; Inventory.Items/Size retains two books without enchantment components; player books migrated."
+      ],
+      "basis": "862106e",
       "build": "PASS: verifyAll",
       "config_checks": "NOT_SCHEDULED",
       "dependencies": {
@@ -769,7 +773,7 @@
         "Q07": "PENDING",
         "Q08": "PENDING"
       },
-      "restored": true,
+      "restored": false,
       "findings": [],
       "basis": "862106e production code; prepared but not executed",
       "build": "PASS: verifyAll",
