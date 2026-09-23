@@ -19,6 +19,13 @@ This folder stores AI-produced maintenance notes for the project.
 
 - [x] Add JVM unit-test infrastructure and a first passing smoke test.
 - [x] Add NeoForge GameTest infrastructure and a first discoverable passing GameTest.
-- [ ] Add release UI smoke-test checklist for manual / Computer Use assisted validation.
+- [x] Add release UI smoke-test checklist for manual / Computer Use assisted validation.
 - [x] Backfill meaningful JVM tests for extracted pure logic.
 - [x] Backfill meaningful GameTests for table block/menu behavior.
+
+## User priorities: 2026-09-23
+
+- [ ] P3 / deferred by user: MIG-01 (old table enchantment components lost) and MIG-02 (old NeoForge inventory format not loaded). Preserve [round-three evidence](../../tools/gui-validation/round3-2026-09-22.md); do not spend the current development pass repairing cross-version saves/resources. This is a priority decision, not a fix or a passing migration result.
+- [ ] Manual follow-up: E02 continuous Shift-click extraction and E06 Shift-click insertion remain blocked in the GUI driver, 36 checks across nine full-suite versions and two loaders. User will test when available; development may continue without these results. Record further gaps explicitly.
+- [ ] Extend `dev` beyond 26.2 to the latest available supported release, with build and actual GUI verification.
+- [ ] Verify the independent `codex/port-1.18.2`, `codex/port-1.19.2`, and `codex/port-1.20.1` branches on Forge and Fabric; keep their legacy build structures separate from the mainline matrix.
