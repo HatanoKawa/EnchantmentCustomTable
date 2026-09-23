@@ -27,7 +27,12 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of((findProperty('java_version') ?: '25') as Integer)
 }
 
-def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '26.2'
+def fabricMinecraftVersionValue = findProperty('fabric_minecraft_version') ?: '26.3'
+def official263 = fabricMinecraftVersionValue.toString() == '26.3'
+def official263Sources = rootProject.file('fabric/src/versioned/official26_3/java')
+def official263Overrides = official263 ? fileTree(official263Sources).matching {
+    include '**/*.java'
+}.files.collect { official263Sources.toPath().relativize(it.toPath()).toString().replace(File.separatorChar, '/' as char) }.toSet() : [] as Set
 tasks.withType(AbstractArchiveTask).configureEach {
     archiveVersion = "${project.mod_version}-fabric-mc${fabricMinecraftVersionValue}"
 }
@@ -44,6 +49,13 @@ sourceSets {
                 rootProject.file('src/common/java'),
                 rootProject.file('src/common-minecraft/java')
         ])
+        if (official263) {
+            java.srcDir official263Sources
+            // Override only the classes whose vanilla APIs changed; retain shared 26.x logic.
+            java.exclude { entry ->
+                official263Overrides.contains(entry.path) && !entry.file.toPath().startsWith(official263Sources.toPath())
+            }
+        }
         resources.setSrcDirs([
                 rootProject.file('fabric/src/main/resources'),
                 rootProject.file('src/main/resources'),
@@ -55,7 +67,7 @@ sourceSets {
         java.setSrcDirs([
                 rootProject.file('src/test/java'),
                 rootProject.file('fabric/src/test/java'),
-                rootProject.file('fabric/src/test-versioned/official26/java')
+                rootProject.file(official263 ? 'fabric/src/test-versioned/official26_3/java' : 'fabric/src/test-versioned/official26/java')
         ])
     }
 }

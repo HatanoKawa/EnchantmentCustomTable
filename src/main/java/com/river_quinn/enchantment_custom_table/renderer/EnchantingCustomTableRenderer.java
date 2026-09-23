@@ -86,8 +86,13 @@ public class EnchantingCustomTableRenderer<T extends EnchantingTableLikeBlockEnt
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.75F, 0.5F);
         poseStack.translate(0.0F, 0.1F + Mth.sin(renderState.time * 0.1F) * 0.01F, 0.0F);
-        poseStack.mulPose(Axis.YP.rotation(-renderState.yRot));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(80.0F));
+        //? if >=26.3 {
+        poseStack.rotate(Axis.YP, -renderState.yRot);
+        poseStack.rotateDegrees(Axis.ZP, 80.0F);
+        //?} else {
+        /*poseStack.mulPose(Axis.YP.rotation(-renderState.yRot));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(80.0F));*/
+        //?}
         float f = Mth.frac(renderState.flip + 0.25F) * 1.6F - 0.3F;
         float f1 = Mth.frac(renderState.flip + 0.75F) * 1.6F - 0.3F;
         BookModel.State bookState = BookModel.State.forAnimation(
@@ -105,9 +110,20 @@ public class EnchantingCustomTableRenderer<T extends EnchantingTableLikeBlockEnt
                 -1,
                 this.bookTexture,
                 this.sprites,
-                0,
-                renderState.breakProgress
+                0
+                //? if <26.3 {
+                /*, renderState.breakProgress*/
+                //?}
         );
+        //? if >=26.3 {
+        if (renderState.breakProgress != null) {
+            nodeCollector.order(1).submitCrumblingOverlay(
+                    this.bookModel, bookState, poseStack,
+                    this.bookTexture.renderType(this.bookModel.renderType()),
+                    renderState.lightCoords, OverlayTexture.NO_OVERLAY, -1, renderState.breakProgress
+            );
+        }
+        //?}
         poseStack.popPose();
     }
 }

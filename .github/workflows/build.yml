@@ -65,6 +65,10 @@ jobs:
             project: "26.1.1"
           - version: "26.1.2"
             project: "26.1.2"
+          - version: "26.2"
+            project: "26.2"
+          - version: "26.3"
+            project: "26.3"
           - version: "latest"
             project: "neoforge"
     steps:
@@ -123,6 +127,10 @@ jobs:
             project: "fabric_26_1_1"
           - version: "26.1.2"
             project: "fabric_26_1_2"
+          - version: "26.2"
+            project: "fabric_26_2"
+          - version: "26.3"
+            project: "fabric_26_3"
           - version: "default"
             project: "fabric"
     steps:

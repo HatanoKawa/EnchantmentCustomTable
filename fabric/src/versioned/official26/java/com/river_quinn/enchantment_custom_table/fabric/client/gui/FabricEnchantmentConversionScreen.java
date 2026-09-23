@@ -1,5 +1,7 @@
 package com.river_quinn.enchantment_custom_table.fabric.client.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.fabric.network.FabricConversionSearchPayload;
 import com.river_quinn.enchantment_custom_table.fabric.screen.FabricEnchantmentConversionMenu;
@@ -79,7 +81,7 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (event.key() == 256) {
+        if (event.key() == InputConstants.KEY_ESCAPE) {
             if (minecraft != null && minecraft.player != null) {
                 minecraft.player.closeContainer();
             }

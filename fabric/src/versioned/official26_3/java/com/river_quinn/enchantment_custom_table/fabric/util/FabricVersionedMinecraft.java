@@ -42,7 +42,7 @@ public final class FabricVersionedMinecraft {
     }
 
     public static void dropExportedBook(Player player, ItemStack stack) {
-        player.drop(stack, false);
+        player.drop(stack, false, net.minecraft.util.Prediction.SERVER_ONLY);
     }
 
     public static InteractionResult sidedSuccess(Level level) {

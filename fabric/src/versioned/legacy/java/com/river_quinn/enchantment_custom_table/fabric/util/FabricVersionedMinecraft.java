@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -37,6 +38,10 @@ public final class FabricVersionedMinecraft {
     @FunctionalInterface
     public interface BlockPosMenuFactory<T extends AbstractContainerMenu> {
         T create(int id, Inventory inventory, BlockPos pos);
+    }
+
+    public static void dropExportedBook(Player player, ItemStack stack) {
+        player.drop(stack, false);
     }
 
     public static InteractionResult sidedSuccess(Level level) {

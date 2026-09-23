@@ -28,7 +28,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class EnchantingCustomTableBlock extends EnchantingTableLikeBlock {
-    public static final MapCodec<EnchantingCustomTableBlock> CODEC = simpleCodec(EnchantingCustomTableBlock::new);
+    //? if <26.3 {
+    /*public static final MapCodec<EnchantingCustomTableBlock> CODEC = simpleCodec(EnchantingCustomTableBlock::new);*/
+    //?}
 
     public EnchantingCustomTableBlock(Properties properties) {
         super(properties);
@@ -50,10 +52,12 @@ public class EnchantingCustomTableBlock extends EnchantingTableLikeBlock {
     }
     //?}
 
-    @Override
+    //? if <26.3 {
+    /*@Override
     protected MapCodec<? extends EnchantingCustomTableBlock> codec() {
         return CODEC;
-    }
+    }*/
+    //?}
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {

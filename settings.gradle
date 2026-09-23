@@ -44,6 +44,7 @@ include 'fabric_26_1'
 include 'fabric_26_1_1'
 include 'fabric_26_1_2'
 include 'fabric_26_2'
+include 'fabric_26_3'
 
 project(':fabric_1_21_1').projectDir = file('fabric_versions/1.21.1')
 project(':fabric_1_21_2').projectDir = file('fabric_versions/1.21.2')
@@ -60,6 +61,7 @@ project(':fabric_26_1').projectDir = file('fabric_versions/26.1')
 project(':fabric_26_1_1').projectDir = file('fabric_versions/26.1.1')
 project(':fabric_26_1_2').projectDir = file('fabric_versions/26.1.2')
 project(':fabric_26_2').projectDir = file('fabric_versions/26.2')
+project(':fabric_26_3').projectDir = file('fabric_versions/26.3')
 project(':fabric_1_21_1').buildFileName = '../../fabric/build.gradle'
 project(':fabric_1_21_2').buildFileName = '../../fabric/build.gradle'
 project(':fabric_1_21_3').buildFileName = '../../fabric/build.gradle'
@@ -75,13 +77,14 @@ project(':fabric_26_1').buildFileName = '../../fabric/build-26.gradle'
 project(':fabric_26_1_1').buildFileName = '../../fabric/build-26.gradle'
 project(':fabric_26_1_2').buildFileName = '../../fabric/build-26.gradle'
 project(':fabric_26_2').buildFileName = '../../fabric/build-26.gradle'
+project(':fabric_26_3').buildFileName = '../../fabric/build-26.gradle'
 
 stonecutter {
     kotlinController = false
     centralScript = 'build.gradle'
     create(getRootProject()) {
-        versions '1.21.1', '1.21.2', '1.21.3', '1.21.4', '1.21.5', '1.21.6', '1.21.7', '1.21.8', '1.21.9', '1.21.10', '1.21.11', '26.1', '26.1.1', '26.1.2', '26.2'
-        vcsVersion = '26.2'
+        versions '1.21.1', '1.21.2', '1.21.3', '1.21.4', '1.21.5', '1.21.6', '1.21.7', '1.21.8', '1.21.9', '1.21.10', '1.21.11', '26.1', '26.1.1', '26.1.2', '26.2', '26.3'
+        vcsVersion = '26.3'
     }
 }
 
@@ -100,7 +103,8 @@ def neoForgeVersionProjects = [
         '26.1',
         '26.1.1',
         '26.1.2',
-        '26.2'
+        '26.2',
+        '26.3'
 ]
 def fabricVersionProjects = [
         'fabric_1_21_1',
@@ -117,7 +121,8 @@ def fabricVersionProjects = [
         'fabric_26_1',
         'fabric_26_1_1',
         'fabric_26_1_2',
-        'fabric_26_2'
+        'fabric_26_2',
+        'fabric_26_3'
 ]
 
 gradle.rootProject {
@@ -161,6 +166,7 @@ gradle.rootProject {
         dependsOn ':verifyCommon',
                 ':1.21.1:build',
                 ':26.2:build',
+                ':26.3:build',
                 ':neoforge:build',
                 ':fabric_1_21_1:build',
                 ':fabric_1_21_11:build',
@@ -168,6 +174,7 @@ gradle.rootProject {
                 ':fabric_26_1_1:build',
                 ':fabric_26_1_2:build',
                 ':fabric_26_2:build',
+                ':fabric_26_3:build',
                 ':fabric:build'
     }
 

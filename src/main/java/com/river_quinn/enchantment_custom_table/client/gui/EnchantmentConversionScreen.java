@@ -1,5 +1,7 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 //? if <1.21.6 {
 /*import com.mojang.blaze3d.systems.RenderSystem;
 *///?}
@@ -137,7 +139,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     //? if >=1.21.9 {
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (event.key() == 256) {
+        if (event.key() == InputConstants.KEY_ESCAPE) {
             this.minecraft.player.closeContainer();
             return true;
         }
@@ -159,7 +161,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     //?} else {
     /*@Override
     public boolean keyPressed(int key, int b, int c) {
-        if (key == 256) {
+        if (key == InputConstants.KEY_ESCAPE) {
             this.minecraft.player.closeContainer();
             return true;
         }

@@ -10,6 +10,7 @@ import com.river_quinn.enchantment_custom_table.core.layout.TableMenuLayout;
 import com.river_quinn.enchantment_custom_table.core.session.EnchantingTableSession;
 import com.river_quinn.enchantment_custom_table.core.session.TableOperationResult;
 import com.river_quinn.enchantment_custom_table.fabric.util.FabricEnchantmentUtils;
+import com.river_quinn.enchantment_custom_table.fabric.util.FabricVersionedMinecraft;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -170,7 +171,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                     acknowledgeBoundInventoryVersion();
                 }
                 if (result.success() && !player.getInventory().add(result.exportedStack())) {
-                    player.drop(result.exportedStack(), false);
+                    FabricVersionedMinecraft.dropExportedBook(player, result.exportedStack());
                 }
                 if (result.playSound()) {
                     playUseSound();

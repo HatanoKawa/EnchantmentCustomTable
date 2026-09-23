@@ -442,7 +442,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	public void removed(@NotNull Player playerIn) {
 		super.removed(playerIn);
 		if (playerIn instanceof ServerPlayer) {
-			playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(1));
+			//? if >=26.3 {
+            playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(1), net.minecraft.util.Prediction.SERVER_ONLY);
+            //?} else {
+            /*playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(1));*/
+            //?}
 			itemHandler.setStackInSlot(1, ItemStack.EMPTY);
 		}
 	}
@@ -468,7 +472,11 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		syncPageState();
 		acknowledgeBoundInventoryVersion();
 		if (result.success()) {
-			entity.getInventory().placeItemBackInInventory(result.exportedStack());
+			//? if >=26.3 {
+            entity.getInventory().placeItemBackInInventory(result.exportedStack(), net.minecraft.util.Prediction.SERVER_ONLY);
+            //?} else {
+            /*entity.getInventory().placeItemBackInInventory(result.exportedStack());*/
+            //?}
 		}
 		if (result.playSound()) {
 			playUseSound();
