@@ -11,7 +11,7 @@ Main shared code is split by dependency level:
 - `src/main/java`: NeoForge platform implementation used by the root Stonecutter NeoForge matrix and the `:neoforge` project.
 - `src/test/java`: shared JVM tests for common table rules and session behavior.
 - `fabric/src/test/java`: Minecraft-dependent Fabric regression tests using real slots, item components, and table sessions; run for every Fabric version project.
-- `fabric/src/test-versioned/{legacy,official26}/java`: test-only vanilla registry bootstrap; `26.x` also binds default item components before creating stacks.
+- `fabric/src/test-versioned/{legacy,official26,official26_3}/java`: test-only vanilla registry bootstrap; `26.x` also binds default item components before creating stacks.
 
 Platform and version projects live in separate directories:
 

@@ -1,0 +1,76 @@
+{
+  "targets": {
+    "fabric-1.18.2": {
+      "cases": {
+        "PASS": 14,
+        "BLOCKED": 2
+      },
+      "original_files_verified": true,
+      "code_basis": "cbe3354 (Q01/Q02/Q05/Q06/Q07 observed before copy/search guards; corresponding source unchanged)"
+    },
+    "fabric-1.19.2": {
+      "cases": {
+        "PASS": 14,
+        "BLOCKED": 2
+      },
+      "original_files_verified": true,
+      "code_basis": "b9db390"
+    },
+    "fabric-1.20.1": {
+      "cases": {
+        "PASS": 14,
+        "BLOCKED": 2
+      },
+      "original_files_verified": true,
+      "code_basis": "42a1988"
+    },
+    "fabric-26.3": {
+      "cases": {
+        "BLOCKED": 27,
+        "PASS": 2,
+        "PARTIAL": 1
+      },
+      "original_files_verified": true,
+      "code_basis": "610ce47"
+    },
+    "forge-1.18.2": {
+      "cases": {
+        "PASS": 14,
+        "BLOCKED": 2
+      },
+      "original_files_verified": true,
+      "code_basis": "cbe3354"
+    },
+    "forge-1.19.2": {
+      "cases": {
+        "PASS": 14,
+        "BLOCKED": 2
+      },
+      "original_files_verified": true,
+      "code_basis": "b9db390"
+    },
+    "forge-1.20.1": {
+      "cases": {
+        "PASS": 14,
+        "BLOCKED": 2
+      },
+      "original_files_verified": true,
+      "code_basis": "42a1988"
+    },
+    "neoforge-26.3": {
+      "cases": {
+        "BLOCKED": 27,
+        "PASS": 2,
+        "PARTIAL": 1
+      },
+      "original_files_verified": true,
+      "code_basis": "610ce47"
+    }
+  },
+  "total": {
+    "PASS": 88,
+    "BLOCKED": 66,
+    "PARTIAL": 2
+  },
+  "scope": "new 26.3 full plan and six legacy focused suites; previous round not recounted"
+}

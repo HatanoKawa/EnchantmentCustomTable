@@ -1,12 +1,13 @@
 # macOS 开发客户端 GUI 验证
 
-这个工具为 NeoForge 和 Fabric `1.21.1～26.2` 的开发客户端提供可识别的 macOS 应用身份，
+这个工具为 NeoForge 和 Fabric `1.21.1～26.3` 的开发客户端提供可识别的 macOS 应用身份，
 用于让桌面自动化工具定位真实的 Minecraft 窗口、截图及发送键鼠输入。
 启动工具本身不修改模组逻辑、常规 `runClient` 配置或发布产物。
 
 全版本使用[全量/快速分级清单](tiered-matrix.md)。[第三轮结果](round3-2026-09-22.md)
 已覆盖全部 30 个目标的可执行清单：548 本轮通过、52 复用通过、36 Shift 输入阻塞、0 待验。
-两类旧存档迁移缺陷仍未修复，独立于同版本 GUI 通过记录。
+两类旧存档迁移缺陷按用户要求降为低优先级搁置，独立于同版本 GUI 通过记录。
+[第四轮记录](round4-2026-09-23.md)新增 26.3 和三个 legacy 分支；26.3 的 SDL 鼠标注入受阻，不能沿用第三轮的 GUI 通过结论。
 
 ## 启动
 
@@ -68,6 +69,20 @@ fabric_versions/1.21.1/build/gui-validation/ECT GUI Fabric.app
 游戏工作目录、存档和截图分别在本 worktree 的 `versions/1.21.1/run/` 和
 `fabric_versions/1.21.1/run/` 中。
 所有生成文件都在已忽略的构建/运行目录内。
+
+## Legacy 分支
+
+在对应 `codex/port-*` 独立分支中使用 `-PguiLegacy=true -PguiLoader=both -PguiVersion=1.18.2`
+导出 `:forge:exportGuiClientLaunch :fabric:exportGuiClientLaunch`，然后使用
+`--legacy --loader forge` 或 `--legacy --loader fabric` 启动，版本参数须与分支一致。
+这些分支保留 Java 17、Forge/Fabric 结构，不加入主线版本矩阵。
+Gradle 8 的 JVM 参数属性与 ForgeGradle 的延迟运行配置须显式导出；只导出加载器环境覆盖，
+不保存继承的 shell 环境。旧 Loom 重复追加的 `-XstartOnFirstThread` 在启动器中去重。
+
+Forge 1.18.2 的原始 LWJGL 3.2.1 只有 Intel macOS 原生库。在 Apple Silicon 上，
+可显式追加 `--legacy-forge-arm`，复用同分支 Fabric Loom 已准备的七个 LWJGL JAR 和 ARM 原生库。
+该选项只适用于 `--legacy --loader forge --minecraft 1.18.2`，另写测试启动清单和 classpath 副本；
+不修改普通 `runClient`、缓存或发布包。使用此选项的 GUI 证据须注明运行库差异。
 
 ## 实现
 

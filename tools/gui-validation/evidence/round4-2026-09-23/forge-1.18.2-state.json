@@ -1,0 +1,45 @@
+{
+  "root": "/Users/river_quinn/workspace/learn/EnchantmentCustomTable-legacy-1.18.2",
+  "minecraft": "1.18.2",
+  "loader": "forge",
+  "tier": "legacy focused regression",
+  "originals": {
+    "config": {
+      "path": "forge/run/config/enchantment_custom_table-common.toml",
+      "existed": false
+    },
+    "options": {
+      "path": "forge/run/options.txt",
+      "existed": false
+    }
+  },
+  "cases": {
+    "Q01": "PASS: both world models, empty table layouts and tooltips observed",
+    "Q02": "PASS: 35/36 boundary, V pickup, reopen and save/reload preserve 1 book/0 payment and one owned V",
+    "Q03": "PASS: copy/refill/reopen/world reload agree with server: 1 book/4 blocks and V template/output/owned book",
+    "Q04": "PASS: paging, match/no-match/clear, mending input, Esc/reopen, scheduled open-menu reload and subsequent V pickup",
+    "Q05": "PASS: four normal books extracted in stable slots; fresh export yields one four-enchantment book and cleared sword",
+    "Q06": "PASS: three insertion paths consume books once; server sword Sharpness II/Looting I/Unbreaking II",
+    "Q07": "PASS: three III -> II -> III normal extraction/return cycles; six server snapshots and no remaining player book",
+    "Q08": "PASS: exported four-enchantment book/cleared sword survived world reload; merged Sharpness II/Looting I/Unbreaking II sword survived client restart",
+    "K01": "PASS: observed GUI and server inventory; strict/free config captured",
+    "K02": "PASS: observed GUI and server inventory; strict/free config captured",
+    "K03": "PASS: observed GUI and server inventory; strict/free config captured",
+    "K04": "PASS: observed GUI and server inventory; strict/free config captured",
+    "K05": "PASS: observed GUI and server inventory; strict/free config captured",
+    "K06": "PASS: observed GUI and server inventory; strict/free config captured",
+    "E02": "BLOCKED: Shift-click unsupported",
+    "E06": "BLOCKED: Shift-click unsupported"
+  },
+  "restored": true,
+  "status": "completed: 14 PASS, 2 Shift input BLOCKED",
+  "world": "forge/run/saves/ECT-GUI-R4-forge-1_18_2",
+  "world_created": "Copy of fresh vanilla-only 1.18.2 flat creative seed, created via GUI with no mod items or table data; not a mod migration test",
+  "findings": [
+    "Unmodified Forge 40.2.0 launch fails on Apple Silicon: LWJGL 3.2.1 natives are x86_64 (UnsatisfiedLinkError)",
+    "GUI completed using explicit test-only LWJGL 3.3.2 runtime from companion Fabric cache; stock Forge runtime remains untested on a compatible platform"
+  ],
+  "code_basis": "cbe3354",
+  "runtime": "Java 17 ARM; Forge 40.2.0; test-only LWJGL 3.3.2 from same-version Loom; stock Intel-only native failure retained",
+  "termination": "normal GUI Command-Q"
+}

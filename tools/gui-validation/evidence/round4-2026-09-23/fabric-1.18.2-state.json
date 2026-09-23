@@ -1,0 +1,44 @@
+{
+  "root": "/Users/river_quinn/workspace/learn/EnchantmentCustomTable-legacy-1.18.2",
+  "minecraft": "1.18.2",
+  "loader": "fabric",
+  "tier": "legacy focused regression",
+  "originals": {
+    "config": {
+      "path": "fabric/run/config/enchantment_custom_table.json",
+      "existed": false
+    },
+    "options": {
+      "path": "fabric/run/options.txt",
+      "existed": false
+    }
+  },
+  "cases": {
+    "Q01": "PASS: both table models, GUI layouts and item tooltips observed",
+    "Q02": "PASS: 35 rejects; 36 enables Sharpness V; 1 book/0 emerald and owned V survive reopen and world reload",
+    "Q03": "PASS after server-only copy fix: generate/take/refill, reopen and world reload all show 1 book/4 blocks, template/output/owned book V; server agrees",
+    "Q04": "PASS after suggestion fix: 2/2 page, sharpness/no-match/clear, mending/e input, Esc/reopen, scheduled reload while open then Sharpness V pickup",
+    "Q05": "PASS: four normal extractions leave empty slots and unenchanted sword; fresh export gives one four-enchantment book",
+    "Q06": "PASS: input, empty generated and same-name generated insertion; server sword Sharpness II, Looting I, Unbreaking II; books consumed",
+    "Q07": "PASS: three complete III -> II -> III normal take/return cycles; server inventory read after every half-cycle, no carried remainder",
+    "Q08": "PASS: exported four-enchantment book and cleared sword survived world reload; merged sword Sharpness II/Looting I/Unbreaking II survived client restart",
+    "K01": "PASS: observed GUI and server inventory; strict/free config captured",
+    "K02": "PASS: observed GUI and server inventory; strict/free config captured",
+    "K03": "PASS: observed GUI and server inventory; strict/free config captured",
+    "K04": "PASS: observed GUI and server inventory; strict/free config captured",
+    "K05": "PASS: observed GUI and server inventory; strict/free config captured",
+    "K06": "PASS: observed GUI and server inventory; strict/free config captured",
+    "E02": "BLOCKED: Shift-click unsupported",
+    "E06": "BLOCKED: Shift-click unsupported"
+  },
+  "restored": true,
+  "status": "completed: 14 PASS, 2 Shift input BLOCKED",
+  "world": "fabric/run/saves/ECT-GUI-R4-fabric-1_18_2",
+  "world_created": "Copy of fresh vanilla-only 1.18.2 flat creative seed, created via GUI with no mod items or table data; not a mod migration test",
+  "findings": [
+    "Search suggestion overlaps nonempty query; observed in GUI and fix prepared for legacy 1.18.2/1.19.2 on both loaders",
+    "Initial Fabric Java 21 launch failed because old Mixin cannot parse class version 65; build now binds client to Java 17"
+  ],
+  "code_basis": "cbe3354 (Q01/Q02/Q05/Q06/Q07 observed before copy/search guards; corresponding source unchanged)",
+  "termination": "normal GUI Command-Q"
+}

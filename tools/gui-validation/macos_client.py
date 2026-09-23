@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import plistlib
+import platform
 import shutil
 import subprocess
 import sys
@@ -13,8 +14,11 @@ import sys
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--loader', choices=['neoforge', 'fabric'], default='neoforge')
+    parser.add_argument('--loader', choices=['neoforge', 'forge', 'fabric'], default='neoforge')
     parser.add_argument('--minecraft', default='1.21.1', help='Minecraft version project to launch')
+    parser.add_argument('--legacy', action='store_true', help='Use the independent Forge/Fabric project layout')
+    parser.add_argument('--legacy-forge-arm', action='store_true',
+                        help='For Forge 1.18.2 on Apple Silicon, use the companion Loom LWJGL runtime')
     parser.add_argument('--launch', action='store_true', help='Run the prepared client in this process')
     parser.add_argument('--keep-awake', action='store_true',
                         help='Keep display/system awake for this client, at most one hour')
@@ -25,24 +29,71 @@ def main():
         parser.error('--keep-awake requires --launch.')
 
     root = Path(__file__).resolve().parents[2]
-    matrix = root / ('fabric_versions' if args.loader == 'fabric' else 'versions')
-    if args.minecraft not in {p.name for p in matrix.iterdir() if (p / 'gradle.properties').is_file()}:
-        parser.error('Minecraft version is not present in this loader matrix.')
-    project = matrix / args.minecraft
+    if args.legacy:
+        if args.loader not in ('forge', 'fabric'):
+            parser.error('Legacy projects use Forge or Fabric.')
+        project = root / args.loader
+    else:
+        matrix = root / ('fabric_versions' if args.loader == 'fabric' else 'versions')
+        if args.minecraft not in {p.name for p in matrix.iterdir() if (p / 'gradle.properties').is_file()}:
+            parser.error('Minecraft version is not present in this loader matrix.')
+        project = matrix / args.minecraft
     build = root / project / 'build/gui-validation'
     manifest = build / 'launch.json'
     if not manifest.is_file():
         parser.error('Export this loader with export-client.init.gradle and exportGuiClientLaunch first.')
     launch = json.loads(manifest.read_text())
+    # Older Loom RunConfig providers can append this macOS flag on each evaluation.
+    # Keep one first-thread request in the exported launcher command.
+    first_thread_seen = False
+    command = []
+    for argument in launch['command']:
+        if argument == '-XstartOnFirstThread':
+            if first_thread_seen:
+                continue
+            first_thread_seen = True
+        command.append(argument)
+    launch['command'] = command
     if launch['loader'] != args.loader or launch.get('minecraftVersion', '1.21.1') != args.minecraft:
         parser.error('Launch manifest does not match the requested loader/version; export again.')
+    if args.legacy_forge_arm:
+        if not (args.legacy and args.loader == 'forge' and args.minecraft == '1.18.2'
+                and platform.machine() == 'arm64'):
+            parser.error('--legacy-forge-arm is only for Forge 1.18.2 on Apple Silicon.')
+        companion = root / 'fabric/build/gui-validation/launch.json'
+        fabric_launch = json.loads(companion.read_text())
+        if fabric_launch['loader'] != 'fabric' or fabric_launch['minecraftVersion'] != args.minecraft:
+            parser.error('Export the companion Fabric launch for the same version first.')
+        fabric_command = fabric_launch['command']
+        replacement = [p for p in fabric_command[fabric_command.index('-cp') + 1].split(os.pathsep)
+                       if 'org.lwjgl' in Path(p).parts and '-natives-' not in Path(p).name]
+        native_dir = root / '.gradle/loom-cache/natives' / args.minecraft
+        if len(replacement) != 7 or not any(native_dir.rglob('libglfw.dylib')):
+            parser.error('Expected the seven prepared Loom LWJGL jars and extracted native libraries.')
+        def replace_lwjgl(paths):
+            return [p for p in paths if 'org.lwjgl' not in Path(p).parts] + replacement
+        command = list(launch['command'])
+        cp_index = command.index('-cp') + 1
+        command[cp_index] = os.pathsep.join(replace_lwjgl(command[cp_index].split(os.pathsep)))
+        for i, value in enumerate(command):
+            if value.startswith('-DlegacyClassPath.file='):
+                original = Path(value.split('=', 1)[1])
+                adapted = build / 'minecraftClasspath-macos-arm.txt'
+                adapted.write_text('\n'.join(replace_lwjgl(original.read_text().splitlines())) + '\n')
+                command[i] = '-DlegacyClassPath.file=' + str(adapted)
+        command[1:1] = ['-Dorg.lwjgl.librarypath=' + str(native_dir),
+                        '-Djava.library.path=' + str(native_dir)]
+        launch['command'] = command
+        # Separate launch copy: no dependency cache, normal runClient or release jar is modified.
+        (build / 'launch-macos-arm.json').write_text(json.dumps(launch, indent=2) + '\n')
+        print('Test runtime override: companion Loom LWJGL for Forge 1.18.2 on Apple Silicon', flush=True)
     java_home = Path(launch['javaHome'])
     java = Path(launch['command'][0])
     libjli = java_home / 'lib/libjli.dylib'
     if not java.is_file() or not libjli.is_file():
         parser.error('The exported Java toolchain is no longer available; export again.')
 
-    app_name = 'ECT GUI Fabric' if args.loader == 'fabric' else 'ECT GUI Dev'
+    app_name = {'fabric': 'ECT GUI Fabric', 'forge': 'ECT GUI Forge', 'neoforge': 'ECT GUI Dev'}[args.loader]
     bundle_id = ('com.river-quinn.ect.gui-dev.fabric.mc1211'
                  if args.loader == 'fabric' else 'com.river-quinn.ect.gui-dev.mc1211')
     if args.minecraft != '1.21.1':

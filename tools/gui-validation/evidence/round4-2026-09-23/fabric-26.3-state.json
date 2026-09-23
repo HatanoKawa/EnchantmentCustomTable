@@ -1,0 +1,76 @@
+{
+  "loader": "fabric",
+  "minecraft": "26.3",
+  "tier": "full",
+  "world": "fabric_versions/26.3/run/saves/ECT-GUI-R4-fabric-26_3",
+  "originals": {
+    "config": {
+      "path": "fabric_versions/26.3/run/config/enchantment_custom_table.json",
+      "existed": false
+    },
+    "options": {
+      "path": "fabric_versions/26.3/run/options.txt",
+      "existed": false
+    }
+  },
+  "cases": {
+    "E02": "BLOCKED: Shift-click unsupported",
+    "E06": "BLOCKED: Shift-click unsupported",
+    "C01": "PASS",
+    "V02": "PASS: search accepts mending, Backspace clears, Esc closes and menu reopens",
+    "V01": "PARTIAL: both models, textures and empty GUIs observed; tooltip blocked",
+    "C02": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C03": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C04": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C05": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C06": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C07": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C08": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C09": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C10": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C11": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C12": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E01": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E03": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E04": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E05": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E07": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E08": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E09": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E10": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K01": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K02": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K03": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K04": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K05": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K06": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed"
+  },
+  "restored": true,
+  "status": "completed with GUI driver blockers",
+  "game_metadata": {
+    "id": "26.3",
+    "name": "26.3",
+    "world_version": 5023,
+    "series_id": "main",
+    "protocol_version": 777,
+    "pack_version": {
+      "resource_major": 97,
+      "resource_minor": 1,
+      "data_major": 121,
+      "data_minor": 0
+    },
+    "build_time": "2026-09-15T11:20:48+00:00",
+    "java_component": "java-runtime-epsilon",
+    "java_version": 25,
+    "stable": true,
+    "use_editor": false
+  },
+  "world_created": "Fresh creative world via GUI; default terrain, isolated command-prepared test platform",
+  "findings": [
+    "26.3 SDL input: CUA cursor moves on the screenshot but Minecraft keeps previous mouse coordinates; reproduced in vanilla title buttons and mod slots. Keyboard navigation works.",
+    "Raw mouse setting no longer exists in 26.3 options; no raw-input-off experiment was performed.",
+    "V02 found real Escape bug in mod screen: event.key() == 256. Fixed with InputConstants.KEY_ESCAPE in 610ce47; actual V02 keyboard retest passed."
+  ],
+  "termination": "GUI Command-Q normal exit",
+  "code_basis": "610ce47"
+}

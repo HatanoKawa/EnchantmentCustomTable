@@ -9,7 +9,7 @@ import shutil
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
-FULL = {'1.21.1', '1.21.2', '1.21.4', '1.21.5', '1.21.6', '1.21.9', '1.21.11', '26.1', '26.2'}
+FULL = {'1.21.1', '1.21.2', '1.21.4', '1.21.5', '1.21.6', '1.21.9', '1.21.11', '26.1', '26.2', '26.3'}
 SWITCHES = ('enforceEnchantmentLevelLimit', 'incrementalSameLevelMerge',
             'convertOnlyLevelOneBook', 'freeConversionTableCosts')
 

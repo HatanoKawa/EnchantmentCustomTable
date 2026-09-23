@@ -1,0 +1,8 @@
+[22:42:55] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_22.42.55.png
+[22:43:21] [Server thread/INFO] (Minecraft) [Not Secure] [Player625] GUIFIXTURE esplit
+[22:43:21] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player625] GUIFIXTURE esplit
+[22:43:23] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_22.43.22.png
+[22:43:24] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_22.43.24.png
+[22:43:35] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-23_22.43.35.png
+[22:43:36] [Render thread/INFO] (Minecraft) Stopping!
+[22:43:36] [Server thread/INFO] (Minecraft) Stopping server

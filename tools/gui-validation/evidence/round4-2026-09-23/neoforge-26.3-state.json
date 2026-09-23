@@ -1,0 +1,54 @@
+{
+  "loader": "neoforge",
+  "minecraft": "26.3",
+  "tier": "full",
+  "world": "versions/26.3/run/saves/ECT-GUI-R4-neoforge-26_3",
+  "originals": {
+    "config": {
+      "path": "versions/26.3/run/config/enchantment_custom_table-common.toml",
+      "existed": false
+    },
+    "options": {
+      "path": "versions/26.3/run/options.txt",
+      "existed": false
+    }
+  },
+  "cases": {
+    "E02": "BLOCKED: Shift-click unsupported",
+    "E06": "BLOCKED: Shift-click unsupported",
+    "C01": "PASS",
+    "V01": "PARTIAL: both models, textures and empty GUIs observed; tooltip blocked",
+    "V02": "PASS: search accepts mending, Backspace clears, Esc closes and menu reopens",
+    "C02": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C03": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C04": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C05": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C06": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C07": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C08": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C09": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C10": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C11": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "C12": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E01": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E03": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E04": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E05": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E07": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E08": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E09": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "E10": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K01": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K02": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K03": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K04": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K05": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed",
+    "K06": "BLOCKED: 26.3 SDL pointer position not delivered correctly by CUA; GUI business operation not executed"
+  },
+  "restored": true,
+  "status": "completed with GUI driver blockers",
+  "world_created": "Isolated same-26.3 copy of fresh Fabric test world; fixtures reset all test inventory. Not a migration test.",
+  "termination": "GUI Command-Q normal exit",
+  "code_basis": "610ce47",
+  "findings": []
+}

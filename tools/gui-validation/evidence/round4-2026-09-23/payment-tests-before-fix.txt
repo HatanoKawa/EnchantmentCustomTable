@@ -1,0 +1,35 @@
+build-legacy-1.18.2-before.log
+FabricConversionPaymentSessionTest > blockPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+FabricConversionPaymentSessionTest > emeraldPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+> Task :fabric:test FAILED
+ForgeConversionPaymentSessionTest > blockPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+ForgeConversionPaymentSessionTest > emeraldPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+> Task :forge:test FAILED
+
+build-legacy-1.19.2-before.log
+> Task :fabric:test FAILED
+FabricConversionPaymentSessionTest > blockPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+FabricConversionPaymentSessionTest > emeraldPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+> Task :forge:test FAILED
+ForgeConversionPaymentSessionTest > blockPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+ForgeConversionPaymentSessionTest > emeraldPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+
+payment-legacy-1.20.1-before.log
+> Task :fabric:test FAILED
+FabricConversionPaymentSessionTest > blockPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+FabricConversionPaymentSessionTest > emeraldPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+> Task :forge:test FAILED
+ForgeConversionPaymentSessionTest > blockPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58
+ForgeConversionPaymentSessionTest > emeraldPurchaseNotifiesPersistentInventoryAfterAnEarlierSave() FAILED
+    org.opentest4j.AssertionFailedError at ConversionPaymentSessionTest.java:58

@@ -3,24 +3,29 @@ import groovy.json.JsonOutput
 // Opt-in only: no change to normal runClient or release builds.
 gradle.projectsEvaluated {
     def loader = gradle.rootProject.findProperty('guiLoader') ?: 'neoforge'
-    if (!(loader in ['neoforge', 'fabric', 'both'])) {
-        throw new GradleException('guiLoader must be neoforge, fabric or both')
+    def legacy = gradle.rootProject.findProperty('guiLegacy')?.toString() == 'true'
+    if (!(loader in ['neoforge', 'forge', 'fabric', 'both'])) {
+        throw new GradleException('guiLoader must be neoforge, forge, fabric or both')
     }
     def versionSelection = (gradle.rootProject.findProperty('guiVersion') ?: '1.21.1').toString()
     def versions = versionSelection == 'all'
             ? gradle.rootProject.subprojects.findAll { it.name ==~ /(?:1\.21|26\.\d+)(?:\.\d+)?/ }.collect { it.name }.sort()
             : [versionSelection]
-    def loaders = loader == 'both' ? ['neoforge', 'fabric'] : [loader]
+    def loaders = loader == 'both' ? [legacy ? 'forge' : 'neoforge', 'fabric'] : [loader]
     loaders.each { selectedLoader ->
         versions.each { minecraftVersion ->
-            def target = gradle.rootProject.project(selectedLoader == 'fabric'
+            def target = gradle.rootProject.project(legacy ? ':' + selectedLoader : selectedLoader == 'fabric'
                     ? ':fabric_' + minecraftVersion.replace('.', '_') : ':' + minecraftVersion)
-            def client = target.tasks.named('runClient').get()
             target.tasks.register('exportGuiClientLaunch') {
                 group = 'verification'
                 description = "Exports the prepared ${selectedLoader} ${minecraftVersion} development client launch."
-                dependsOn client.taskDependencies.getDependencies(client)
+                dependsOn {
+                    // ForgeGradle registers runs in a later projectsEvaluated callback.
+                    def client = target.tasks.named('runClient').get()
+                    client.taskDependencies.getDependencies(client)
+                }
                 doLast {
+                    def client = target.tasks.named('runClient').get()
                     def runtimeClasspath
                     def gameDirectory
                     def environmentOverrides
@@ -33,6 +38,25 @@ gradle.projectsEvaluated {
                         gameDirectory = runDirectory instanceof org.gradle.api.file.FileSystemLocation
                                 ? runDirectory.asFile : new File(target.projectDir, runDirectory.toString())
                         environmentOverrides = client.internalEnvironmentVars.get()
+                    } else if (selectedLoader == 'forge') {
+                        // Mirror ForgeGradle MinecraftRunTask.exec's preparation, without launching it.
+                        def run = client.runConfig.get()
+                        def generator = run.class.classLoader.loadClass('net.minecraftforge.gradle.common.util.runs.RunConfigGenerator')
+                        def tokens = generator.configureTokensLazy(target, run,
+                                generator.mapModClassesToGradle(target, run),
+                                client.minecraftArtifacts, client.runtimeClasspathArtifacts)
+                        client.args(generator.getArgsStream(run, tokens, false).toArray())
+                        run.jvmArgs.each { client.jvmArgs(run.replace(tokens, it)) }
+                        if (run.isClient()) {
+                            client.additionalClientArgs.get().each { client.jvmArgs(run.replace(tokens, it)) }
+                        }
+                        run.properties.each { key, value -> client.systemProperty(key, run.replace(tokens, value)) }
+                        run.allSources.each { client.classpath(it.runtimeClasspath) }
+                        runtimeClasspath = client.classpath.asPath
+                        gameDirectory = new File(run.workingDirectory)
+                        environmentOverrides = run.environment.collectEntries { key, value ->
+                            [(key): run.replace(tokens, value)]
+                        }
                     } else {
                         // ModDev normally resolves this extra classpath inside RunGameTask.exec().
                         client.classpath(client.classpathProvider)
@@ -44,6 +68,10 @@ gradle.projectsEvaluated {
                     def command = [javaLauncher.executablePath.asFile.absolutePath]
                     // allJvmArgs already includes the ModDev JVM argument providers (modFolders).
                     command.addAll(client.allJvmArgs)
+                    // Gradle 8 keeps explicit/lazy JVM args separate until JavaExec.exec().
+                    if (legacy) {
+                        command.addAll(client.jvmArguments.getOrElse([]))
+                    }
                     command.addAll(['-cp', runtimeClasspath, client.mainClass.get()])
                     command.addAll(client.args)
                     client.argumentProviders.each { command.addAll(it.asArguments()) }

@@ -1,0 +1,19 @@
+verifyAll-26.3.log
+BUILD SUCCESSFUL in 32m 13s
+298 actionable tasks: 157 executed, 3 from cache, 138 up-to-date
+
+release-artifacts-26.3.log
+BUILD SUCCESSFUL in 30s
+287 actionable tasks: 7 executed, 280 up-to-date
+
+build-legacy-1.18.2-gui-fixes.log
+BUILD SUCCESSFUL in 47s
+33 actionable tasks: 12 executed, 21 up-to-date
+
+build-legacy-1.19.2-gui-fixes.log
+BUILD SUCCESSFUL in 42s
+32 actionable tasks: 12 executed, 20 up-to-date
+
+build-legacy-1.20.1-gui-fixes.log
+BUILD SUCCESSFUL in 43s
+32 actionable tasks: 12 executed, 20 up-to-date
