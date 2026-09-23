@@ -137,7 +137,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
                 Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search")
         );
         searchBox.setMaxLength(EnchantmentSearchRules.MAX_SEARCH_QUERY_LENGTH);
-        searchBox.setSuggestion(Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search").getString());
+        searchBox.setSuggestion(pendingSearchQuery.isEmpty() ? Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search").getString() : null);
         searchBox.setValue(pendingSearchQuery);
         searchBox.setResponder(this::queueSearchRequest);
         this.addRenderableWidget(searchBox);
@@ -164,6 +164,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     }
 
     private void queueSearchRequest(String query) {
+        searchBox.setSuggestion(query.isEmpty() ? Component.translatable("gui.enchantment_custom_table.enchantment_conversion.search").getString() : null);
         pendingSearchQuery = EnchantmentSearchRules.sanitizeSearchQuery(query);
         searchUpdateDelayTicks = 6;
     }
