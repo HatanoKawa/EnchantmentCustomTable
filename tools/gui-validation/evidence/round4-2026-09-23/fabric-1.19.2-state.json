@@ -1,0 +1,40 @@
+{
+  "root": "/Users/river_quinn/workspace/learn/EnchantmentCustomTable-legacy-1.19.2",
+  "minecraft": "1.19.2",
+  "loader": "fabric",
+  "tier": "legacy focused regression",
+  "originals": {
+    "config": {
+      "path": "fabric/run/config/enchantment_custom_table.json",
+      "existed": false
+    },
+    "options": {
+      "path": "fabric/run/options.txt",
+      "existed": false
+    }
+  },
+  "cases": {
+    "Q01": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "Q02": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "Q03": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "Q04": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "Q05": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "Q06": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "Q07": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "Q08": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "K01": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "K02": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "K03": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "K04": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "K05": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "K06": "PASS: actual GUI operations and server inventory observed; see filtered phase log and screenshots",
+    "E02": "BLOCKED: Shift-click unsupported",
+    "E06": "BLOCKED: Shift-click unsupported"
+  },
+  "restored": true,
+  "status": "completed: 14 PASS, 2 Shift input BLOCKED",
+  "world": "fabric/run/saves/ECT-GUI-R4-fabric-1_19_2",
+  "world_created": "Copy of fresh vanilla-only 1.18.2 flat creative seed, created via GUI with no mod items or table data; not a mod migration test",
+  "code_basis": "b9db390",
+  "termination": "normal GUI Command-Q"
+}
