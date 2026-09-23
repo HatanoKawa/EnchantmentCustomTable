@@ -1,0 +1,29 @@
+[23:18:50] [Server thread/INFO] (Minecraft) [Player677] GUIEVIDENCE
+[23:18:50] [Render thread/INFO] (Minecraft) [CHAT] [Player677] GUIEVIDENCE
+[23:18:50] [Render thread/INFO] (Minecraft) [CHAT] GUIBLOCK Items= Inventory={Items:[{Count:1b,Slot:0b,id:"minecraft:diamond_sword",tag:{Damage:0,Enchantments:[{id:"minecraft:sharpness",lvl:2s},{id:"minecraft:looting",lvl:1s},{id:"minecraft:unbreaking",lvl:2s}]}}]}
+[23:18:50] [Render thread/INFO] (Minecraft) [CHAT] GUIPLAYER [{Count:1b,Slot:5b,id:"minecraft:book"},{Count:1b,Slot:6b,id:"minecraft:dirt"}]
+[23:18:51] [Render thread/INFO] (Minecraft) [CHAT] Saved screenshot as 2026-09-23_23.18.51.png
+[23:18:53] [Server thread/INFO] (Minecraft) [Player677] GUIFIXTURE ccopy
+[23:18:53] [Render thread/INFO] (Minecraft) [CHAT] [Player677] GUIFIXTURE ccopy
+[23:19:00] [Server thread/INFO] (Minecraft) [Player677] GUIEVIDENCE
+[23:19:00] [Render thread/INFO] (Minecraft) [CHAT] [Player677] GUIEVIDENCE
+[23:19:00] [Render thread/INFO] (Minecraft) [CHAT] GUIBLOCK Items= Inventory={Items:[{Count:1b,Slot:0b,id:"minecraft:book"},{Count:4b,Slot:1b,id:"minecraft:emerald_block"},{Count:1b,Slot:2b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:5s}]}},{Count:1b,Slot:3b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:5s}]}}]}
+[23:19:00] [Render thread/INFO] (Minecraft) [CHAT] GUIPLAYER [{Count:1b,Slot:3b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:3s},{id:"minecraft:unbreaking",lvl:3s}]}},{Count:1b,Slot:4b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:6s}]}},{Count:1b,Slot:5b,id:"minecraft:diamond_sword",tag:{Damage:0}},{Count:1b,Slot:6b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:5s}]}}]
+[23:19:01] [Render thread/INFO] (Minecraft) [CHAT] Saved screenshot as 2026-09-23_23.19.01.png
+[23:19:19] [Server thread/INFO] (Minecraft) Stopping server
+[23:21:13] [Server thread/INFO] (Minecraft) [Player677] GUIEVIDENCE
+[23:21:13] [Render thread/INFO] (Minecraft) [CHAT] [Player677] GUIEVIDENCE
+[23:21:13] [Render thread/INFO] (Minecraft) [CHAT] GUIBLOCK Items= Inventory={Items:[{Count:1b,Slot:0b,id:"minecraft:book"},{Count:4b,Slot:1b,id:"minecraft:emerald_block"},{Count:1b,Slot:2b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:5s}]}},{Count:1b,Slot:3b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:5s}]}}]}
+[23:21:13] [Render thread/INFO] (Minecraft) [CHAT] GUIPLAYER [{Count:1b,Slot:3b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:3s},{id:"minecraft:unbreaking",lvl:3s}]}},{Count:1b,Slot:4b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:6s}]}},{Count:1b,Slot:5b,id:"minecraft:diamond_sword",tag:{Damage:0}},{Count:1b,Slot:6b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:5s}]}}]
+[23:21:14] [Render thread/INFO] (Minecraft) [CHAT] Saved screenshot as 2026-09-23_23.21.14.png
+[23:21:15] [Server thread/INFO] (Minecraft) [Player677] GUIFIXTURE cbase
+[23:21:15] [Render thread/INFO] (Minecraft) [CHAT] [Player677] GUIFIXTURE cbase
+[23:22:18] [Server thread/INFO] (Minecraft) [Server] GUIRELOAD
+[23:22:18] [Render thread/INFO] (Minecraft) [CHAT] [Server] GUIRELOAD
+[23:23:21] [Render thread/INFO] (Minecraft) [CHAT] Saved screenshot as 2026-09-23_23.23.21.png
+[23:23:22] [Server thread/INFO] (Minecraft) [Player677] GUIEVIDENCE
+[23:23:22] [Render thread/INFO] (Minecraft) [CHAT] [Player677] GUIEVIDENCE
+[23:23:22] [Render thread/INFO] (Minecraft) [CHAT] GUIBLOCK Items= Inventory={Items:[{Count:7b,Slot:0b,id:"minecraft:book"},{Count:28b,Slot:1b,id:"minecraft:emerald"}]}
+[23:23:22] [Render thread/INFO] (Minecraft) [CHAT] GUIPLAYER [{Count:1b,Slot:2b,id:"minecraft:dirt"},{Count:4b,Slot:3b,id:"minecraft:emerald_block"},{Count:1b,Slot:4b,id:"minecraft:enchanted_book",tag:{StoredEnchantments:[{id:"minecraft:sharpness",lvl:5s}]}}]
+[23:23:22] [Render thread/INFO] (Minecraft) Stopping!
+[23:23:22] [Server thread/INFO] (Minecraft) Stopping server
