@@ -1,0 +1,35 @@
+{
+  "loader": "forge",
+  "minecraft": "1.20.1",
+  "legacy": true,
+  "code_base": "c682917eaf812535a260a63160506a74d9647a9d",
+  "world": "forge/run/saves/ECT-SHIFT-R5-forge-1.20.1",
+  "originals": {
+    "config": {
+      "path": "forge/run/config/enchantment_custom_table-common.toml",
+      "existed": false
+    },
+    "options": {
+      "path": "forge/run/options.txt",
+      "existed": false
+    }
+  },
+  "started_at_unix": 1790446720.887263,
+  "restored": true,
+  "cases": {
+    "input_control": "PASS",
+    "E02": "PASS",
+    "E06": "PASS",
+    "E06_strict_extension": "PASS"
+  },
+  "data_checks": {
+    "E02_world_reload": "PASS",
+    "E06_client_restart": "PASS",
+    "strict_world_reload": "PASS"
+  },
+  "screenshots": {
+    "E02-first-two.png": "2026-09-27_02.21.59.png",
+    "E06-restarted.png": "2026-09-27_02.27.00.png",
+    "strict-reloaded.png": "2026-09-27_02.32.07.png"
+  }
+}
