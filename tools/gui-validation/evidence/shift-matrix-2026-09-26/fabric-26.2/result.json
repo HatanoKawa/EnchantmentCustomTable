@@ -1,0 +1,35 @@
+{
+  "loader": "fabric",
+  "minecraft": "26.2",
+  "legacy": false,
+  "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+  "world": "fabric_versions/26.2/run/saves/ECT-SHIFT-R5-fabric-26.2",
+  "originals": {
+    "config": {
+      "path": "fabric_versions/26.2/run/config/enchantment_custom_table.json",
+      "existed": false
+    },
+    "options": {
+      "path": "fabric_versions/26.2/run/options.txt",
+      "existed": false
+    }
+  },
+  "started_at_unix": 1790439416.249177,
+  "restored": true,
+  "cases": {
+    "input_control": "PASS",
+    "E02": "PASS",
+    "E06": "PASS",
+    "E06_strict_extension": "PASS"
+  },
+  "data_checks": {
+    "E02_world_reload": "PASS",
+    "E06_client_restart": "PASS",
+    "strict_world_reload": "PASS"
+  },
+  "screenshots": {
+    "E02-first-two.png": "2026-09-27_00.21.50.png",
+    "E06-restarted.png": "2026-09-27_00.26.02.png",
+    "strict-reloaded.png": "2026-09-27_00.28.32.png"
+  }
+}

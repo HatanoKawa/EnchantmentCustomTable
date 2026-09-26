@@ -1,0 +1,432 @@
+{
+  "round": "2026-09-26..27",
+  "historical_matrix_shift_gaps_passed": 44,
+  "additional_26_3_E02_E06_passed": 4,
+  "new_E02_E06_pass_total": 48,
+  "previous_1_21_1_pass_not_recounted": 4,
+  "strict_extension_targets_passed": 22,
+  "persistence_comparisons_passed": 70,
+  "settings_paths_restored": 48,
+  "remaining_26_3_per_loader": {
+    "PASS": [
+      "C01",
+      "V02",
+      "E02",
+      "E06"
+    ],
+    "PARTIAL": [
+      "V01"
+    ],
+    "NOT_RUN": [
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "C08",
+      "C09",
+      "C10",
+      "C11",
+      "C12",
+      "E01",
+      "E03",
+      "E04",
+      "E05",
+      "E07",
+      "E08",
+      "E09",
+      "E10",
+      "K01",
+      "K02",
+      "K03",
+      "K04",
+      "K05",
+      "K06"
+    ]
+  },
+  "targets": [
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.11",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-1.21.11/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.2",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-1.21.2/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.4",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-1.21.4/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.5",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-1.21.5/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.6",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-1.21.6/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.21.9",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-1.21.9/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.1",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-26.1/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.2",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-26.2/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "26.3",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "NOT_RUN",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-26.3/result.json"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.11",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/neoforge-1.21.11/result.json"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.2",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/neoforge-1.21.2/result.json"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.4",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/neoforge-1.21.4/result.json"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.5",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/neoforge-1.21.5/result.json"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.6",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/neoforge-1.21.6/result.json"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "1.21.9",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/neoforge-1.21.9/result.json"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.1",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/neoforge-26.1/result.json"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.2",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/neoforge-26.2/result.json"
+    },
+    {
+      "loader": "neoforge",
+      "minecraft": "26.3",
+      "branch": "dev",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "NOT_RUN",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/neoforge-26.3/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.18.2",
+      "branch": "codex/port-1.18.2",
+      "code_base": "e778281a1fba99c2d0cd56b88ebfdc173ac0017c",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-1.18.2/result.json"
+    },
+    {
+      "loader": "forge",
+      "minecraft": "1.18.2",
+      "branch": "codex/port-1.18.2",
+      "code_base": "e778281a1fba99c2d0cd56b88ebfdc173ac0017c",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/forge-1.18.2/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.19.2",
+      "branch": "codex/port-1.19.2",
+      "code_base": "33759be49059e7a93185d19afb86ec0a9e8aa5af",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-1.19.2/result.json"
+    },
+    {
+      "loader": "forge",
+      "minecraft": "1.19.2",
+      "branch": "codex/port-1.19.2",
+      "code_base": "33759be49059e7a93185d19afb86ec0a9e8aa5af",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/forge-1.19.2/result.json"
+    },
+    {
+      "loader": "fabric",
+      "minecraft": "1.20.1",
+      "branch": "codex/port-1.20.1",
+      "code_base": "c682917eaf812535a260a63160506a74d9647a9d",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-1.20.1/result.json"
+    },
+    {
+      "loader": "forge",
+      "minecraft": "1.20.1",
+      "branch": "codex/port-1.20.1",
+      "code_base": "c682917eaf812535a260a63160506a74d9647a9d",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/forge-1.20.1/result.json"
+    }
+  ]
+}

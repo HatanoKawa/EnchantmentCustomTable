@@ -1,0 +1,52 @@
+{
+  "files": [
+    {
+      "name": "E02-first-two.png",
+      "sha256": "abe6677261be881e43a573a75b38016566bee64e4d62ba2c1c9f82031326e473"
+    },
+    {
+      "name": "E02-reloaded.png",
+      "sha256": "4f46df2a8402341bdf8bacbf0ce50f5c44e142dbb17c4fd62bde053cd71b66a3"
+    },
+    {
+      "name": "E06-restarted.png",
+      "sha256": "858548618bbaca4e14bfb1ce0923d10dcc66526f8531f36fe7ce465f27fb0242"
+    },
+    {
+      "name": "config-default.json",
+      "sha256": "021b9dc718e60e06588d79a397d07bb51c9d2cfdcf4eba4dfe9e9be365af5f85"
+    },
+    {
+      "name": "default-observations.txt",
+      "sha256": "fc75386c35564af502874a5e1aa4714146459380db39a738876e337a47a95d8c"
+    },
+    {
+      "name": "input-chest-control.png",
+      "sha256": "1f41d112ddcf9ad2a3aeac5a9aad694da3bd9c9b79436d56475e4d69cbba353a"
+    },
+    {
+      "name": "input-cua-slot.png",
+      "sha256": "9404e6f1f2d29be97841f9df415824accaa201e89a33a65dcee050f0fc6525bf"
+    },
+    {
+      "name": "input-cua-title.png",
+      "sha256": "1ad710000eb6acd205906402c1b2f8a48713503669e364f06b296f4d348bdf30"
+    },
+    {
+      "name": "input-native-tooltip.png",
+      "sha256": "962dd2d9b5351755a43c62afd4726582b03d27da7c5dd6f6466061c8a45fcc58"
+    },
+    {
+      "name": "input-native-world-list.png",
+      "sha256": "a3b7ab1feadbba949b92170ce7c0b37a5e49a5bec79346af6e118fb1d4aa45d2"
+    },
+    {
+      "name": "restart-observations.txt",
+      "sha256": "f67eab520e70c9fca4626b5a58e57c0fddeebb44f1af07bdab6c5d24704b19b8"
+    },
+    {
+      "name": "result.json",
+      "sha256": "13c4cd3dae198f0def3c6547f5e93a517cbc7b545703251d852daa1ac7192059"
+    }
+  ]
+}

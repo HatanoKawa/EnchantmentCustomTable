@@ -11,22 +11,58 @@ enum InputError: Error, CustomStringConvertible {
 }
 
 func run() throws {
-    let args = Array(CommandLine.arguments.dropFirst())
+    var args = Array(CommandLine.arguments.dropFirst())
+    let mode = args.first ?? ""
+    let plain = ["--plain", "--right", "--move"].contains(mode)
+    if plain { args.removeFirst() }
     if args == ["--check"] {
         print("accessibilityTrusted=\(AXIsProcessTrusted())")
+        let flags = CGEventSource.flagsState(.combinedSessionState)
+        let names: [(String, CGEventFlags)] = [("Shift", .maskShift), ("Control", .maskControl),
+                                               ("Option", .maskAlternate), ("Command", .maskCommand)]
+        print("heldModifiers=\(names.filter { flags.contains($0.1) }.map { $0.0 }.joined(separator: ","))")
         return
     }
-    guard args.count == 3, let pid = Int32(args[0]),
-          let x = Double(args[1]), let y = Double(args[2]), x.isFinite, y.isFinite else {
-        throw InputError.invalid("Usage: shift-click --check | <client-pid> <window-x-points> <window-y-points>")
+    let releaseOnly = args.count == 2 && args[0] == "--release-shift"
+    guard (args.count == 3 || releaseOnly), let pid = Int32(args[releaseOnly ? 1 : 0]),
+          let x = Double(releaseOnly ? "0" : args[1]),
+          let y = Double(releaseOnly ? "24" : args[2]), x.isFinite, y.isFinite else {
+        throw InputError.invalid("Usage: shift-click --check | --release-shift <client-pid> | [--plain|--right|--move] <client-pid> <window-x-points> <window-y-points>")
     }
     guard AXIsProcessTrusted() else {
         throw InputError.invalid("Accessibility permission is unavailable; no events sent. No permission prompt or settings change was requested.")
     }
-    let allowed = ["com.river-quinn.ect.gui-dev.fabric.mc1211", "com.river-quinn.ect.gui-dev.mc1211"]
+    // Explicit test matrix only; do not accept arbitrary applications by prefix.
+    var allowed = ["com.river-quinn.ect.gui-dev.fabric.mc1211", "com.river-quinn.ect.gui-dev.mc1211"]
+    for version in ["1-21-2", "1-21-4", "1-21-5", "1-21-6", "1-21-9", "1-21-11", "26-1", "26-2", "26-3"] {
+        for loader in ["fabric", "neoforge"] {
+            allowed.append("com.river-quinn.ect.gui-dev.\(loader).mc\(version)")
+        }
+    }
+    for version in ["1-18-2", "1-19-2", "1-20-1"] {
+        for loader in ["fabric", "forge"] {
+            allowed.append("com.river-quinn.ect.gui-dev.\(loader).mc\(version)")
+        }
+    }
     guard let app = NSRunningApplication(processIdentifier: pid),
           let bundle = app.bundleIdentifier, allowed.contains(bundle) else {
-        throw InputError.invalid("Target must be the dedicated Fabric/NeoForge 1.21.1 GUI client.")
+        throw InputError.invalid("Target must be an explicitly allowed ECT GUI matrix client.")
+    }
+    if releaseOnly {
+        // Recovery only for a Shift left held by this tool; never use during manual input.
+        guard NSWorkspace.shared.frontmostApplication?.processIdentifier == pid,
+              CGEventSource.flagsState(.combinedSessionState)
+                .intersection([.maskControl, .maskAlternate, .maskCommand]).isEmpty,
+              let source = CGEventSource(stateID: .hidSystemState),
+              let release = CGEvent(keyboardEventSource: source, virtualKey: 56, keyDown: false) else {
+            throw InputError.invalid("Recovery requires the test client to be foreground.")
+        }
+        release.type = .flagsChanged
+        release.flags = []
+        release.post(tap: .cghidEventTap)
+        Thread.sleep(forTimeInterval: 0.1)
+        print("Posted left Shift release; heldShift=\(CGEventSource.flagsState(.combinedSessionState).contains(.maskShift))")
+        return
     }
     guard let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]],
           let window = windows.first(where: {
@@ -57,32 +93,39 @@ func run() throws {
           let move = CGEvent(mouseEventSource: source, mouseType: .mouseMoved, mouseCursorPosition: point, mouseButton: .left),
           let shiftDown = CGEvent(keyboardEventSource: source, virtualKey: 56, keyDown: true),
           let shiftUp = CGEvent(keyboardEventSource: source, virtualKey: 56, keyDown: false),
-          let down = CGEvent(mouseEventSource: source, mouseType: .leftMouseDown, mouseCursorPosition: point, mouseButton: .left),
-          let up = CGEvent(mouseEventSource: source, mouseType: .leftMouseUp, mouseCursorPosition: point, mouseButton: .left) else {
+          let down = CGEvent(mouseEventSource: source, mouseType: mode == "--right" ? .rightMouseDown : .leftMouseDown, mouseCursorPosition: point, mouseButton: mode == "--right" ? .right : .left),
+          let up = CGEvent(mouseEventSource: source, mouseType: mode == "--right" ? .rightMouseUp : .leftMouseUp, mouseCursorPosition: point, mouseButton: mode == "--right" ? .right : .left) else {
         throw InputError.invalid("Could not construct input events; no events sent.")
     }
     shiftDown.type = .flagsChanged
     shiftDown.flags = .maskShift
     shiftUp.type = .flagsChanged
     shiftUp.flags = []
-    down.flags = .maskShift
-    up.flags = .maskShift
+    down.flags = plain ? [] : .maskShift
+    up.flags = plain ? [] : .maskShift
     move.flags = []
     move.post(tap: .cghidEventTap)
     Thread.sleep(forTimeInterval: 0.05)
-    shiftDown.post(tap: .cghidEventTap)
+    if mode == "--move" {
+        print("Posted mouse move: pid=\(pid), windowPoint=(\(x),\(y)). Verify the game hover separately.")
+        return
+    }
+    if !plain { shiftDown.post(tap: .cghidEventTap) }
     // Release both inputs even if foreground changes after pressing Shift.
     defer {
         up.post(tap: .cghidEventTap)
-        shiftUp.post(tap: .cghidEventTap)
+        Thread.sleep(forTimeInterval: 0.05)
+        if !plain { shiftUp.post(tap: .cghidEventTap) }
+        // Keep the event source alive while the release reaches the event queue.
+        Thread.sleep(forTimeInterval: 0.1)
     }
     Thread.sleep(forTimeInterval: 0.08)
     guard NSWorkspace.shared.frontmostApplication?.processIdentifier == pid else {
-        throw InputError.invalid("Foreground changed; click cancelled and Shift released.")
+        throw InputError.invalid("Foreground changed; click cancelled and posted inputs released.")
     }
     down.post(tap: .cghidEventTap)
     Thread.sleep(forTimeInterval: 0.05)
-    print("Posted Shift+left click: pid=\(pid), bundle=\(bundle), windowPoint=(\(x),\(y)), screenPoint=\(point). Verify the game result separately.")
+    print("Posted \(plain ? mode : "Shift+left") click: pid=\(pid), bundle=\(bundle), windowPoint=(\(x),\(y)), screenPoint=\(point). Verify the game result separately.")
 }
 
 do {

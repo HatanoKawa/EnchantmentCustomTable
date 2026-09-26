@@ -1,0 +1,35 @@
+{
+  "loader": "neoforge",
+  "minecraft": "1.21.6",
+  "legacy": false,
+  "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+  "world": "versions/1.21.6/run/saves/ECT-SHIFT-R5-neoforge-1.21.6",
+  "originals": {
+    "config": {
+      "path": "versions/1.21.6/run/config/enchantment_custom_table-common.toml",
+      "existed": false
+    },
+    "options": {
+      "path": "versions/1.21.6/run/options.txt",
+      "existed": false
+    }
+  },
+  "started_at_unix": 1790420713.8864682,
+  "restored": true,
+  "cases": {
+    "input_control": "PASS",
+    "E02": "PASS",
+    "E06": "PASS",
+    "E06_strict_extension": "PASS"
+  },
+  "data_checks": {
+    "E02_world_reload": "PASS",
+    "E06_client_restart": "PASS",
+    "strict_world_reload": "PASS"
+  },
+  "screenshots": {
+    "E02-first-two.png": "2026-09-26_19.10.45.png",
+    "E06-restarted.png": "2026-09-26_19.15.25.png",
+    "strict-reloaded.png": "2026-09-26_19.19.20.png"
+  }
+}

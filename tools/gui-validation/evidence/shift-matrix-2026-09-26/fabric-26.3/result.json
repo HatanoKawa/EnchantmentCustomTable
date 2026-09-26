@@ -1,0 +1,40 @@
+{
+  "loader": "fabric",
+  "minecraft": "26.3",
+  "legacy": false,
+  "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+  "world": "fabric_versions/26.3/run/saves/ECT-SHIFT-R5-fabric-26.3",
+  "originals": {
+    "config": {
+      "path": "fabric_versions/26.3/run/config/enchantment_custom_table.json",
+      "existed": false
+    },
+    "options": {
+      "path": "fabric_versions/26.3/run/options.txt",
+      "existed": false
+    }
+  },
+  "started_at_unix": 1790447664.362965,
+  "restored": true,
+  "cases": {
+    "input_control": "PASS",
+    "E02": "PASS",
+    "E06": "PASS",
+    "E06_strict_extension": "NOT_RUN"
+  },
+  "data_checks": {
+    "E02_world_reload": "PASS",
+    "E06_client_restart": "PASS"
+  },
+  "screenshots": {
+    "input-cua-title.png": "2026-09-27_02.35.31.png",
+    "input-native-world-list.png": "2026-09-27_02.40.04.png",
+    "input-chest-control.png": "2026-09-27_02.44.59.png",
+    "E02-first-two.png": "2026-09-27_02.52.23.png",
+    "E02-reloaded.png": "2026-09-27_03.02.56.png",
+    "E06-restarted.png": "2026-09-27_03.15.55.png",
+    "input-cua-slot.png": "2026-09-27_02.50.12.png",
+    "input-native-tooltip.png": "2026-09-27_02.51.17.png"
+  },
+  "input_diagnosis": "CUA cursor targeting fails; native mouseMoved plus button events works in observed title, chest and mod screens. Exact CUA/SDL internals not established."
+}

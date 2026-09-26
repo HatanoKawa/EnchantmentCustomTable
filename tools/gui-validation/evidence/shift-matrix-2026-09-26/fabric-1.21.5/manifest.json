@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "name": "E02-first-two.png",
+      "sha256": "a842fd70037806e951cde75d03c513b535f7919ef8c186a14f77ddacbfa10d96"
+    },
+    {
+      "name": "E06-restarted.png",
+      "sha256": "c2fe6ddd3974939b1f7910d5de2ee221b8f201438b2d2108e9e9a393ed522607"
+    },
+    {
+      "name": "config-default.json",
+      "sha256": "021b9dc718e60e06588d79a397d07bb51c9d2cfdcf4eba4dfe9e9be365af5f85"
+    },
+    {
+      "name": "config-strict.json",
+      "sha256": "fbca6cb4ee5d280d9f88867f9c22312a1209fc03af7f69393dfd7c730b66a70d"
+    },
+    {
+      "name": "default-observations.txt",
+      "sha256": "7a3b08d8f6e34c26385cc1a4e4100c2c1891ccdc5ec6839299998ee3be4aa209"
+    },
+    {
+      "name": "result.json",
+      "sha256": "02817028921e433b450917cd24e1077dba59aed69f937ef28e5e6c022f51e4d7"
+    },
+    {
+      "name": "strict-observations.txt",
+      "sha256": "aacac7794748e219c7829570dd4b3dac2ddc5108b654ce4c95e8850c12ddd910"
+    },
+    {
+      "name": "strict-reloaded.png",
+      "sha256": "ea6bb422fdbf9436c7bba1b451691f5e415793b0cfcfd1df25df1596e5294397"
+    }
+  ]
+}

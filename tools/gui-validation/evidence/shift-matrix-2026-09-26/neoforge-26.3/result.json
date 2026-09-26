@@ -1,0 +1,38 @@
+{
+  "loader": "neoforge",
+  "minecraft": "26.3",
+  "legacy": false,
+  "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+  "world": "versions/26.3/run/saves/ECT-SHIFT-R5-neoforge-26.3",
+  "originals": {
+    "config": {
+      "path": "versions/26.3/run/config/enchantment_custom_table-common.toml",
+      "existed": false
+    },
+    "options": {
+      "path": "versions/26.3/run/options.txt",
+      "existed": false
+    }
+  },
+  "started_at_unix": 1790450403.437307,
+  "restored": true,
+  "cases": {
+    "input_control": "PASS",
+    "E02": "PASS",
+    "E06": "PASS",
+    "E06_strict_extension": "NOT_RUN"
+  },
+  "data_checks": {
+    "E02_world_reload": "PASS",
+    "E06_client_restart": "PASS"
+  },
+  "screenshots": {
+    "input-cua-title.png": "2026-09-27_03.21.54.png",
+    "input-native-world-list.png": "2026-09-27_03.23.13.png",
+    "input-chest-control.png": "2026-09-27_03.27.50.png",
+    "E02-first-two.png": "2026-09-27_03.36.21.png",
+    "E02-reloaded.png": "2026-09-27_03.38.38.png",
+    "E06-restarted.png": "2026-09-27_03.43.50.png"
+  },
+  "input_diagnosis": "CUA cursor targeting fails; native mouseMoved plus button events works in observed title, chest and mod screens. Exact CUA/SDL internals not established."
+}

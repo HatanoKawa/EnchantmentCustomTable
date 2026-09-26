@@ -1,0 +1,44 @@
+{
+  "files": [
+    {
+      "name": "E02-first-two.png",
+      "sha256": "9e1a2e50d38ff24fcdd04b13488eda107f12364a2d39a5d709d4fd7dd5e3b286"
+    },
+    {
+      "name": "E02-reloaded.png",
+      "sha256": "c0f51cbf2f89238c6a6c86ee5c66241c582eafa656af706802a71d399669361a"
+    },
+    {
+      "name": "E06-restarted.png",
+      "sha256": "193b74a2976242ab3c3fdcf038f27ad6abbcdd16d7086cb2e3ffe8e5273c94a7"
+    },
+    {
+      "name": "config-default.toml",
+      "sha256": "e5371893b56635a17c8120e3a514c105a3f37361aff2b12ec1c77072bed9c868"
+    },
+    {
+      "name": "default-observations.txt",
+      "sha256": "37c28563d03ad8791260c8b90abeb8cbbc11979eb6863fadc7258111cbc9ccd3"
+    },
+    {
+      "name": "input-chest-control.png",
+      "sha256": "e3635b34c6693441882decab89a5fee56fb99bded3564f972e5751c2eb131f5b"
+    },
+    {
+      "name": "input-cua-title.png",
+      "sha256": "52bbb7d3476b0e8dee221d7760ca69b1bc06e076b64a6625efecaeee369910b7"
+    },
+    {
+      "name": "input-native-world-list.png",
+      "sha256": "0ae21656be345517553720909cf6f990a7feb8d95289c5f3668716c88ee6b530"
+    },
+    {
+      "name": "restart-observations.txt",
+      "sha256": "e665c3fa53c93d6f736b4460268973c81e71807cf6c63f602d2cf43a866bed34"
+    },
+    {
+      "name": "result.json",
+      "sha256": "4bf68537946036711cedcc7756868f4bffcfe5dd20016068fb385947a5e33811"
+    }
+  ]
+}
