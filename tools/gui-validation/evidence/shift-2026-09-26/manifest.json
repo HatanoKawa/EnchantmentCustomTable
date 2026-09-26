@@ -1,0 +1,166 @@
+{
+  "files": [
+    {
+      "name": "execution-summary.json",
+      "source": "Generated from verified local test records",
+      "bytes": 2478,
+      "sha256": "461bdc2505377e50fd7c1dd972fd9d4e10ad8e0d46037942222294b68cf12e4f"
+    },
+    {
+      "name": "fabric-E02-first-two.png",
+      "source": "fabric_versions/1.21.1/run/screenshots/2026-09-26_16.55.12.png",
+      "bytes": 294355,
+      "sha256": "58cad0e03b8d64fa9ff39f60b71b4fe0c2cad46ec4bc6bf5950e5263b95554ff"
+    },
+    {
+      "name": "fabric-E02-reloaded.png",
+      "source": "fabric_versions/1.21.1/run/screenshots/2026-09-26_16.57.20.png",
+      "bytes": 330864,
+      "sha256": "10aa6d6051cb83e0f6785b4141ccaa7827c56b6247b52e015b874ae2ec741e6a"
+    },
+    {
+      "name": "fabric-E06-invalid.png",
+      "source": "fabric_versions/1.21.1/run/screenshots/2026-09-26_16.58.51.png",
+      "bytes": 292417,
+      "sha256": "fdd4330b0aeedcc88d00756f0441090d63f5a79d95303d1de03586e4c51b821b"
+    },
+    {
+      "name": "fabric-E06-restarted.png",
+      "source": "fabric_versions/1.21.1/run/screenshots/2026-09-26_17.01.45.png",
+      "bytes": 308541,
+      "sha256": "6bb147a65f4dca30d63ece99020e4f06aba9a4fe44cd090fd24c313a7f077e35"
+    },
+    {
+      "name": "fabric-config-default.json",
+      "source": "build/reports/gui-validation/shift-2026-09-26/fabric/config-original",
+      "bytes": 214,
+      "sha256": "15198c8a3b4b820ef04491675ea1038c12b8844dd1fef69682b87d80c2880268"
+    },
+    {
+      "name": "fabric-config-strict.json",
+      "source": "build/reports/gui-validation/shift-2026-09-26/fabric/config-strict.json",
+      "bytes": 213,
+      "sha256": "fbca6cb4ee5d280d9f88867f9c22312a1209fc03af7f69393dfd7c730b66a70d"
+    },
+    {
+      "name": "fabric-control-before.png",
+      "source": "fabric_versions/1.21.1/run/screenshots/2026-09-26_16.52.28.png",
+      "bytes": 281756,
+      "sha256": "8cad58b8976525dd25c5105debd98d44e94310811fac7e3c0b482e75898af265"
+    },
+    {
+      "name": "fabric-control-released.png",
+      "source": "fabric_versions/1.21.1/run/screenshots/2026-09-26_16.54.07.png",
+      "bytes": 270460,
+      "sha256": "f66b66a8bf9e5afa799f52c43bba61328d62721304df45ff2dd7b6710767d64a"
+    },
+    {
+      "name": "fabric-control-shifted.png",
+      "source": "fabric_versions/1.21.1/run/screenshots/2026-09-26_16.53.37.png",
+      "bytes": 270139,
+      "sha256": "1a1484d7a89216d1e7a8ec1d739b08e6116aa20d556a3999404fb01896a2041d"
+    },
+    {
+      "name": "fabric-default-observations.txt",
+      "source": "build/reports/gui-validation/shift-2026-09-26/fabric/default-latest.log (filtered)",
+      "bytes": 3938,
+      "sha256": "8cf7a955f67d5b5352eae4eee30a54a09d867e95dab6acb562aba6ed66385bbf"
+    },
+    {
+      "name": "fabric-strict-observations.txt",
+      "source": "build/reports/gui-validation/shift-2026-09-26/fabric/strict-latest.log (filtered)",
+      "bytes": 5202,
+      "sha256": "9b2734a5bf1a03b2244f5c63adb844c94ae82b21aa2c9e7bb76375714a121fd0"
+    },
+    {
+      "name": "fabric-strict-rejected.png",
+      "source": "fabric_versions/1.21.1/run/screenshots/2026-09-26_17.02.29.png",
+      "bytes": 297860,
+      "sha256": "d4ca4dded87c97cd89241a710e670eef99da6f6d158da57332085936028101f3"
+    },
+    {
+      "name": "fabric-strict-reloaded.png",
+      "source": "fabric_versions/1.21.1/run/screenshots/2026-09-26_17.05.10.png",
+      "bytes": 313449,
+      "sha256": "79c4d854993af82e886edc273bb0bd2b5ce63785558972cf2ee2780c36857f9f"
+    },
+    {
+      "name": "neoforge-E02-first-two.png",
+      "source": "versions/1.21.1/run/screenshots/2026-09-26_17.11.17.png",
+      "bytes": 295637,
+      "sha256": "5330658ee859ac6aab7e7187cdeba92eab802966bcb5b15938119061786222a7"
+    },
+    {
+      "name": "neoforge-E02-reloaded.png",
+      "source": "versions/1.21.1/run/screenshots/2026-09-26_17.14.20.png",
+      "bytes": 320585,
+      "sha256": "67ae06a7a688480243467af907466d4bc542df700f38375c11c7dc428c09954b"
+    },
+    {
+      "name": "neoforge-E06-invalid.png",
+      "source": "versions/1.21.1/run/screenshots/2026-09-26_17.16.41.png",
+      "bytes": 294062,
+      "sha256": "71bf86df0ee5b7d8ef664e782ae1d782d7eaa1a0c7e559ab5e64bd81a1a1167d"
+    },
+    {
+      "name": "neoforge-E06-restarted.png",
+      "source": "versions/1.21.1/run/screenshots/2026-09-26_17.21.10.png",
+      "bytes": 308824,
+      "sha256": "96be44e4b452f50c5cec71b3173d4ee033624ed31cc77026b8faf47d6ea8c17c"
+    },
+    {
+      "name": "neoforge-config-default.toml",
+      "source": "build/reports/gui-validation/shift-2026-09-26/neoforge/config-original",
+      "bytes": 1234,
+      "sha256": "b6e7b44d79f657215751d4af124f31ee98f4c9ca40a5cf43c1d5442dae3491f9"
+    },
+    {
+      "name": "neoforge-config-strict.toml",
+      "source": "build/reports/gui-validation/shift-2026-09-26/neoforge/config-strict.toml",
+      "bytes": 1232,
+      "sha256": "56fab46ad5bb5aeeac924a4acc5e7080d97eafc509ed5b1a250fd3b61b75b365"
+    },
+    {
+      "name": "neoforge-control-before.png",
+      "source": "versions/1.21.1/run/screenshots/2026-09-26_17.08.27.png",
+      "bytes": 281679,
+      "sha256": "555d2e98478b882b74a7f74eaa90b31f998df3ea13daba2608ad7b5bf28287d4"
+    },
+    {
+      "name": "neoforge-control-released.png",
+      "source": "versions/1.21.1/run/screenshots/2026-09-26_17.10.05.png",
+      "bytes": 272052,
+      "sha256": "92c7949f157d6572725f2a72eca6fac4c041bca182986d6c3cfbf83113189457"
+    },
+    {
+      "name": "neoforge-control-shifted.png",
+      "source": "versions/1.21.1/run/screenshots/2026-09-26_17.09.06.png",
+      "bytes": 271559,
+      "sha256": "f1345cabba2b615789f4f804fe7f1590576ab0f57f994857809c0bb6de52aa7b"
+    },
+    {
+      "name": "neoforge-default-observations.txt",
+      "source": "build/reports/gui-validation/shift-2026-09-26/neoforge/default-latest.log (filtered)",
+      "bytes": 5374,
+      "sha256": "4fe54908eb9e16123e5a71e53b1f40c02c704860936cdad4a160c33937a11c69"
+    },
+    {
+      "name": "neoforge-strict-observations.txt",
+      "source": "build/reports/gui-validation/shift-2026-09-26/neoforge/strict-latest.log (filtered)",
+      "bytes": 6538,
+      "sha256": "6ecfd726273dbf5f00b646383bb64cd14d5451d8bdca9f79e4be732449e20422"
+    },
+    {
+      "name": "neoforge-strict-rejected.png",
+      "source": "versions/1.21.1/run/screenshots/2026-09-26_17.22.14.png",
+      "bytes": 297988,
+      "sha256": "ef6e32d3cf3f3410d6f786d04bf50f05b6f7d649a69b038648b9a498a5621278"
+    },
+    {
+      "name": "neoforge-strict-reloaded.png",
+      "source": "versions/1.21.1/run/screenshots/2026-09-26_17.28.08.png",
+      "bytes": 315610,
+      "sha256": "5bd743ee2b8224a3b133d04d9ac11c61c9d0d3d7c1be6160b3ca07154b9d7e78"
+    }
+  ]
+}

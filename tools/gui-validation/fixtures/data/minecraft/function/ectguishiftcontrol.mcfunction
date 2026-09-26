@@ -1,0 +1,1 @@
+function ectgui:shiftcontrol

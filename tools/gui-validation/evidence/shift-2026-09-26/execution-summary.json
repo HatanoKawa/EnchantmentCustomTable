@@ -1,0 +1,76 @@
+{
+  "date": "2026-09-26",
+  "timezone": "Asia/Shanghai",
+  "branch": "dev",
+  "code_base": "a347ed06c59d1e09dff2d4ee7e7553607ff666e0",
+  "minecraft": "1.21.1",
+  "production_code_changed": false,
+  "historical_blocked_cases_resolved": 4,
+  "other_versions_retested": false,
+  "deferred_issue": "INPUT-26.3-01",
+  "targets": {
+    "fabric": {
+      "loader_version": "0.19.3",
+      "fabric_api_version": "0.116.12+1.21.1",
+      "world": "fabric_versions/1.21.1/run/saves/ECT-SHIFT-fabric-1.21.1",
+      "results": {
+        "vanilla_control": "PASS",
+        "E02": "PASS",
+        "E06": "PASS",
+        "E06_strict": "PASS"
+      },
+      "server_data_persistence_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "E06_strict_world_reload": "PASS"
+      },
+      "client_exited": true,
+      "restoration": {
+        "config": {
+          "path": "fabric_versions/1.21.1/run/config/enchantment_custom_table.json",
+          "existed_before": true,
+          "restored_exactly": true,
+          "sha256": "15198c8a3b4b820ef04491675ea1038c12b8844dd1fef69682b87d80c2880268"
+        },
+        "options": {
+          "path": "fabric_versions/1.21.1/run/options.txt",
+          "existed_before": true,
+          "restored_exactly": true,
+          "sha256": "033e7e3e2248c93dca3fa425bf1fa4325a793fe2663a3cade244634c59379754"
+        }
+      }
+    },
+    "neoforge": {
+      "loader_version": "21.1.136",
+      "fabric_api_version": null,
+      "world": "versions/1.21.1/run/saves/ECT-SHIFT-neoforge-1.21.1",
+      "results": {
+        "vanilla_control": "PASS",
+        "E02": "PASS",
+        "E06": "PASS",
+        "E06_strict": "PASS"
+      },
+      "server_data_persistence_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "E06_strict_world_reload": "PASS"
+      },
+      "client_exited": true,
+      "restoration": {
+        "config": {
+          "path": "versions/1.21.1/run/config/enchantment_custom_table-common.toml",
+          "existed_before": true,
+          "restored_exactly": true,
+          "sha256": "b6e7b44d79f657215751d4af124f31ee98f4c9ca40a5cf43c1d5442dae3491f9"
+        },
+        "options": {
+          "path": "versions/1.21.1/run/options.txt",
+          "existed_before": true,
+          "restored_exactly": true,
+          "sha256": "18c33e71e0bb5fccd230fddb3dfa7cc79e2167667fd36464b778ce8db344bbbc"
+        }
+      }
+    }
+  },
+  "temporary_keep_awake_ended": true
+}

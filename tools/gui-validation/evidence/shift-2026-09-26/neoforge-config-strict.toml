@@ -1,0 +1,19 @@
+#Minimum emerald cost when using enchantment conversion table. When set to 0, emeralds are not accepted on the table.
+# Default: 36
+# Range: 0 ~ 64
+minimumEmeraldCost = 36
+#Minimum emerald block cost when using enchantment conversion table. When set to 0, emerald blocks are not accepted on the table.
+# Default: 4
+# Range: 0 ~ 64
+minimumEmeraldBlockCost = 4
+#When enabled, duplicate enchantment merges cannot exceed each enchantment's vanilla max level.
+#Adding a new enchantment entry is still allowed even if another mod created a book above that level.
+enforceEnchantmentLevelLimit = true
+#When enabled, duplicate enchantments can only be merged if the current level and the added book level are the same.
+#A successful duplicate merge increases the level by 1 instead of adding both levels directly. New enchantments are still added normally.
+incrementalSameLevelMerge = true
+#When enabled, the enchantment conversion table exchanges only level-one enchanted books.
+convertOnlyLevelOneBook = false
+#When enabled, the enchantment conversion table does not require or consume normal books, emeralds, or emerald blocks.
+#The book and payment slots stop accepting input while this mode is enabled.
+freeConversionTableCosts = false
