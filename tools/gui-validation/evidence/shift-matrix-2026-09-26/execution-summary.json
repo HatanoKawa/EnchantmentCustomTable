@@ -1,0 +1,37 @@
+{
+  "new_E02_E06_pass": 4,
+  "targets": [
+    {
+      "loader": "fabric",
+      "minecraft": "1.18.2",
+      "branch": "codex/port-1.18.2",
+      "code_base": "e778281a1fba99c2d0cd56b88ebfdc173ac0017c",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/fabric-1.18.2/result.json"
+    },
+    {
+      "loader": "forge",
+      "minecraft": "1.18.2",
+      "branch": "codex/port-1.18.2",
+      "code_base": "e778281a1fba99c2d0cd56b88ebfdc173ac0017c",
+      "E02": "PASS",
+      "E06": "PASS",
+      "strict_extension": "PASS",
+      "data_checks": {
+        "E02_world_reload": "PASS",
+        "E06_client_restart": "PASS",
+        "strict_world_reload": "PASS"
+      },
+      "settings_restored": true,
+      "evidence": "tools/gui-validation/evidence/shift-matrix-2026-09-26/forge-1.18.2/result.json"
+    }
+  ]
+}

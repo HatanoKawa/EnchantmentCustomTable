@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "name": "E02-first-two.png",
+      "sha256": "66daccd940950af2baac4509f43f94511e5cf3fe6f9d230fad6d67aab81de813"
+    },
+    {
+      "name": "E06-restarted.png",
+      "sha256": "48c3478c0083824d892a38ca9ac70f5966e48d2be7728e31325c742f7d35aad6"
+    },
+    {
+      "name": "config-default.toml",
+      "sha256": "e5371893b56635a17c8120e3a514c105a3f37361aff2b12ec1c77072bed9c868"
+    },
+    {
+      "name": "config-strict.toml",
+      "sha256": "616ccd1f5ec125acc9ac9cddef7bc89652c469b58c9748990ecad7804af77af1"
+    },
+    {
+      "name": "default-observations.txt",
+      "sha256": "f3f1000b6c4eb3c568785d83a051599a00509cf37e46c68ff2e375aac19765ce"
+    },
+    {
+      "name": "result.json",
+      "sha256": "c707632e3ef4b258449b986032d17bef8c39eb127e0607486880dfaa3c8143ca"
+    },
+    {
+      "name": "strict-observations.txt",
+      "sha256": "8032eed6f809f8f8f4d8133e3842c6ce7fee8bf1a43e0e523680a9ce142431db"
+    },
+    {
+      "name": "strict-reloaded.png",
+      "sha256": "77e6b895980e232c5bea6b79894840195388ded99a173fff500b47f755aed799"
+    }
+  ]
+}
