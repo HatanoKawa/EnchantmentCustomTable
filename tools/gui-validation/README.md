@@ -1,5 +1,7 @@
 # Legacy GUI verification
 
+> 2026-09-27 更新：双端 E02/E06 及严格扩展已[补测通过](shift-matrix-2026-09-26.md)，下文历史 Shift 阻塞/手动清单已解除。
+
 Use the isolated creative test world only. Fixtures clear player inventory and replace the table at 0 -60 2; they prepare vanilla items but never call mod menu methods. This branch keeps its own Forge/Fabric projects and Java 17 toolchain.
 
 ```sh
