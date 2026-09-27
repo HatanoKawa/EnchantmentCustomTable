@@ -46,8 +46,9 @@ class JsonTableConfigCodecTest {
     void defaultJsonContainsOnlyCurrentFields() {
         JsonObject root = JsonTableConfigCodec.defaultJson();
 
-        assertTrue(root.has(JsonTableConfigCodec.MINIMUM_EMERALD_COST));
-        assertTrue(root.has(JsonTableConfigCodec.MINIMUM_EMERALD_BLOCK_COST));
+        assertFalse(root.has(JsonTableConfigCodec.MINIMUM_EMERALD_COST));
+        assertEquals(3, root.getAsJsonArray(JsonTableConfigCodec.PAYMENT_OPTIONS).size());
+        assertFalse(root.has(JsonTableConfigCodec.MINIMUM_EMERALD_BLOCK_COST));
         assertTrue(root.has(JsonTableConfigCodec.ENFORCE_ENCHANTMENT_LEVEL_LIMIT));
         assertTrue(root.has(JsonTableConfigCodec.INCREMENTAL_SAME_LEVEL_MERGE));
         assertTrue(root.has(JsonTableConfigCodec.CONVERT_ONLY_LEVEL_ONE_BOOK));
