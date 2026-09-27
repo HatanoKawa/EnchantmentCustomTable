@@ -1,0 +1,85 @@
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by net.rubygrapefruit.platform.internal.NativeLibraryLoader in an unnamed module (file:/Users/river_quinn/.gradle/wrapper/dists/gradle-9.5.1-bin/iq79hdu3mqx29lgffhp8bfmx/gradle-9.5.1/lib/native-platform-0.22-milestone-29.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+Running Stonecutter 0.9.4
+
+> Configure project :fabric
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_1
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_10
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_11
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_2
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_3
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_4
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_5
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_6
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_7
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_8
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_1_21_9
+Fabric Loom: 1.13.4
+
+> Configure project :fabric_26_1
+Fabric Loom: 1.17.0-alpha.14
+
+> Configure project :fabric_26_1_1
+Fabric Loom: 1.17.0-alpha.14
+
+> Configure project :fabric_26_1_2
+Fabric Loom: 1.17.0-alpha.14
+
+> Configure project :fabric_26_2
+Fabric Loom: 1.17.0-alpha.14
+
+> Configure project :fabric_26_3
+Fabric Loom: 1.17.0-alpha.14
+
+> Task :fabric_26_3:compileJava UP-TO-DATE
+> Task :fabric_26_3:processResources UP-TO-DATE
+> Task :fabric_26_3:classes UP-TO-DATE
+> Task :fabric_26_3:generateLog4jConfig UP-TO-DATE
+> Task :fabric_26_3:generateDLIConfig UP-TO-DATE
+> Task :fabric_26_3:configureLaunch UP-TO-DATE
+> Task :fabric_26_3:downloadAssets UP-TO-DATE
+> Task :fabric_26_3:configureClientLaunch UP-TO-DATE
+
+> Task :fabric_26_3:exportGuiClientLaunch
+GUI client launch: /Users/river_quinn/workspace/learn/EnchantmentCustomTable/fabric_versions/26.3/build/gui-validation/launch.json
+
+> Task :26.3:createMinecraftArtifacts UP-TO-DATE
+> Task :26.3:compileJava UP-TO-DATE
+> Task :26.3:stonecutterPrepare UP-TO-DATE
+> Task :26.3:stonecutterGenerate UP-TO-DATE
+> Task :26.3:generateModMetadata UP-TO-DATE
+> Task :26.3:processResources UP-TO-DATE
+> Task :26.3:classes UP-TO-DATE
+> Task :26.3:downloadAssets UP-TO-DATE
+> Task :26.3:prepareClientRun UP-TO-DATE
+
+> Task :26.3:exportGuiClientLaunch
+GUI client launch: /Users/river_quinn/workspace/learn/EnchantmentCustomTable/versions/26.3/build/gui-validation/launch.json
+
+BUILD SUCCESSFUL in 1s
+15 actionable tasks: 2 executed, 13 up-to-date

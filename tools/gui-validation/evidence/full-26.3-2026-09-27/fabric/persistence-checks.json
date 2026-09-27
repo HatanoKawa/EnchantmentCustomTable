@@ -1,0 +1,82 @@
+[
+  {
+    "case": "C11 ordinary",
+    "before_phase": "default",
+    "before_time": "11:13:03",
+    "after_phase": "default",
+    "after_time": "11:15:29",
+    "equal": true,
+    "before": {
+      "GUIBLOCK": " Items= Inventory={Items: [{count: 1, Slot: 0b, id: \"minecraft:book\"}]}",
+      "GUIPLAYER": " [{components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 5}}, count: 1, Slot: 0b, id: \"minecraft:enchanted_book\"}, {count: 1, Slot: 3b, id: \"minecraft:dirt\"}]"
+    },
+    "after": {
+      "GUIBLOCK": " Items= Inventory={Items: [{count: 1, Slot: 0b, id: \"minecraft:book\"}]}",
+      "GUIPLAYER": " [{components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 5}}, count: 1, Slot: 0b, id: \"minecraft:enchanted_book\"}, {count: 1, Slot: 3b, id: \"minecraft:dirt\"}]"
+    }
+  },
+  {
+    "case": "C11 copy",
+    "before_phase": "default",
+    "before_time": "11:23:22",
+    "after_phase": "default",
+    "after_time": "11:26:55",
+    "equal": true,
+    "before": {
+      "GUIBLOCK": " Items= Inventory={Items: [{count: 1, Slot: 0b, id: \"minecraft:book\"}, {count: 4, Slot: 1b, id: \"minecraft:emerald_block\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 5}}, count: 1, Slot: 2b, id: \"minecraft:enchanted_book\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 5}}, count: 1, Slot: 3b, id: \"minecraft:enchanted_book\"}]}",
+      "GUIPLAYER": " [{components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 5}}, count: 1, Slot: 0b, id: \"minecraft:enchanted_book\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 3, \"minecraft:unbreaking\": 3}}, count: 1, Slot: 3b, id: \"minecraft:enchanted_book\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 6}}, count: 1, Slot: 4b, id: \"minecraft:enchanted_book\"}, {count: 1, Slot: 5b, id: \"minecraft:diamond_sword\"}]"
+    },
+    "after": {
+      "GUIBLOCK": " Items= Inventory={Items: [{count: 1, Slot: 0b, id: \"minecraft:book\"}, {count: 4, Slot: 1b, id: \"minecraft:emerald_block\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 5}}, count: 1, Slot: 2b, id: \"minecraft:enchanted_book\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 5}}, count: 1, Slot: 3b, id: \"minecraft:enchanted_book\"}]}",
+      "GUIPLAYER": " [{components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 5}}, count: 1, Slot: 0b, id: \"minecraft:enchanted_book\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 3, \"minecraft:unbreaking\": 3}}, count: 1, Slot: 3b, id: \"minecraft:enchanted_book\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 6}}, count: 1, Slot: 4b, id: \"minecraft:enchanted_book\"}, {count: 1, Slot: 5b, id: \"minecraft:diamond_sword\"}]"
+    }
+  },
+  {
+    "case": "E10 merge",
+    "before_phase": "default",
+    "before_time": "11:45:59",
+    "after_phase": "default",
+    "after_time": "11:51:05",
+    "equal": true,
+    "before": {
+      "GUIBLOCK": " Items= Inventory={Items: [{components: {\"minecraft:enchantments\": {\"minecraft:sharpness\": 2, \"minecraft:unbreaking\": 2, \"minecraft:looting\": 1}}, count: 1, Slot: 0b, id: \"minecraft:diamond_sword\"}]}",
+      "GUIPLAYER": " [{count: 1, Slot: 5b, id: \"minecraft:book\"}, {count: 1, Slot: 6b, id: \"minecraft:dirt\"}]"
+    },
+    "after": {
+      "GUIBLOCK": " Items= Inventory={Items: [{components: {\"minecraft:enchantments\": {\"minecraft:sharpness\": 2, \"minecraft:unbreaking\": 2, \"minecraft:looting\": 1}}, count: 1, Slot: 0b, id: \"minecraft:diamond_sword\"}]}",
+      "GUIPLAYER": " [{count: 1, Slot: 5b, id: \"minecraft:book\"}, {count: 1, Slot: 6b, id: \"minecraft:dirt\"}]"
+    }
+  },
+  {
+    "case": "E10 export",
+    "before_phase": "default",
+    "before_time": "11:54:44",
+    "after_phase": "default",
+    "after_time": "11:56:34",
+    "equal": true,
+    "before": {
+      "GUIBLOCK": " Items= Inventory={Items: [{count: 1, Slot: 0b, id: \"minecraft:diamond_sword\"}]}",
+      "GUIPLAYER": " [{components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 3, \"minecraft:mending\": 1, \"minecraft:unbreaking\": 3, \"minecraft:looting\": 3}}, count: 1, Slot: 0b, id: \"minecraft:enchanted_book\"}]"
+    },
+    "after": {
+      "GUIBLOCK": " Items= Inventory={Items: [{count: 1, Slot: 0b, id: \"minecraft:diamond_sword\"}]}",
+      "GUIPLAYER": " [{components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 3, \"minecraft:mending\": 1, \"minecraft:unbreaking\": 3, \"minecraft:looting\": 3}}, count: 1, Slot: 0b, id: \"minecraft:enchanted_book\"}]"
+    }
+  },
+  {
+    "case": "strict Shift restart",
+    "before_phase": "strict",
+    "before_time": "12:02:48",
+    "after_phase": "strict-free",
+    "after_time": "12:05:34",
+    "equal": true,
+    "before": {
+      "GUIBLOCK": " Items= Inventory={Items: [{components: {\"minecraft:enchantments\": {\"minecraft:sharpness\": 5, \"minecraft:looting\": 4}}, count: 1, Slot: 0b, id: \"minecraft:diamond_sword\"}]}",
+      "GUIPLAYER": " [{components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 1}}, count: 1, Slot: 9b, id: \"minecraft:enchanted_book\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 1, \"minecraft:unbreaking\": 1}}, count: 1, Slot: 10b, id: \"minecraft:enchanted_book\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 5}}, count: 1, Slot: 11b, id: \"minecraft:enchanted_book\"}]"
+    },
+    "after": {
+      "GUIBLOCK": " Items= Inventory={Items: [{components: {\"minecraft:enchantments\": {\"minecraft:sharpness\": 5, \"minecraft:looting\": 4}}, count: 1, Slot: 0b, id: \"minecraft:diamond_sword\"}]}",
+      "GUIPLAYER": " [{components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 1}}, count: 1, Slot: 9b, id: \"minecraft:enchanted_book\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 1, \"minecraft:unbreaking\": 1}}, count: 1, Slot: 10b, id: \"minecraft:enchanted_book\"}, {components: {\"minecraft:stored_enchantments\": {\"minecraft:sharpness\": 5}}, count: 1, Slot: 11b, id: \"minecraft:enchanted_book\"}]"
+    }
+  }
+]

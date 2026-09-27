@@ -1,0 +1,39 @@
+{
+  "baseline": "dev / a5dd03cd358fedf6461d4bb6e82161c3c9ff9d32",
+  "date": "2026-09-27",
+  "timezone": "Asia/Shanghai",
+  "loaders": {
+    "fabric": {
+      "current_evaluated_cases": 28,
+      "retained_complete_cases": [
+        "E02",
+        "E06"
+      ],
+      "cumulative_pass": 30,
+      "newly_completed_previously_pending_cases": 25,
+      "strict_shift_extension": "PASS",
+      "current_screenshots": 56,
+      "persistence_pairs_verified": 5,
+      "restored": true
+    },
+    "neoforge": {
+      "current_evaluated_cases": 28,
+      "retained_complete_cases": [
+        "E02",
+        "E06"
+      ],
+      "cumulative_pass": 30,
+      "newly_completed_previously_pending_cases": 25,
+      "strict_shift_extension": "PASS",
+      "current_screenshots": 56,
+      "persistence_pairs_verified": 5,
+      "restored": true
+    }
+  },
+  "production_changes": false,
+  "limitations": [
+    "V01 world-model observations retained from R4; current menu/tooltips rechecked",
+    "E02/E06 complete default and persistence observations retained from R5",
+    "Scope is the agreed 30-case suite plus strict Shift; multiplayer/hoppers/full inventory/QUICK_CRAFT/performance excluded"
+  ]
+}

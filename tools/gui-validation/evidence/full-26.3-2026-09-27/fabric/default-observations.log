@@ -1,0 +1,259 @@
+[11:07:28] [Render thread/INFO] (Minecraft) Reloading ResourceManager: vanilla, vanilla, enchantment_custom_table, fabric-advancement-api-v1, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-getter-api-v2, fabric-client-gametest-api-v1, fabric-command-api-v2, fabric-content-registries-v0, fabric-convention-tags-v2, fabric-crash-report-info-v1, fabric-creative-tab-api-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-debug-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-game-rule-api-v1, fabric-gametest-api-v1, fabric-item-api-v1, fabric-key-mapping-api-v1, fabric-lifecycle-events-v1, fabric-loot-api-v3, fabric-menu-api-v1, fabric-message-api-v1, fabric-model-loading-api-v1, fabric-networking-api-v1, fabric-object-builder-api-v1, fabric-particles-v1, fabric-permission-api-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-rendering-fluids-v1, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-resource-loader-v1, fabric-screen-api-v1, fabric-serialization-api-v1, fabric-sound-api-v1, fabric-tag-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader
+[11:08:41] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:08:41] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:08:41] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:08:41] [Server thread/INFO] (Minecraft) System chat: Player349 joined the game
+[11:09:02] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguicbase]
+[11:09:02] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguicbase
+[11:09:29] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.09.29.png
+[11:10:00] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.10.00.png
+[11:10:04] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:10:04] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:10:04] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:10:04] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:10:04] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: []}
+[11:10:04] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{count: 8, Slot: 0b, id: "minecraft:book"}, {count: 64, Slot: 1b, id: "minecraft:emerald"}, {count: 1, Slot: 2b, id: "minecraft:dirt"}, {count: 4, Slot: 3b, id: "minecraft:emerald_block"}]
+[11:10:07] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguicboundary]
+[11:10:07] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguicboundary
+[11:10:44] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.10.44.png
+[11:11:08] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.11.08.png
+[11:11:35] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.11.35.png
+[11:11:38] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:11:38] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:11:38] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:11:38] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:11:38] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 2, Slot: 0b, id: "minecraft:book"}, {count: 36, Slot: 1b, id: "minecraft:emerald"}]}
+[11:11:38] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{count: 1, Slot: 3b, id: "minecraft:dirt"}]
+[11:11:40] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[11:11:40] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:11:40] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:11:40] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:12:59] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.12.59.png
+[11:13:03] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:13:03] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:13:03] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:13:03] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:13:03] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 1, Slot: 0b, id: "minecraft:book"}]}
+[11:13:03] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}, {count: 1, Slot: 3b, id: "minecraft:dirt"}]
+[11:13:36] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.13.36.png
+[11:13:37] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[11:13:37] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:13:37] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:13:37] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:13:50] [Server thread/INFO] (Minecraft) Stopping server
+[11:13:50] [Server thread/INFO] (Minecraft) Saving players
+[11:13:50] [Server thread/INFO] (Minecraft) Saving worlds
+[11:13:50] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:13:50] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:13:50] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:15:09] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:15:09] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:15:09] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:15:09] [Server thread/INFO] (Minecraft) System chat: Player349 joined the game
+[11:15:29] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:15:29] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:15:29] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:15:29] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:15:29] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 1, Slot: 0b, id: "minecraft:book"}]}
+[11:15:29] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}, {count: 1, Slot: 3b, id: "minecraft:dirt"}]
+[11:15:59] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.15.59.png
+[11:16:02] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguicblocks]
+[11:16:02] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguicblocks
+[11:17:15] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.17.15.png
+[11:17:19] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:17:19] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:17:19] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:17:19] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:17:19] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 1, Slot: 0b, id: "minecraft:book"}]}
+[11:17:19] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:aqua_affinity": 1}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}]
+[11:17:23] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiccopy]
+[11:17:23] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiccopy
+[11:18:41] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.18.41.png
+[11:19:31] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.19.31.png
+[11:19:35] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:19:35] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:19:35] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:19:35] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:19:35] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 1, Slot: 0b, id: "minecraft:book"}, {count: 4, Slot: 1b, id: "minecraft:emerald_block"}]}
+[11:19:35] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 1b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 2b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 3, "minecraft:unbreaking": 3}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 6}}, count: 1, Slot: 4b, id: "minecraft:enchanted_book"}, {count: 1, Slot: 5b, id: "minecraft:diamond_sword"}]
+[11:19:38] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiccopy]
+[11:19:38] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiccopy
+[11:20:28] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.20.28.png
+[11:20:32] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:20:32] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:20:32] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:20:32] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:20:32] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: []}
+[11:20:32] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{count: 3, Slot: 0b, id: "minecraft:book"}, {count: 12, Slot: 1b, id: "minecraft:emerald_block"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 2b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 3, "minecraft:unbreaking": 3}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 6}}, count: 1, Slot: 4b, id: "minecraft:enchanted_book"}, {count: 1, Slot: 5b, id: "minecraft:diamond_sword"}]
+[11:21:22] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.21.22.png
+[11:21:25] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:21:25] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:21:25] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:21:25] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:21:25] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 2, Slot: 0b, id: "minecraft:book"}, {count: 8, Slot: 1b, id: "minecraft:emerald_block"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 2b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}]}
+[11:21:25] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 3, "minecraft:unbreaking": 3}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 6}}, count: 1, Slot: 4b, id: "minecraft:enchanted_book"}, {count: 1, Slot: 5b, id: "minecraft:diamond_sword"}]
+[11:21:27] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[11:21:27] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:21:27] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:21:27] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:23:19] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.23.19.png
+[11:23:22] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:23:22] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:23:22] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:23:22] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:23:22] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 1, Slot: 0b, id: "minecraft:book"}, {count: 4, Slot: 1b, id: "minecraft:emerald_block"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 2b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}]}
+[11:23:22] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 3, "minecraft:unbreaking": 3}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 6}}, count: 1, Slot: 4b, id: "minecraft:enchanted_book"}, {count: 1, Slot: 5b, id: "minecraft:diamond_sword"}]
+[11:24:00] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.24.00.png
+[11:24:02] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[11:24:02] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:24:02] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:24:02] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:24:25] [Server thread/INFO] (Minecraft) Stopping server
+[11:24:25] [Server thread/INFO] (Minecraft) Saving players
+[11:24:25] [Server thread/INFO] (Minecraft) Saving worlds
+[11:24:25] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:24:25] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:24:25] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:26:08] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:26:08] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:26:08] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:26:08] [Server thread/INFO] (Minecraft) System chat: Player349 joined the game
+[11:26:55] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:26:55] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:26:55] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:26:55] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:26:55] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 1, Slot: 0b, id: "minecraft:book"}, {count: 4, Slot: 1b, id: "minecraft:emerald_block"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 2b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}]}
+[11:26:55] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 3, "minecraft:unbreaking": 3}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 6}}, count: 1, Slot: 4b, id: "minecraft:enchanted_book"}, {count: 1, Slot: 5b, id: "minecraft:diamond_sword"}]
+[11:27:36] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.27.36.png
+[11:28:22] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.28.22.png
+[11:28:26] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:28:26] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:28:26] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:28:26] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:28:26] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 1, Slot: 0b, id: "minecraft:book"}, {count: 4, Slot: 1b, id: "minecraft:emerald_block"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}]}
+[11:28:26] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 2b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 3, "minecraft:unbreaking": 3}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 6}}, count: 1, Slot: 4b, id: "minecraft:enchanted_book"}, {count: 1, Slot: 5b, id: "minecraft:diamond_sword"}]
+[11:28:29] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguicbase]
+[11:28:29] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguicbase
+[11:29:18] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.29.18.png
+[11:29:57] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.29.57.png
+[11:30:00] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.30.00.png
+[11:30:38] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.30.38.png
+[11:30:41] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguireloadlater]
+[11:30:41] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguireloadlater
+[11:30:46] [Server thread/INFO] (Minecraft) [Not Secure] [Server] GUIRELOAD
+[11:30:47] [Render thread/INFO] (Minecraft) [System] [CHAT] [Server] GUIRELOAD
+[11:31:25] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.31.25.png
+[11:33:14] [Server thread/INFO] (Minecraft) System chat: [Player349: Reloading!]
+[11:33:14] [Render thread/INFO] (Minecraft) [System] [CHAT] Reloading!
+[11:33:36] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguireloadlater]
+[11:33:36] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguireloadlater
+[11:34:06] [Server thread/INFO] (Minecraft) [Not Secure] [Server] GUIRELOAD
+[11:34:06] [Render thread/INFO] (Minecraft) [System] [CHAT] [Server] GUIRELOAD
+[11:34:17] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.34.17.png
+[11:35:57] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.35.57.png
+[11:36:01] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:36:01] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:36:01] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:36:01] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:36:01] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 7, Slot: 0b, id: "minecraft:book"}, {count: 28, Slot: 1b, id: "minecraft:emerald"}]}
+[11:36:01] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 5}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}, {count: 1, Slot: 2b, id: "minecraft:dirt"}, {count: 4, Slot: 3b, id: "minecraft:emerald_block"}]
+[11:36:04] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiesync]
+[11:36:04] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiesync
+[11:37:44] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.37.44.png
+[11:38:32] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.38.32.png
+[11:39:14] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.39.14.png
+[11:39:18] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:39:18] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:39:18] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:39:18] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:39:18] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 1, Slot: 0b, id: "minecraft:diamond_sword"}]}
+[11:39:18] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:unbreaking": 3}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:looting": 3}}, count: 1, Slot: 1b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 3}}, count: 1, Slot: 2b, id: "minecraft:enchanted_book"}, {components: {"minecraft:stored_enchantments": {"minecraft:mending": 1}}, count: 1, Slot: 3b, id: "minecraft:enchanted_book"}]
+[11:39:21] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguieinsert]
+[11:39:21] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguieinsert
+[11:40:31] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.40.31.png
+[11:41:39] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.41.38.png
+[11:45:55] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.45.55.png
+[11:45:59] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:45:59] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:45:59] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:45:59] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:45:59] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{components: {"minecraft:enchantments": {"minecraft:sharpness": 2, "minecraft:unbreaking": 2, "minecraft:looting": 1}}, count: 1, Slot: 0b, id: "minecraft:diamond_sword"}]}
+[11:45:59] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{count: 1, Slot: 5b, id: "minecraft:book"}, {count: 1, Slot: 6b, id: "minecraft:dirt"}]
+[11:46:59] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.46.58.png
+[11:47:00] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[11:47:00] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:47:00] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:47:00] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:49:56] [Server thread/INFO] (Minecraft) Stopping server
+[11:49:56] [Server thread/INFO] (Minecraft) Saving players
+[11:49:56] [Server thread/INFO] (Minecraft) Saving worlds
+[11:49:56] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:49:56] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:49:56] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:50:47] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:50:47] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:50:47] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:50:48] [Server thread/INFO] (Minecraft) System chat: Player349 joined the game
+[11:51:05] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:51:05] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:51:05] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:51:05] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:51:05] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{components: {"minecraft:enchantments": {"minecraft:sharpness": 2, "minecraft:unbreaking": 2, "minecraft:looting": 1}}, count: 1, Slot: 0b, id: "minecraft:diamond_sword"}]}
+[11:51:05] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{count: 1, Slot: 5b, id: "minecraft:book"}, {count: 1, Slot: 6b, id: "minecraft:dirt"}]
+[11:51:26] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.51.26.png
+[11:51:30] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiesplit]
+[11:51:30] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiesplit
+[11:52:05] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.52.05.png
+[11:52:22] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.52.22.png
+[11:52:37] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.52.37.png
+[11:52:53] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.52.53.png
+[11:53:17] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.53.17.png
+[11:53:38] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.53.37.png
+[11:53:41] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:53:41] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:53:41] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:53:41] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:53:41] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{components: {"minecraft:stored_enchantments": {"minecraft:looting": 3}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}]}
+[11:53:41] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER []
+[11:54:07] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.54.07.png
+[11:54:11] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiesync]
+[11:54:11] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiesync
+[11:54:30] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.54.30.png
+[11:54:44] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:54:44] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:54:44] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:54:44] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:54:44] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 1, Slot: 0b, id: "minecraft:diamond_sword"}]}
+[11:54:44] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 3, "minecraft:mending": 1, "minecraft:unbreaking": 3, "minecraft:looting": 3}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}]
+[11:55:09] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.55.09.png
+[11:55:11] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[11:55:11] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:55:11] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:55:11] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:55:22] [Server thread/INFO] (Minecraft) Stopping server
+[11:55:22] [Server thread/INFO] (Minecraft) Saving players
+[11:55:22] [Server thread/INFO] (Minecraft) Saving worlds
+[11:55:22] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:55:22] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:55:22] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:56:19] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:56:19] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:56:19] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:56:19] [Server thread/INFO] (Minecraft) System chat: Player349 joined the game
+[11:56:34] [Server thread/INFO] (Minecraft) System chat: [Player349: Running function minecraft:ectguiinspect]
+[11:56:34] [Server thread/INFO] (Minecraft) [Not Secure] [Player349] GUIEVIDENCE
+[11:56:34] [Render thread/INFO] (Minecraft) [System] [CHAT] Running function minecraft:ectguiinspect
+[11:56:34] [Render thread/INFO] (Minecraft) [System] [CHAT] [Player349] GUIEVIDENCE
+[11:56:34] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIBLOCK Items= Inventory={Items: [{count: 1, Slot: 0b, id: "minecraft:diamond_sword"}]}
+[11:56:34] [Render thread/INFO] (Minecraft) [System] [CHAT] GUIPLAYER [{components: {"minecraft:stored_enchantments": {"minecraft:sharpness": 3, "minecraft:mending": 1, "minecraft:unbreaking": 3, "minecraft:looting": 3}}, count: 1, Slot: 0b, id: "minecraft:enchanted_book"}]
+[11:57:03] [Render thread/INFO] (Minecraft) [System] [CHAT] Saved screenshot as 2026-09-27_11.57.03.png
+[11:57:04] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[11:57:04] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:57:04] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:57:04] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end
+[11:57:17] [Server thread/INFO] (Minecraft) Stopping server
+[11:57:17] [Server thread/INFO] (Minecraft) Saving players
+[11:57:17] [Server thread/INFO] (Minecraft) Saving worlds
+[11:57:17] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:overworld
+[11:57:17] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_nether
+[11:57:17] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[ECT-GUI-R4-fabric-26.3]'/minecraft:the_end

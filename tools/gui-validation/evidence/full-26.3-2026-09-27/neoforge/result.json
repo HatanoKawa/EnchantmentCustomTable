@@ -1,0 +1,150 @@
+{
+  "loader": "neoforge",
+  "minecraft": "26.3",
+  "code_base": "a5dd03cd358fedf6461d4bb6e82161c3c9ff9d32",
+  "world": "versions/26.3/run/saves/ECT-FULL-R7-neoforge-26.3",
+  "originals": {
+    "config": {
+      "path": "versions/26.3/run/config/enchantment_custom_table-common.toml",
+      "existed": false
+    },
+    "options": {
+      "path": "versions/26.3/run/options.txt",
+      "existed": false
+    }
+  },
+  "restored": true,
+  "cases": {
+    "C01": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C02": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C03": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C04": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C05": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C06": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C07": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C08": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C09": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C10": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C11": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "C12": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and latest.log"
+    },
+    "V02": {
+      "status": "PASS",
+      "source": "C06 pages 2/2,1/1,-/-,1/2"
+    },
+    "E01": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and default.log"
+    },
+    "E03": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and default.log"
+    },
+    "E04": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and default.log"
+    },
+    "E05": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and default.log"
+    },
+    "E07": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and default.log"
+    },
+    "E08": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and default.log"
+    },
+    "E09": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and default.log"
+    },
+    "E10": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and default.log"
+    },
+    "V01": {
+      "status": "PASS",
+      "source": "R7 menu/tooltips plus retained R4 world models; same production renderer code"
+    },
+    "K01": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and strict-free.log"
+    },
+    "K02": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and strict-free.log"
+    },
+    "K03": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and strict-free.log"
+    },
+    "K04": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and strict-free.log"
+    },
+    "K05": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and strict-free.log"
+    },
+    "K06": {
+      "status": "PASS",
+      "source": "current R7 native GUI, F2 screenshots and strict-free.log"
+    },
+    "E02": {
+      "status": "REUSED_PASS",
+      "source": "../../shift-matrix-2026-09-26/neoforge-26.3/result.json",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "reason": "Production code and dependency files unchanged through a5dd03c; full R5 persistence evidence retained."
+    },
+    "E06": {
+      "status": "REUSED_PASS",
+      "source": "../../shift-matrix-2026-09-26/neoforge-26.3/result.json",
+      "code_base": "821b447c1be6f27ace485d36a6c05a747a31092f",
+      "reason": "Production code and dependency files unchanged through a5dd03c; full R5 persistence evidence retained."
+    }
+  },
+  "observations": [
+    "VIS-26.3-01: empty enchanting candidates display -/- immediately after export, 1/1 after reopen; both loaders, items unchanged."
+  ],
+  "strict_shift_extension": {
+    "status": "PASS",
+    "source": "strict-observations.log, strict-free-observations.log, persistence-checks.json"
+  }
+}
