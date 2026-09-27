@@ -27,6 +27,8 @@ import java.util.Objects;
 
 public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<FabricEnchantmentConversionMenu> {
     private static final ResourceLocation GUI_BACKGROUND = FabricVersionedMinecraft.id("textures/gui/container/enchantment_conversion.png");
+    private Button paymentInfo;
+    private com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot paymentView;
     private EditBox searchBox;
     private String pendingSearchQuery = "";
     private String lastSentSearchQuery = "";
@@ -42,11 +44,16 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         super.render(poseStack, mouseX, mouseY, partialTicks);
         this.renderTooltip(poseStack, mouseX, mouseY);
+        if (paymentInfo != null && paymentInfo.isMouseOver(mouseX, mouseY)) renderTooltip(poseStack,
+                font.split(com.river_quinn.enchantment_custom_table.core.config.MinecraftPaymentConfig.describe(paymentView), 220), mouseX, mouseY);
     }
 
     @Override
     protected void init() {
         super.init();
+        paymentInfo = new Button(leftPos + 8, topPos + 4, 30, 14, Component.literal("?"), button -> {});
+        addRenderableWidget(paymentInfo);
+        updatePaymentInfo();
         searchBox = new EditBox(
                 this.font,
                 this.leftPos + 43,
@@ -82,6 +89,7 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
     @Override
     protected void containerTick() {
         super.containerTick();
+        updatePaymentInfo();
         if (searchUpdateDelayTicks > 0) {
             searchUpdateDelayTicks--;
         }
@@ -193,6 +201,13 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
     private void clickMenuButton(int buttonId) {
         if (minecraft != null && minecraft.gameMode != null) {
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, buttonId);
+        }
+    }
+    private void updatePaymentInfo() {
+        var current = com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig.snapshot(true);
+        if (paymentInfo != null && paymentView != current) {
+            paymentView = current;
+
         }
     }
 }

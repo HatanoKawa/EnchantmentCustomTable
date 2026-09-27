@@ -188,7 +188,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 
             @Override
             public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-                return EMERALD_SLOT_ICON;
+                return null;
             }
         });
 
@@ -421,7 +421,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
     }
 
     private TableConfigView config() {
-        return Config.snapshot();
+        return Config.snapshot(world.isClientSide());
     }
 
     private void syncPageState() {

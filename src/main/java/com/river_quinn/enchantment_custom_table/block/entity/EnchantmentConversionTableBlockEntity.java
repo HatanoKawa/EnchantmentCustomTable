@@ -192,7 +192,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     }
 
     private TableConfigView config() {
-        return Config.snapshot();
+        return Config.snapshot(level != null && level.isClientSide());
     }
 
     private class ConversionAutomationItemHandler implements IItemHandler, AutomationPort {

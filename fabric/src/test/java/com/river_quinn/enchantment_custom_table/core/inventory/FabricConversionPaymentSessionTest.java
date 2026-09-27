@@ -9,7 +9,7 @@ import java.util.function.IntConsumer;
 class FabricConversionPaymentSessionTest extends ConversionPaymentSessionTest {
     @Override
     protected LogicalInventory inventory(IntConsumer changed) {
-        return new FabricTableInventory(3, slot -> 64, (slot, stack) -> true, changed);
+        return new FabricTableInventory(4, slot -> 64, (slot, stack) -> true, changed);
     }
 
     @Override
