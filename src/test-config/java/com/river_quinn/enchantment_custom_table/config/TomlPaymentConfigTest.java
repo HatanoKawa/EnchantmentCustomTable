@@ -47,4 +47,16 @@ class TomlPaymentConfigTest {
         TomlPaymentConfig.migrate(file, ignored -> {});
         assertEquals(PaymentOptions.DEFAULTS, TomlPaymentConfig.read(new TomlParser().parse(Files.readString(file)).get("paymentOptions"), ignored -> {}));
     }
+
+    @Test void editorSavePreservesOtherFieldsAndRefusesMalformedEdits() throws Exception {
+        Path file = directory.resolve("edited.toml");
+        Files.writeString(file, "# pack note\nunrelated = 42\n");
+        var custom = new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(Map.of("minecraft:diamond", 3), true, true, true, false);
+        TomlPaymentConfig.save(file, custom);
+        assertEquals(custom, TomlPaymentConfig.load(file, ignored -> {}));
+        assertEquals(Integer.valueOf(42), new TomlParser().parse(Files.readString(file)).get("unrelated"));
+        Files.writeString(file, "paymentOptions = [{");
+        assertThrows(RuntimeException.class, () -> TomlPaymentConfig.save(file, custom));
+        assertEquals("paymentOptions = [{", Files.readString(file));
+    }
 }
