@@ -83,3 +83,8 @@ Keep version, mod id, author, loader dependency ranges, Forge version, Fabric Lo
 Forge metadata is generated from `src/main/templates/META-INF/mods.toml`. Fabric metadata lives in `fabric/src/main/resources/fabric.mod.json`.
 
 Fabric self-manages its config file at the Fabric config dir path `enchantment_custom_table.json`. Shared JSON defaults and parsing live in `src/common/java/com/river_quinn/enchantment_custom_table/core/config/JsonTableConfigCodec.java`; Fabric-only file IO and logging live in `fabric/src/main/java/com/river_quinn/enchantment_custom_table/fabric/config/FabricTableConfig.java`.
+
+
+Payment configuration uses the schema-2 `paymentOptions` list, with 36 emeralds / 4 emerald blocks / 1 nether star as alternatives. Validation, migration and immutable snapshots live in `core/config`; resolve item IDs and default stack limits only after Minecraft registration. Preserve original files with `.payment-v1.bak` before migrating old costs. TOML adapters and their common-project tests live in `src/main/java/com/river_quinn/enchantment_custom_table/config/TomlPaymentConfig.java` and `src/test-config/java`.
+
+Server rules are authoritative. Keep local snapshots separate from connection-scoped client snapshots, sync all four gameplay flags with payments, and clear the remote snapshot on disconnect. Do not persist received rules to the client file. Forge/NeoForge retains COMMON configuration and replaces only this mod's file watcher after loading to preserve malformed edits; Fabric reloads on server/world start. Config changes require JVM regression tests plus real client/server checks with intentionally different local and server prices. See both README configuration sections before changing migration or validation semantics.
