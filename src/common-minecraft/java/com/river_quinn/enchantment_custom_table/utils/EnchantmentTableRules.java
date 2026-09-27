@@ -91,7 +91,7 @@ public final class EnchantmentTableRules {
     }
 
     public static int paymentCostFor(Item item, TableConfigView config) {
-        return paymentCostFor(item, config.minimumEmeraldCost(), config.minimumEmeraldBlockCost());
+        return config.paymentCost(com.river_quinn.enchantment_custom_table.core.config.MinecraftPaymentConfig.itemId(item));
     }
 
     public static boolean acceptsConversionBookInput(TableConfigView config) {
@@ -107,7 +107,7 @@ public final class EnchantmentTableRules {
     }
 
     public static boolean hasEnoughPayment(ItemStack paymentStack, TableConfigView config) {
-        return hasEnoughPayment(paymentStack, config.minimumEmeraldCost(), config.minimumEmeraldBlockCost());
+        return hasEnoughPayment(paymentStack.getCount(), paymentCostFor(paymentStack.getItem(), config));
     }
 
     public static boolean consumePayment(ItemStack paymentStack, int emeraldCost, int emeraldBlockCost) {
@@ -120,7 +120,10 @@ public final class EnchantmentTableRules {
     }
 
     public static boolean consumePayment(ItemStack paymentStack, TableConfigView config) {
-        return consumePayment(paymentStack, config.minimumEmeraldCost(), config.minimumEmeraldBlockCost());
+        int cost = paymentCostFor(paymentStack.getItem(), config);
+        if (!hasEnoughPayment(paymentStack.getCount(), cost)) return false;
+        paymentStack.shrink(cost);
+        return true;
     }
 
     public static boolean hasRequiredConversionMaterials(ItemStack bookStack, ItemStack paymentStack, TableConfigView config) {

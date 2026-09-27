@@ -440,7 +440,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	}
 
 	private EnchantmentTableRules.MergeOptions mergeOptions() {
-		return EnchantmentTableRules.MergeOptions.from(Config.snapshot());
+		return EnchantmentTableRules.MergeOptions.from(Config.snapshot(world.isClientSide()));
 	}
 
 	private void playUseSound() {

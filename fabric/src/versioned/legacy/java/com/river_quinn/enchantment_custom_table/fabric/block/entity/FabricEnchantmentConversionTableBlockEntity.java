@@ -60,7 +60,7 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
     }
 
     public boolean isPaymentItem(ItemStack stack) {
-        return EnchantmentTableRules.isConversionPaymentItem(stack, FabricTableConfig.snapshot());
+        return EnchantmentTableRules.isConversionPaymentItem(stack, FabricTableConfig.snapshot(level != null && level.isClientSide()));
     }
 
     public boolean isValidCopyTemplate(ItemStack stack) {
@@ -107,7 +107,7 @@ public class FabricEnchantmentConversionTableBlockEntity extends FabricEnchantin
 
     private boolean isItemValid(int slot, ItemStack stack) {
         return switch (slot) {
-            case FabricEnchantmentConversionMenu.BOOK_SLOT -> EnchantmentTableRules.acceptsConversionBookInput(FabricTableConfig.snapshot()) && stack.is(Items.BOOK);
+            case FabricEnchantmentConversionMenu.BOOK_SLOT -> EnchantmentTableRules.acceptsConversionBookInput(FabricTableConfig.snapshot(level != null && level.isClientSide())) && stack.is(Items.BOOK);
             case FabricEnchantmentConversionMenu.PAYMENT_SLOT -> isPaymentItem(stack);
             case FabricEnchantmentConversionMenu.TEMPLATE_BOOK_SLOT -> isValidCopyTemplate(stack);
             default -> false;

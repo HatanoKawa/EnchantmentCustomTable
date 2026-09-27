@@ -30,7 +30,9 @@ public class EnchantmentCustomTable
         CREATIVE_MODE_TABS.register(modEventBus);
 
         modEventBus.addListener(this::addCreative);
+        Config.prepareMigration();
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        com.river_quinn.enchantment_custom_table.network.TableConfigSync.register();
 
         //? if >=1.21.9 {
         if (FMLEnvironment.getDist().isClient()) {
@@ -40,6 +42,7 @@ public class EnchantmentCustomTable
             modEventBus.addListener(ModBlockEntityRenderers::register);
             modEventBus.addListener(ModScreens::register);
             ModConfigScreens.register(modContainer);
+            com.river_quinn.enchantment_custom_table.client.ClientTableConfigSync.register();
         }
     }
 

@@ -17,7 +17,12 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class ModPayloads {
     public static void register(final RegisterPayloadHandlersEvent event) {
-        final PayloadRegistrar registrar = event.registrar("1");
+        final PayloadRegistrar registrar = event.registrar("2");
+        registrar.playToClient(com.river_quinn.enchantment_custom_table.network.TableConfigPayload.TYPE,
+                com.river_quinn.enchantment_custom_table.network.TableConfigPayload.CODEC, (payload, context) -> {
+                    var update = com.river_quinn.enchantment_custom_table.core.config.TableConfigWireCodec.decode(payload.json());
+                    com.river_quinn.enchantment_custom_table.Config.STATE.receive(update.revision(), update.config());
+                });
         //? if >=1.21.7 {
         registrar.playBidirectional(
                 EnchantingCustomTableNetData.TYPE,

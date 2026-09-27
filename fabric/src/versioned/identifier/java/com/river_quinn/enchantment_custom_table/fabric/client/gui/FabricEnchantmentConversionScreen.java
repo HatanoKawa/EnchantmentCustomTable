@@ -28,6 +28,8 @@ import java.util.Objects;
 public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<FabricEnchantmentConversionMenu> {
     private static final Identifier GUI_BACKGROUND = FabricVersionedMinecraft.id("textures/screens/enchantment_conversion.png");
     private EditBox searchBox;
+    private Button paymentInfo;
+    private com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot paymentView;
     private String pendingSearchQuery = "";
     private String lastSentSearchQuery = "";
     private int searchUpdateDelayTicks = -1;
@@ -47,6 +49,10 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
     @Override
     protected void init() {
         super.init();
+        paymentInfo = Button.builder(Component.literal("?"), button -> {})
+                .bounds(this.leftPos + 8, this.topPos + 4, 30, 14).build();
+        this.addRenderableWidget(paymentInfo);
+        updatePaymentInfo();
         searchBox = new EditBox(
                 this.font,
                 this.leftPos + 43,
@@ -76,6 +82,7 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
     @Override
     protected void containerTick() {
         super.containerTick();
+        updatePaymentInfo();
         if (searchUpdateDelayTicks > 0) {
             searchUpdateDelayTicks--;
         }
@@ -175,4 +182,13 @@ public class FabricEnchantmentConversionScreen extends AbstractContainerScreen<F
                 .limit(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS)
                 .toList();
     }
+    private void updatePaymentInfo() {
+        var current = com.river_quinn.enchantment_custom_table.fabric.config.FabricTableConfig.snapshot(true);
+        if (paymentInfo != null && paymentView != current) {
+            paymentView = current;
+            paymentInfo.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                    com.river_quinn.enchantment_custom_table.core.config.MinecraftPaymentConfig.describe(current)));
+        }
+    }
+
 }

@@ -218,12 +218,13 @@ public class ConversionTableSession {
     }
 
     public TableOperationResult pickGeneratedBook() {
-        if (!canPickGeneratedBook()) {
+        TableConfigView currentConfig = config.snapshot();
+        if (copyMode.getAsBoolean() || !EnchantmentTableRules.hasRequiredConversionMaterials(
+                inventory.getStackInSlot(bookSlot), inventory.getStackInSlot(paymentSlot), currentConfig)) {
             clearGeneratedSlots();
             return TableOperationResult.failed(true);
         }
 
-        TableConfigView currentConfig = config.snapshot();
         if (!currentConfig.freeConversionTableCosts()) {
             ItemStack books = inventory.getStackInSlot(bookSlot).copy();
             ItemStack payment = inventory.getStackInSlot(paymentSlot).copy();
@@ -245,10 +246,11 @@ public class ConversionTableSession {
             int templateSlot,
             int copyResultSlot
     ) {
+        TableConfigView currentConfig = config.snapshot();
         if (!EnchantmentTableRules.shouldGenerateCopyResult(
                 copyMode.getAsBoolean(),
                 inventory.getStackInSlot(copyResultSlot).isEmpty(),
-                hasEnoughMaterialsForCopy(inventory, config.snapshot(), bookSlot, paymentSlot)
+                hasEnoughMaterialsForCopy(inventory, currentConfig, bookSlot, paymentSlot)
         )) {
             return TableOperationResult.failed(false);
         }
@@ -256,7 +258,7 @@ public class ConversionTableSession {
         EnchantmentTableRules.consumeRequiredConversionMaterials(
                 inventory.getStackInSlot(bookSlot),
                 inventory.getStackInSlot(paymentSlot),
-                config.snapshot()
+                currentConfig
         );
         inventory.setStackInSlot(
                 copyResultSlot,

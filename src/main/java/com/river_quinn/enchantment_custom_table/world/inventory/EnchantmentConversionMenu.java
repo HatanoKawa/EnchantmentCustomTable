@@ -200,7 +200,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			@Override
 			//? if >=1.21.11 {
 			public Identifier getNoItemIcon() {
-				return Identifier.withDefaultNamespace("container/slot/emerald");
+				return null;
 			}
 			//? } else if >=1.21.4 {
 			/*public ResourceLocation getNoItemIcon() {
@@ -497,7 +497,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 	}
 
 	private TableConfigView config() {
-		return Config.snapshot();
+		return Config.snapshot(world.isClientSide());
 	}
 
 	private void syncPageState() {
