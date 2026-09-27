@@ -30,9 +30,14 @@ public class Config {
     public static final ModConfigSpec SPEC = BUILDER.build();
     public static final TableConfigState STATE = new TableConfigState();
     private static volatile TableConfigSnapshot raw = JsonTableConfigCodec.defaultSnapshot();
+    private static volatile boolean safeWatcherInstalled;
+
+    private static java.nio.file.Path path() {
+        return FMLPaths.CONFIGDIR.get().resolve(EnchantmentCustomTable.MODID + "-common.toml");
+    }
 
     public static void prepareMigration() {
-        TomlPaymentConfig.migrate(FMLPaths.CONFIGDIR.get().resolve(EnchantmentCustomTable.MODID + "-common.toml"), Config::warn);
+        TomlPaymentConfig.migrate(path(), Config::warn);
     }
     public static TableConfigSnapshot snapshot() { return STATE.local(); }
     public static TableConfigSnapshot snapshot(boolean clientSide) { return STATE.forSide(clientSide); }
@@ -43,17 +48,39 @@ public class Config {
     public static void warn(String message) { LoggerFactory.getLogger(EnchantmentCustomTable.MODID).warn(message); }
 
     public static void save(TableConfigSnapshot value) {
-        PAYMENTS.set(TomlPaymentConfig.entries(value.paymentOptions()));
-        ENFORCE.set(value.enforceEnchantmentLevelLimit()); INCREMENTAL.set(value.incrementalSameLevelMerge());
-        LEVEL_ONE.set(value.convertOnlyLevelOneBook()); FREE.set(value.freeConversionTableCosts());
-        SPEC.save();
-        readValues();
+        try {
+            TomlPaymentConfig.save(path(), value);
+            raw = value;
+            TableConfigSync.configChanged();
+        } catch (java.io.IOException ex) { throw new IllegalStateException("Cannot save config", ex); }
+    }
+
+    @SubscribeEvent
+    static void afterLoading(net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent event) {
+        event.enqueueWork(() -> {
+            try {
+                // Replace only this mod's watcher. FML's default watcher rewrites malformed files.
+                com.electronwill.nightconfig.core.file.FileWatcher.defaultInstance().setWatch(path(), Config::reloadSafely);
+                safeWatcherInstalled = true;
+                reloadSafely();
+            } catch (Exception ex) { throw new IllegalStateException("Cannot install safe config reload", ex); }
+        });
+    }
+
+    private static synchronized void reloadSafely() {
+        try {
+            TomlPaymentConfig.migrate(path(), Config::warn);
+            raw = TomlPaymentConfig.load(path(), Config::warn);
+            TableConfigSync.configChanged();
+        } catch (java.io.IOException | RuntimeException ex) {
+            warn("Cannot reload config; file and last valid rules retained: " + ex.getMessage());
+        }
     }
 
     @SubscribeEvent
     static void onLoad(ModConfigEvent event) {
         if (event.getConfig().getSpec() != SPEC || event instanceof ModConfigEvent.Unloading) return;
-        readValues();
+        if (safeWatcherInstalled) reloadSafely(); else readValues();
     }
     private static void readValues() {
         raw = new TableConfigSnapshot(TomlPaymentConfig.read(PAYMENTS.get(), Config::warn),
