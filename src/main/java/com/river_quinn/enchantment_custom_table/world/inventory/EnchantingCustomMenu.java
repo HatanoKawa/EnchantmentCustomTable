@@ -14,22 +14,11 @@ import com.river_quinn.enchantment_custom_table.init.ModMenus;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import net.minecraft.core.*;
-//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
-//?} else {
-/*import net.minecraft.resources.ResourceLocation;*/
-//?}
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.*;
-//? if <1.21.9 {
-/*import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
-*///?}
-//? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
-//?}
 
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.Items;
@@ -38,10 +27,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-//? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
-//?}
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -60,11 +47,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	 * index 1: 附加槽，仅接受附魔，添加附魔书后将会立刻将附魔书的附魔添加到待附魔工具中并重新生成附魔书槽
 	 * index 2-22: 附魔书槽
 	 */
-	//? if >=1.21.9 {
 	private final EnchantingMenuItemHandler itemHandler;
-	//?} else {
-	/*private final IItemHandlerModifiable itemHandler;
-	*///?}
 	private final EnchantingTableSession session;
 
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -78,11 +61,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	private int lastInventoryVersion = -1;
 
 	@Override
-	//? if >=26.1 {
 	public void clicked(int slotId, int button, ContainerInput clickType, Player player) {
-	//?} else {
-	/*public void clicked(int slotId, int button, ClickType clickType, Player player) {
-	*///?}
 		// 在 1.21.2 版本及以上时，在尝试堆叠 isSameItemSameComponents 判定为 true 的附魔书时不会触发 setByPlayer 方法，
 		// 因此将对于附魔书槽操作的逻辑迁移到更底层的 clicked 方法中
 
@@ -93,11 +72,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		var itemStackToPut = entity.containerMenu.getCarried();
 		if (
 				isGeneratedSlotIndex(slotId) &&
-				//? if >=26.1 {
 				clickType != ContainerInput.QUICK_MOVE &&
-				//?} else {
-				/*clickType != ClickType.QUICK_MOVE &&
-				*///?}
 				itemStackToPut.isEmpty() &&
 				getSlot(slotId).getItem().isEmpty()
 		) {
@@ -105,11 +80,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		}
 		if (
 				isGeneratedSlotIndex(slotId) &&
-				//? if >=26.1 {
 				clickType != ContainerInput.QUICK_MOVE &&
-				//?} else {
-				/*clickType != ClickType.QUICK_MOVE &&
-				*///?}
 				(itemStackToPut.isEmpty() || getSlot(slotId).mayPlace(entity.containerMenu.getCarried()))
 		) {
 			session.captureCurrentPageSlots();
@@ -185,13 +156,8 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 				boundBlockEntity = blockEntity;
 			}
 		}
-		//? if >=1.21.9 {
 		this.itemHandler = new EnchantingMenuItemHandler(boundBlockEntity);
 		LogicalInventory logicalInventory = new ResourceHandlerLogicalInventory(itemHandler);
-		//?} else {
-		/*EnchantingMenuInventory logicalInventory = new EnchantingMenuInventory(boundBlockEntity);
-		this.itemHandler = new LogicalInventoryItemHandler(logicalInventory);
-		*///?}
 		this.session = new EnchantingTableSession(
 				world,
 				logicalInventory,
@@ -229,11 +195,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		});
 
 		this.addSlot(
-			//? if >=1.21.9 {
 			new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, TableMenuLayout.Enchanting.TOOL_SLOT_X, TableMenuLayout.Enchanting.TOOL_SLOT_Y) {
-			//?} else {
-			/*new SlotItemHandler(itemHandler, 0, TableMenuLayout.Enchanting.TOOL_SLOT_X, TableMenuLayout.Enchanting.TOOL_SLOT_Y) {
-			*///?}
 			@Override
 			public void onQuickCraft(ItemStack newStack, ItemStack oldStack) {
 				super.onQuickCraft(newStack, oldStack);
@@ -260,11 +222,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		});
 
 		this.addSlot(
-			//? if >=1.21.9 {
 			new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, TableMenuLayout.Enchanting.INPUT_SLOT_X, TableMenuLayout.Enchanting.INPUT_SLOT_Y) {
-			//?} else {
-			/*new SlotItemHandler(itemHandler, 1, TableMenuLayout.Enchanting.INPUT_SLOT_X, TableMenuLayout.Enchanting.INPUT_SLOT_Y) {
-			*///?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return Items.ENCHANTED_BOOK == stack.getItem()
@@ -273,22 +231,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 			}
 
 			@Override
-			//? if >=1.21.11 {
 			public Identifier getNoItemIcon() {
 				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
-			//?} else if >=1.21.4 {
-			/*public ResourceLocation getNoItemIcon() {
-				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
-			}
-			*///?} else {
-			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-				return Pair.of(
-						InventoryMenu.BLOCK_ATLAS,
-						ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
-				);
-			}
-			*///?}
 
 			@Override
 			public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
@@ -311,11 +256,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 				int xPos = TableMenuLayout.Enchanting.generatedSlotX(col);
 				int final_enchanted_book_index = enchanted_book_index;
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
-					//? if >=1.21.9 {
 					new ResourceHandlerSlot(itemHandler, itemHandler::set, final_enchanted_book_index + 2, xPos, yPos) {
-					//?} else {
-					/*new SlotItemHandler(itemHandler, final_enchanted_book_index + 2, xPos, yPos) {
-					*///?}
 						@Override
 						public boolean mayPlace(ItemStack stack) {
 							return Items.ENCHANTED_BOOK == stack.getItem()
@@ -329,22 +270,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 						}
 
 						@Override
-						//? if >=1.21.11 {
 						public Identifier getNoItemIcon() {
 							return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 						}
-						//?} else if >=1.21.4 {
-						/*public ResourceLocation getNoItemIcon() {
-							return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
-						}
-						*///?} else {
-						/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-							return Pair.of(
-									InventoryMenu.BLOCK_ATLAS,
-									ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
-							);
-						}
-						*///?}
 
 						@Override
 						public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
@@ -444,9 +372,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		if (playerIn instanceof ServerPlayer) {
 			//? if >=26.3 {
             playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(1), net.minecraft.util.Prediction.SERVER_ONLY);
-            //?} else {
+			//? } else {
             /*playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(1));*/
-            //?}
+			//?}
 			itemHandler.setStackInSlot(1, ItemStack.EMPTY);
 		}
 	}
@@ -474,9 +402,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		if (result.success()) {
 			//? if >=26.3 {
             entity.getInventory().placeItemBackInInventory(result.exportedStack(), net.minecraft.util.Prediction.SERVER_ONLY);
-            //?} else {
+			//? } else {
             /*entity.getInventory().placeItemBackInInventory(result.exportedStack());*/
-            //?}
+			//?}
 		}
 		if (result.playSound()) {
 			playUseSound();
@@ -586,7 +514,6 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		return slotId >= 2 && slotId < ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE;
 	}
 
-	//? if >=1.21.9 {
 	private static class EnchantingMenuItemHandler extends MenuItemStackHandler {
 		private final EnchantingCustomTableBlockEntity blockEntity;
 		private final MenuItemStackHandler fallbackToolHandler = new MenuItemStackHandler(1, 1);
@@ -669,62 +596,4 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 			return blockEntity != null ? blockEntity.getInventory() : fallbackToolHandler;
 		}
 	}
-	//?} else {
-	/*private static class EnchantingMenuInventory implements LogicalInventory {
-		private final EnchantingCustomTableBlockEntity blockEntity;
-		private final LogicalInventory fallbackToolInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(1));
-		private final LogicalInventory virtualInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE - 1));
-
-		private EnchantingMenuInventory(EnchantingCustomTableBlockEntity blockEntity) {
-			this.blockEntity = blockEntity;
-		}
-
-		@Override
-		public int getSlots() {
-			return ENCHANTMENT_CUSTOM_TABLE_SLOT_SIZE;
-		}
-
-		@Override
-		public ItemStack getStackInSlot(int slot) {
-			return slot == 0 ? persistentInventory().getStackInSlot(0) : virtualInventory.getStackInSlot(slot - 1);
-		}
-
-		@Override
-		public void setStackInSlot(int slot, ItemStack stack) {
-			if (slot == 0) {
-				persistentInventory().setStackInSlot(0, stack);
-			} else {
-				virtualInventory.setStackInSlot(slot - 1, stack);
-			}
-		}
-
-		@Override
-		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-			return slot == 0
-					? persistentInventory().insertItem(0, stack, simulate)
-					: virtualInventory.insertItem(slot - 1, stack, simulate);
-		}
-
-		@Override
-		public ItemStack extractItem(int slot, int amount, boolean simulate) {
-			return slot == 0
-					? persistentInventory().extractItem(0, amount, simulate)
-					: virtualInventory.extractItem(slot - 1, amount, simulate);
-		}
-
-		@Override
-		public int getSlotLimit(int slot) {
-			return 1;
-		}
-
-		@Override
-		public boolean isItemValid(int slot, ItemStack stack) {
-			return true;
-		}
-
-		private LogicalInventory persistentInventory() {
-			return blockEntity != null ? blockEntity.getLogicalInventory() : fallbackToolInventory;
-		}
-	}
-	*///?}
 }

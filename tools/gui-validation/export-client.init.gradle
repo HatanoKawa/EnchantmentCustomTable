@@ -7,9 +7,9 @@ gradle.projectsEvaluated {
     if (!(loader in ['neoforge', 'forge', 'fabric', 'both'])) {
         throw new GradleException('guiLoader must be neoforge, forge, fabric or both')
     }
-    def versionSelection = (gradle.rootProject.findProperty('guiVersion') ?: '1.21.1').toString()
+    def versionSelection = (gradle.rootProject.findProperty('guiVersion') ?: gradle.rootProject.property('minecraft_version')).toString()
     def versions = versionSelection == 'all'
-            ? gradle.rootProject.subprojects.findAll { it.name ==~ /(?:1\.21|26\.\d+)(?:\.\d+)?/ }.collect { it.name }.sort()
+            ? gradle.rootProject.subprojects.findAll { it.name ==~ /\d+(?:\.\d+)+/ }.collect { it.name }.sort()
             : [versionSelection]
     def loaders = loader == 'both' ? [legacy ? 'forge' : 'neoforge', 'fabric'] : [loader]
     loaders.each { selectedLoader ->

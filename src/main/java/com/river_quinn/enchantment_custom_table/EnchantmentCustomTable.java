@@ -32,11 +32,7 @@ public class EnchantmentCustomTable
         modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
-        //? if >=1.21.9 {
         if (FMLEnvironment.getDist().isClient()) {
-        //?} else {
-        /*if (FMLEnvironment.dist.isClient()) {
-        *///?}
             modEventBus.addListener(ModBlockEntityRenderers::register);
             modEventBus.addListener(ModScreens::register);
             ModConfigScreens.register(modContainer);

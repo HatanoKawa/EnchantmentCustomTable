@@ -6,11 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
-//?} else {
-/*import net.minecraft.resources.ResourceLocation;*/
-//?}
 
 import java.util.List;
 import java.util.Objects;
@@ -53,11 +49,7 @@ public record EnchantmentConversionTableNetData(
     }
 
     public static final Type<EnchantmentConversionTableNetData> TYPE =
-            //? if >=1.21.11 {
             new Type<>(Identifier.fromNamespaceAndPath(MODID, "enchantment_conversion"));
-            //?} else {
-            /*new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "enchantment_conversion"));
-            *///?}
 
     private static final StreamCodec<ByteBuf, List<String>> MATCHED_ENCHANTMENTS_CODEC =
             ByteBufCodecs.stringUtf8(256).apply(ByteBufCodecs.list(EnchantmentSearchRules.MAX_MATCHED_ENCHANTMENT_IDS));

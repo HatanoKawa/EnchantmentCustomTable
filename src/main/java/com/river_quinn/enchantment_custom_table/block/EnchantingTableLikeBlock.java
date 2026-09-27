@@ -6,14 +6,8 @@ import com.river_quinn.enchantment_custom_table.block.entity.EnchantmentConversi
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
-//?} else {
-/*import net.minecraft.resources.ResourceLocation;*/
-//?}
-//? if >=1.21.5 {
 import net.minecraft.server.level.ServerLevel;
-//?}
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -40,28 +34,14 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
                 .explosionResistance(3600));
     }
 
-    //? if <1.21.2 {
-    /*public EnchantingTableLikeBlock() {
-        super(Properties.of()
-                .lightLevel(blockState -> 15)
-                .destroyTime(1)
-                .explosionResistance(3600));
-    }
-    *///?}
 
-    //? if >=1.21.2 {
-    //? if >=1.21.11 {
     public EnchantingTableLikeBlock(Identifier registryName) {
-    //?} else {
-    /*public EnchantingTableLikeBlock(ResourceLocation registryName) {
-    *///?}
         super(BlockBehaviour.Properties.of()
                 .setId(ResourceKey.create(Registries.BLOCK, registryName))
                 .lightLevel(blockState -> 15)
                 .destroyTime(1)
                 .explosionResistance(3600));
     }
-    //?}
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -89,28 +69,14 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
         return super.playerWillDestroy(level, pos, state, player);
     }
 
-    //? if >=1.21.5 {
     @Override
     protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
         dropTableContents(level, pos);
         super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     }
-    //?} else {
-    /*@Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock())) {
-            dropTableContents(level, pos);
-        }
-        super.onRemove(state, level, pos, newState, movedByPiston);
-    }
-    *///?}
 
     private void dropTableContents(Level level, BlockPos pos) {
-        //? if >=1.21.6 {
         if (level.isClientSide()) {
-        //?} else {
-        /*if (level.isClientSide) {
-        *///?}
             return;
         }
         BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -126,11 +92,7 @@ public abstract class EnchantingTableLikeBlock extends BaseEntityBlock {
     @SuppressWarnings("unchecked")
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        //? if >=1.21.2 {
         return level.isClientSide() ? (lvl, pos, blockState, t) -> {
-        //?} else {
-        /*return level.isClientSide ? (lvl, pos, blockState, t) -> {
-        *///?}
             if (t instanceof EnchantingTableLikeBlockEntity enchantingTable) {
                 EnchantingTableLikeBlockEntity.bookAnimationTick(lvl, pos, blockState, enchantingTable);
             }

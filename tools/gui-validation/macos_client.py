@@ -15,7 +15,7 @@ import sys
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--loader', choices=['neoforge', 'forge', 'fabric'], default='neoforge')
-    parser.add_argument('--minecraft', default='1.21.1', help='Minecraft version project to launch')
+    parser.add_argument('--minecraft', default='26.3', help='Minecraft version project to launch')
     parser.add_argument('--legacy', action='store_true', help='Use the independent Forge/Fabric project layout')
     parser.add_argument('--legacy-forge-arm', action='store_true',
                         help='For Forge 1.18.2 on Apple Silicon, use the companion Loom LWJGL runtime')
@@ -54,7 +54,7 @@ def main():
             first_thread_seen = True
         command.append(argument)
     launch['command'] = command
-    if launch['loader'] != args.loader or launch.get('minecraftVersion', '1.21.1') != args.minecraft:
+    if launch['loader'] != args.loader or launch.get('minecraftVersion') != args.minecraft:
         parser.error('Launch manifest does not match the requested loader/version; export again.')
     if args.legacy_forge_arm:
         if not (args.legacy and args.loader == 'forge' and args.minecraft == '1.18.2'

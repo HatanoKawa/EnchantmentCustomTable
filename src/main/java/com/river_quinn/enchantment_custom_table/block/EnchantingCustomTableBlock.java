@@ -7,11 +7,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
-//?} else {
-/*import net.minecraft.resources.ResourceLocation;*/
-//?}
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -36,21 +32,10 @@ public class EnchantingCustomTableBlock extends EnchantingTableLikeBlock {
         super(properties);
     }
 
-    //? if <1.21.2 {
-    /*public EnchantingCustomTableBlock() {
-        super();
-    }
-    *///?}
 
-    //? if >=1.21.2 {
-    //? if >=1.21.11 {
     public EnchantingCustomTableBlock(Identifier registryName) {
-    //?} else {
-    /*public EnchantingCustomTableBlock(ResourceLocation registryName) {
-    *///?}
         super(registryName);
     }
-    //?}
 
     //? if <26.3 {
     /*@Override

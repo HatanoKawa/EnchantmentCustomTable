@@ -17,11 +17,9 @@ Grab a release from [CurseForge](https://www.curseforge.com/minecraft/mc-mods/en
 
 ## Supported Versions
 
-There are builds for both the **NeoForge** and **Fabric** loaders, covering Minecraft `1.21.1` through `1.21.11`, plus `26.1`, `26.1.1`, `26.1.2`, `26.2`, and `26.3`.
+There are builds for both the **NeoForge** and **Fabric** loaders, covering Minecraft `26.1`, `26.1.1`, `26.1.2`, `26.2`, and `26.3` on this branch.
 
 **Tip:** when you download, make sure two things line up — your loader (NeoForge or Fabric) *and* your Minecraft version. Both have to match the jar, or the game won't load it.
-
-> **Known issue (NeoForge 1.21.9):** opening NeoForge's in-game Mods list may crash because of an issue in NeoForge `21.9.16-beta`. If this happens, edit this mod's common config file directly instead of using the in-game config screen.
 
 ## Enchanting Custom Table: rearrange your enchantments
 

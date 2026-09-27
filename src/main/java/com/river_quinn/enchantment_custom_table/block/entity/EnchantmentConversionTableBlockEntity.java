@@ -11,21 +11,13 @@ import com.river_quinn.enchantment_custom_table.init.ModBlockEntities;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentTableRules;
 import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConversionMenu;
-//? if >=1.21.9 {
 import com.river_quinn.enchantment_custom_table.world.inventory.MenuItemStackHandler;
 import com.river_quinn.enchantment_custom_table.world.inventory.ResourceHandlerLogicalInventory;
-//?} else {
-/*import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
-*///?}
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-//? if <1.21.6 {
-/*import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-*///?}
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Containers;
@@ -36,20 +28,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
-//? if >=1.21.6 {
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-//?}
-//? if <1.21.9 {
-/*import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemStackHandler;
-*///?}
-//? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
-//?}
 import org.jetbrains.annotations.Nullable;
 
 public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBlockEntity implements MenuProvider {
@@ -59,7 +43,6 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     public static final int COPY_RESULT_SLOT = 3;
     public static final int SLOT_COUNT = 4;
 
-    //? if >=1.21.9 {
     private final MenuItemStackHandler inventory = new MenuItemStackHandler(SLOT_COUNT, 64) {
         @Override
         public boolean isValid(int slot, ItemResource resource) {
@@ -84,33 +67,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         }
     };
     private final LogicalInventory logicalInventory = new ResourceHandlerLogicalInventory(inventory);
-    //?} else {
-    /*private final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT) {
-        @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            return switch (slot) {
-                case BOOK_SLOT -> EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
-                case PAYMENT_SLOT -> isPaymentItem(stack);
-                case TEMPLATE_SLOT -> isValidCopyTemplate(stack);
-                default -> false;
-            };
-        }
-
-        @Override
-        protected void onContentsChanged(int slot) {
-            markInventoryChanged();
-            if (!updatingCopyResult) {
-                refreshCopyResult();
-            }
-        }
-    };
-    private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);
-    *///?}
-    //? if >=1.21.9 {
     private final ResourceHandler<ItemResource> automationHandler = new ConversionAutomationItemHandler();
-    //?} else {
-    /*private final IItemHandler automationHandler = new ConversionAutomationItemHandler();
-    *///?}
     private boolean updatingCopyResult = false;
     private int inventoryVersion = 0;
 
@@ -123,15 +80,9 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         return new EnchantmentConversionMenu(i, inventory, new FriendlyByteBuf(Unpooled.buffer()).writeBlockPos(this.worldPosition));
     }
 
-    //? if >=1.21.9 {
     public MenuItemStackHandler getInventory() {
         return inventory;
     }
-    //?} else {
-    /*public ItemStackHandler getInventory() {
-        return inventory;
-    }
-    *///?}
 
     public LogicalInventory getLogicalInventory() {
         return logicalInventory;
@@ -141,15 +92,9 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         return inventoryVersion;
     }
 
-    //? if >=1.21.9 {
     public @Nullable ResourceHandler<ItemResource> getAutomationItemHandler(@Nullable Direction direction) {
         return automationHandler;
     }
-    //?} else {
-    /*public @Nullable IItemHandler getAutomationItemHandler(@Nullable Direction direction) {
-        return automationHandler;
-    }
-    *///?}
 
     public boolean isCopyMode() {
         return isValidCopyTemplate(inventory.getStackInSlot(TEMPLATE_SLOT));
@@ -181,11 +126,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
 
     public void refreshCopyResult() {
         if (updatingCopyResult || level == null
-                //? if >=1.21.6 {
                 || level.isClientSide()
-                //?} else {
-                /*|| level.isClientSide
-                *///?}
         ) {
             return;
         }
@@ -212,11 +153,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
 
     public void dropInventory() {
         if (level == null
-                //? if >=1.21.6 {
                 || level.isClientSide()
-                //?} else {
-                /*|| level.isClientSide
-                *///?}
         ) {
             return;
         }
@@ -229,7 +166,6 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         }
     }
 
-    //? if >=1.21.6 {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
@@ -242,37 +178,6 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         input.child("Inventory").ifPresent(inventory::deserialize);
         refreshCopyResult();
     }
-    //?} else if >=1.21.5 {
-    /*@Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("Inventory", inventory.serializeNBT(registries));
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("Inventory")) {
-            tag.getCompound("Inventory").ifPresent(inventoryTag -> inventory.deserializeNBT(registries, inventoryTag));
-        }
-        refreshCopyResult();
-    }
-    *///?} else {
-    /*@Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("Inventory", inventory.serializeNBT(registries));
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("Inventory")) {
-            inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
-        }
-        refreshCopyResult();
-    }
-    *///?}
 
     private void markInventoryChanged() {
         inventoryVersion++;
@@ -283,7 +188,6 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         return Config.snapshot();
     }
 
-    //? if >=1.21.9 {
     private class ConversionAutomationItemHandler implements ResourceHandler<ItemResource>, AutomationPort {
         private final SnapshotJournal<ItemStack[]> snapshotJournal = new SnapshotJournal<>() {
             @Override
@@ -426,80 +330,4 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
             return extracted.getCount();
         }
     }
-    //?} else {
-    /*private class ConversionAutomationItemHandler implements IItemHandler, AutomationPort {
-        @Override
-        public int getSlots() {
-            return 3;
-        }
-
-        @Override
-        public ItemStack getStackInSlot(int slot) {
-            return slot == 2 ? inventory.getStackInSlot(COPY_RESULT_SLOT) : ItemStack.EMPTY;
-        }
-
-        @Override
-        public SlotRole getRole(int slot) {
-            return switch (slot) {
-                case 0 -> SlotRole.BOOK_INPUT;
-                case 1 -> SlotRole.PAYMENT;
-                case 2 -> SlotRole.COPY_RESULT;
-                default -> SlotRole.GENERATED_BOOK;
-            };
-        }
-
-        @Override
-        public boolean canInsert(int slot, ItemStack stack) {
-            return isItemValid(slot, stack);
-        }
-
-        @Override
-        public boolean canExtract(int slot) {
-            return slot == 2;
-        }
-
-        @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            int internalSlot = switch (slot) {
-                case 0 -> BOOK_SLOT;
-                case 1 -> PAYMENT_SLOT;
-                default -> -1;
-            };
-            if (internalSlot < 0 || stack.isEmpty() || !inventory.isItemValid(internalSlot, stack)) {
-                return stack;
-            }
-            ItemStack remainder = inventory.insertItem(internalSlot, stack, simulate);
-            if (!simulate) {
-                refreshCopyResult();
-            }
-            return remainder;
-        }
-
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (slot != 2) {
-                return ItemStack.EMPTY;
-            }
-            ItemStack extracted = inventory.extractItem(COPY_RESULT_SLOT, amount, simulate);
-            if (!simulate && !extracted.isEmpty()) {
-                refreshCopyResult();
-            }
-            return extracted;
-        }
-
-        @Override
-        public int getSlotLimit(int slot) {
-            return slot == 2 ? 1 : 64;
-        }
-
-        @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            return switch (slot) {
-                case 0 -> EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
-                case 1 -> isPaymentItem(stack);
-                default -> false;
-            };
-        }
-    }
-    *///?}
 }

@@ -9,7 +9,7 @@ import shutil
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
-FULL = {'1.21.1', '1.21.2', '1.21.4', '1.21.5', '1.21.6', '1.21.9', '1.21.11', '26.1', '26.2', '26.3'}
+FULL = {'26.1', '26.2', '26.3'}
 SWITCHES = ('enforceEnchantmentLevelLimit', 'incrementalSameLevelMerge',
             'convertOnlyLevelOneBook', 'freeConversionTableCosts')
 
@@ -43,7 +43,7 @@ def write_fixtures(version, destination):
     return info
 
 
-def prepare(loader, version, report):
+def prepare(loader, version, report, seed_world):
     matrix = ROOT / ('fabric_versions' if loader == 'fabric' else 'versions')
     if not (matrix / version / 'gradle.properties').is_file():
         raise ValueError('Version is not present in this loader matrix')
@@ -52,9 +52,14 @@ def prepare(loader, version, report):
     target = report / loader / version
     if world.exists() or target.exists():
         raise FileExistsError('Already prepared; refusing to overwrite world or original-file backups')
-    seed = matrix / '1.21.1/run/saves' / ('ECT-fabric-GUI-R2' if loader == 'fabric' else 'ECT-neoforge-GUI-R2')
+    seed_name = seed_world.format(loader=loader, minecraft=version)
+    if not seed_name or seed_name in {'.', '..'} or Path(seed_name).name != seed_name:
+        raise ValueError('--seed-world must be a folder name in this target’s run/saves')
+    seed = run / 'saves' / seed_name
+    if seed.resolve().parent != (run / 'saves').resolve():
+        raise ValueError('Seed must remain in this target’s run/saves')
     if not (seed / 'level.dat').is_file():
-        raise FileNotFoundError('Expected round-2 dedicated test world: ' + str(seed))
+        raise FileNotFoundError('Create a same-version dedicated test world first: ' + str(seed))
     shutil.copytree(seed, world)
     # Remove only the inherited test pack in this newly created world.
     fixture = world / 'datapacks/ectgui'
@@ -73,11 +78,9 @@ def prepare(loader, version, report):
     default = ROOT / 'tools/gui-validation/evidence/round2-2026-09-22' / (
         loader + '-config-default.' + ('json' if loader == 'fabric' else 'toml'))
     shutil.copy2(default, paths['config'])
-    seed_options = matrix / '1.21.1/run/options.txt'
-    if seed_options.resolve() != paths['options'].resolve():
-        shutil.copy2(seed_options, paths['options'])
+    # Keep this target's options; never copy settings or worlds from another version.
     entry = {'loader': loader, 'minecraft': version, 'tier': 'full' if version in FULL else 'quick',
-             'world': str(world.relative_to(ROOT)), 'game_metadata': info,
+             'world': str(world.relative_to(ROOT)), 'seed': str(seed.relative_to(ROOT)), 'game_metadata': info,
              'originals': originals, 'status': 'prepared', 'cases': {}}
     (target / 'state.json').write_text(json.dumps(entry, indent=2) + '\n')
     shutil.copy2(paths['config'], target / 'config-default')
@@ -119,10 +122,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--loader', choices=['fabric', 'neoforge', 'both'], default='both')
     parser.add_argument('--minecraft', default='all')
+    parser.add_argument('--seed-world', help='Same-version seed folder in each target’s run/saves; supports {loader} and {minecraft}')
     parser.add_argument('--report', type=Path, default=ROOT / 'build/reports/gui-validation/round3')
     parser.add_argument('--config', choices=['default', 'strict-free', 'restore'],
                         help='Only change/restore configuration; requires stopped client')
     args = parser.parse_args()
+    if not args.config and not args.seed_world:
+        parser.error('--seed-world is required when preparing a world')
     versions = sorted((p.parent.name for p in (ROOT / 'versions').glob('*/gradle.properties')), key=version_tuple)
     if args.minecraft != 'all':
         versions = [args.minecraft]
@@ -131,7 +137,7 @@ def main():
             if args.config:
                 configure(loader, version, args.report, args.config)
             else:
-                prepare(loader, version, args.report)
+                prepare(loader, version, args.report, args.seed_world)
 
 
 if __name__ == '__main__':
