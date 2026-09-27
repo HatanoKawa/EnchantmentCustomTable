@@ -8,9 +8,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 //? if >=1.21.6 {
 @EventBusSubscriber(modid = EnchantmentCustomTable.MODID)
-//?} else {
-/*@EventBusSubscriber(modid = EnchantmentCustomTable.MODID, bus = EventBusSubscriber.Bus.MOD)
-*///?}
+//? } else {
+/*@EventBusSubscriber(modid = EnchantmentCustomTable.MODID, bus = EventBusSubscriber.Bus.MOD)*/
+//?}
 public class Config
 {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();

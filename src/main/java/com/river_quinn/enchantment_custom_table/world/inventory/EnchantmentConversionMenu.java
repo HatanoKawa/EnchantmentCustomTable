@@ -17,7 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 //? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
-//?} else {
+//? } else {
 /*import net.minecraft.resources.ResourceLocation;*/
 //?}
 import net.minecraft.world.entity.player.Inventory;
@@ -33,8 +33,8 @@ import net.minecraft.world.level.Level;
 //? if <1.21.9 {
 /*import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
-*///?}
+import net.neoforged.neoforge.items.SlotItemHandler;*/
+//?}
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
@@ -65,9 +65,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 	 */
 	//? if >=1.21.9 {
 	private final ConversionMenuItemHandler itemHandler;
-	//?} else {
-	/*private final IItemHandlerModifiable itemHandler;
-	*///?}
+	//? } else {
+	/*private final IItemHandlerModifiable itemHandler;*/
+	//?}
 	private final ConversionTableSession session;
 
 	public final Level world;
@@ -101,10 +101,10 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 		//? if >=1.21.9 {
 		this.itemHandler = new ConversionMenuItemHandler(boundBlockEntity);
 		LogicalInventory logicalInventory = new ResourceHandlerLogicalInventory(itemHandler);
-		//?} else {
+		//? } else {
 		/*ConversionMenuInventory logicalInventory = new ConversionMenuInventory(boundBlockEntity);
-		this.itemHandler = new LogicalInventoryItemHandler(logicalInventory);
-		*///?}
+		this.itemHandler = new LogicalInventoryItemHandler(logicalInventory);*/
+		//?}
 		this.session = new ConversionTableSession(
 				world,
 				logicalInventory,
@@ -145,9 +145,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 		this.addSlot(
 			//? if >=1.21.9 {
 			new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y) {
-			//?} else {
-			/*new SlotItemHandler(itemHandler, 0, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y) {
-			*///?}
+			//? } else {
+			/*new SlotItemHandler(itemHandler, 0, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y) {*/
+			//?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return EnchantmentTableRules.acceptsConversionBookInput(config()) && stack.is(Items.BOOK);
@@ -164,26 +164,26 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			public Identifier getNoItemIcon() {
 				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
-			//?} else if >=1.21.4 {
+			//? } else if >=1.21.4 {
 			/*public ResourceLocation getNoItemIcon() {
 				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
-			}
-			*///?} else {
+			}*/
+			//? } else {
 			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 				return Pair.of(
 						InventoryMenu.BLOCK_ATLAS,
 						ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
 				);
-			}
-			*///?}
+			}*/
+			//?}
 		});
 
 		this.addSlot(
 			//? if >=1.21.9 {
 			new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y) {
-			//?} else {
-			/*new SlotItemHandler(itemHandler, 1, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y) {
-			*///?}
+			//? } else {
+			/*new SlotItemHandler(itemHandler, 1, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y) {*/
+			//?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return boundBlockEntity != null
@@ -202,18 +202,18 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			public Identifier getNoItemIcon() {
 				return Identifier.withDefaultNamespace("container/slot/emerald");
 			}
-			//?} else if >=1.21.4 {
+			//? } else if >=1.21.4 {
 			/*public ResourceLocation getNoItemIcon() {
 				return ResourceLocation.withDefaultNamespace("container/slot/emerald");
-			}
-			*///?} else {
+			}*/
+			//? } else {
 			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 				return Pair.of(
 						InventoryMenu.BLOCK_ATLAS,
 						ResourceLocation.tryParse("minecraft:item/empty_slot_emerald")
 				);
-			}
-			*///?}
+			}*/
+			//?}
 		});
 
 		int enchanted_book_index = 0;
@@ -225,9 +225,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
 					//? if >=1.21.9 {
 					new ResourceHandlerSlot(itemHandler, itemHandler::set, final_enchanted_book_index + ENCHANTED_BOOK_SLOT_START, xPos, yPos) {
-					//?} else {
-					/*new SlotItemHandler(itemHandler, final_enchanted_book_index + ENCHANTED_BOOK_SLOT_START, xPos, yPos) {
-					*///?}
+					//? } else {
+					/*new SlotItemHandler(itemHandler, final_enchanted_book_index + ENCHANTED_BOOK_SLOT_START, xPos, yPos) {*/
+					//?}
 						@Override
 						public boolean mayPlace(ItemStack stack) {
 							return false;
@@ -241,14 +241,14 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 									isCopyMode() ? "container/slot/empty_slot_book_disabled" : "container/slot/empty_slot_book"
 							);
 						}
-						//?} else if >=1.21.4 {
+						//? } else if >=1.21.4 {
 						/*public ResourceLocation getNoItemIcon() {
 							return ResourceLocation.fromNamespaceAndPath(
 									"enchantment_custom_table",
 									isCopyMode() ? "container/slot/empty_slot_book_disabled" : "container/slot/empty_slot_book"
 							);
-						}
-						*///?} else {
+						}*/
+						//? } else {
 						/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 							return Pair.of(
 									InventoryMenu.BLOCK_ATLAS,
@@ -256,8 +256,8 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 											? "enchantment_custom_table:item/empty_slot_book_disabled"
 											: "enchantment_custom_table:item/empty_slot_book")
 							);
-						}
-						*///?}
+						}*/
+						//?}
 
 						@Override
 						public boolean mayPickup(Player player) {
@@ -281,9 +281,9 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 		this.addSlot(
 			//? if >=1.21.9 {
 			new ResourceHandlerSlot(itemHandler, itemHandler::set, TEMPLATE_BOOK_SLOT, TableMenuLayout.Conversion.TEMPLATE_SLOT_X, TableMenuLayout.Conversion.TEMPLATE_SLOT_Y) {
-			//?} else {
-			/*new SlotItemHandler(itemHandler, TEMPLATE_BOOK_SLOT, TableMenuLayout.Conversion.TEMPLATE_SLOT_X, TableMenuLayout.Conversion.TEMPLATE_SLOT_Y) {
-			*///?}
+			//? } else {
+			/*new SlotItemHandler(itemHandler, TEMPLATE_BOOK_SLOT, TableMenuLayout.Conversion.TEMPLATE_SLOT_X, TableMenuLayout.Conversion.TEMPLATE_SLOT_Y) {*/
+			//?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return boundBlockEntity != null && boundBlockEntity.isValidCopyTemplate(stack);
@@ -300,26 +300,26 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			public Identifier getNoItemIcon() {
 				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/copy_template_slot");
 			}
-			//?} else if >=1.21.4 {
+			//? } else if >=1.21.4 {
 			/*public ResourceLocation getNoItemIcon() {
 				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/copy_template_slot");
-			}
-			*///?} else {
+			}*/
+			//? } else {
 			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 				return Pair.of(
 						InventoryMenu.BLOCK_ATLAS,
 						ResourceLocation.tryParse("enchantment_custom_table:item/copy_template_slot")
 				);
-			}
-			*///?}
+			}*/
+			//?}
 		});
 
 		this.addSlot(
 			//? if >=1.21.9 {
 			new ResourceHandlerSlot(itemHandler, itemHandler::set, COPY_RESULT_SLOT, TableMenuLayout.Conversion.COPY_RESULT_SLOT_X, TableMenuLayout.Conversion.COPY_RESULT_SLOT_Y) {
-			//?} else {
-			/*new SlotItemHandler(itemHandler, COPY_RESULT_SLOT, TableMenuLayout.Conversion.COPY_RESULT_SLOT_X, TableMenuLayout.Conversion.COPY_RESULT_SLOT_Y) {
-			*///?}
+			//? } else {
+			/*new SlotItemHandler(itemHandler, COPY_RESULT_SLOT, TableMenuLayout.Conversion.COPY_RESULT_SLOT_X, TableMenuLayout.Conversion.COPY_RESULT_SLOT_Y) {*/
+			//?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return false;
@@ -338,18 +338,18 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			public Identifier getNoItemIcon() {
 				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/output_slot");
 			}
-			//?} else if >=1.21.4 {
+			//? } else if >=1.21.4 {
 			/*public ResourceLocation getNoItemIcon() {
 				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/output_slot");
-			}
-			*///?} else {
+			}*/
+			//? } else {
 			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 				return Pair.of(
 						InventoryMenu.BLOCK_ATLAS,
 						ResourceLocation.tryParse("enchantment_custom_table:item/output_slot")
 				);
-			}
-			*///?}
+			}*/
+			//?}
 		});
 
 		for (int si = 0; si < 3; ++si)
@@ -615,7 +615,7 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			};
 		}
 	}
-	//?} else {
+	//? } else {
 	/*private static class ConversionMenuInventory implements LogicalInventory {
 		private final EnchantmentConversionTableBlockEntity blockEntity;
 		private final LogicalInventory fallbackPersistentInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(EnchantmentConversionTableBlockEntity.SLOT_COUNT));
@@ -705,6 +705,6 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 					? EnchantmentConversionTableBlockEntity.TEMPLATE_SLOT
 					: EnchantmentConversionTableBlockEntity.COPY_RESULT_SLOT;
 		}
-	}
-	*///?}
+	}*/
+	//?}
 }

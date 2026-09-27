@@ -22,10 +22,10 @@ public class ModBlockEntities {
                     EnchantingCustomTableBlockEntity::new,
                     ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get()
             )
-            //?} else {
+            //? } else {
             /*() -> BlockEntityType.Builder.of(EnchantingCustomTableBlockEntity::new,
-                    ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get()).build(null)
-            *///?}
+                    ModBlocks.ENCHANTING_CUSTOM_TABLE_BLOCK.get()).build(null)*/
+            //?}
     );
 
     public static final Supplier<BlockEntityType<EnchantmentConversionTableBlockEntity>> ENCHANTMENT_CONVERSION_TABLE = BLOCK_ENTITY_TYPES.register(
@@ -35,10 +35,10 @@ public class ModBlockEntities {
                     EnchantmentConversionTableBlockEntity::new,
                     ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get()
             )
-            //?} else {
+            //? } else {
             /*() -> BlockEntityType.Builder.of(EnchantmentConversionTableBlockEntity::new,
-                    ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get()).build(null)
-            *///?}
+                    ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get()).build(null)*/
+            //?}
     );
 
     public static void register(IEventBus eventBus){

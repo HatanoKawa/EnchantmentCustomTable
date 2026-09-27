@@ -43,8 +43,8 @@ final class GameTestAssertions {
     static void assertTrue(GameTestHelper helper, boolean condition, String message) {
         //? if >=1.21.5 {
         helper.assertTrue(condition, Component.literal(message));
-        //?} else {
-        /*helper.assertTrue(condition, message);
-        *///?}
+        //? } else {
+        /*helper.assertTrue(condition, message);*/
+        //?}
     }
 }

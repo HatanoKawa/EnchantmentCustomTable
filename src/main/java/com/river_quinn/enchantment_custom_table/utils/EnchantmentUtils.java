@@ -25,9 +25,9 @@ public class EnchantmentUtils {
             List<Holder<Enchantment>> enchantments = new ArrayList<>();
             //? if >=1.21.2 {
             Registry<Enchantment> registry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-            //?} else {
-            /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-            *///?}
+            //? } else {
+            /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);*/
+            //?}
             registry.asHolderIdMap().forEach(enchantments::add);
             return enchantments;
         }
@@ -64,11 +64,11 @@ public class EnchantmentUtils {
         Registry<Enchantment> fullEnchantmentRegistry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         Optional<ResourceKey<Enchantment>> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantment);
         return resourceKey.flatMap(fullEnchantmentRegistry::get).orElse(null);
-        //?} else {
+        //? } else {
         /*Registry<Enchantment> fullEnchantmentRegistry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
         Optional<ResourceKey<Enchantment>> resourceKey = fullEnchantmentRegistry.getResourceKey(enchantment);
-        return resourceKey.flatMap(fullEnchantmentRegistry::getHolder).orElse(null);
-        *///?}
+        return resourceKey.flatMap(fullEnchantmentRegistry::getHolder).orElse(null);*/
+        //?}
     }
 
     public static Optional<ResourceKey<Enchantment>> getEnchantmentKey(Level level, Holder<Enchantment> enchantment) {
@@ -83,9 +83,9 @@ public class EnchantmentUtils {
 
         //? if >=1.21.2 {
         Registry<Enchantment> registry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-        //?} else {
-        /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-        *///?}
+        //? } else {
+        /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);*/
+        //?}
         return registry.getResourceKey(enchantment.value());
     }
 
@@ -99,12 +99,12 @@ public class EnchantmentUtils {
         return getEnchantmentKey(level, enchantment)
                 .flatMap(registry::get)
                 .map(holder -> holder);
-        //?} else {
+        //? } else {
         /*Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
         return getEnchantmentKey(level, enchantment)
                 .flatMap(registry::getHolder)
-                .map(holder -> holder);
-        *///?}
+                .map(holder -> holder);*/
+        //?}
     }
 
     public static ItemEnchantments getEnchantments(ItemStack itemStack) {
@@ -149,8 +149,8 @@ public class EnchantmentUtils {
     private static EnchantmentKey fromResourceKey(ResourceKey<Enchantment> key) {
         //? if >=1.21.11 {
         return EnchantmentKey.of(key.identifier().getNamespace(), key.identifier().getPath());
-        //?} else {
-        /*return EnchantmentKey.of(key.location().getNamespace(), key.location().getPath());
-        *///?}
+        //? } else {
+        /*return EnchantmentKey.of(key.location().getNamespace(), key.location().getPath());*/
+        //?}
     }
 }

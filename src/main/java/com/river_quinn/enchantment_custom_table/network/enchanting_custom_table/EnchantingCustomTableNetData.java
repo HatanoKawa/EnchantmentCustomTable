@@ -7,7 +7,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 //? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
-//?} else {
+//? } else {
 /*import net.minecraft.resources.ResourceLocation;*/
 //?}
 
@@ -28,9 +28,9 @@ public record EnchantingCustomTableNetData(EnchantingTableIntent intent) impleme
     public static final CustomPacketPayload.Type<EnchantingCustomTableNetData> TYPE =
             //? if >=1.21.11 {
             new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MODID, "enchanting_custom"));
-            //?} else {
-            /*new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "enchanting_custom"));
-            *///?}
+            //? } else {
+            /*new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "enchanting_custom"));*/
+            //?}
 
     public static final StreamCodec<ByteBuf, EnchantingCustomTableNetData> STREAM_CODEC = StreamCodec.composite(
             INTENT_CODEC,

@@ -9,7 +9,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 //? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
-//?} else {
+//? } else {
 /*import net.minecraft.resources.ResourceLocation;*/
 //?}
 import net.minecraft.server.level.ServerPlayer;
@@ -28,9 +28,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class EnchantingCustomTableBlock extends EnchantingTableLikeBlock {
-    //? if <26.3 {
-    /*public static final MapCodec<EnchantingCustomTableBlock> CODEC = simpleCodec(EnchantingCustomTableBlock::new);*/
-    //?}
+    public static final MapCodec<EnchantingCustomTableBlock> CODEC = simpleCodec(EnchantingCustomTableBlock::new);
 
     public EnchantingCustomTableBlock(Properties properties) {
         super(properties);
@@ -39,25 +37,23 @@ public class EnchantingCustomTableBlock extends EnchantingTableLikeBlock {
     //? if <1.21.2 {
     /*public EnchantingCustomTableBlock() {
         super();
-    }
-    *///?}
+    }*/
+    //?}
 
     //? if >=1.21.2 {
     //? if >=1.21.11 {
     public EnchantingCustomTableBlock(Identifier registryName) {
-    //?} else {
-    /*public EnchantingCustomTableBlock(ResourceLocation registryName) {
-    *///?}
+    //? } else {
+    /*public EnchantingCustomTableBlock(ResourceLocation registryName) {*/
+    //?}
         super(registryName);
     }
     //?}
 
-    //? if <26.3 {
-    /*@Override
+    @Override
     protected MapCodec<? extends EnchantingCustomTableBlock> codec() {
         return CODEC;
-    }*/
-    //?}
+    }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {

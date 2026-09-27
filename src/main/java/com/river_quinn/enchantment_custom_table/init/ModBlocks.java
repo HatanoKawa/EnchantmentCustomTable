@@ -17,18 +17,18 @@ public class ModBlocks {
             "enchanting_custom_table",
             //? if >=1.21.2 {
             EnchantingCustomTableBlock::new
-            //?} else {
-            /*registryName -> new EnchantingCustomTableBlock()
-            *///?}
+            //? } else {
+            /*registryName -> new EnchantingCustomTableBlock()*/
+            //?}
     );
     
     public static final DeferredBlock<Block> ENCHANTMENT_CONVERSION_TABLE_BLOCK = BLOCKS.register(
             "enchantment_conversion_table",
             //? if >=1.21.2 {
             EnchantmentConversionTableBlock::new
-            //?} else {
-            /*registryName -> new EnchantmentConversionTableBlock()
-            *///?}
+            //? } else {
+            /*registryName -> new EnchantmentConversionTableBlock()*/
+            //?}
     );
 
     public static void register(IEventBus eventBus){

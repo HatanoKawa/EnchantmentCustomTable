@@ -10,16 +10,16 @@ import com.river_quinn.enchantment_custom_table.world.inventory.EnchantingCustom
 //? if >=1.21.9 {
 import com.river_quinn.enchantment_custom_table.world.inventory.MenuItemStackHandler;
 import com.river_quinn.enchantment_custom_table.world.inventory.ResourceHandlerLogicalInventory;
-//?} else {
-/*import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
-*///?}
+//? } else {
+/*import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;*/
+//?}
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 //? if <1.21.6 {
 /*import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-*///?}
+import net.minecraft.nbt.CompoundTag;*/
+//?}
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -39,8 +39,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 //?}
 //? if <1.21.9 {
 /*import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemStackHandler;
-*///?}
+import net.neoforged.neoforge.items.ItemStackHandler;*/
+//?}
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
@@ -62,7 +62,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         }
     };
     private final LogicalInventory logicalInventory = new ResourceHandlerLogicalInventory(inventory);
-    //?} else {
+    //? } else {
     /*private final ItemStackHandler inventory = new ItemStackHandler(1) {
         @Override
         public int getSlotLimit(int slot) {
@@ -74,13 +74,13 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
             markInventoryChanged();
         }
     };
-    private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);
-    *///?}
+    private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);*/
+    //?}
     //? if >=1.21.9 {
     private final ResourceHandler<ItemResource> automationHandler = new EnchantingAutomationItemHandler();
-    //?} else {
-    /*private final IItemHandler automationHandler = new EnchantingAutomationItemHandler();
-    *///?}
+    //? } else {
+    /*private final IItemHandler automationHandler = new EnchantingAutomationItemHandler();*/
+    //?}
     private int inventoryVersion = 0;
 
     public EnchantingCustomTableBlockEntity(BlockPos pos, BlockState state) {
@@ -100,11 +100,11 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
     public MenuItemStackHandler getInventory() {
         return inventory;
     }
-    //?} else {
+    //? } else {
     /*public ItemStackHandler getInventory() {
         return inventory;
-    }
-    *///?}
+    }*/
+    //?}
 
     public LogicalInventory getLogicalInventory() {
         return logicalInventory;
@@ -118,11 +118,11 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
     public @Nullable ResourceHandler<ItemResource> getAutomationItemHandler(@Nullable Direction direction) {
         return automationHandler;
     }
-    //?} else {
+    //? } else {
     /*public @Nullable IItemHandler getAutomationItemHandler(@Nullable Direction direction) {
         return automationHandler;
-    }
-    *///?}
+    }*/
+    //?}
 
     public ItemStack getToolStack() {
         return inventory.getStackInSlot(TOOL_SLOT);
@@ -186,9 +186,9 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         if (level == null
                 //? if >=1.21.6 {
                 || level.isClientSide()
-                //?} else {
-                /*|| level.isClientSide
-                *///?}
+                //? } else {
+                /*|| level.isClientSide*/
+                //?}
         ) {
             return;
         }
@@ -211,7 +211,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         super.loadAdditional(input);
         input.child("Inventory").ifPresent(inventory::deserialize);
     }
-    //?} else if >=1.21.5 {
+    //? } else if >=1.21.5 {
     /*@Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -224,8 +224,8 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         if (tag.contains("Inventory")) {
             tag.getCompound("Inventory").ifPresent(inventoryTag -> inventory.deserializeNBT(registries, inventoryTag));
         }
-    }
-    *///?} else {
+    }*/
+    //? } else {
     /*@Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -238,8 +238,8 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         if (tag.contains("Inventory")) {
             inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
         }
-    }
-    *///?}
+    }*/
+    //?}
 
     private EnchantmentTableRules.MergeOptions mergeOptions() {
         return EnchantmentTableRules.MergeOptions.from(com.river_quinn.enchantment_custom_table.Config.snapshot());
@@ -249,9 +249,9 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         if (level != null
                 //? if >=1.21.6 {
                 && !level.isClientSide()
-                //?} else {
-                /*&& !level.isClientSide
-                *///?}
+                //? } else {
+                /*&& !level.isClientSide*/
+                //?}
         ) {
             level.playSound(null, worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
         }
@@ -345,7 +345,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
             return 0;
         }
     }
-    //?} else {
+    //? } else {
     /*private class EnchantingAutomationItemHandler implements IItemHandler, AutomationPort {
         @Override
         public int getSlots() {
@@ -397,6 +397,6 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
         public boolean isItemValid(int slot, ItemStack stack) {
             return slot == 0 && canApplyEnchantedBook(stack, mergeOptions());
         }
-    }
-    *///?}
+    }*/
+    //?}
 }

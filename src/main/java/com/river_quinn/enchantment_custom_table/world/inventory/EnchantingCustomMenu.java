@@ -16,7 +16,7 @@ import com.river_quinn.enchantment_custom_table.utils.EnchantmentUtils;
 import net.minecraft.core.*;
 //? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
-//?} else {
+//? } else {
 /*import net.minecraft.resources.ResourceLocation;*/
 //?}
 import net.minecraft.sounds.SoundEvents;
@@ -25,8 +25,8 @@ import net.minecraft.world.inventory.*;
 //? if <1.21.9 {
 /*import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
-*///?}
+import net.neoforged.neoforge.items.SlotItemHandler;*/
+//?}
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 //?}
@@ -62,9 +62,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	 */
 	//? if >=1.21.9 {
 	private final EnchantingMenuItemHandler itemHandler;
-	//?} else {
-	/*private final IItemHandlerModifiable itemHandler;
-	*///?}
+	//? } else {
+	/*private final IItemHandlerModifiable itemHandler;*/
+	//?}
 	private final EnchantingTableSession session;
 
 	private static final Logger LOGGER = LogUtils.getLogger();
@@ -78,11 +78,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	private int lastInventoryVersion = -1;
 
 	@Override
-	//? if >=26.1 {
-	public void clicked(int slotId, int button, ContainerInput clickType, Player player) {
-	//?} else {
-	/*public void clicked(int slotId, int button, ClickType clickType, Player player) {
-	*///?}
+	public void clicked(int slotId, int button, ClickType clickType, Player player) {
 		// 在 1.21.2 版本及以上时，在尝试堆叠 isSameItemSameComponents 判定为 true 的附魔书时不会触发 setByPlayer 方法，
 		// 因此将对于附魔书槽操作的逻辑迁移到更底层的 clicked 方法中
 
@@ -93,11 +89,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		var itemStackToPut = entity.containerMenu.getCarried();
 		if (
 				isGeneratedSlotIndex(slotId) &&
-				//? if >=26.1 {
-				clickType != ContainerInput.QUICK_MOVE &&
-				//?} else {
-				/*clickType != ClickType.QUICK_MOVE &&
-				*///?}
+				clickType != ClickType.QUICK_MOVE &&
 				itemStackToPut.isEmpty() &&
 				getSlot(slotId).getItem().isEmpty()
 		) {
@@ -105,11 +97,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		}
 		if (
 				isGeneratedSlotIndex(slotId) &&
-				//? if >=26.1 {
-				clickType != ContainerInput.QUICK_MOVE &&
-				//?} else {
-				/*clickType != ClickType.QUICK_MOVE &&
-				*///?}
+				clickType != ClickType.QUICK_MOVE &&
 				(itemStackToPut.isEmpty() || getSlot(slotId).mayPlace(entity.containerMenu.getCarried()))
 		) {
 			session.captureCurrentPageSlots();
@@ -188,10 +176,10 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		//? if >=1.21.9 {
 		this.itemHandler = new EnchantingMenuItemHandler(boundBlockEntity);
 		LogicalInventory logicalInventory = new ResourceHandlerLogicalInventory(itemHandler);
-		//?} else {
+		//? } else {
 		/*EnchantingMenuInventory logicalInventory = new EnchantingMenuInventory(boundBlockEntity);
-		this.itemHandler = new LogicalInventoryItemHandler(logicalInventory);
-		*///?}
+		this.itemHandler = new LogicalInventoryItemHandler(logicalInventory);*/
+		//?}
 		this.session = new EnchantingTableSession(
 				world,
 				logicalInventory,
@@ -231,9 +219,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		this.addSlot(
 			//? if >=1.21.9 {
 			new ResourceHandlerSlot(itemHandler, itemHandler::set, 0, TableMenuLayout.Enchanting.TOOL_SLOT_X, TableMenuLayout.Enchanting.TOOL_SLOT_Y) {
-			//?} else {
-			/*new SlotItemHandler(itemHandler, 0, TableMenuLayout.Enchanting.TOOL_SLOT_X, TableMenuLayout.Enchanting.TOOL_SLOT_Y) {
-			*///?}
+			//? } else {
+			/*new SlotItemHandler(itemHandler, 0, TableMenuLayout.Enchanting.TOOL_SLOT_X, TableMenuLayout.Enchanting.TOOL_SLOT_Y) {*/
+			//?}
 			@Override
 			public void onQuickCraft(ItemStack newStack, ItemStack oldStack) {
 				super.onQuickCraft(newStack, oldStack);
@@ -262,9 +250,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		this.addSlot(
 			//? if >=1.21.9 {
 			new ResourceHandlerSlot(itemHandler, itemHandler::set, 1, TableMenuLayout.Enchanting.INPUT_SLOT_X, TableMenuLayout.Enchanting.INPUT_SLOT_Y) {
-			//?} else {
-			/*new SlotItemHandler(itemHandler, 1, TableMenuLayout.Enchanting.INPUT_SLOT_X, TableMenuLayout.Enchanting.INPUT_SLOT_Y) {
-			*///?}
+			//? } else {
+			/*new SlotItemHandler(itemHandler, 1, TableMenuLayout.Enchanting.INPUT_SLOT_X, TableMenuLayout.Enchanting.INPUT_SLOT_Y) {*/
+			//?}
 			@Override
 			public boolean mayPlace(ItemStack stack) {
 				return Items.ENCHANTED_BOOK == stack.getItem()
@@ -277,18 +265,18 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 			public Identifier getNoItemIcon() {
 				return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 			}
-			//?} else if >=1.21.4 {
+			//? } else if >=1.21.4 {
 			/*public ResourceLocation getNoItemIcon() {
 				return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
-			}
-			*///?} else {
+			}*/
+			//? } else {
 			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 				return Pair.of(
 						InventoryMenu.BLOCK_ATLAS,
 						ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
 				);
-			}
-			*///?}
+			}*/
+			//?}
 
 			@Override
 			public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
@@ -313,9 +301,9 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 				this.enchantedBookSlots.put(final_enchanted_book_index, this.addSlot(
 					//? if >=1.21.9 {
 					new ResourceHandlerSlot(itemHandler, itemHandler::set, final_enchanted_book_index + 2, xPos, yPos) {
-					//?} else {
-					/*new SlotItemHandler(itemHandler, final_enchanted_book_index + 2, xPos, yPos) {
-					*///?}
+					//? } else {
+					/*new SlotItemHandler(itemHandler, final_enchanted_book_index + 2, xPos, yPos) {*/
+					//?}
 						@Override
 						public boolean mayPlace(ItemStack stack) {
 							return Items.ENCHANTED_BOOK == stack.getItem()
@@ -333,18 +321,18 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 						public Identifier getNoItemIcon() {
 							return Identifier.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
 						}
-						//?} else if >=1.21.4 {
+						//? } else if >=1.21.4 {
 						/*public ResourceLocation getNoItemIcon() {
 							return ResourceLocation.fromNamespaceAndPath("enchantment_custom_table", "container/slot/empty_slot_book");
-						}
-						*///?} else {
+						}*/
+						//? } else {
 						/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 							return Pair.of(
 									InventoryMenu.BLOCK_ATLAS,
 									ResourceLocation.tryParse("enchantment_custom_table:item/empty_slot_book")
 							);
-						}
-						*///?}
+						}*/
+						//?}
 
 						@Override
 						public void setByPlayer(ItemStack newStack, ItemStack oldStack) {
@@ -442,11 +430,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 	public void removed(@NotNull Player playerIn) {
 		super.removed(playerIn);
 		if (playerIn instanceof ServerPlayer) {
-			//? if >=26.3 {
-            playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(1), net.minecraft.util.Prediction.SERVER_ONLY);
-            //?} else {
-            /*playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(1));*/
-            //?}
+            playerIn.getInventory().placeItemBackInInventory(itemHandler.getStackInSlot(1));
 			itemHandler.setStackInSlot(1, ItemStack.EMPTY);
 		}
 	}
@@ -472,11 +456,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		syncPageState();
 		acknowledgeBoundInventoryVersion();
 		if (result.success()) {
-			//? if >=26.3 {
-            entity.getInventory().placeItemBackInInventory(result.exportedStack(), net.minecraft.util.Prediction.SERVER_ONLY);
-            //?} else {
-            /*entity.getInventory().placeItemBackInInventory(result.exportedStack());*/
-            //?}
+            entity.getInventory().placeItemBackInInventory(result.exportedStack());
 		}
 		if (result.playSound()) {
 			playUseSound();
@@ -669,7 +649,7 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 			return blockEntity != null ? blockEntity.getInventory() : fallbackToolHandler;
 		}
 	}
-	//?} else {
+	//? } else {
 	/*private static class EnchantingMenuInventory implements LogicalInventory {
 		private final EnchantingCustomTableBlockEntity blockEntity;
 		private final LogicalInventory fallbackToolInventory = new ItemHandlerLogicalInventory(new ItemStackHandler(1));
@@ -725,6 +705,6 @@ public class EnchantingCustomMenu extends AbstractContainerMenu implements Encha
 		private LogicalInventory persistentInventory() {
 			return blockEntity != null ? blockEntity.getLogicalInventory() : fallbackToolInventory;
 		}
-	}
-	*///?}
+	}*/
+	//?}
 }

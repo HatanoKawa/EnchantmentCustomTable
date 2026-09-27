@@ -1,6 +1,8 @@
+> Current maintenance scope: **1.21.x**, default **1.21.11**. Export with an explicit supported `-PguiVersion` / `--minecraft` when following historical examples below. Earlier reports retain their original matrix and evidence.
+
 # macOS 开发客户端 GUI 验证
 
-这个工具为 NeoForge 和 Fabric `1.21.1～26.3` 的开发客户端提供可识别的 macOS 应用身份，
+本分支工具为 NeoForge 和 Fabric `1.21.x` 的开发客户端提供可识别的 macOS 应用身份，
 用于让桌面自动化工具定位真实的 Minecraft 窗口、截图及发送键鼠输入。
 启动工具本身不修改模组逻辑、常规 `runClient` 配置或发布产物。
 
@@ -22,7 +24,7 @@ E02/E06 及严格配置扩展，解除其中 4 项历史阻塞。
 ```sh
 ./gradlew --no-configuration-cache \
   -I tools/gui-validation/export-client.init.gradle \
-  :1.21.1:exportGuiClientLaunch
+  :1.21.11:exportGuiClientLaunch
 python3 tools/gui-validation/macos_client.py --launch
 ```
 
@@ -31,7 +33,7 @@ Fabric 使用独立导出目标和应用身份：
 ```sh
 ./gradlew --no-configuration-cache \
   -I tools/gui-validation/export-client.init.gradle -PguiLoader=fabric \
-  :fabric_1_21_1:exportGuiClientLaunch
+  :fabric_1_21_11:exportGuiClientLaunch
 python3 tools/gui-validation/macos_client.py --loader fabric --launch
 ```
 
@@ -44,41 +46,40 @@ python3 tools/gui-validation/macos_client.py --loader fabric --minecraft 1.21.9 
 ```
 
 `-PguiLoader=both -PguiVersion=all` 会在所有版本项目注册导出任务；仍需显式列出需要执行的任务。
-每个版本读取对应 `runClient` 的 Java toolchain，26.x 自动使用 Java 25。
+每个版本读取对应 `runClient` 的 Java 21 toolchain。
 用户允许临时保持唤醒时，可在启动命令追加 `--keep-awake`。该选项通过 macOS
 `caffeinate` 绑定实际游戏进程，游戏退出即解除，最长持续一小时；不修改系统电源设置。
 它不能解锁已锁定的 Mac，也不能阻止用户主动锁屏。
-26.x Loom 的目录属性与旧版字符串属性均已适配。1.21.1 的应用身份保持不变，
-其他目标使用含加载器和版本的独立 bundle identifier，并在应用名后追加版本号。
+各目标使用含加载器和版本的独立 bundle identifier，并在应用名后追加版本号；历史 1.21.1 的应用身份保持不变。
 
 当前机器在独立 worktree 中使用以下 Gradle Java 路径验证成功：
 
 ```sh
-JAVA_HOME=/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home \
+JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home \
   ./gradlew --no-configuration-cache \
   -I tools/gui-validation/export-client.init.gradle \
-  :1.21.1:exportGuiClientLaunch
+  :1.21.11:exportGuiClientLaunch
 ```
 
-这里的 Gradle JVM 为 Java 25；游戏仍使用项目的 Java 21 toolchain。
+这里的 Gradle JVM 与游戏工具链均为 Java 21。
 还需要 macOS 自带的 `codesign` 和 Python 3。更改源码、依赖、JDK 或移动工作目录后，
 重新执行导出命令。重新打包前先退出当前测试客户端；同一时间仅运行一个该实验客户端。
 
 生成的应用位于：
 
 ```text
-versions/1.21.1/build/gui-validation/ECT GUI Dev.app
-fabric_versions/1.21.1/build/gui-validation/ECT GUI Fabric.app
+versions/1.21.11/build/gui-validation/ECT GUI Dev 1.21.11.app
+fabric_versions/1.21.11/build/gui-validation/ECT GUI Fabric 1.21.11.app
 ```
 
 自动化工具应通过该 `.app` 的绝对路径选择应用。
-游戏工作目录、存档和截图分别在本 worktree 的 `versions/1.21.1/run/` 和
-`fabric_versions/1.21.1/run/` 中。
+游戏工作目录、存档和截图分别在本 worktree 的 `versions/1.21.11/run/` 和
+`fabric_versions/1.21.11/run/` 中。
 所有生成文件都在已忽略的构建/运行目录内。
 
 ## Legacy 分支
 
-在对应 `codex/port-*` 独立分支中使用 `-PguiLegacy=true -PguiLoader=both -PguiVersion=1.18.2`
+在对应 `maint/1.18.x`、`maint/1.19.x` 或 `maint/1.20.x` 分支中使用 `-PguiLegacy=true -PguiLoader=both -PguiVersion=1.18.2`
 导出 `:forge:exportGuiClientLaunch :fabric:exportGuiClientLaunch`，然后使用
 `--legacy --loader forge` 或 `--legacy --loader fabric` 启动，版本参数须与分支一致。
 这些分支保留 Java 17、Forge/Fabric 结构，不加入主线版本矩阵。
@@ -197,12 +198,13 @@ Computer Use/SDL 内部根因，也不代表其他系统或所有输入方式已
 所有函数都有纯字母别名；详细准备及预期结果见用例文档。截图可用 F2 保存至对应 `run/screenshots/`。
 切换配置用例前退出客户端、备份配置，测试后恢复；保留配置副本与日志。
 
-全版本回归的 `prepare_matrix.py` 可从第二轮专用世界复制独立测试世界，按对应游戏 JAR
+`prepare_matrix.py` 从显式指定的同版本专用世界复制独立测试世界，按对应游戏 JAR
 生成 pack 元数据及附魔组件命令，并备份已有配置和 options。它拒绝覆盖已准备的世界和备份。
-这只准备前置条件，不操作游戏业务菜单。当前脚本依赖本机 Loom 缓存及第二轮种子世界。
+这只准备前置条件，不操作游戏业务菜单。先用目标客户端创建允许命令的创造超平坦种子世界并关闭客户端；脚本依赖对应版本的本机 Loom 缓存。
+`--seed-world` 只能是该目标 `run/saves` 下的目录名，也可使用 `{loader}` / `{minecraft}` 占位符；不要跨版本复用存档。
 
 ```sh
-python3 tools/gui-validation/prepare_matrix.py --loader fabric --minecraft 1.21.9
+python3 tools/gui-validation/prepare_matrix.py --loader fabric --minecraft 1.21.9 --seed-world ECT-SEED
 # 客户端退出后切换配置组
 python3 tools/gui-validation/prepare_matrix.py --loader fabric --minecraft 1.21.9 --config strict-free
 # 客户端退出后恢复原配置和 options（原来不存在的文件会恢复为不存在）

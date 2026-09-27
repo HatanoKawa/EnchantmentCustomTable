@@ -14,9 +14,9 @@ import com.river_quinn.enchantment_custom_table.world.inventory.EnchantmentConve
 //? if >=1.21.9 {
 import com.river_quinn.enchantment_custom_table.world.inventory.MenuItemStackHandler;
 import com.river_quinn.enchantment_custom_table.world.inventory.ResourceHandlerLogicalInventory;
-//?} else {
-/*import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;
-*///?}
+//? } else {
+/*import com.river_quinn.enchantment_custom_table.world.inventory.ItemHandlerLogicalInventory;*/
+//?}
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
@@ -24,8 +24,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 //? if <1.21.6 {
 /*import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-*///?}
+import net.minecraft.nbt.CompoundTag;*/
+//?}
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Containers;
@@ -42,8 +42,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 //?}
 //? if <1.21.9 {
 /*import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemStackHandler;
-*///?}
+import net.neoforged.neoforge.items.ItemStackHandler;*/
+//?}
 //? if >=1.21.9 {
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
@@ -84,7 +84,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         }
     };
     private final LogicalInventory logicalInventory = new ResourceHandlerLogicalInventory(inventory);
-    //?} else {
+    //? } else {
     /*private final ItemStackHandler inventory = new ItemStackHandler(SLOT_COUNT) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
@@ -104,13 +104,13 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
             }
         }
     };
-    private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);
-    *///?}
+    private final LogicalInventory logicalInventory = new ItemHandlerLogicalInventory(inventory);*/
+    //?}
     //? if >=1.21.9 {
     private final ResourceHandler<ItemResource> automationHandler = new ConversionAutomationItemHandler();
-    //?} else {
-    /*private final IItemHandler automationHandler = new ConversionAutomationItemHandler();
-    *///?}
+    //? } else {
+    /*private final IItemHandler automationHandler = new ConversionAutomationItemHandler();*/
+    //?}
     private boolean updatingCopyResult = false;
     private int inventoryVersion = 0;
 
@@ -127,11 +127,11 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     public MenuItemStackHandler getInventory() {
         return inventory;
     }
-    //?} else {
+    //? } else {
     /*public ItemStackHandler getInventory() {
         return inventory;
-    }
-    *///?}
+    }*/
+    //?}
 
     public LogicalInventory getLogicalInventory() {
         return logicalInventory;
@@ -145,11 +145,11 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     public @Nullable ResourceHandler<ItemResource> getAutomationItemHandler(@Nullable Direction direction) {
         return automationHandler;
     }
-    //?} else {
+    //? } else {
     /*public @Nullable IItemHandler getAutomationItemHandler(@Nullable Direction direction) {
         return automationHandler;
-    }
-    *///?}
+    }*/
+    //?}
 
     public boolean isCopyMode() {
         return isValidCopyTemplate(inventory.getStackInSlot(TEMPLATE_SLOT));
@@ -183,9 +183,9 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         if (updatingCopyResult || level == null
                 //? if >=1.21.6 {
                 || level.isClientSide()
-                //?} else {
-                /*|| level.isClientSide
-                *///?}
+                //? } else {
+                /*|| level.isClientSide*/
+                //?}
         ) {
             return;
         }
@@ -214,9 +214,9 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         if (level == null
                 //? if >=1.21.6 {
                 || level.isClientSide()
-                //?} else {
-                /*|| level.isClientSide
-                *///?}
+                //? } else {
+                /*|| level.isClientSide*/
+                //?}
         ) {
             return;
         }
@@ -242,7 +242,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         input.child("Inventory").ifPresent(inventory::deserialize);
         refreshCopyResult();
     }
-    //?} else if >=1.21.5 {
+    //? } else if >=1.21.5 {
     /*@Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -256,8 +256,8 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
             tag.getCompound("Inventory").ifPresent(inventoryTag -> inventory.deserializeNBT(registries, inventoryTag));
         }
         refreshCopyResult();
-    }
-    *///?} else {
+    }*/
+    //? } else {
     /*@Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -271,8 +271,8 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
             inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
         }
         refreshCopyResult();
-    }
-    *///?}
+    }*/
+    //?}
 
     private void markInventoryChanged() {
         inventoryVersion++;
@@ -426,7 +426,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
             return extracted.getCount();
         }
     }
-    //?} else {
+    //? } else {
     /*private class ConversionAutomationItemHandler implements IItemHandler, AutomationPort {
         @Override
         public int getSlots() {
@@ -500,6 +500,6 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
                 default -> false;
             };
         }
-    }
-    *///?}
+    }*/
+    //?}
 }

@@ -8,18 +8,18 @@ public class ModCapabilities {
         event.registerBlockEntity(
                 //? if >=1.21.9 {
                 Capabilities.Item.BLOCK,
-                //?} else {
-                /*Capabilities.ItemHandler.BLOCK,
-                *///?}
+                //? } else {
+                /*Capabilities.ItemHandler.BLOCK,*/
+                //?}
                 ModBlockEntities.ENCHANTING_CUSTOM_TABLE.get(),
                 (blockEntity, direction) -> blockEntity.getAutomationItemHandler(direction)
         );
         event.registerBlockEntity(
                 //? if >=1.21.9 {
                 Capabilities.Item.BLOCK,
-                //?} else {
-                /*Capabilities.ItemHandler.BLOCK,
-                *///?}
+                //? } else {
+                /*Capabilities.ItemHandler.BLOCK,*/
+                //?}
                 ModBlockEntities.ENCHANTMENT_CONVERSION_TABLE.get(),
                 (blockEntity, direction) -> blockEntity.getAutomationItemHandler(direction)
         );

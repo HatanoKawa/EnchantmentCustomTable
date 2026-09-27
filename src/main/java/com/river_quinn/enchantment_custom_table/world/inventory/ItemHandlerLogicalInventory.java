@@ -46,5 +46,5 @@ public class ItemHandlerLogicalInventory implements LogicalInventory {
     public boolean isItemValid(int slot, ItemStack stack) {
         return itemHandler.isItemValid(slot, stack);
     }
-}
-*///?}
+}*/
+//?}

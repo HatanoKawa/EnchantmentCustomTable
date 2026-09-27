@@ -8,8 +8,8 @@ import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.
 import com.river_quinn.enchantment_custom_table.network.enchanting_custom_table.EnchantingCustomTableNetData;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 //? if <1.21.7 {
-/*import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
-*///?}
+/*import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;*/
+//?}
 //? if >=1.21.7 {
 import net.neoforged.neoforge.network.handling.MainThreadPayloadHandler;
 //?}
@@ -29,7 +29,7 @@ public class ModPayloads {
                         EnchantingCustomTableClientPayloadHandler::handleDataOnMain
                 )
         );
-        //?} else {
+        //? } else {
         /*registrar.playBidirectional(
                 EnchantingCustomTableNetData.TYPE,
                 EnchantingCustomTableNetData.STREAM_CODEC,
@@ -37,8 +37,8 @@ public class ModPayloads {
                         EnchantingCustomTableClientPayloadHandler::handleDataOnMain,
                         EnchantingCustomTableServerPayloadHandler::handleDataOnMain
                 )
-        );
-        *///?}
+        );*/
+        //?}
 
         //? if >=1.21.7 {
         registrar.playBidirectional(
@@ -51,7 +51,7 @@ public class ModPayloads {
                         EnchantmentConversionTableServerPayloadHandler::handleDataOnMain
                 )
         );
-        //?} else {
+        //? } else {
         /*registrar.playBidirectional(
                 EnchantmentConversionTableNetData.TYPE,
                 EnchantmentConversionTableNetData.STREAM_CODEC,
@@ -59,7 +59,7 @@ public class ModPayloads {
                         EnchantmentConversionTableClientPayloadHandler::handleDataOnMain,
                         EnchantmentConversionTableServerPayloadHandler::handleDataOnMain
                 )
-        );
-        *///?}
+        );*/
+        //?}
     }
 }

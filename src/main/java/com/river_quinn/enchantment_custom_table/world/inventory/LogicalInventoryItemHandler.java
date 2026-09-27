@@ -46,5 +46,5 @@ public class LogicalInventoryItemHandler implements IItemHandlerModifiable {
     public boolean isItemValid(int slot, ItemStack stack) {
         return inventory.isItemValid(slot, stack);
     }
-}
-*///?}
+}*/
+//?}
