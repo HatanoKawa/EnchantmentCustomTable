@@ -1,236 +1,122 @@
 package com.river_quinn.enchantment_custom_table.client.gui;
 
+import com.google.gson.*;
 import com.river_quinn.enchantment_custom_table.Config;
-import com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot;
+import com.river_quinn.enchantment_custom_table.core.config.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.function.Consumer;
-import java.util.function.IntConsumer;
-
+/** A small paged editor for structured payment rows; no extra configuration UI dependency. */
 public class TableConfigScreen extends Screen {
-    private static final int MIN_COST = 0;
-    private static final int MAX_COST = 64;
-
     private final Screen parent;
-    private int minimumEmeraldCost;
-    private int minimumEmeraldBlockCost;
-    private boolean enforceEnchantmentLevelLimit;
-    private boolean incrementalSameLevelMerge;
-    private boolean convertOnlyLevelOneBook;
-    private boolean freeConversionTableCosts;
+    private final boolean readOnly;
+    private final List<Row> rows = new ArrayList<>();
+    private final boolean[] flags = new boolean[4];
+    private static final String[] FLAG_KEYS = {"enforceEnchantmentLevelLimit", "incrementalSameLevelMerge", "convertOnlyLevelOneBook", "freeConversionTableCosts"};
+    private int page;
+    private int rowsPerPage = 3;
+    private TableConfigSnapshot displayed;
+    private Component status = Component.empty();
 
     public TableConfigScreen(Screen parent) {
-        super(Component.translatable(
-                "enchantment_custom_table.configuration.title",
-                Component.literal("Enchantment Custom Table")
-        ));
+        super(label("title"));
         this.parent = parent;
-        load(Config.snapshot());
+        Minecraft client = Minecraft.getInstance();
+        readOnly = client.getConnection() != null && client.getSingleplayerServer() == null;
+        load(readOnly ? Config.snapshot(true) : Config.editableSnapshot());
     }
-
-    @Override
-    protected void init() {
-        int controlWidth = Math.min(150, Math.max(100, (width - 30) / 2));
-        int left = (width - controlWidth * 2 - 10) / 2;
-        int right = left + controlWidth + 10;
-        int firstRow = 46;
-        int rowSpacing = 24;
-
-        addIntegerOption(
-                left,
-                firstRow,
-                controlWidth,
-                "enchantment_custom_table.configuration.minimumEmeraldCost",
-                "enchantment_custom_table.configuration.minimumEmeraldCost.description",
-                minimumEmeraldCost,
-                value -> minimumEmeraldCost = value
-        );
-        addIntegerOption(
-                right,
-                firstRow,
-                controlWidth,
-                "enchantment_custom_table.configuration.minimumEmeraldBlockCost",
-                "enchantment_custom_table.configuration.minimumEmeraldBlockCost.description",
-                minimumEmeraldBlockCost,
-                value -> minimumEmeraldBlockCost = value
-        );
-        addBooleanOption(
-                left,
-                firstRow + rowSpacing,
-                controlWidth,
-                "enchantment_custom_table.configuration.enforceEnchantmentLevelLimit",
-                "enchantment_custom_table.configuration.enforceEnchantmentLevelLimit.description",
-                enforceEnchantmentLevelLimit,
-                value -> enforceEnchantmentLevelLimit = value
-        );
-        addBooleanOption(
-                right,
-                firstRow + rowSpacing,
-                controlWidth,
-                "enchantment_custom_table.configuration.incrementalSameLevelMerge",
-                "enchantment_custom_table.configuration.incrementalSameLevelMerge.description",
-                incrementalSameLevelMerge,
-                value -> incrementalSameLevelMerge = value
-        );
-        addBooleanOption(
-                left,
-                firstRow + rowSpacing * 2,
-                controlWidth,
-                "enchantment_custom_table.configuration.convertOnlyLevelOneBook",
-                "enchantment_custom_table.configuration.convertOnlyLevelOneBook.description",
-                convertOnlyLevelOneBook,
-                value -> convertOnlyLevelOneBook = value
-        );
-        addBooleanOption(
-                right,
-                firstRow + rowSpacing * 2,
-                controlWidth,
-                "enchantment_custom_table.configuration.freeConversionTableCosts",
-                "enchantment_custom_table.configuration.freeConversionTableCosts.description",
-                freeConversionTableCosts,
-                value -> freeConversionTableCosts = value
-        );
-
-        int buttonWidth = Math.min(100, Math.max(80, (width - 40) / 3));
-        int buttonGap = 5;
-        int buttonRowWidth = buttonWidth * 3 + buttonGap * 2;
-        int buttonX = (width - buttonRowWidth) / 2;
-        int buttonY = height - 28;
-        addRenderableWidget(Button.builder(Component.translatable("controls.reset"), button -> resetToDefaults())
-                .bounds(buttonX, buttonY, buttonWidth, 20)
-                .build());
-        addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose())
-                .bounds(buttonX + buttonWidth + buttonGap, buttonY, buttonWidth, 20)
-                .build());
-        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> saveAndClose())
-                .bounds(buttonX + (buttonWidth + buttonGap) * 2, buttonY, buttonWidth, 20)
-                .build());
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderBackground(guiGraphics);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawCenteredString(font, title, width / 2, 18, 0xFFFFFF);
-    }
-
-    @Override
-    public void onClose() {
-        if (minecraft != null) {
-            minecraft.setScreen(parent);
-        }
-    }
-
-    private void addIntegerOption(
-            int x,
-            int y,
-            int controlWidth,
-            String labelKey,
-            String descriptionKey,
-            int initialValue,
-            IntConsumer onChange
-    ) {
-        IntegerSlider slider = new IntegerSlider(
-                x,
-                y,
-                controlWidth,
-                Component.translatable(labelKey),
-                initialValue,
-                onChange
-        );
-        slider.setTooltip(Tooltip.create(Component.translatable(descriptionKey)));
-        addRenderableWidget(slider);
-    }
-
-    private void addBooleanOption(
-            int x,
-            int y,
-            int controlWidth,
-            String labelKey,
-            String descriptionKey,
-            boolean initialValue,
-            Consumer<Boolean> onChange
-    ) {
-        CycleButton<Boolean> button = CycleButton.onOffBuilder(initialValue).create(
-                x,
-                y,
-                controlWidth,
-                20,
-                Component.translatable(labelKey),
-                (cycleButton, value) -> onChange.accept(value)
-        );
-        button.setTooltip(Tooltip.create(Component.translatable(descriptionKey)));
-        addRenderableWidget(button);
-    }
-
-    private void resetToDefaults() {
-        load(Config.defaultSnapshot());
-        rebuildWidgets();
-    }
-
-    private void saveAndClose() {
-        Config.save(new TableConfigSnapshot(
-                minimumEmeraldCost,
-                minimumEmeraldBlockCost,
-                enforceEnchantmentLevelLimit,
-                incrementalSameLevelMerge,
-                convertOnlyLevelOneBook,
-                freeConversionTableCosts
-        ));
-        onClose();
-    }
-
+    private static Component label(String key) { return Component.translatable("enchantment_custom_table.payment_config." + key); }
     private void load(TableConfigSnapshot snapshot) {
-        minimumEmeraldCost = snapshot.minimumEmeraldCost();
-        minimumEmeraldBlockCost = snapshot.minimumEmeraldBlockCost();
-        enforceEnchantmentLevelLimit = snapshot.enforceEnchantmentLevelLimit();
-        incrementalSameLevelMerge = snapshot.incrementalSameLevelMerge();
-        convertOnlyLevelOneBook = snapshot.convertOnlyLevelOneBook();
-        freeConversionTableCosts = snapshot.freeConversionTableCosts();
+        displayed = snapshot; rows.clear();
+        snapshot.paymentOptions().forEach((id, cost) -> rows.add(new Row(id, Integer.toString(cost))));
+        flags[0] = snapshot.enforceEnchantmentLevelLimit(); flags[1] = snapshot.incrementalSameLevelMerge();
+        flags[2] = snapshot.convertOnlyLevelOneBook(); flags[3] = snapshot.freeConversionTableCosts();
     }
-
-    private static final class IntegerSlider extends AbstractSliderButton {
-        private final Component label;
-        private final IntConsumer onChange;
-
-        private IntegerSlider(
-                int x,
-                int y,
-                int width,
-                Component label,
-                int initialValue,
-                IntConsumer onChange
-        ) {
-            super(x, y, width, 20, CommonComponents.EMPTY, normalize(initialValue));
-            this.label = label;
-            this.onChange = onChange;
-            updateMessage();
+    @Override protected void init() {
+        rowsPerPage = Math.max(1, Math.min(4, (height - 164) / 24));
+        page = Math.min(page, Math.max(0, (rows.size() - 1) / rowsPerPage));
+        int totalWidth = Math.min(420, width - 20), left = (width - totalWidth) / 2;
+        for (int line = 0; line < rowsPerPage; line++) {
+            int index = page * rowsPerPage + line;
+            if (index >= rows.size()) break;
+            Row row = rows.get(index); int y = 52 + line * 24;
+            EditBox id = new EditBox(font, left, y, totalWidth - 95, 20, label("item"));
+            id.setMaxLength(256); id.setValue(row.id); id.setResponder(value -> row.id = value);
+            id.setEditable(!readOnly); addRenderableWidget(id);
+            EditBox cost = new EditBox(font, left + totalWidth - 90, y, 60, 20, label("cost"));
+            cost.setMaxLength(128); cost.setValue(row.cost); cost.setResponder(value -> row.cost = value);
+            cost.setEditable(!readOnly); addRenderableWidget(cost);
+            button(left + totalWidth - 25, y, 25, Component.literal("−"), () -> {
+                rows.remove(index); rebuildWidgets();
+            }, !readOnly);
         }
-
-        @Override
-        protected void updateMessage() {
-            setMessage(label.copy().append(": ").append(Integer.toString(currentValue())));
+        int controlsY = 52 + rowsPerPage * 24;
+        button(left, controlsY, 75, label("add"), () -> {
+            rows.add(new Row("minecraft:diamond", "1")); page = (rows.size() - 1) / rowsPerPage; rebuildWidgets();
+        }, !readOnly && rows.size() < PaymentOptions.MAX_ENTRIES);
+        button(left + totalWidth - 100, controlsY, 30, Component.literal("<"), () -> { page--; rebuildWidgets(); }, page > 0);
+        button(left + totalWidth - 30, controlsY, 30, Component.literal(">"), () -> { page++; rebuildWidgets(); }, (page + 1) * rowsPerPage < rows.size());
+        for (int i = 0; i < flags.length; i++) {
+            int flag = i;
+            Component name = label(FLAG_KEYS[i]);
+            Button option = button(left + i % 2 * (totalWidth / 2 + 2), controlsY + 24 + i / 2 * 24,
+                    totalWidth / 2 - 2, name.copy().append(flags[i] ? ": ON" : ": OFF"), () -> {
+                        flags[flag] = !flags[flag]; rebuildWidgets();
+                    }, !readOnly);
+            option.setTooltip(Tooltip.create(Component.translatable("enchantment_custom_table.configuration." + FLAG_KEYS[i] + ".description")));
         }
-
-        @Override
-        protected void applyValue() {
-            onChange.accept(currentValue());
+        int footer = height - 26, buttonWidth = Math.min(100, (width - 30) / 3), x = (width - (buttonWidth * 3 + 10)) / 2;
+        button(x, footer, buttonWidth, label("reset"), () -> { load(Config.defaultSnapshot()); page = 0; rebuildWidgets(); }, !readOnly);
+        button(x + buttonWidth + 5, footer, buttonWidth, Component.translatable("gui.cancel"), this::onClose, true);
+        button(x + (buttonWidth + 5) * 2, footer, buttonWidth, Component.translatable("gui.done"), this::save, !readOnly);
+    }
+    private Button button(int x, int y, int width, Component text, Runnable action, boolean enabled) {
+        Button widget = Button.builder(text, b -> action.run()).bounds(x, y, width, 20).build();
+        widget.active = enabled; return addRenderableWidget(widget);
+    }
+    private void save() {
+        if (readOnly) return;
+        JsonObject root = new JsonObject(); JsonArray entries = new JsonArray();
+        for (Row row : rows) {
+            JsonObject entry = new JsonObject(); entry.addProperty("item_id", row.id);
+            try {
+                if (!row.cost.matches("-?[0-9]+")) throw new NumberFormatException();
+                entry.addProperty("cost", new java.math.BigInteger(row.cost));
+            } catch (NumberFormatException ex) { status = label("integer_required"); return; }
+            entries.add(entry);
         }
-
-        private int currentValue() {
-            return MIN_COST + (int) Math.round(value * (MAX_COST - MIN_COST));
-        }
-
-        private static double normalize(int value) {
-            int clamped = Math.max(MIN_COST, Math.min(MAX_COST, value));
-            return (double) (clamped - MIN_COST) / (MAX_COST - MIN_COST);
-        }
+        root.add(JsonTableConfigCodec.PAYMENT_OPTIONS, entries);
+        for (int i = 0; i < flags.length; i++) root.addProperty(FLAG_KEYS[i], flags[i]);
+        try {
+            var parsed = JsonTableConfigCodec.parse(root, Config::warn);
+            Config.save(MinecraftPaymentConfig.resolve(parsed, Config::warn));
+            onClose();
+        } catch (RuntimeException ex) { Config.warn("Cannot save payment config: " + ex.getMessage()); status = label("save_failed"); }
+    }
+    @Override public void tick() {
+        if (readOnly && displayed != Config.snapshot(true)) { load(Config.snapshot(true)); rebuildWidgets(); }
+    }
+    @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.render(graphics, mouseX, mouseY, partialTick);
+        graphics.drawCenteredString(font, title, width / 2, 10, 0xFFFFFFFF);
+        graphics.drawCenteredString(font, readOnly ? label("server_controlled") : status.getString().isEmpty() ? label("hint") : status,
+                width / 2, 27, 0xFFFFFF88);
+        int totalWidth = Math.min(420, width - 20), left = (width - totalWidth) / 2;
+        graphics.drawString(font, label("item"), left, 41, 0xFFFFFFFF);
+        graphics.drawString(font, label("cost"), left + totalWidth - 90, 41, 0xFFFFFFFF);
+        graphics.drawCenteredString(font, Component.literal(Integer.toString(page + 1)), left + totalWidth - 50,
+                58 + rowsPerPage * 24, 0xFFFFFFFF);
+    }
+    @Override public void onClose() { if (minecraft != null) minecraft.setScreen(parent); }
+    private static final class Row {
+        String id; String cost;
+        Row(String id, String cost) { this.id = id; this.cost = cost; }
     }
 }

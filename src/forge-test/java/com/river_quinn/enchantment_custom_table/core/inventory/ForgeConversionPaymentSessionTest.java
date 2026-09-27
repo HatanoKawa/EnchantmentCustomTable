@@ -10,7 +10,7 @@ import java.util.function.IntConsumer;
 class ForgeConversionPaymentSessionTest extends ConversionPaymentSessionTest {
     @Override
     protected LogicalInventory inventory(IntConsumer changed) {
-        return new ItemHandlerLogicalInventory(new ItemStackHandler(3) {
+        return new ItemHandlerLogicalInventory(new ItemStackHandler(4) {
             @Override
             protected void onContentsChanged(int slot) {
                 changed.accept(slot);

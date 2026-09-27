@@ -1,56 +1,29 @@
 package com.river_quinn.enchantment_custom_table.fabric.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.river_quinn.enchantment_custom_table.core.config.JsonTableConfigCodec;
-import com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot;
+import com.river_quinn.enchantment_custom_table.core.config.*;
 import com.river_quinn.enchantment_custom_table.fabric.EnchantmentCustomTableFabric;
 import net.fabricmc.loader.api.FabricLoader;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.io.IOException;
 
 public final class FabricTableConfig {
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final String CONFIG_FILE_NAME = EnchantmentCustomTableFabric.MODID + ".json";
-    private static TableConfigSnapshot snapshot = JsonTableConfigCodec.defaultSnapshot();
-
-    private FabricTableConfig() {
-    }
-
+    public static final TableConfigState STATE = new TableConfigState();
+    private static TableConfigSnapshot raw = JsonTableConfigCodec.defaultSnapshot();
+    private static boolean loaded;
+    private FabricTableConfig() {}
     public static void load() {
-        Path configPath = FabricLoader.getInstance().getConfigDir().resolve(CONFIG_FILE_NAME);
-        if (!Files.exists(configPath)) {
-            saveDefault(configPath);
-            return;
-        }
-
-        try (Reader reader = Files.newBufferedReader(configPath)) {
-            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            snapshot = JsonTableConfigCodec.parse(root);
-        } catch (RuntimeException | IOException exception) {
-            EnchantmentCustomTableFabric.LOGGER.warn("Failed to load Fabric config {}, using defaults", configPath, exception);
-            snapshot = JsonTableConfigCodec.defaultSnapshot();
-        }
-    }
-
-    public static TableConfigSnapshot snapshot() {
-        return snapshot;
-    }
-
-    private static void saveDefault(Path configPath) {
+        Path path = FabricLoader.getInstance().getConfigDir().resolve(EnchantmentCustomTableFabric.MODID + ".json");
         try {
-            Files.createDirectories(configPath.getParent());
-            try (Writer writer = Files.newBufferedWriter(configPath)) {
-                GSON.toJson(JsonTableConfigCodec.defaultJson(), writer);
-            }
-        } catch (IOException exception) {
-            EnchantmentCustomTableFabric.LOGGER.warn("Failed to write default Fabric config {}", configPath, exception);
+            raw = ConfigFiles.loadJson(path, FabricTableConfig::warn);
+            loaded = true;
+        } catch (IOException | RuntimeException ex) {
+            EnchantmentCustomTableFabric.LOGGER.error("Cannot load config {}; original retained, keeping last valid rules", path, ex);
         }
     }
+    public static void resolveLocal() {
+        if (loaded) STATE.setLocal(MinecraftPaymentConfig.resolve(raw, FabricTableConfig::warn));
+    }
+    private static void warn(String message) { EnchantmentCustomTableFabric.LOGGER.warn(message); }
+    public static TableConfigSnapshot snapshot() { return STATE.local(); }
+    public static TableConfigSnapshot snapshot(boolean clientSide) { return STATE.forSide(clientSide); }
 }

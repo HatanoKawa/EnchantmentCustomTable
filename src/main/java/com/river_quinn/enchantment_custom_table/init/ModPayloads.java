@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 import static com.river_quinn.enchantment_custom_table.EnchantmentCustomTable.MODID;
 
 public final class ModPayloads {
-    private static final String PROTOCOL_VERSION = "1";
+    private static final String PROTOCOL_VERSION = "2";
     private static int nextPacketId = 0;
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
@@ -28,6 +28,17 @@ public final class ModPayloads {
     }
 
     public static void register() {
+        CHANNEL.registerMessage(nextPacketId++, com.river_quinn.enchantment_custom_table.network.TableConfigPayload.class,
+                com.river_quinn.enchantment_custom_table.network.TableConfigPayload::encode,
+                com.river_quinn.enchantment_custom_table.network.TableConfigPayload::decode,
+                (payload, supplier) -> {
+                    var context = supplier.get();
+                    context.enqueueWork(() -> {
+                        var update = com.river_quinn.enchantment_custom_table.core.config.TableConfigWireCodec.decode(payload.json());
+                        com.river_quinn.enchantment_custom_table.Config.STATE.receive(update.revision(), update.config());
+                    });
+                    context.setPacketHandled(true);
+                }, java.util.Optional.of(net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(
                 nextPacketId++,
                 EnchantingCustomTableNetData.class,

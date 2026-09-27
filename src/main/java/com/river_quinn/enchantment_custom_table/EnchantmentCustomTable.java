@@ -31,9 +31,12 @@ public class EnchantmentCustomTable {
 
         modEventBus.addListener(this::addCreative);
         ModPayloads.register();
+        Config.prepareMigration();
+        com.river_quinn.enchantment_custom_table.network.TableConfigSync.register();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
         if (FMLEnvironment.dist.isClient()) {
+            com.river_quinn.enchantment_custom_table.client.ClientTableConfigSync.register();
             modEventBus.addListener(ModBlockEntityRenderers::register);
             modEventBus.addListener(ModScreens::register);
             ModConfigScreens.register();

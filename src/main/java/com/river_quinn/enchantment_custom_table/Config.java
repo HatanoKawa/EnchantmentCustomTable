@@ -1,93 +1,90 @@
 package com.river_quinn.enchantment_custom_table;
 
-import com.river_quinn.enchantment_custom_table.core.config.JsonTableConfigCodec;
-import com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot;
-import net.minecraftforge.common.ForgeConfigSpec;
+import com.river_quinn.enchantment_custom_table.config.TomlPaymentConfig;
+import com.river_quinn.enchantment_custom_table.core.config.*;
+import com.river_quinn.enchantment_custom_table.network.TableConfigSync;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.common.ForgeConfigSpec;
+import org.slf4j.LoggerFactory;
+import java.util.List;
 
 @EventBusSubscriber(modid = EnchantmentCustomTable.MODID, bus = EventBusSubscriber.Bus.MOD)
-public class Config
-{
-    private static final TableConfigSnapshot DEFAULTS = JsonTableConfigCodec.defaultSnapshot();
+public class Config {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    private static final ForgeConfigSpec.IntValue VERSION = BUILDER.defineInRange("configVersion", 2, 2, 2);
+    private static final ForgeConfigSpec.ConfigValue<List<?>> PAYMENTS = BUILDER
+            .comment("Alternative payments: item_id and integer cost. Books/invalid entries are ignored; empty lists use defaults.",
+                    "Costs clamp to 1..min(default item stack limit, 64). Delete an entry to disable it; zero means one.")
+            .define("paymentOptions", () -> TomlPaymentConfig.entries(PaymentOptions.DEFAULTS), value -> value instanceof List<?>);
+    private static final ForgeConfigSpec.BooleanValue ENFORCE = BUILDER
+            .comment("Limit duplicate enchantment merges to vanilla maximum levels.").define("enforceEnchantmentLevelLimit", false);
+    private static final ForgeConfigSpec.BooleanValue INCREMENTAL = BUILDER
+            .comment("Merge equal enchantment levels by adding one level.").define("incrementalSameLevelMerge", false);
+    private static final ForgeConfigSpec.BooleanValue LEVEL_ONE = BUILDER
+            .comment("Only exchange level-one books.").define("convertOnlyLevelOneBook", false);
+    private static final ForgeConfigSpec.BooleanValue FREE = BUILDER
+            .comment("Require neither books nor payment items; both input slots reject insertion.").define("freeConversionTableCosts", false);
+    public static final ForgeConfigSpec SPEC = BUILDER.build();
+    public static final TableConfigState STATE = new TableConfigState();
+    private static volatile TableConfigSnapshot raw = JsonTableConfigCodec.defaultSnapshot();
+    private static volatile boolean safeWatcherInstalled;
 
-    private static final ForgeConfigSpec.IntValue MINIMUM_EMERALD_COST = BUILDER
-            .comment("Minimum emerald cost when using enchantment conversion table. When set to 0, emeralds are not accepted on the table.")
-            .defineInRange("minimumEmeraldCost", DEFAULTS.minimumEmeraldCost(), 0, 64);
-
-    private static final ForgeConfigSpec.IntValue MINIMUM_EMERALD_BLOCK_COST = BUILDER
-            .comment("Minimum emerald block cost when using enchantment conversion table. When set to 0, emerald blocks are not accepted on the table.")
-            .defineInRange("minimumEmeraldBlockCost", DEFAULTS.minimumEmeraldBlockCost(), 0, 64);
-
-    private static final ForgeConfigSpec.BooleanValue ENFORCE_ENCHANTMENT_LEVEL_LIMIT = BUILDER
-            .comment("When enabled, duplicate enchantment merges cannot exceed each enchantment's vanilla max level.")
-            .comment("Adding a new enchantment entry is still allowed even if another mod created a book above that level.")
-            .define("enforceEnchantmentLevelLimit", DEFAULTS.enforceEnchantmentLevelLimit());
-
-    private static final ForgeConfigSpec.BooleanValue INCREMENTAL_SAME_LEVEL_MERGE = BUILDER
-            .comment("When enabled, duplicate enchantments can only be merged if the current level and the added book level are the same.")
-            .comment("A successful duplicate merge increases the level by 1 instead of adding both levels directly. New enchantments are still added normally.")
-            .define("incrementalSameLevelMerge", DEFAULTS.incrementalSameLevelMerge());
-
-    private static final ForgeConfigSpec.BooleanValue CONVERT_ONLY_LEVEL_ONE_BOOK = BUILDER
-            .comment("When enabled, the enchantment conversion table exchanges only level-one enchanted books.")
-            .define("convertOnlyLevelOneBook", DEFAULTS.convertOnlyLevelOneBook());
-
-    private static final ForgeConfigSpec.BooleanValue FREE_CONVERSION_TABLE_COSTS = BUILDER
-            .comment("When enabled, the enchantment conversion table does not require or consume normal books, emeralds, or emerald blocks.")
-            .comment("The book and payment slots stop accepting input while this mode is enabled.")
-            .define("freeConversionTableCosts", DEFAULTS.freeConversionTableCosts());
-
-    static final ForgeConfigSpec SPEC = BUILDER.build();
-
-    public static int minimumEmeraldCost = DEFAULTS.minimumEmeraldCost();
-    public static int minimumEmeraldBlockCost = DEFAULTS.minimumEmeraldBlockCost();
-    public static boolean enforceEnchantmentLevelLimit = DEFAULTS.enforceEnchantmentLevelLimit();
-    public static boolean incrementalSameLevelMerge = DEFAULTS.incrementalSameLevelMerge();
-    public static boolean convertOnlyLevelOneBook = DEFAULTS.convertOnlyLevelOneBook();
-    public static boolean freeConversionTableCosts = DEFAULTS.freeConversionTableCosts();
-
-    public static TableConfigSnapshot snapshot() {
-        return new TableConfigSnapshot(
-                minimumEmeraldCost,
-                minimumEmeraldBlockCost,
-                enforceEnchantmentLevelLimit,
-                incrementalSameLevelMerge,
-                convertOnlyLevelOneBook,
-                freeConversionTableCosts
-        );
+    private static java.nio.file.Path path() {
+        return FMLPaths.CONFIGDIR.get().resolve(EnchantmentCustomTable.MODID + "-common.toml");
     }
 
-    public static TableConfigSnapshot defaultSnapshot() {
-        return DEFAULTS;
+    public static void prepareMigration() {
+        TomlPaymentConfig.migrate(path(), Config::warn);
     }
+    public static TableConfigSnapshot snapshot() { return STATE.local(); }
+    public static TableConfigSnapshot snapshot(boolean clientSide) { return STATE.forSide(clientSide); }
+    public static TableConfigSnapshot editableSnapshot() { return MinecraftPaymentConfig.resolve(raw, Config::warn); }
+    public static TableConfigSnapshot defaultSnapshot() { return JsonTableConfigCodec.defaultSnapshot(); }
+    public static void resolveLocal() { STATE.setLocal(MinecraftPaymentConfig.resolve(raw, Config::warn)); }
+    public static void setRuntimeSnapshot(TableConfigSnapshot value) { STATE.setLocal(value); }
+    public static void warn(String message) { LoggerFactory.getLogger(EnchantmentCustomTable.MODID).warn(message); }
 
-    public static void save(TableConfigSnapshot snapshot) {
-        MINIMUM_EMERALD_COST.set(snapshot.minimumEmeraldCost());
-        MINIMUM_EMERALD_BLOCK_COST.set(snapshot.minimumEmeraldBlockCost());
-        ENFORCE_ENCHANTMENT_LEVEL_LIMIT.set(snapshot.enforceEnchantmentLevelLimit());
-        INCREMENTAL_SAME_LEVEL_MERGE.set(snapshot.incrementalSameLevelMerge());
-        CONVERT_ONLY_LEVEL_ONE_BOOK.set(snapshot.convertOnlyLevelOneBook());
-        FREE_CONVERSION_TABLE_COSTS.set(snapshot.freeConversionTableCosts());
-        SPEC.save();
-        syncValues();
+    public static void save(TableConfigSnapshot value) {
+        try {
+            TomlPaymentConfig.save(path(), value);
+            raw = value;
+            TableConfigSync.configChanged();
+        } catch (java.io.IOException ex) { throw new IllegalStateException("Cannot save config", ex); }
     }
 
     @SubscribeEvent
-    static void onLoad(final ModConfigEvent event)
-    {
-        syncValues();
+    static void afterLoading(net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent event) {
+        event.enqueueWork(() -> {
+            try {
+                // Replace only this mod's watcher. FML's default watcher rewrites malformed files.
+                com.electronwill.nightconfig.core.file.FileWatcher.defaultInstance().setWatch(path(), Config::reloadSafely);
+                safeWatcherInstalled = true;
+                reloadSafely();
+            } catch (Exception ex) { throw new IllegalStateException("Cannot install safe config reload", ex); }
+        });
     }
 
-    private static void syncValues()
-    {
-        minimumEmeraldCost = MINIMUM_EMERALD_COST.get();
-        minimumEmeraldBlockCost = MINIMUM_EMERALD_BLOCK_COST.get();
-        enforceEnchantmentLevelLimit = ENFORCE_ENCHANTMENT_LEVEL_LIMIT.get();
-        incrementalSameLevelMerge = INCREMENTAL_SAME_LEVEL_MERGE.get();
-        convertOnlyLevelOneBook = CONVERT_ONLY_LEVEL_ONE_BOOK.get();
-        freeConversionTableCosts = FREE_CONVERSION_TABLE_COSTS.get();
+    private static synchronized void reloadSafely() {
+        try {
+            TomlPaymentConfig.migrate(path(), Config::warn);
+            raw = TomlPaymentConfig.load(path(), Config::warn);
+            TableConfigSync.configChanged();
+        } catch (java.io.IOException | RuntimeException ex) {
+            warn("Cannot reload config; file and last valid rules retained: " + ex.getMessage());
+        }
+    }
+
+    @SubscribeEvent
+    static void onLoad(ModConfigEvent event) {
+        if (event.getConfig().getSpec() != SPEC || event instanceof ModConfigEvent.Unloading) return;
+        if (safeWatcherInstalled) reloadSafely(); else readValues();
+    }
+    private static void readValues() {
+        raw = new TableConfigSnapshot(TomlPaymentConfig.read(PAYMENTS.get(), Config::warn),
+                ENFORCE.get(), INCREMENTAL.get(), LEVEL_ONE.get(), FREE.get());
+        TableConfigSync.configChanged();
     }
 }
