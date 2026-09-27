@@ -204,14 +204,11 @@ public class EnchantmentConversionMenu extends AbstractContainerMenu implements 
 			}
 			//? } else if >=1.21.4 {
 			/*public ResourceLocation getNoItemIcon() {
-				return ResourceLocation.withDefaultNamespace("container/slot/emerald");
+				return null;
 			}*/
 			//? } else {
 			/*public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-				return Pair.of(
-						InventoryMenu.BLOCK_ATLAS,
-						ResourceLocation.tryParse("minecraft:item/empty_slot_emerald")
-				);
+				return null;
 			}*/
 			//?}
 		});

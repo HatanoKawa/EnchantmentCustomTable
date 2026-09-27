@@ -27,6 +27,24 @@ public final class TomlPaymentConfig {
         return JsonTableConfigCodec.readPayments(json(value), warning);
     }
 
+    public static TableConfigSnapshot load(Path path, Consumer<String> warning) throws IOException {
+        return JsonTableConfigCodec.parse(json(new TomlParser().parse(Files.readString(path))).getAsJsonObject(), warning);
+    }
+
+    public static void save(Path path, TableConfigSnapshot value) throws IOException {
+        // Parse before writing: an unfinished manual edit must never be replaced with defaults.
+        CommentedConfig config = Files.exists(path) ? new TomlParser().parse(Files.readString(path)) : CommentedConfig.inMemory();
+        config.set("configVersion", 2);
+        config.set("paymentOptions", entries(value.paymentOptions()));
+        config.set("enforceEnchantmentLevelLimit", value.enforceEnchantmentLevelLimit());
+        config.set("incrementalSameLevelMerge", value.incrementalSameLevelMerge());
+        config.set("convertOnlyLevelOneBook", value.convertOnlyLevelOneBook());
+        config.set("freeConversionTableCosts", value.freeConversionTableCosts());
+        config.remove(JsonTableConfigCodec.MINIMUM_EMERALD_COST);
+        config.remove(JsonTableConfigCodec.MINIMUM_EMERALD_BLOCK_COST);
+        ConfigFiles.writeAtomic(path, new TomlWriter().writeToString(config));
+    }
+
     /** Runs before registering the spec: framework correction otherwise deletes the legacy keys. */
     public static void migrate(Path path, Consumer<String> warning) {
         if (!Files.exists(path)) return;

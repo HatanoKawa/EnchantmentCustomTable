@@ -13,7 +13,11 @@ import net.minecraft.resources.Identifier;
 //?}
 
 public record TableConfigPayload(String json) implements CustomPacketPayload {
+    //? if >=1.21.11 {
     public static final Type<TableConfigPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "table_config_v2"));
+    //? } else {
+    /*public static final Type<TableConfigPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(EnchantmentCustomTable.MODID, "table_config_v2"));*/
+    //?}
     public static final StreamCodec<ByteBuf, TableConfigPayload> CODEC = ByteBufCodecs.stringUtf8(TableConfigWireCodec.MAX_LENGTH)
             .map(TableConfigPayload::new, TableConfigPayload::json);
     @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
