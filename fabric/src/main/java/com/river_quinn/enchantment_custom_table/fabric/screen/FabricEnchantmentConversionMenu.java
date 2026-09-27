@@ -69,7 +69,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                 this.inventory,
                 FabricEnchantmentUtils.service(),
                 () -> blockEntity != null && blockEntity.isCopyMode(),
-                FabricTableConfig::snapshot,
+                () -> FabricTableConfig.snapshot(world.isClientSide()),
                 BOOK_SLOT,
                 PAYMENT_SLOT,
                 ENCHANTED_BOOK_SLOT_START,
@@ -121,11 +121,11 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
             if (!moveItemStackTo(stack, PLAYER_INVENTORY_START, PLAYER_INVENTORY_END, true)) {
                 return ItemStack.EMPTY;
             }
-        } else if (EnchantmentTableRules.acceptsConversionBookInput(FabricTableConfig.snapshot()) && stack.is(Items.BOOK)) {
+        } else if (EnchantmentTableRules.acceptsConversionBookInput(FabricTableConfig.snapshot(world.isClientSide())) && stack.is(Items.BOOK)) {
             if (!moveItemStackTo(stack, BOOK_SLOT, BOOK_SLOT + 1, false)) {
                 return ItemStack.EMPTY;
             }
-        } else if (EnchantmentTableRules.isConversionPaymentItem(stack, FabricTableConfig.snapshot())) {
+        } else if (EnchantmentTableRules.isConversionPaymentItem(stack, FabricTableConfig.snapshot(world.isClientSide()))) {
             if (!moveItemStackTo(stack, PAYMENT_SLOT, PAYMENT_SLOT + 1, false)) {
                 return ItemStack.EMPTY;
             }
@@ -242,7 +242,7 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
         addSlot(new TableSlot(BOOK_SLOT, TableMenuLayout.Conversion.BOOK_SLOT_X, TableMenuLayout.Conversion.BOOK_SLOT_Y, FabricEmptySlotIcon.BOOK) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return EnchantmentTableRules.acceptsConversionBookInput(FabricTableConfig.snapshot()) && stack.is(Items.BOOK);
+                return EnchantmentTableRules.acceptsConversionBookInput(FabricTableConfig.snapshot(world.isClientSide())) && stack.is(Items.BOOK);
             }
 
             @Override
@@ -251,10 +251,10 @@ public class FabricEnchantmentConversionMenu extends AbstractContainerMenu imple
                 refreshGeneratedSlotsAfterInputsChanged();
             }
         });
-        addSlot(new TableSlot(PAYMENT_SLOT, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y, FabricEmptySlotIcon.EMERALD) {
+        addSlot(new TableSlot(PAYMENT_SLOT, TableMenuLayout.Conversion.PAYMENT_SLOT_X, TableMenuLayout.Conversion.PAYMENT_SLOT_Y, FabricEmptySlotIcon.NONE) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return EnchantmentTableRules.isConversionPaymentItem(stack, FabricTableConfig.snapshot());
+                return EnchantmentTableRules.isConversionPaymentItem(stack, FabricTableConfig.snapshot(world.isClientSide()));
             }
 
             @Override

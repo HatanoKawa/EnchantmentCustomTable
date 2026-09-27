@@ -179,7 +179,7 @@ public class EnchantingCustomTableBlockEntity extends EnchantingTableLikeBlockEn
     }
 
     private EnchantmentTableRules.MergeOptions mergeOptions() {
-        return EnchantmentTableRules.MergeOptions.from(Config.snapshot());
+        return EnchantmentTableRules.MergeOptions.from(Config.snapshot(level != null && level.isClientSide()));
     }
 
     private void playUseSound() {

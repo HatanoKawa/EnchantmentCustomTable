@@ -18,7 +18,8 @@ sourceSets {
     }
     test {
         java.setSrcDirs([
-                rootProject.file('src/test/java')
+                rootProject.file('src/test/java'),
+                rootProject.file('src/test-config/java')
         ])
     }
 }
@@ -28,7 +29,13 @@ dependencies {
 
     testImplementation platform('org.junit:junit-bom:5.10.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation "com.electronwill.night-config:toml:${findProperty('paymentTomlTestVersion') ?: '3.6.4'}"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// Exercise the production TOML adapter without loading Minecraft or a loader.
+tasks.named('compileTestJava') {
+    source rootProject.file('src/main/java/com/river_quinn/enchantment_custom_table/config/TomlPaymentConfig.java')
 }
 
 tasks.withType(JavaCompile).configureEach {

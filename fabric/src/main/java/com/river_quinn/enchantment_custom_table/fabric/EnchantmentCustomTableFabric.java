@@ -23,6 +23,7 @@ public class EnchantmentCustomTableFabric implements ModInitializer {
         FabricModBlockEntities.register();
         FabricModMenus.register();
         FabricModPayloads.register();
+        com.river_quinn.enchantment_custom_table.fabric.network.FabricTableConfigSync.register();
         FabricItemStorageAdapters.register();
         LOGGER.info("Initialized EnchantmentCustomTable Fabric");
     }
