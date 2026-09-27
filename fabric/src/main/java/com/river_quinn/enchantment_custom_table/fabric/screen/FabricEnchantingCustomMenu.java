@@ -73,7 +73,7 @@ public class FabricEnchantingCustomMenu extends AbstractContainerMenu {
                 world,
                 this.inventory,
                 FabricEnchantmentUtils.service(),
-                () -> EnchantmentTableRules.MergeOptions.from(FabricTableConfig.snapshot()),
+                () -> EnchantmentTableRules.MergeOptions.from(FabricTableConfig.snapshot(world.isClientSide())),
                 TOOL_SLOT,
                 INPUT_SLOT,
                 GENERATED_SLOT_START,

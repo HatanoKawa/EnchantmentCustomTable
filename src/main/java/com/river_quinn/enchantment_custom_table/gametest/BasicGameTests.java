@@ -238,12 +238,9 @@ public class BasicGameTests {
     public static void conversionTableConsumesConfiguredPaymentAndClearsResultsWhenExhausted(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
-        int originalEmeraldCost = Config.minimumEmeraldCost;
-        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
-        Config.minimumEmeraldCost = 3;
-        Config.minimumEmeraldBlockCost = 0;
-        Config.convertOnlyLevelOneBook = false;
+        var originalConfig = Config.snapshot();
+        Config.setRuntimeSnapshot(new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(
+                com.river_quinn.enchantment_custom_table.core.config.PaymentOptions.legacy(3, 0), originalConfig.enforceEnchantmentLevelLimit(), originalConfig.incrementalSameLevelMerge(), false, originalConfig.freeConversionTableCosts()));
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -265,20 +262,15 @@ public class BasicGameTests {
 
             helper.succeed();
         } finally {
-            Config.minimumEmeraldCost = originalEmeraldCost;
-            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
-            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
+            Config.setRuntimeSnapshot(originalConfig);
         }
     }
     public static void conversionTableSearchFiltersResultsByClientMatchedIds(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
-        int originalEmeraldCost = Config.minimumEmeraldCost;
-        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
-        Config.minimumEmeraldCost = 1;
-        Config.minimumEmeraldBlockCost = 0;
-        Config.convertOnlyLevelOneBook = false;
+        var originalConfig = Config.snapshot();
+        Config.setRuntimeSnapshot(new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(
+                com.river_quinn.enchantment_custom_table.core.config.PaymentOptions.legacy(1, 0), originalConfig.enforceEnchantmentLevelLimit(), originalConfig.incrementalSameLevelMerge(), false, originalConfig.freeConversionTableCosts()));
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -308,21 +300,16 @@ public class BasicGameTests {
 
             helper.succeed();
         } finally {
-            Config.minimumEmeraldCost = originalEmeraldCost;
-            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
-            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
+            Config.setRuntimeSnapshot(originalConfig);
         }
     }
 
     public static void conversionTableCanBeLimitedToLevelOneBooks(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
-        int originalEmeraldCost = Config.minimumEmeraldCost;
-        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
-        Config.minimumEmeraldCost = 1;
-        Config.minimumEmeraldBlockCost = 0;
-        Config.convertOnlyLevelOneBook = true;
+        var originalConfig = Config.snapshot();
+        Config.setRuntimeSnapshot(new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(
+                com.river_quinn.enchantment_custom_table.core.config.PaymentOptions.legacy(1, 0), originalConfig.enforceEnchantmentLevelLimit(), originalConfig.incrementalSameLevelMerge(), true, originalConfig.freeConversionTableCosts()));
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -344,20 +331,15 @@ public class BasicGameTests {
 
             helper.succeed();
         } finally {
-            Config.minimumEmeraldCost = originalEmeraldCost;
-            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
-            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
+            Config.setRuntimeSnapshot(originalConfig);
         }
     }
     public static void conversionTableRefillsTakenResultSlotAfterPick(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
-        int originalEmeraldCost = Config.minimumEmeraldCost;
-        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
-        Config.minimumEmeraldCost = 0;
-        Config.minimumEmeraldBlockCost = 1;
-        Config.convertOnlyLevelOneBook = false;
+        var originalConfig = Config.snapshot();
+        Config.setRuntimeSnapshot(new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(
+                com.river_quinn.enchantment_custom_table.core.config.PaymentOptions.legacy(0, 1), originalConfig.enforceEnchantmentLevelLimit(), originalConfig.incrementalSameLevelMerge(), false, originalConfig.freeConversionTableCosts()));
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -382,21 +364,16 @@ public class BasicGameTests {
 
             helper.succeed();
         } finally {
-            Config.minimumEmeraldCost = originalEmeraldCost;
-            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
-            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
+            Config.setRuntimeSnapshot(originalConfig);
         }
     }
 
     public static void conversionTablePreservesCurrentPageWhenPaymentInputChanges(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
-        int originalEmeraldCost = Config.minimumEmeraldCost;
-        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
-        Config.minimumEmeraldCost = 0;
-        Config.minimumEmeraldBlockCost = 1;
-        Config.convertOnlyLevelOneBook = false;
+        var originalConfig = Config.snapshot();
+        Config.setRuntimeSnapshot(new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(
+                com.river_quinn.enchantment_custom_table.core.config.PaymentOptions.legacy(0, 1), originalConfig.enforceEnchantmentLevelLimit(), originalConfig.incrementalSameLevelMerge(), false, originalConfig.freeConversionTableCosts()));
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -428,21 +405,16 @@ public class BasicGameTests {
 
             helper.succeed();
         } finally {
-            Config.minimumEmeraldCost = originalEmeraldCost;
-            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
-            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
+            Config.setRuntimeSnapshot(originalConfig);
         }
     }
 
     public static void conversionTablePreservesSearchFilterAfterPick(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
-        int originalEmeraldCost = Config.minimumEmeraldCost;
-        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        boolean originalConvertOnlyLevelOneBook = Config.convertOnlyLevelOneBook;
-        Config.minimumEmeraldCost = 0;
-        Config.minimumEmeraldBlockCost = 1;
-        Config.convertOnlyLevelOneBook = false;
+        var originalConfig = Config.snapshot();
+        Config.setRuntimeSnapshot(new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(
+                com.river_quinn.enchantment_custom_table.core.config.PaymentOptions.legacy(0, 1), originalConfig.enforceEnchantmentLevelLimit(), originalConfig.incrementalSameLevelMerge(), false, originalConfig.freeConversionTableCosts()));
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -483,19 +455,16 @@ public class BasicGameTests {
 
             helper.succeed();
         } finally {
-            Config.minimumEmeraldCost = originalEmeraldCost;
-            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
-            Config.convertOnlyLevelOneBook = originalConvertOnlyLevelOneBook;
+            Config.setRuntimeSnapshot(originalConfig);
         }
     }
 
     public static void conversionTableCopyModeGeneratesResultAndDisablesCandidates(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
-        int originalEmeraldCost = Config.minimumEmeraldCost;
-        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        Config.minimumEmeraldCost = 1;
-        Config.minimumEmeraldBlockCost = 0;
+        var originalConfig = Config.snapshot();
+        Config.setRuntimeSnapshot(new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(
+                com.river_quinn.enchantment_custom_table.core.config.PaymentOptions.legacy(1, 0), originalConfig.enforceEnchantmentLevelLimit(), originalConfig.incrementalSameLevelMerge(), originalConfig.convertOnlyLevelOneBook(), originalConfig.freeConversionTableCosts()));
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -533,8 +502,7 @@ public class BasicGameTests {
 
             helper.succeed();
         } finally {
-            Config.minimumEmeraldCost = originalEmeraldCost;
-            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+            Config.setRuntimeSnapshot(originalConfig);
         }
     }
 
@@ -565,10 +533,9 @@ public class BasicGameTests {
     public static void conversionTableAutomationInputsMaterialsAndExtractsCopiesOnly(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
-        int originalEmeraldCost = Config.minimumEmeraldCost;
-        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        Config.minimumEmeraldCost = 1;
-        Config.minimumEmeraldBlockCost = 0;
+        var originalConfig = Config.snapshot();
+        Config.setRuntimeSnapshot(new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(
+                com.river_quinn.enchantment_custom_table.core.config.PaymentOptions.legacy(1, 0), originalConfig.enforceEnchantmentLevelLimit(), originalConfig.incrementalSameLevelMerge(), originalConfig.convertOnlyLevelOneBook(), originalConfig.freeConversionTableCosts()));
 
         try {
             EnchantmentConversionTableBlockEntity blockEntity = blockEntity(
@@ -618,20 +585,16 @@ public class BasicGameTests {
 
             helper.succeed();
         } finally {
-            Config.minimumEmeraldCost = originalEmeraldCost;
-            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+            Config.setRuntimeSnapshot(originalConfig);
         }
     }
 
     public static void conversionTableFreeCostModeUsesNoMaterialInputs(GameTestHelper helper) {
         helper.setBlock(ENCHANTMENT_CONVERSION_TABLE_POS, ModBlocks.ENCHANTMENT_CONVERSION_TABLE_BLOCK.get());
 
-        boolean originalFreeConversionTableCosts = Config.freeConversionTableCosts;
-        int originalEmeraldCost = Config.minimumEmeraldCost;
-        int originalEmeraldBlockCost = Config.minimumEmeraldBlockCost;
-        Config.freeConversionTableCosts = true;
-        Config.minimumEmeraldCost = 36;
-        Config.minimumEmeraldBlockCost = 4;
+        var originalConfig = Config.snapshot();
+        Config.setRuntimeSnapshot(new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(
+                com.river_quinn.enchantment_custom_table.core.config.PaymentOptions.legacy(36, 4), originalConfig.enforceEnchantmentLevelLimit(), originalConfig.incrementalSameLevelMerge(), originalConfig.convertOnlyLevelOneBook(), true));
 
         try {
             Player player = helper.makeMockPlayer(GameType.CREATIVE);
@@ -689,9 +652,7 @@ public class BasicGameTests {
 
             helper.succeed();
         } finally {
-            Config.freeConversionTableCosts = originalFreeConversionTableCosts;
-            Config.minimumEmeraldCost = originalEmeraldCost;
-            Config.minimumEmeraldBlockCost = originalEmeraldBlockCost;
+            Config.setRuntimeSnapshot(originalConfig);
         }
     }
 
@@ -1399,20 +1360,15 @@ public class BasicGameTests {
     }
 
     private static ConfigSnapshot useMergeConfig(boolean enforceEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {
-        ConfigSnapshot snapshot = new ConfigSnapshot(
-                Config.enforceEnchantmentLevelLimit,
-                Config.incrementalSameLevelMerge
-        );
-        Config.enforceEnchantmentLevelLimit = enforceEnchantmentLevelLimit;
-        Config.incrementalSameLevelMerge = incrementalSameLevelMerge;
-        return snapshot;
+        var original = Config.snapshot();
+        Config.setRuntimeSnapshot(new com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot(
+                original.paymentOptions(), enforceEnchantmentLevelLimit, incrementalSameLevelMerge,
+                original.convertOnlyLevelOneBook(), original.freeConversionTableCosts()));
+        return new ConfigSnapshot(original);
     }
 
-    private record ConfigSnapshot(boolean enforceEnchantmentLevelLimit, boolean incrementalSameLevelMerge) {
-        private void restore() {
-            Config.enforceEnchantmentLevelLimit = enforceEnchantmentLevelLimit;
-            Config.incrementalSameLevelMerge = incrementalSameLevelMerge;
-        }
+    private record ConfigSnapshot(com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot value) {
+        private void restore() { Config.setRuntimeSnapshot(value); }
     }
 
     private static void movePlayerTo(Player player, BlockPos pos) {

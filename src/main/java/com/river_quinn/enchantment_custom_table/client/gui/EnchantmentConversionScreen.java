@@ -42,6 +42,8 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     Button button_left_arrow_button;
     Button button_right_arrow_button;
     EditBox searchBox;
+    private Button paymentInfo;
+    private com.river_quinn.enchantment_custom_table.core.config.TableConfigSnapshot paymentView;
     private String pendingSearchQuery = "";
     private String lastSentSearchQuery = "";
     private int searchUpdateDelayTicks = -1;
@@ -89,6 +91,7 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     @Override
     protected void containerTick() {
         super.containerTick();
+        updatePaymentInfo();
         if (searchUpdateDelayTicks > 0) {
             searchUpdateDelayTicks--;
         }
@@ -121,6 +124,10 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     @Override
     public void init() {
         super.init();
+        paymentInfo = Button.builder(Component.literal("?"), button -> {})
+                .bounds(this.leftPos + 8, this.topPos + 4, 30, 14).build();
+        this.addRenderableWidget(paymentInfo);
+        updatePaymentInfo();
         searchBox = new EditBox(
                 this.font,
                 this.leftPos + 43,
@@ -222,4 +229,13 @@ public class EnchantmentConversionScreen extends AbstractContainerScreen<Enchant
     private void sendToServer(EnchantmentConversionTableNetData payload) {
         ClientPacketDistributor.sendToServer(payload);
     }
+    private void updatePaymentInfo() {
+        var current = com.river_quinn.enchantment_custom_table.Config.snapshot(true);
+        if (paymentInfo != null && paymentView != current) {
+            paymentView = current;
+            paymentInfo.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                    com.river_quinn.enchantment_custom_table.core.config.MinecraftPaymentConfig.describe(current)));
+        }
+    }
+
 }

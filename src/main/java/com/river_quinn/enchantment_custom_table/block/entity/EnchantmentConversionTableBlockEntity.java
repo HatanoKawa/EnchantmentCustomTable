@@ -185,7 +185,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
     }
 
     private TableConfigView config() {
-        return Config.snapshot();
+        return Config.snapshot(level != null && level.isClientSide());
     }
 
     private class ConversionAutomationItemHandler implements ResourceHandler<ItemResource>, AutomationPort {
@@ -244,7 +244,7 @@ public class EnchantmentConversionTableBlockEntity extends EnchantingTableLikeBl
         }
 
         private long getInputSlotGeneralCapacity(int index) {
-            if (Config.freeConversionTableCosts) {
+            if (config().freeConversionTableCosts()) {
                 return 0;
             }
             int internalSlot = switch (index) {
