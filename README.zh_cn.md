@@ -8,121 +8,148 @@
 
 还在为了凑一套理想的附魔反复刷附魔台、开图书馆、堆经验吗？这个 Mod 给你两台新工作台，让你像整理背包一样自由地摆弄附魔。
 
-- **自定义附魔台**：直接在工具或附魔书上「改装」附魔——加一个、删一个、把高级附魔拆成低级的，或者把两本同样的附魔书合成更强的一本。
-- **附魔书转换台**：拿普通书加上一点绿宝石，就能换到想要的附魔书；还能照着你给的一本附魔书「复印」出一模一样的。
+- **自定义附魔台**：为工具和附魔书添加、移除、拆分或合并附魔。
+- **附魔书转换台**：用普通书和可配置的付款物品换取附魔书，也可以照着模板复制附魔书。
 
-> 这个 Mod 默认玩起来是比较「随心所欲」的。如果你（或者你做的整合包）希望玩起来更有挑战、更平衡，可以在配置里打开几个更严格的开关，后面会讲到。
+默认规则比较宽松。玩家和整合包作者可以通过下方配置调整付款物品、费用和附魔规则。
 
-想下载正式版，去 [CurseForge](https://www.curseforge.com/minecraft/mc-mods/enchantment-custom-table) 或 [Modrinth](https://modrinth.com/mod/enchantment-custom-table)。遇到 bug 或者有建议，欢迎到 [GitHub Issues](https://github.com/HatanoKawa/EnchantmentCustomTable/issues) 告诉我们。
+正式发布版本可从 [CurseForge](https://www.curseforge.com/minecraft/mc-mods/enchantment-custom-table) 或 [Modrinth](https://modrinth.com/mod/enchantment-custom-table) 下载。反馈问题或建议请前往 [GitHub Issues](https://github.com/HatanoKawa/EnchantmentCustomTable/issues)。
 
-## 支持的版本
+## 支持版本与安装
 
-NeoForge 和 Fabric 两个加载器都有对应版本，支持 本分支的 Minecraft `26.1`、`26.1.1`、`26.1.2`、`26.2`、`26.3`。
+**当前分支（`dev`）支持 Minecraft `26.1`, `26.1.1`, `26.1.2`, `26.2`, `26.3`，加载器为 NeoForge 和 Fabric，游戏需要 Java 25。** 本文对应当前分支源码，包含 **2.1.0 起**采用的结构化付款配置；下载平台上的发布版本可能晚于分支进度，请核对所选发布包的 Minecraft 版本、加载器及更新说明。
 
-**小提示**：下载时记得对上两件事——你用的加载器（NeoForge 还是 Fabric）和你的游戏版本，两者都要和 jar 文件匹配，不然进不去游戏。
+全部活跃维护分支如下。每一行列出的 Minecraft 版本均支持该行的两种加载器；分支系列名不代表该系列的所有版本都已适配。
 
-## 自定义附魔台：随意摆弄你的附魔
+| 分支 | 实际支持的 Minecraft 版本 | 加载器 | 游戏 Java 版本 |
+| --- | --- | --- | --- |
+| [`dev`](https://github.com/HatanoKawa/EnchantmentCustomTable/tree/dev) | `26.1`, `26.1.1`, `26.1.2`, `26.2`, `26.3` | NeoForge / Fabric | 25 |
+| [`maint/1.21.x`](https://github.com/HatanoKawa/EnchantmentCustomTable/tree/maint/1.21.x) | `1.21.1`, `1.21.2`, `1.21.3`, `1.21.4`, `1.21.5`, `1.21.6`, `1.21.7`, `1.21.8`, `1.21.9`, `1.21.10`, `1.21.11` | NeoForge / Fabric | 21 |
+| [`maint/1.20.x`](https://github.com/HatanoKawa/EnchantmentCustomTable/tree/maint/1.20.x) | `1.20.1` | Forge / Fabric | 17 |
+| [`maint/1.19.x`](https://github.com/HatanoKawa/EnchantmentCustomTable/tree/maint/1.19.x) | `1.19.2` | Forge / Fabric | 17 |
+| [`maint/1.18.x`](https://github.com/HatanoKawa/EnchantmentCustomTable/tree/maint/1.18.x) | `1.18.2` | Forge / Fabric | 17 |
+
+安装对应加载器，将匹配的 Mod jar 放入 `mods/`。Fabric 还需要安装对应 Minecraft 版本的 **Fabric API**。多人游戏需在**客户端和服务器两端安装**本 Mod，并使用一致的 Mod 版本以保证配置同步。每个实例只需放入对应加载器、对应 Minecraft 版本的一个 jar。
+
+## 自定义附魔台：整理物品上的附魔
 
 ![自定义附魔台界面](./src/main/resources/doc/enchantment_custom_table_gui.jpg)
 
-把一件**工具**或一本**附魔书**放进左上角的格子，工作台就会把它身上的每一个附魔，都拆成一本本附魔书摆在右边给你看。接下来你可以：
+本文的界面截图来自较早版本，用于展示基本布局；槽位位置和付款图标可能与当前版本不同，实际费用以游戏内的付款提示为准。
 
-- **想删掉某个附魔？** 直接把右边那本附魔书拿走，物品上对应的附魔就没了。
-- **想加一个附魔？** 把一本附魔书放进输入格，或者放进右边任意一个空格子，它就会附到物品上。
-- **想强化已有的附魔？** 把附魔书叠到右边同名的那一本上，两个就会合并。
-- **想把一本高级书拆开？** 把一本只有「单个附魔」的书放进左上角的格子，它会拆成几本等级更低的书让你挑。
-- **想一次清空？** 点导出按钮，物品上所有附魔会被一次性取下，打包成一本附魔书还给你。
+将工具或附魔书放进主物品格，右侧会展示可取下的附魔；如果放入的是只有一个附魔、且等级高于 I 的书，则展示拆分选项。
 
-默认规则下，两个相同的附魔合并时等级是**直接相加**的。比如锋利 IV ＋ 锋利 IV ＝ 锋利 VIII。（如果你想让它别这么离谱，可以打开后面介绍的严格配置。）
+- **移除**：拿走右侧对应的附魔书，物品上的该附魔随之移除。
+- **添加或合并**：将附魔书放入输入格或右侧允许放入的格子，其附魔会应用到主物品上，并消耗这本输入书。
+- **拆分**：从单附魔高级书的拆分选项中取走一本。默认规则会从原书扣除取出书的等级，再刷新选项；例如从锋利 V 取出锋利 II，主物品格中留下锋利 III。右侧选项是预览，并不是额外存放的书。
+- **导出**：导出按钮将工具上的全部附魔汇成一本书；如果主物品本身就是附魔书，则直接将这本书交还给玩家。
 
-## 附魔书转换台：把普通书换成附魔书
+默认情况下，同名附魔合并时**等级相加**：锋利 IV ＋ 锋利 IV ＝ 锋利 VIII。下方配置可以要求仅合并相同等级，或拒绝超过该附魔正常最高等级的合并。
+
+## 附魔书转换台：兑换附魔书
 
 ![附魔书转换台界面](./src/main/resources/doc/enchantment_conversion_table_gui.jpg)
 
-**普通兑换模式**很简单：放进普通书，再放够配置指定的付款物品当「手续费」（默认三选一：36 绿宝石、4 绿宝石块、1 下界之星）。材料够了之后，右边就会列出你能换到的附魔书。每拿走一本，就扣掉一本普通书和相应的付款物品。
+**普通兑换模式**每本消耗**一本普通书，加一种付款选项**。默认三选一：**36 绿宝石、4 绿宝石块、1 下界之星**。将其中一种物品放入付款格即可，不同选项不能混合凑数。默认加入下界之星来自玩家建议。
 
-右边书太多找不着？用上面的**搜索框**按附魔名字筛一下就行。
+材料足够时，右侧展示可兑换的附魔书，可以搜索和翻页查找。普通兑换默认产出该附魔的**正常最高等级**；开启 `convertOnlyLevelOneBook` 后产出 **I 级**。取走书时才扣除本次费用。
 
-至于换出来的附魔是几级，由配置项 `convertOnlyLevelOneBook` 决定：默认给你能给到的**最高等级**；打开这个开关后，就只给 **1 级**的。
+### 模板复制模式
 
-### 复制模板模式：照着一本书「复印」
+将合格的附魔书放入**模板格**，即可从普通兑换切换到复制模式。模板必须**只含一个附魔**，且等级**大于 0、不超过该附魔的正常最高等级**。工具、多附魔书和超等级书不能作为模板。
 
-把一本附魔书放进**模板格**，转换台就切换到复制模式。这时右边的兑换列表会暂时关掉，改成：只要工作台里有一本普通书加足够的付款物品，输出格就会出现一本和模板**一模一样**的复制品。
+当复制输出格为空且材料足够时，工作台消耗一本普通书及对应费用，在输出格生成一份完整复制品。**模板本身保留，不会消耗。** 复制品保留模板的等级和其他物品数据；`convertOnlyLevelOneBook` 只影响普通兑换。复制在**生成成品时扣费**，因此输出格中已经出现的书已经支付过费用。免费模式下兑换和复制均不需要材料，但模板限制仍然生效。
 
-能用来当模板的书有几个条件：
+![附魔书转换台自动化界面](./src/main/resources/doc/enchantment_conversion_table_automation_gui.jpg)
 
-- 必须是**附魔书**（不能是工具）。
-- 上面**只能有一个**附魔，不能是好几个混在一起的。
-- 附魔等级要**大于 0**。
-- 附魔等级**不能超过**这个附魔本来的最高等级。
+## 存储与自动化
 
-![附魔书转换台界面](./src/main/resources/doc/enchantment_conversion_table_automation_gui.jpg)
+两个工作台的实际库存会保存在方块中，包括未使用的材料、主物品或模板，以及已生成的复制成品。关闭界面、保存世界后仍会保留，破坏方块时会掉落。右侧附魔选项由库存推导生成，不会额外掉落预览中的书。
 
-## 自动化（漏斗、管道之类）
+- **自定义附魔台**：自动化可以输入能够合并到台内现有物品上的附魔书。主物品需要玩家放入和取出，自动化不能抽走它。
+- **附魔书转换台**：自动化可以输入普通书和接受的付款物品，只能抽取**复制输出格**中的成品。
+- 模板格由玩家管理，自动化不能放入、替换或抽取模板。
+- 普通兑换列表不能由自动化抽取；需要持续量产时请使用模板复制。
+- 免费模式下，普通书格与付款格不接受新输入；原有物品仍可由玩家取回，自动化仍可抽取复制成品。
 
-两个工作台里放的东西都是**真实存在**的——会一直保存在那儿，方块被打掉时也会原样掉出来，不会凭空消失。
+## 配置
 
-为了不让漏斗、物流 Mod 钻空子绕过游戏里的规则，自动化是被**特意限制**过的：
+下列路径均相对于游戏实例或独立服务器目录，首次启动会生成配置文件。
 
-- **自定义附魔台**：漏斗可以往输入格塞附魔书，它会自动合并到台子里已有的物品上；但里面那件主工具/主附魔书，漏斗**拿不出来**。
-- **附魔书转换台**：可以自动塞普通书和配置接受的付款物品，但**只能从「复制输出格」把东西抽走**。
-- **模板格**只能玩家手动放，自动化既不能塞也不能换。
-- 右边那些可兑换的附魔书只是给玩家「看着选」的，本质上不是真实物品，自动化碰不到。
-- **想搞自动量产同一种附魔书，请用复制模板模式**，而不是去抓右边的兑换列表。
+- **NeoForge：`config/enchantment_custom_table-common.toml`。** 可直接编辑文件，或经 Mod 列表打开本 Mod 的配置界面。付款编辑器支持逐行添加、删除和修改，以及保存、取消和恢复默认。
+- **Fabric：`config/enchantment_custom_table.json`。** 直接编辑文件；本 Mod 暂未提供 Fabric 配置界面。
 
-一句话记住最关键的一点：**当模板用的那本书，必须只含一个附魔，而且等级别超过它原本的上限。**
-
-## 配置项：想玩得更平衡就改这里
-
-- **NeoForge 玩家**：可以直接在游戏里的「Mod 配置界面」改，也可以改加载器管理的 common 配置文件。
-- **Fabric 玩家**：配置文件在 Fabric 的 config 文件夹里，名字叫 `enchantment_custom_table.json`。
-
-| 配置项 | 默认值 | 它管什么 |
+| 配置项 | 默认值 | 作用 |
 | --- | --- | --- |
-| `paymentOptions` | 36 绿宝石 / 4 绿宝石块 / 1 下界之星 | 每次兑换任选一种付款，另消耗一本普通书。 |
-| `enforceEnchantmentLevelLimit` | `false` | 打开后，合并重复附魔时**不能超过该附魔本来的最高等级**。注意：新加一个附魔不受这条限制，所以别的 Mod 造出来的「超标」附魔书依然能用。 |
-| `incrementalSameLevelMerge` | `false` | 一个更平衡的合并规则。打开后，**只有等级完全相同**的两本同名书才能合并，而且合并一次只 **+1 级**。比如锋利 V ＋ 锋利 V ＝ 锋利 VI，而不是直接变锋利 X。 |
-| `convertOnlyLevelOneBook` | `false` | 打开后，转换台只产出 **1 级**附魔书，而不是最高等级。 |
-| `freeConversionTableCosts` | `false` | 打开后，转换台可以免费生成和复制附魔书。书本槽和付款槽不再接受输入，但模板复制输出依然可以被自动化抽出。 |
+| `paymentOptions` | 36 绿宝石 / 4 绿宝石块 / 1 下界之星 | 兑换与复制的付款选项，每份成品消耗其中一种及一本普通书。 |
+| `enforceEnchantmentLevelLimit` | `false` | **合并重复附魔**时，如果结果超过该附魔正常最高等级，就拒绝合并。添加物品原本没有的附魔不受此上限约束。 |
+| `incrementalSameLevelMerge` | `false` | 重复附魔必须等级相同才能合并，结果为原等级加一，而非等级相加；同时改变单附魔书的拆分规则，见下文。 |
+| `convertOnlyLevelOneBook` | `false` | 普通兑换只产出 I 级书，而非正常最高等级；模板复制仍保留模板等级。 |
+| `freeConversionTableCosts` | `false` | 兑换与复制均不消耗普通书或任何付款物品，两个材料格也不再接受新输入。 |
 
-几点需要注意：
+`enforceEnchantmentLevelLimit` 和 `incrementalSameLevelMerge` 可以独立开启。只开启递增合并时，锋利 V ＋ 锋利 V ＝ 锋利 VI；若同时开启等级上限，则会拒绝该次合并。递增模式的拆分是相反过程：从单附魔锋利 V 书中取出锋利 IV 后，主物品格中留下另一本锋利 IV。
 
-- `enforceEnchantmentLevelLimit` 和 `incrementalSameLevelMerge` 互不影响，可以单独开。两个都开的话，同等级合并依然不会超过正常上限。
-- 打开 `incrementalSameLevelMerge` 后，**拆书的方式也会跟着变**：比如一本锋利 V 会被拆成两本锋利 IV，而不是默认那种「对半分」的拆法。
+### 完整默认配置示例
 
-### 自定义付款列表与服务器规则
+`configVersion` 是 Mod 管理的格式版本，保留为 `2`，它不是难度选项。费用必须是整数，不加引号。修改已有配置时，请保留其他需要沿用的设置。
 
-Fabric JSON 配置示例（费用是整数，不加引号）：
+Fabric JSON：
 
 ```json
-"paymentOptions": [
-  { "item_id": "minecraft:emerald", "cost": 36 },
-  { "item_id": "minecraft:emerald_block", "cost": 4 },
-  { "item_id": "minecraft:nether_star", "cost": 1 }
-]
+{
+  "configVersion": 2,
+  "paymentOptions": [
+    { "item_id": "minecraft:emerald", "cost": 36 },
+    { "item_id": "minecraft:emerald_block", "cost": 4 },
+    { "item_id": "minecraft:nether_star", "cost": 1 }
+  ],
+  "enforceEnchantmentLevelLimit": false,
+  "incrementalSameLevelMerge": false,
+  "convertOnlyLevelOneBook": false,
+  "freeConversionTableCosts": false
+}
 ```
 
-NeoForge / Forge 的 common TOML 可以写成：
+NeoForge common TOML：
 
 ```toml
-paymentOptions = [{ item_id = "minecraft:emerald", cost = 36 }, { item_id = "minecraft:emerald_block", cost = 4 }, { item_id = "minecraft:nether_star", cost = 1 }]
+configVersion = 2
+paymentOptions = [
+  { item_id = "minecraft:emerald", cost = 36 },
+  { item_id = "minecraft:emerald_block", cost = 4 },
+  { item_id = "minecraft:nether_star", cost = 1 }
+]
+enforceEnchantmentLevelLimit = false
+incrementalSameLevelMerge = false
+convertOnlyLevelOneBook = false
+freeConversionTableCosts = false
 ```
 
-也可以在 Mod 配置界面逐行添加、删除和修改。每条规则按完整物品 ID 匹配（包括模组物品），不同付款项是「或」关系，不能混合凑数；不匹配物品标签、NBT 或组件，不返还容器。付款区的问号提示显示当前实际生效的费用。下界之星默认选项来自玩家建议。
+### 付款列表校验规则
 
-- 忽略普通书、附魔书、空气、未知/非法 ID、缺失或非整数费用；相同 ID 保留第一条有效规则，最多 256 项。过滤后为空时恢复上述三项默认值。
-- 有效费用为 `max(1, min(物品默认堆叠上限, 付款槽上限 64, 配置费用))`。零和负数修正为 1；超大整数也会安全修正。某个物品堆的组件不会降低已经确定的价格。删除条目才能禁用对应付款，空列表不能禁用工作台；免费兑换仍由 `freeConversionTableCosts` 控制。
-- 首次迁移在原文件旁保留 `.payment-v1.bak`：旧的正数费用转成列表，旧零费用对应项不加入；两项均为零时恢复三项默认值。已有有效自定义列表或从旧配置迁移的非空列表不会自动加入下界之星。修改其他开关的值不受迁移影响。
-- 多人游戏统一使用服务器下发的付款和四个玩法开关，客户端不会把它们写入本地配置；退出连接时清除。远程服务器配置界面只读。服务器和客户端需更新到支持此协议的版本；收到配置前暂停兑换。
-- 保持现有 common / JSON 配置位置。NeoForge / Forge 使用仅作用于本模组的安全重载回调：语法错误保留原文件和上次有效规则，修复后同步到在线玩家；Fabric 在启动服务器时读取，修改后需重启世界或服务器。格式损坏的文件不会被迁移覆盖；启动时报错时应修复原文件，不能把错误当作免费或默认付款。
+使用完整物品 ID，例如 `minecraft:nether_star`，也可以使用已注册的其他模组物品 ID。仅按物品 ID 匹配，不支持物品标签、NBT 或组件条件，也不返还容器。将鼠标放在付款区域的问号上，可以查看实际生效的费用。
 
-### 已经不用的旧配置项
+- 普通书（`minecraft:book`）、附魔书（`minecraft:enchanted_book`）、空气、非法或未注册 ID、缺失或非整数费用会被忽略。同一 ID 保留第一条有效配置，最多接受 256 项。
+- 过滤后没有可用项时，恢复上述三项默认值。空列表**不会禁用工作台，也不会变成免费兑换**。
+- 实际费用为 `max(1, min(物品默认堆叠上限, 付款格上限 64, 配置费用))`。零和负数修正为 1，过大费用压到上限；例如堆叠上限为 16 的物品，最多收取 16 个。单个物品堆的自定义组件不会降低固定价格。配置文件本身仍需符合 JSON/TOML 语法。
+- **删除条目才表示禁用该付款物品**，零不再表示禁用。免费兑换使用 `freeConversionTableCosts`；整合包若要禁止合成工作台，可以移除或禁用其合成配方。
 
-下面这些是老版本的配置名，现在已经**不起作用**了。如果你的旧配置文件里还有它们，建议删掉重新生成，或者手动换成新名字：
+### 旧配置迁移
 
-- `ignoreEnchantmentLevelLimit` → 改用 `enforceEnchantmentLevelLimit`（含义正好相反）。
-- `convert_max_level_book` → 改用 `convertOnlyLevelOneBook`（含义正好相反）。
-- `enableXpRequirement` → 已删除，没有替代项。
+如果没有 `paymentOptions`，旧的 `minimumEmeraldCost` 和 `minimumEmeraldBlockCost` 会自动迁移。首次迁移前，会在原文件旁保留后缀为 **`.payment-v1.bak`** 的原文件备份。
+
+- 旧配置的正数费用转成列表项，零费用项不加入；两项均为零时，改用新的三项默认值。
+- 已有自定义列表或迁移后的非空列表**不会自动增加下界之星**；需要时请自行添加。四个现行玩法开关保持原值。
+- 更早的 `ignoreEnchantmentLevelLimit` 和 `convert_max_level_book` 已不再读取，也不会自动迁移。若要保留旧含义，需分别设置 `enforceEnchantmentLevelLimit` 和 `convertOnlyLevelOneBook`，并将布尔值**取反**；只改名、保留原值会导致行为相反。
+- `enableXpRequirement` 已删除，没有替代项。
+
+手动调整前请备份配置，无需为了迁移而删除整个文件。
+
+### 服务器规则与配置生效
+
+多人游戏统一由**服务器决定付款列表和四个玩法开关**。服务器规则在本次连接期间覆盖客户端本地设置，不写入客户端配置文件，断开连接后清除。连接远程服务器时，NeoForge 配置界面只读显示服务器规则；需要修改时，应编辑服务器上的文件。单人世界使用本地实例配置。
+
+NeoForge 在运行中应用有效的文件修改，并同步给在线玩家；若修改后语法有误，会保留上次有效规则和待修复的文件。Fabric 修改后需**重启世界或独立服务器**。启动时若无法解析配置，请根据日志修复原文件，它不会被自动覆盖成默认配置；有效服务器规则就绪前，兑换不会执行。
 
 ## 怎么合成这两台工作台
 
@@ -161,3 +188,16 @@ paymentOptions = [{ item_id = "minecraft:emerald", cost = 36 }, { item_id = "min
 | 石英块* | 石英块* | 石英块* |
 
 \* 标星号的格子放上面列出的**任意一种石英块**都行。
+
+## 编译当前分支
+
+使用 JDK 25，在当前 checkout 根目录运行：
+
+```sh
+./gradlew :common:test
+./gradlew :26.3:build :fabric_26_3:build
+./gradlew :verifyAll
+./gradlew :buildReleaseArtifacts
+```
+
+第二条命令编译一个已支持版本的双加载器构建；`verifyAll` 验证当前分支的完整矩阵，`buildReleaseArtifacts` 编译并收集当前分支的可发布 jar 到 `build/release-artifacts/`。其他维护系列需要在各自分支编译。更多构建说明见 [AGENTS.md](./AGENTS.md)，游戏内验证见 [GUI 测试说明](./tools/gui-validation/README.md)。
